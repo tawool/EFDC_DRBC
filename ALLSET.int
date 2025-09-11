@@ -1,0 +1,279 @@
+c=======================================================================
+c=====HYDROLINK INTERFACE===============================================
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETDEBUG(HL_DEBUG)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETDEBUG
+      INTEGER HL_DEBUG
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLGETLASTERROR(MESSAGE)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLGETLASTERROR
+      CHARACTER*(*) MESSAGE
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLOPEN(FNAME, HL_MODE, HL_HANDLE, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLOPEN
+	CHARACTER*(*) FNAME
+      INTEGER HL_MODE, HL_HANDLE, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETLANGUAGE(HL_HANDLE, HL_LANGUAGE, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETLANGUAGE
+      INTEGER HL_HANDLE, HL_LANGUAGE, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETCREATOR(HL_HANDLE, HL_CREATOR, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETCREATOR
+      INTEGER HL_HANDLE, HL_CREATOR, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLADDDESCRIPTION(HL_HANDLE, ID, STRING, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLADDDESCRIPTION
+      INTEGER HL_HANDLE, ID, IERROR
+	CHARACTER *(*) STRING
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETSEEDMOMENT(HL_HANDLE, MONTH, DAY, YEAR, HOUR,
+     &MINUTE,SECOND,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETSEEDMOMENT
+      INTEGER HL_HANDLE, MONTH, DAY, YEAR, HOUR, MINUTE, SECOND,IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETNUMSEGMENTS(HL_HANDLE, NUMSEGS, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETNUMSEGMENTS
+      INTEGER HL_HANDLE, NUMSEGS, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETSEGNAME(HL_HANDLE,INDEX, SEGNAME, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETSEGNAME
+      INTEGER HL_HANDLE, INDEX, IERROR
+	CHARACTER *(*) SEGNAME
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETNUMFLOWPATHS(HL_HANDLE,NUMFP, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETNUMFLOWPATHS
+	INTEGER HL_HANDLE, NUMFP, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETNUMSEGCONSTS(HL_HANDLE,NUMSC, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETNUMSEGCONSTS
+      INTEGER HL_HANDLE, NUMSC, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETNUMFPCONSTS(HL_HANDLE,NUMFPC, IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETNUMFPCONSTS
+      INTEGER HL_HANDLE, NUMFPC, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETSEGCONSTTYPE(HL_HANDLE,SC_INDEX, SC_TYPE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETSEGCONSTTYPE
+      INTEGER HL_HANDLE, SC_INDEX, SC_TYPE, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETFPCONSTTYPE(HL_HANDLE,FP_INDEX, FP_TYPE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETFPCONSTTYPE
+      INTEGER HL_HANDLE, FP_INDEX, FP_TYPE, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETVARTIMESTEP(HL_HANDLE,VARDT,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETVARTIMESTEP
+	INTEGER HL_HANDLE, VARDT, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETHYDTIMESTEP(HL_HANDLE,TIMESTEP,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETHYDTIMESTEP
+	INTEGER HL_HANDLE, IERROR
+	REAL TIMESTEP
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETUPDATEINT(HL_HANDLE,UPDATEINTERVAL,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETUPDATEINT
+	INTEGER HL_HANDLE, IERROR
+	REAL UPDATEINTERVAL
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETHYDTOWASPRATIO(HL_HANDLE,IRATIO,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETHYDTOWASPRATIO
+      INTEGER HL_HANDLE, IRATIO, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETNUMLAYERS(HL_HANDLE,NUMLAYERS,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETNUMLAYERS
+      INTEGER HL_HANDLE, NUMLAYERS, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETFLOWPATH(HL_HANDLE,FLOW_INDEX,FROM_SEG,
+     &TO_SEG,DIRECTION,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETFLOWPATH
+      INTEGER HL_HANDLE, FLOW_INDEX,FROM_SEG, TO_SEG,DIRECTION,IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETFLOWINFO(HL_HANDLE,INDEX,VALUE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETFLOWINFO
+      INTEGER HL_HANDLE, INDEX, IERROR
+      REAL VALUE(31000)
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETSEGINFO(HL_HANDLE,INDEX,VALUE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETSEGINFO
+	 INTEGER HL_HANDLE, INDEX, IERROR
+         REAL VALUE(12000)
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLSETTIMESTEP(HL_HANDLE,VALUE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLSETTIMESTEP
+	 INTEGER HL_HANDLE, IERROR
+	 REAL VALUE
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLMOMENTCOMPLETE(HL_HANDLE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLMOMENTCOMPLETE
+	 INTEGER HL_HANDLE, IERROR
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+      INTERFACE
+      SUBROUTINE HLCLOSE(HL_HANDLE,IERROR)
+!DEC$ ATTRIBUTES DEFAULT, C, REFERENCE, DECORATE :: HLCLOSE
+	 INTEGER HL_HANDLE, IERROR
+	 REAL VALUE
+      END SUBROUTINE
+      END INTERFACE
+C=======================================================================
+c=====BMD2 INTERFACE==============================  !HNR_GHD 7/2019 BMD2
+c=======================================================================
+      interface
+      subroutine bmd2create(fname, numsegs, numvars, nummoms, year, 
+     + month, day, hour, minute, second, optimization, handle, ierror)
+!dec$ attributes DEFAULT, c, DECORATE, reference :: bmd2create
+      character*(*) fname
+      integer numsegs, numvars, nummoms, year, month, day, hour, 
+     + minute, second, optimization, handle, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2close(handle, ierror)
+!dec$ attributes c, reference :: bmd2close
+       integer handle, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2setloglevelthreshold(threshold, ierror)
+!dec$ attributes c, reference :: bmd2setloglevelthreshold
+      integer threshold, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2setproperty(key, value, ierror)
+!dec$ attributes c, reference :: bmd2setproperty
+      character*(*) key, value
+      integer ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2getlasterror(buffer_size,message)
+!dec$ attributes c, reference :: bmd2getlasterror
+      integer buffer_size
+      character*(*) message
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2setsegmentmetadata(handle, segment_index, 
+     + key, value, ierror)
+!dec$attributes c, reference :: bmd2setsegmentmetadata
+      character*(*) key, value
+      integer handle, segment_index, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2setvariablemetadata(handle, variable_index, 
+     + key, value, ierror)
+         !dec$attributes c, reference :: bmd2setvariablemetadata
+      character*(*) key, value
+      integer handle, variable_index, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2setnextframe(handle, moment, conc, ierror)
+!dec$ attributes c, reference :: bmd2setnextframe
+      integer handle, ierror
+      real*8 moment
+      real*4 conc(0,0)
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2beginframes(handle, ierror)
+!dec$ attributes c, reference :: bmd2beginframes
+      integer handle, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2endframes(handle, ierror)
+!dec$ attributes c, reference :: bmd2endframes
+      integer handle, ierror
+      end subroutine
+      end interface
+c======================================================================
+      interface
+      subroutine bmd2setindexbase(base, ierror)
+!dec$ attributes c, reference :: bmd2setindexbase
+      integer base, ierror
+      end subroutine
+      end interface
+c======================================================================

@@ -1,56 +1,56 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE RESTOUT(IRSTYP)
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C  11/14/2001       john hamric        11/14/2001       john hamric
-C   add output of bed load transport QSBDLDX  QSBDLDY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE RESTOUT WRITES A RESTART FILE
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!  11/14/2001       john hamric        11/14/2001       john hamric
+!   add output of bed load transport QSBDLDX  QSBDLDY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE RESTOUT WRITES A RESTART FILE
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       DIMENSION FVOLSED(KBM),FVOLSND(KBM)
 
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(IRSTYP.EQ.0)THEN
         OPEN(99,FILE='RESTART.OUT',STATUS='UNKNOWN')
         CLOSE(99,STATUS='DELETE')
         OPEN(99,FILE='RESTART.OUT',STATUS='UNKNOWN')
       ENDIF
-C
+!
       IF(IRSTYP.EQ.1)THEN
         OPEN(99,FILE='CRASHST.OUT',STATUS='UNKNOWN')
         CLOSE(99,STATUS='DELETE')
         OPEN(99,FILE='CRASHST.OUT',STATUS='UNKNOWN')
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ISRESTO.EQ.-11)THEN
-C
+!
       DO L=1,LC
-C     HP(L)=HMP(L)
-C     H1P(L)=HMP(L)
-C     HWQ(L)=HMP(L)
-C     H2WQ(L)=HMP(L)
+!     HP(L)=HMP(L)
+!     H1P(L)=HMP(L)
+!     HWQ(L)=HMP(L)
+!     H2WQ(L)=HMP(L)
       HP(L)=-BELV(L)
       H1P(L)=-BELV(L)
       HWQ(L)=-BELV(L)
@@ -60,7 +60,7 @@ C     H2WQ(L)=HMP(L)
       VHDXE(L)=0.
       VHDX1E(L)=0.
       ENDDO
-C
+!
       DO K=0,KC
       DO L=1,LC
       QQ(L,K)=QQMIN
@@ -70,7 +70,7 @@ C
       DML(L,K)=DMLMIN
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
       DO L=1,LC
       U(L,K)=0.
@@ -79,16 +79,16 @@ C
       V1(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
       DO L=1,LC
       SAL(L,K)=MAX(SAL(L,K),0.)
       SAL1(L,K)=MAX(SAL1(L,K),0.)
       ENDDO
       ENDDO
-C
+!
       ENDIF
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=DT*FLOAT(N)+TCON*TBEGIN
         TIME=TIME/TCON    
@@ -96,9 +96,9 @@ C
         TIME=TIMESEC/TCON
       ENDIF
       WRITE(99,909)N,TIME
-C
+!
       DO L=2,LA
-C     WRITE(99,906)HP(L),H1P(L),HWQ(L),H2WQ(L)
+!     WRITE(99,906)HP(L),H1P(L),HWQ(L),H2WQ(L)
       WRITE(99,906)HP(L),H1P(L),HWQ(L),H2WQ(L),BELV(L)
       WRITE(99,907)UHDYE(L),UHDY1E(L),VHDXE(L),VHDX1E(L)
       WRITE(99,907)(U(L,K),K=1,KC)
@@ -157,10 +157,10 @@ C     WRITE(99,906)HP(L),H1P(L),HWQ(L),H2WQ(L)
        WRITE(99,907)(VDRBED1(L,K),K=1,KB)
       ENDIF
       ENDDO
-C
+!
       DO M=1,4
       IF(ISCO(M).EQ.1)THEN
-C
+!
        DO LL=1,NCBS
        DO K=1,KC
        NLOS(LL,K,M)=NLOS(LL,K,M)-N
@@ -168,7 +168,7 @@ C
        WRITE(99,908)(NLOS(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        DO K=1,KC
        NLOW(LL,K,M)=NLOW(LL,K,M)-N
@@ -176,7 +176,7 @@ C
        WRITE(99,908)(NLOW(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        DO K=1,KC
        NLOE(LL,K,M)=NLOE(LL,K,M)-N
@@ -184,7 +184,7 @@ C
        WRITE(99,908)(NLOE(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        DO K=1,KC
        NLON(LL,K,M)=NLON(LL,K,M)-N
@@ -192,14 +192,14 @@ C
        WRITE(99,908)(NLON(LL,K,M),K=1,KC)
        WRITE(99,907)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDIF
       ENDDO
-C
+!
       IF(ISCO(5).EQ.1)THEN
       DO NT=1,NTOX
        M=MSVTOX(NT)
-C
+!
        DO LL=1,NCBS
        DO K=1,KC
        NLOS(LL,K,M)=NLOS(LL,K,M)-N
@@ -207,7 +207,7 @@ C
        WRITE(99,908)(NLOS(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        DO K=1,KC
        NLOW(LL,K,M)=NLOW(LL,K,M)-N
@@ -215,7 +215,7 @@ C
        WRITE(99,908)(NLOW(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        DO K=1,KC
        NLOE(LL,K,M)=NLOE(LL,K,M)-N
@@ -223,7 +223,7 @@ C
        WRITE(99,908)(NLOE(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        DO K=1,KC
        NLON(LL,K,M)=NLON(LL,K,M)-N
@@ -231,14 +231,14 @@ C
        WRITE(99,908)(NLON(LL,K,M),K=1,KC)
        WRITE(99,907)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDDO
       ENDIF
-C
+!
       IF(ISCO(6).EQ.1)THEN
       DO NT=1,NSED
        M=MSVSED(NT)
-C
+!
        DO LL=1,NCBS
        DO K=1,KC
        NLOS(LL,K,M)=NLOS(LL,K,M)-N
@@ -246,7 +246,7 @@ C
        WRITE(99,908)(NLOS(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        DO K=1,KC
        NLOW(LL,K,M)=NLOW(LL,K,M)-N
@@ -254,7 +254,7 @@ C
        WRITE(99,908)(NLOW(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        DO K=1,KC
        NLOE(LL,K,M)=NLOE(LL,K,M)-N
@@ -262,7 +262,7 @@ C
        WRITE(99,908)(NLOE(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        DO K=1,KC
        NLON(LL,K,M)=NLON(LL,K,M)-N
@@ -270,14 +270,14 @@ C
        WRITE(99,908)(NLON(LL,K,M),K=1,KC)
        WRITE(99,907)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDDO
       ENDIF
-C
+!
       IF(ISCO(7).EQ.1)THEN
       DO NT=1,NSND
        M=MSVSND(NT)
-C
+!
        DO LL=1,NCBS
        DO K=1,KC
        NLOS(LL,K,M)=NLOS(LL,K,M)-N
@@ -285,7 +285,7 @@ C
        WRITE(99,908)(NLOS(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        DO K=1,KC
        NLOW(LL,K,M)=NLOW(LL,K,M)-N
@@ -293,7 +293,7 @@ C
        WRITE(99,908)(NLOW(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        DO K=1,KC
        NLOE(LL,K,M)=NLOE(LL,K,M)-N
@@ -301,7 +301,7 @@ C
        WRITE(99,908)(NLOE(LL,K,M),K=1,KC)
        WRITE(99,907)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        DO K=1,KC
        NLON(LL,K,M)=NLON(LL,K,M)-N
@@ -309,39 +309,37 @@ C
        WRITE(99,908)(NLON(LL,K,M),K=1,KC)
        WRITE(99,907)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDDO
       ENDIF
-C
+!
       DO L=2,LA
         WRITE(99,907)QSUME(L),(QSUM(L,K),K=1,KC)
       ENDDO
-C
+!
       IF(MDCHH.GE.1)THEN
         DO NMD=1,MDCHH
-        WRITE(99,910)IMDCHH(NMD),JMDCHH(NMD),IMDCHU(NMD),JMDCHU(NMD),
-     &               IMDCHV(NMD),JMDCHV(NMD),QCHANU(NMD),QCHANV(NMD)
+        WRITE(99,910)IMDCHH(NMD),JMDCHH(NMD),IMDCHU(NMD),JMDCHU(NMD),IMDCHV(NMD),JMDCHV(NMD),QCHANU(NMD),QCHANV(NMD)
         ENDDO
       ENDIF
-C
+!
       IF(ISGWIE.GE.1)THEN
         DO L=2,LA
         WRITE(99,907)AGWELV(L),AGWELV1(L)
         ENDDO
       ENDIF
-C
-C
+!
+!
       IF(ISWAVE.GE.1)THEN
        OPEN(1,FILE='WVQWCP.OUT',STATUS='UNKNOWN')
        CLOSE(1, STATUS='DELETE')
        OPEN(1,FILE='WVQWCP.OUT',STATUS='UNKNOWN')
        DO L=2,LA
-       WRITE(1,911)IL(L),JL(L),QQWV1(L),QQWV2(L),QQWV3(L),QQWC(L),
-     &                         QQWCR(L),QQ(L,0) 
+       WRITE(1,911)IL(L),JL(L),QQWV1(L),QQWV2(L),QQWV3(L),QQWC(L),QQWCR(L),QQ(L,0) 
        ENDDO
        CLOSE(1)
       ENDIF     
-C
+!
       IF(ISCO(1).GE.1.)THEN
        OPEN(1,FILE='SALT.RST',STATUS='UNKNOWN')
        CLOSE(1, STATUS='DELETE')
@@ -351,7 +349,7 @@ C
        ENDDO
        CLOSE(1)
       ENDIF
-C
+!
       IF(ISCO(2).GE.1.)THEN
        OPEN(1,FILE='TEMP.RST',STATUS='UNKNOWN')
        OPEN(2,FILE='TEMPB.RST',STATUS='UNKNOWN')
@@ -366,24 +364,23 @@ C
        CLOSE(1)
        CLOSE(2)
       ENDIF
-C
+!
       IF(ISDRY.EQ.99)THEN
        OPEN(1,FILE='RSTWD.OUT',STATUS='UNKNOWN')
        CLOSE(1, STATUS='DELETE')
        OPEN(1,FILE='RSTWD.OUT',STATUS='UNKNOWN')
        DO L=2,LA
-        WRITE(1,913)L,IL(L),JL(L),ISCDRY(L),NATDRY(L),
-     &           IMASKDRY(L),SUB(L),SVB(L),SUBO(L),SVBO(L) 
+        WRITE(1,913)L,IL(L),JL(L),ISCDRY(L),NATDRY(L),IMASKDRY(L),SUB(L),SVB(L),SUBO(L),SVBO(L) 
        ENDDO
        CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OUTPUT SALINITY AND TEMPATURE DATA ASSIMILATION
-C
+!
+!**********************************************************************C
+!
+! **  OUTPUT SALINITY AND TEMPATURE DATA ASSIMILATION
+!
       IF(NLCDA.GT.0)THEN
-C
+!
       OPEN(1,FILE='STDATAASM.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='STDATAASM.OUT')
@@ -392,19 +389,19 @@ C
           WRITE(1,5678)J,I,FSALASM(I,J),FVOLASM(I,J),FTEMASM(I,J)
 	  ENDDO
 	ENDDO
-C
+!
       ENDIF
-C
-C **  OUTPUT CORRECTIVE FLOW FOR WATER SURFACE ELEVATION DATA ASSIMILATION
-C
+!
+! **  OUTPUT CORRECTIVE FLOW FOR WATER SURFACE ELEVATION DATA ASSIMILATION
+!
       IF(NLWSEDA.GT.0)THEN
-C
+!
       TMP1=1.
       IF(ITIMSOL.EQ.0)THEN
        TMP1=(FLOAT(NTSTBC)+1.)/(FLOAT(NTSTBC))
 	ENDIF
 	TMP1=TMP1*FLOAT(NTSPTC)
-C
+!
       OPEN(1,FILE='WSEDATAASM.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='WSEDATAASM.OUT')
@@ -415,38 +412,38 @@ C
           WRITE(1,5679)J,TIMDAY,QWSEASMT
 	  ENDDO
 	ENDDO
-C
+!
       ENDIF
-C
+!
  5678 FORMAT(2I6,3E14.5)
  5679 FORMAT(I6,F10.2,3E14.5)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       CLOSE(99)
-C
-C     IF(ISRESTO.EQ.-2) CALL OUT3D
-C
-C**********************************************************************C
-C
-C     WRITE BED CONDITIONS AT RESTART
-C
+!
+!     IF(ISRESTO.EQ.-2) CALL OUT3D
+!
+!**********************************************************************C
+!
+!     WRITE BED CONDITIONS AT RESTART
+!
       IWRTBED=0
-C
+!
       IF(ISTRAN(6).EQ.1.OR.ISTRAN(7).EQ.1)THEN
       IF(ISDTXBUG.EQ.1.OR.N.EQ.NTS)THEN
          IWRTBED=1
       ENDIF
 	ENDIF
-C
+!
       IF(ISTRAN(6).EQ.1.OR.ISTRAN(7).EQ.1)THEN
       IF(IRSTYP.EQ.1)THEN
          IWRTBED=1
       ENDIF
 	ENDIF
-C
+!
       IF(IWRTBED.EQ.1)THEN
-C
+!
       OPEN(1,FILE='BEDRST_SED.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_SED.OUT')
@@ -460,7 +457,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_SND.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_SND.OUT')
@@ -474,7 +471,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_VDR.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_VDR.OUT')
@@ -483,7 +480,7 @@ C
         WRITE(1,101)IL(L),JL(L),(VDRBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_VDRS.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_VDRS.OUT')
@@ -494,7 +491,7 @@ C
         WRITE(1,102)(VDRBEDSND(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_VFS.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_VFS.OUT')
@@ -517,7 +514,7 @@ C
         WRITE(1,102)(FVOLSND(K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_POR.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_POR.OUT')
@@ -526,7 +523,7 @@ C
         WRITE(1,101)IL(L),JL(L),(PORBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_ZHB.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_ZHB.OUT')
@@ -535,7 +532,7 @@ C
         WRITE(1,101)IL(L),JL(L),ZELBEDA(L),HBEDA(L),(HBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_BDN.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_BDN.OUT')
@@ -544,7 +541,7 @@ C
         WRITE(1,101)IL(L),JL(L),(BDENBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_ELV.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_ELV.OUT')
@@ -571,7 +568,7 @@ C
 	JDUM=0
         WRITE(1,101)IDUM,JDUM,TMP1,TMP2,TMP3,TMP4
       CLOSE(1)
-C
+!
       OPEN(1,FILE='WATRST_SED.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='WATRST_SED.OUT')
@@ -585,7 +582,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='WATRST_SND.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='WATRST_SND.OUT')
@@ -599,7 +596,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_BDL.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_BDL.OUT')
@@ -613,7 +610,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDRST_TOX.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDRST_TOX.OUT')
@@ -624,26 +621,26 @@ C
       ENDDO
       ENDDO
       CLOSE(1)
-C
+!
       ENDIF
-c
-c      OPEN(1,FILE='RSTDXDY.INP',STATUS='UNKNOWN')
-c      DO J=1,JC
-c      DO I=1,IC
-c      L=LIJ(I,J)
-c      IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LT.9)THEN
-c        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HP(L),BELV(L),
-c     &              ZBR(L)
-C       WRITE(1,339)I,J,DXTMP,DYTMP,H(I,J),BELVIJ(I,J),
-C    &              ZBRIJ(I,J)
-c      ENDIF
-c      ENDDO
-c      ENDDO
-c      CLOSE(1)
-c
-C
+!
+!      OPEN(1,FILE='RSTDXDY.INP',STATUS='UNKNOWN')
+!      DO J=1,JC
+!      DO I=1,IC
+!      L=LIJ(I,J)
+!      IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LT.9)THEN
+!        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HP(L),BELV(L),
+!     &              ZBR(L)
+!       WRITE(1,339)I,J,DXTMP,DYTMP,H(I,J),BELVIJ(I,J),
+!    &              ZBRIJ(I,J)
+!      ENDIF
+!      ENDDO
+!      ENDDO
+!      CLOSE(1)
+!
+!
   339 FORMAT(2I5,6F14.5)
-C
+!
   101 FORMAT(2I5,18E13.5)
   102 FORMAT(10X,18E13.5)
   111 FORMAT('   IL   JL    SEDBT(K=1,KB)')
@@ -652,29 +649,28 @@ C
   114 FORMAT('   IL   JL    PORBED(K=1,KB)')
   115 FORMAT('   IL   JL    ZBEDB        HBEDT        HBED(K=1,KB)')
   116 FORMAT('   IL   JL    BDENBED(K=1,KB)')
-  117 FORMAT('   IL   JL    ZBEDB        HBEDT        BELV',
-     &       '        HWCOL        SELV')
+  117 FORMAT('   IL   JL    ZBEDB        HBEDT        BELV','        HWCOL        SELV')
   118 FORMAT('   IL   JL    SEDT(K=1,KC)')
   119 FORMAT('   IL   JL    SNDT(K=1,KC)')
   120 FORMAT('   IL   JL    QSBDLDX      QSBDLDY')
   121 FORMAT('   IL   JL    TOXB(K=1,KB,NT)  NT = ',I5)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   906 FORMAT(26E17.8)
   907 FORMAT(26E17.8)
-CMRM      906 FORMAT(1P,5E17.8)
-CMRM      907 FORMAT(1P,13E17.8)
+!MRM      906 FORMAT(1P,5E17.8)
+!MRM      907 FORMAT(1P,13E17.8)
   908 FORMAT(26I12)
   909 FORMAT(I20,4X,F12.4)
   910 FORMAT(6I5,2X,E17.8,2X,E17.8)
   911 FORMAT(2I5,2X,26E13.4)
-CMRM      910 FORMAT(6I5,2X,1P,E17.8,2X,E17.8)
-CMRM      911 FORMAT(2I5,2X,1P,6E13.4)
+!MRM      910 FORMAT(6I5,2X,1P,E17.8,2X,E17.8)
+!MRM      911 FORMAT(2I5,2X,1P,6E13.4)
   912 FORMAT(3I5,26F7.3)
   913 FORMAT(6I5,26F7.3)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

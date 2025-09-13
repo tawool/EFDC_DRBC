@@ -1,32 +1,32 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SHOWVAL3
-C
-C  THIS VERSION OF SHOWVAL ARISES AS SHOWVAL1 DURING FSPLIT OF 
-C  HOUSATONIC FILE SET UNDER SUBROUTINE ZZZ000.FOR
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0A
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C
-C
+!
+!  THIS VERSION OF SHOWVAL ARISES AS SHOWVAL1 DURING FSPLIT OF 
+!  HOUSATONIC FILE SET UNDER SUBROUTINE ZZZ000.FOR
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0A
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       CHARACTER BLANK,ASTER,CSURF(32),CSALS(20),CSALB(20)
-C
+!
       REAL*8 SBDLDT(5000)
       DATA BLANK/' '/
       DATA ASTER/'*'/
       DATA NSHOWTITLE/0/      
-C
+!
       IF(NSHOWC.EQ.NSHOWR)THEN
         OPEN(1,FILE='SHOW.INP',STATUS='UNKNOWN')
         DO NSKIP=1,6
@@ -38,7 +38,7 @@ C
       ENDIF
 
       NSHOWTITLE=NSHOWTITLE+1
-C      IF(NSHOWC.EQ.NSHOWR)THEN
+!      IF(NSHOWC.EQ.NSHOWR)THEN
       IF(MOD(NSHOWTITLE,NSHOWR).EQ.1)THEN
         IF(NSHTYPE.EQ.1)THEN
           ! *** SALINITY SPECIAL
@@ -94,7 +94,7 @@ C      IF(NSHOWC.EQ.NSHOWR)THEN
           WRITE(6,2)
         ENDIF
       ENDIF
-C
+!
       IF(NSHTYPE.EQ.1)THEN
         DO M=1,32
           CSURF(M)=BLANK
@@ -124,8 +124,7 @@ C
         IF(ISBTMP.LT.1)ISBTMP=1
         CSALS(ISSTMP)=ASTER
         CSALB(ISBTMP)=ASTER
-        WRITE(6,11)N,ICSHOW,JCSHOW,(CSURF(I),I=1,32),(CSALS(J),J=1,20),
-     &      (CSALB(K),K=1,20)
+        WRITE(6,11)N,ICSHOW,JCSHOW,(CSURF(I),I=1,32),(CSALS(J),J=1,20),(CSALB(K),K=1,20)
       ELSE
        IF(MOD(NSHOWTITLE,ISHPRT).EQ.0)THEN   
         IF(ISDYNSTP.EQ.0)THEN
@@ -198,12 +197,12 @@ C
           SNDK2=SND(L,KC,2)
           SNDK3=SND(L,KC,3)
           SNDK4=SND(L,KC,4)
-c         SNDK5=SND(L,KC,5)
+!         SNDK5=SND(L,KC,5)
           SBDLD1=QSBDLDX(L,1)+QSBDLDY(L,1)
           SBDLD2=QSBDLDX(L,2)+QSBDLDY(L,2)
           SBDLD3=QSBDLDX(L,3)+QSBDLDY(L,3)
           SBDLD4=QSBDLDX(L,4)+QSBDLDY(L,4)
-c         SBDLD5=QSBDLDX(L,5)+QSBDLDY(L,5)
+!         SBDLD5=QSBDLDX(L,5)+QSBDLDY(L,5)
         ENDIF
         IVELEKC=NINT(VELEKC)
         IVELNKC=NINT(VELNKC)
@@ -237,87 +236,58 @@ c         SBDLD5=QSBDLDX(L,5)+QSBDLDY(L,5)
         TAUSE=TAUBSED(L)*1000.0
         TAUSN=TAUBSND(L)*1000.0
         IF(NSHTYPE.EQ.2)THEN
-          WRITE(6,7)N,ZSURF,
-     &        IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,
-     &        IVELEKB,IVELNKB,ISALKB,IAVKB,IABKB
+          WRITE(6,7)N,ZSURF,IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,IVELEKB,IVELNKB,ISALKB,IAVKB,IABKB
         ELSEIF(NSHTYPE.EQ.3)THEN
-          WRITE(6,77)TIME,ZSURF,
-     &        IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,
-     &        IVELEKB,IVELNKB,ISALKB,IACTALL,NCORDRY
+          WRITE(6,77)TIME,ZSURF,IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,IVELEKB,IVELNKB,ISALKB,IACTALL,NCORDRY
         ELSEIF(NSHTYPE.EQ.4)THEN
-          WRITE(6,77)TIME,ZSURF,
-     &        IVELEKC,IVELNKC,TEM(L,KC),IAVKS,IABKS,
-     &        IVELEKB,IVELNKB,TEM(L,1),IAVKB,IABKB
+          WRITE(6,77)TIME,ZSURF,IVELEKC,IVELNKC,TEM(L,KC),IAVKS,IABKS,IVELEKB,IVELNKB,TEM(L,1),IAVKB,IABKB
         ELSEIF(NSHTYPE.EQ.5)THEN
-          WRITE(6,77)TIME,ZSURF,
-     &        IVELEKC,IVELNKC,ISALKC,ISEDKC,
-     &        IVELEKB,IVELNKB,ISALKB,ISEDKB,NCORDRY
+          WRITE(6,77)TIME,ZSURF,IVELEKC,IVELNKC,ISALKC,ISEDKC,IVELEKB,IVELNKB,ISALKB,ISEDKB,NCORDRY
         ELSEIF(NSHTYPE.EQ.6)THEN
-          WRITE(6,679)TIME,ZSURF,IVELEKC,IVELNKC,ISEDKC,ISNDKC,
-     &               IVELEKB,IVELNKB,ISEDKB,ISNDKC,ISBEDLD,NCORDRY
+          WRITE(6,679)TIME,ZSURF,IVELEKC,IVELNKC,ISEDKC,ISNDKC,IVELEKB,IVELNKB,ISEDKB,ISNDKC,ISBEDLD,NCORDRY
         ELSEIF(NSHTYPE.EQ.8)THEN
-          WRITE(6,593)TIME,ZSURF,IVELEKC,IVELNKC,ISEDK1,ISNDK1,ISNDK2,
-     &ISNDK3,ISNDK4,ISNDK5,ISBDLD1,ISBDLD2,ISBDLD3,ISBDLD4,ISBDLD5,
-     .TAUSE,TAUBB
+          WRITE(6,593)TIME,ZSURF,IVELEKC,IVELNKC,ISEDK1,ISNDK1,ISNDK2,ISNDK3,ISNDK4,ISNDK5,ISBDLD1,ISBDLD2,ISBDLD3,ISBDLD4,ISBDLD5,TAUSE,TAUBB
         ENDIF
        ENDIF
       ENDIF
-C
+!
     1 FORMAT (80X)
-    2 FORMAT('----------------------------------------------------'
-     & ,'---------------------------')
+    2 FORMAT('----------------------------------------------------','---------------------------')
     3 FORMAT(' TIME     ZSUR   VELE  VELN  SAL   AV  AB VELE VELN  SAL')
-   33 FORMAT('    TIME    ZSUR   VELE  VELN   SAL   SED  VELE  VELN   SA
-     &L   SED  # Dry')
-   34 FORMAT('   TIME   ZSUR  VELE VELN   TEM   AV    AB  VELE VELN   TE
-     .M   AV    AB')
-   44 FORMAT('                SURF SURF  SURF  SURF  SURF BOTT BOTT  BOT
-     .T  BOTT  BOTT')
-   68 FORMAT('   DAYS     m   cm/s cm/s   D:C cm2/s cm2/s cm/s cm/s   D:
-     .C cm2/s cm2/s')
+   33 FORMAT('    TIME    ZSUR   VELE  VELN   SAL   SED  VELE  VELN   SA   L   SED  # Dry')
+   34 FORMAT('   TIME   ZSUR  VELE VELN   TEM   AV    AB  VELE VELN   TE   M   AV    AB')
+   44 FORMAT('                SURF SURF  SURF  SURF  SURF BOTT BOTT  BOT   T  BOTT  BOTT')
+   68 FORMAT('   DAYS     m   cm/s cm/s   D:C cm2/s cm2/s cm/s cm/s   D:C cm2/s cm2/s')
    77 FORMAT(F7.3,F7.2,I6,I5,F6.1,2I6,2I5,F6.1,2I6)
-   67 FORMAT('    days     cm    cm/s  cm/s   psu  mg/L  cm/s  cm/s   ps
-     &u  mg/L')
-C
-C - COHESIVE AND NONCOHESIVE SEDIMENT OUTPUT - NSHTYPE=6
-C
-   39 FORMAT('    TIME    ZSUR VELE VELN COHSED NONSED VELE VELN COHSED  
-     &NONSED  BDLD # Dry')
-   49 FORMAT('                 SURF SURF  SURF   SURF  BOTT BOTT  BOTT   
-     & BOTT        cells')
-   69 FORMAT('    days     cm  cm/s cm/s  mg/L   mg/L  cm/s cm/s  mg/L   
-     & mg/L')
+   67 FORMAT('    days     cm    cm/s  cm/s   psu  mg/L  cm/s  cm/s   ps   u  mg/L')
+!
+! - COHESIVE AND NONCOHESIVE SEDIMENT OUTPUT - NSHTYPE=6
+!
+   39 FORMAT('    TIME    ZSUR VELE VELN COHSED NONSED VELE VELN COHSED  NONSED  BDLD # Dry')
+   49 FORMAT('                 SURF SURF  SURF   SURF  BOTT BOTT  BOTT   BOTT        cells')
+   69 FORMAT('    days     cm  cm/s cm/s  mg/L   mg/L  cm/s cm/s  mg/L   mg/L')
   679 FORMAT(F9.4,F7.1,2I5,2I7,2I5,2I7,2I6)
-C
-C - COHESIVE AND NONCOHESIVE SEDIMENT OUTPUT for the HOUSATONIC & GREEN RIVERS - NSHTYPE=8
-C
-  590 FORMAT('    TIME    ZSUR  VELE  VELN COHSED  SED1  SND1  SND2  SND
-     &3  SND4 BEDLD1 BEDLD2 BEDLD3 BEDLD4 BEDLD5  TAUBSED       TAUB')
-  591 FORMAT('                                                          
-     &           ')
-  592 FORMAT('    days      m   cm/s  cm/s  mg/L   mg/L  mg/L  mg/L  mg/
-     &L  mg/L   gm/s   gm/s   gm/s   gm/s   gm/s     Pa          Pa')
+!
+! - COHESIVE AND NONCOHESIVE SEDIMENT OUTPUT for the HOUSATONIC & GREEN RIVERS - NSHTYPE=8
+!
+  590 FORMAT('    TIME    ZSUR  VELE  VELN COHSED  SED1  SND1  SND2  SND   3  SND4 BEDLD1 BEDLD2 BEDLD3 BEDLD4 BEDLD5  TAUBSED       TAUB')
+  591 FORMAT('                                                                     ')
+  592 FORMAT('    days      m   cm/s  cm/s  mg/L   mg/L  mg/L  mg/L  mg/    L  mg/L   gm/s   gm/s   gm/s   gm/s   gm/s     Pa          Pa')
   593 FORMAT(F9.3,F7.1,I6,I6,I7,5I6,5I7,2E12.5,2F8.3)
              !1234567891234567 |234||234||234||234||234||234||234||234||234||234|
    35 FORMAT(' TIME     ZSUR   VELE VELN  TOX   AV   AB VELE VELN  TOX')
-    4 FORMAT(' STEP            SURF SURF SURF BOTT BOTT BOTT BOTT BOTT',
-     &       ' #ACT #DRY')
+    4 FORMAT(' STEP            SURF SURF SURF BOTT BOTT BOTT BOTT BOTT',' #ACT #DRY')
              !1234567891234567 |234||234||234||234||234||234||234||234||234||234|
-    6 FORMAT('                  CM   CM/S  CM/S ',
-     &     ' CM/S  CM/S  CM/S  PSU    PIPE  CELLS')
-   66 FORMAT(' DAYS             CM   CM/S  CM/S ',
-     &     ' CM/S  CM/S  CM/S  PSU    PIPE  CELLS')
+    6 FORMAT('                  CM   CM/S  CM/S ',' CM/S  CM/S  CM/S  PSU    PIPE  CELLS')
+   66 FORMAT(' DAYS             CM   CM/S  CM/S ',' CM/S  CM/S  CM/S  PSU    PIPE  CELLS')
              !1234567891234567 |234||234||234||234||234||234||234||234||234||234|
     7 FORMAT(I6,F7.2,11I5)
 
-    8 FORMAT(' TIME    I   J       FREE SURFACE ELEVATION     ',1X
-     &    ,' SURFACE SALINITY     BOTTOM SALINITY')
-    9 FORMAT(' STEP                         (CM)              ',1X
-     &    ,'       (PSU)              (PSU)')
-   10 FORMAT('                ',I3,'                          ',I3
-     &    ,' 0               ',I3,' 0               ',I3)
+    8 FORMAT(' TIME    I   J       FREE SURFACE ELEVATION     ',1X,' SURFACE SALINITY     BOTTOM SALINITY')
+    9 FORMAT(' STEP                         (CM)              ',1X,'       (PSU)              (PSU)')
+   10 FORMAT('                ',I3,'                          ',I3,' 0               ',I3,' 0               ',I3)
    11 FORMAT(I5,1X,I4,1X,I4,1X,32A1,20A1,20A1)
-C
+!
       NSHOWC=NSHOWC+1
       RETURN
       END

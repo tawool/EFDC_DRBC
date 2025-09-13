@@ -1,47 +1,47 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
-C      SUBROUTINE WSMTS(TINDAY)
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
+!      SUBROUTINE WSMTS(TINDAY)
       SUBROUTINE WSMTS
-C
-C**********************************************************************C
-C
-C **  LAST MODIFIED BY JOHN HAMRICK AND MIKE MORTON ON 8 AUGUST 2001
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C
-C**********************************************************************C
-C
-C WRITE TIME-SERIES OUTPUT
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  LAST MODIFIED BY JOHN HAMRICK AND MIKE MORTON ON 8 AUGUST 2001
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!
+!**********************************************************************C
+!
+! WRITE TIME-SERIES OUTPUT
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
       TINDAY=TINDAY
-C
+!
       OPEN(1,FILE='WQSDTS1.OUT',STATUS='UNKNOWN',POSITION='APPEND')
       OPEN(2,FILE='WQSDTS2.OUT',STATUS='UNKNOWN',POSITION='APPEND')
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIMTMP=DT*FLOAT(N)+TCON*TBEGIN
         TIMTMP=TIMTMP/TCTMSR  
       ELSE
         TIMTMP=TIMESEC/TCTMSR  
       ENDIF
-C
+!
       DO M=1,ISMTS
         LL=LSMTS(M)
         TSMPON = SMPON(LL,1)+SMPON(LL,2)+SMPON(LL,3)
@@ -58,10 +58,10 @@ C
      *   SMDFN(LL,1),SMDFN(LL,2),SMDFN(LL,3),SMDFP(LL,1),SMDFP(LL,2),
      *   SMDFP(LL,3),SMDFC(LL,1),SMDFC(LL,2),SMDFC(LL,3)
       ENDDO
-C
-CMRM   71 FORMAT(2I5, F11.5, 23E12.4)
+!
+!MRM   71 FORMAT(2I5, F11.5, 23E12.4)
    71 FORMAT(2I5, F11.5, 1P, 23E11.3)
-C
+!
       CLOSE(1)
       CLOSE(2)
 C

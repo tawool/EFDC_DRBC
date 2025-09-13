@@ -1,42 +1,42 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE RVELPLTH
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE RVELPLTH WRITES HORIZONTAL EULERIAN RESIDUAL, VECTOR 
-C **  POTENTIAL AND MEAN MASS TRANSPORT VELOCITY VECTOR FILES 
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE RVELPLTH WRITES HORIZONTAL EULERIAN RESIDUAL, VECTOR 
+! **  POTENTIAL AND MEAN MASS TRANSPORT VELOCITY VECTOR FILES 
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       REAL DBS(10)
       CHARACTER*80 TITLE1,TITLE2,TITLE3
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(JSRVPH.NE.1) GOTO 300
-C
-C----------------------------------------------------------------------C
-C
-C **  WRITE HEADINGS
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  WRITE HEADINGS
+!
       TITLE1='HORIZ EULERIAN MEAN TRANSPORT VELOCITY'
       TITLE2='HORIZ VECTOR POTENTIAL TRANSPORT VELOCITY'
       TITLE3='HORIZ MEAN MASS TRANSPORT VELOCITY'
@@ -46,7 +46,7 @@ C
       LEVELS=2
       DBS(1)=0.
       DBS(2)=99.
-C
+!
       OPEN(11,FILE='RVELVCH.OUT',STATUS='UNKNOWN')
       OPEN(12,FILE='PVELVCH.OUT',STATUS='UNKNOWN')
       OPEN(13,FILE='MVELVCH.OUT',STATUS='UNKNOWN')
@@ -68,31 +68,31 @@ C
       CLOSE(11)
       CLOSE(12)
       CLOSE(13)
-C
+!
       JSRVPH=0
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
   300 CONTINUE
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=DT*FLOAT(N)+TCON*TBEGIN
         TIME=TIME/TCON    
       ELSE
         TIME=TIMESEC/TCON
       ENDIF
-C
+!
       OPEN(11,FILE='RVELVCH.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       OPEN(12,FILE='PVELVCH.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       OPEN(13,FILE='MVELVCH.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       WRITE (11,100)N,TIME
       WRITE (12,100)N,TIME
       WRITE (13,100)N,TIME
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(IVPHXY.EQ.0)THEN
-C
+!
       IF(ISRVPH.EQ.1)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -104,8 +104,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,250)RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,250)RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -114,17 +113,15 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,250)PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,250)PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,250)PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,250)PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       IF(ISRVPH.EQ.2)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -136,8 +133,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,250)RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,250)RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -146,17 +142,15 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,250)PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,250)PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,250)PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,250)PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       IF(ISRVPH.EQ.3)THEN
        DO L=2,LA
        RVELEKB=DYU(L)*UHLPF(L,1)
@@ -176,13 +170,13 @@ C
        WRITE(13,250)PVELEKB,PVELNKB,PVELEKC,PVELNKC
        ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(IVPHXY.EQ.1)THEN
-C
+!
       IF(ISRVPH.EQ.1)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -194,8 +188,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,200)IL(L),JL(L),RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,200)IL(L),JL(L),RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -204,17 +197,15 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,200)IL(L),JL(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,200)IL(L),JL(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,200)IL(L),JL(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,200)IL(L),JL(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       IF(ISRVPH.EQ.2)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -226,8 +217,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,200)IL(L),JL(L),RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,200)IL(L),JL(L),RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -236,17 +226,15 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,200)IL(L),JL(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,200)IL(L),JL(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,200)IL(L),JL(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,200)IL(L),JL(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       IF(ISRVPH.EQ.3)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -258,8 +246,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,200)IL(L),JL(L),RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,200)IL(L),JL(L),RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -268,23 +255,21 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,200)IL(L),JL(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,200)IL(L),JL(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,200)IL(L),JL(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,200)IL(L),JL(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(IVPHXY.EQ.2)THEN
-C
+!
       IF(ISRVPH.EQ.1)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -296,8 +281,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,200)IL(L),JL(L),DLON(L),DLAT(L),RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,200)IL(L),JL(L),DLON(L),DLAT(L),RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -306,17 +290,15 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       IF(ISRVPH.EQ.2)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -328,8 +310,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,200)IL(L),JL(L),DLON(L),DLAT(L),RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,200)IL(L),JL(L),DLON(L),DLAT(L),RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -338,17 +319,15 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       IF(ISRVPH.EQ.3)THEN
        DO L=2,LA
        LN=LNC(L)
@@ -360,8 +339,7 @@ C
        VTMP=50.*STCUV(L)*(VHLPF(LN,1)+VHLPF(L,1))/HMP(L)
        RVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        RVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(11,200)IL(L),JL(L),DLON(L),DLAT(L),RVELEKC,RVELNKC,
-     &              RVELEKB,RVELNKB
+       WRITE(11,200)IL(L),JL(L),DLON(L),DLAT(L),RVELEKC,RVELNKC,RVELEKB,RVELNKB
        UTMP=50.*STCUV(L)*(UVPT(L+1,KC)+UVPT(L,KC))/HMP(L)
        VTMP=50.*STCUV(L)*(VVPT(LN,KC)+VVPT(L,KC))/HMP(L)
        PVELEKC=CUE(L)*UTMP+CVE(L)*VTMP
@@ -370,36 +348,34 @@ C
        VTMP=50.*STCUV(L)*(VVPT(LN,1)+VVPT(L,1))/HMP(L)
        PVELEKB=CUE(L)*UTMP+CVE(L)*VTMP
        PVELNKB=CUN(L)*UTMP+CVN(L)*VTMP
-       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        PVELEKC=PVELEKC+RVELEKC
        PVELNKC=PVELNKC+RVELNKC
        PVELEKB=PVELEKB+RVELEKB
        PVELNKB=PVELNKB+RVELNKB
-       WRITE(13,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,
-     &              PVELEKB,PVELNKB
+       WRITE(13,200)IL(L),JL(L),DLON(L),DLAT(L),PVELEKC,PVELNKC,PVELEKB,PVELNKB
        ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       CLOSE(11)
       CLOSE(12)
       CLOSE(13)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
    99 FORMAT(A80)
   100 FORMAT(I10,F12.4)
   101 FORMAT(2I10)
   200 FORMAT(2I5,1X,6E14.6)
   250 FORMAT(12E14.6)
-CMRM  200 FORMAT(2I5,1X,1P,6E13.5) 
-CMRM  250 FORMAT(1P,12E11.3)
-C
-C**********************************************************************C
-C
+!MRM  200 FORMAT(2I5,1X,1P,6E13.5) 
+!MRM  250 FORMAT(1P,12E11.3)
+!
+!**********************************************************************C
+!
       RETURN
       END

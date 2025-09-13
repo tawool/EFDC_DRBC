@@ -1,56 +1,52 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE TMSRHOUS
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 02/19/2002        john hamrick       02/19/2002       john hamrick
-C  changed tox bed output
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE TMSR WRITES TIME SERIES FILES FOR SURFACE ELEVATON,
-C **  VELOCITY, CONCENTRATION, AND VOLUME SOURCES AT SPECIFIED
-C **  (I,J) POINTS
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 02/19/2002        john hamrick       02/19/2002       john hamrick
+!  changed tox bed output
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE TMSR WRITES TIME SERIES FILES FOR SURFACE ELEVATON,
+! **  VELOCITY, CONCENTRATION, AND VOLUME SOURCES AT SPECIFIED
+! **  (I,J) POINTS
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
-C     DIMENSION ATMP(KCM),BTMP(KCM)
-C
-      DIMENSION SEDSND(KCM),TXWF(KCM),TXWC(KCM),TXWP(KCM),TXBT(KBM),
-     &          SEDSNDB(KBM),TXBF(KBM),TXBC(KBM),TXBP(KBM),PORH(KBM)
+!
+!**********************************************************************C
+!
+!     DIMENSION ATMP(KCM),BTMP(KCM)
+!
+      DIMENSION SEDSND(KCM),TXWF(KCM),TXWC(KCM),TXWP(KCM),TXBT(KBM),SEDSNDB(KBM),TXBF(KBM),TXBC(KBM),TXBP(KBM),PORH(KBM)
       DIMENSION QCHANUIJ(LCM),QCHANVIJ(LCM)
-C
-      CHARACTER(80) :: TITLE1,TITLE2,TITLE3,TITLE4,TITLE5,TITLE6,TITLE7,
-     &         TITLE11,TITLE12,TITLE13,TITLE14,TITLE15,TITLE16,TITLE17,
-     &         TITLE18,TITLE19,TFNTXWT,TFNTXWF,TFNTXWC,TFNTXWP,
-     &         TFNTXBT,TFNTXBF,TFNTXBC,TFNTXBP
+!
+      CHARACTER(80) :: TITLE1,TITLE2,TITLE3,TITLE4,TITLE5,TITLE6,TITLE7,TITLE11,TITLE12,TITLE13,TITLE14,TITLE15,TITLE16,TITLE17,TITLE18,TITLE19,TFNTXWT,TFNTXWF,TFNTXWC,TFNTXWP,TFNTXBT,TFNTXBF,TFNTXBC,TFNTXBP
       CHARACTER(10) :: CTUNIT
       CHARACTER(1) ::  CZTT(0:9)
       CHARACTER(1) ::  CCHTMF,CCHTMS
       CHARACTER(2) ::  CNTOX(25),CNSND(6),CNSBL(6)
       CHARACTER(5) ::  OUTLOC
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       OUTLOC(1:2)='&&'
       IF(JSTMSR.NE.1) GOTO 300
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(MLTMSR.GT.MLTMSRM)THEN
         WRITE (6,600)
         STOP
@@ -59,13 +55,13 @@ C
         WRITE (6,601)
         STOP
       ENDIF
-C
+!
   600 FORMAT(' NUMBER OF TIME SER LOC, MLTMSR, EXCEEDS DIM, MLTMSRM')
   601 FORMAT(' NUMBER OF TIME SERIES LOCATIONS EXCEED 99')
-C
+!
             TAUW1=0.
             TAUW2=0.
-c
+!
       CZTT(0)='0'
       CZTT(1)='1'
       CZTT(2)='2'
@@ -76,7 +72,7 @@ c
       CZTT(7)='7'
       CZTT(8)='8'
       CZTT(9)='9'
-C
+!
       DO MLTM=1,MLTMSR
       MSDIG=MOD(MLTM,10)
       MTMP=MLTM-MSDIG
@@ -85,12 +81,12 @@ C
       CCHTMS=CZTT(MSDIG)
       CNTMSR(MLTM)= CCHTMF // CCHTMS
       ENDDO
-C
+!
       IF(TCTMSR.EQ.1.) CTUNIT='SECONDS'
       IF(TCTMSR.EQ.60.) CTUNIT='MINUTES'
       IF(TCTMSR.EQ.3600.) CTUNIT='HOURS'
       IF(TCTMSR.EQ.86400.) CTUNIT='DAYS'
-C
+!
        CNTOX( 1)= '01'
        CNTOX( 2)= '02'
        CNTOX( 3)= '03'
@@ -116,24 +112,24 @@ C
        CNTOX(23)= '23'
        CNTOX(24)= '24'
        CNTOX(25)= '25'
-C
+!
        CNSND( 1)= '01'
        CNSND( 2)= '02'
        CNSND( 3)= '03'
        CNSND( 4)= '04'
        CNSND( 5)= '05'
        CNSND( 6)= '06'
-C
+!
        CNSBL( 1)= '01'
        CNSBL( 2)= '02'
        CNSBL( 3)= '03'
        CNSBL( 4)= '04'
        CNSBL( 5)= '05'
        CNSBL( 6)= '06'
-C
+!
 
-C **  WRITE HEADINGS
-C
+! **  WRITE HEADINGS
+!
       TITLE1=' SALINITY (PSU) TIME SERIES, K=1,KC'
       TITLE2=' TEMPERATURE (DEG C) TIME SERIES, K=1,KC'
       TITLE3=' DYE CONC (KG/M**3) TIME SERIES, K=1,KC'
@@ -158,7 +154,7 @@ C
       TFNTXBF=' FREE DIS TOXIC CONC SED BED (M/PORE VOL), UG/LITER'
       TFNTXBC=' DOC COMP TOXIC CONC SED BED (M/PORE VOL), UG/LITER'
       TFNTXBP=' TOT PART TOXIC CONC SED BED (M/M), UG/GM'
-C
+!
       IF(ISTMSR.EQ.2)THEN
       DO MLTM=1,MLTMSR
         IF(MTMSRC(MLTM).EQ.1)THEN
@@ -177,15 +173,13 @@ C
           IF(ISTRAN(6).GE.1)THEN
             FNSED(MLTM)='SEDTS' // CNTMSR(MLTM) // '.OUT'
           ENDIF
-C          IF(ISTRAN(7).GE.1)THEN
-C            FNSND(MLTM)='SNDTS' // CNTMSR(MLTM) // '.OUT'
-C          ENDIF
+!          IF(ISTRAN(7).GE.1)THEN
+!            FNSND(MLTM)='SNDTS' // CNTMSR(MLTM) // '.OUT'
+!          ENDIF
           IF(ISTRAN(7).GE.1)THEN
             DO NX=1,NSND
-            FNSND(MLTM,NX)='SND' // CNSND(NX) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNSBL(MLTM,NX)='SBL' // CNSBL(NX) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+            FNSND(MLTM,NX)='SND' // CNSND(NX) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNSBL(MLTM,NX)='SBL' // CNSBL(NX) // 'TS' // CNTMSR(MLTM) // '.OUT'
             ENDDO
           ENDIF
           IF(ISTRAN(8).GE.1)THEN
@@ -195,22 +189,14 @@ C          ENDIF
           ENDIF
           IF(ISTRAN(5).GE.1)THEN
             DO NT=1,NTOX
-            FNTXWT(MLTM,NT)='TXWT' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXWF(MLTM,NT)='TXWF' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXWC(MLTM,NT)='TXWC' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXWP(MLTM,NT)='TXWP' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXBT(MLTM,NT)='TXBT' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXBF(MLTM,NT)='TXBF' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXBC(MLTM,NT)='TXBC' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
-            FNTXBP(MLTM,NT)='TXBP' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+            FNTXWT(MLTM,NT)='TXWT' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXWF(MLTM,NT)='TXWF' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXWC(MLTM,NT)='TXWC' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXWP(MLTM,NT)='TXWP' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXBT(MLTM,NT)='TXBT' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXBF(MLTM,NT)='TXBF' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXBC(MLTM,NT)='TXBC' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
+            FNTXBP(MLTM,NT)='TXBP' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
             ENDDO
           ENDIF
         ENDIF
@@ -240,9 +226,9 @@ C          ENDIF
       ENDDO
       JSTMSR=0
       ENDIF
-C
+!
       IF(JSTMSR.EQ.0) GOTO 300
-C
+!
       DO MLTM=1,MLTMSR
         WRITE(OUTLOC(3:5),107) MLTM
         IF(OUTLOC(3:3).EQ.' ') OUTLOC(3:3)='0'
@@ -304,14 +290,13 @@ C
            ENDIF
             WRITE (JHFNSED,104) OUTLOC,CLTMSR(MLTM)
             WRITE (JHFNSED,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah        CLOSE(41)
+!jah        CLOSE(41)
           ENDIF
           IF(ISTRAN(7).GE.1)THEN
             DO NX=1,NSND
             JHFNSND=400+NX
            IF(MLTM.EQ.1) THEN
-            FNSND(MLTM,NX)='SND'// CNSND(NX) // 'TS' //
-     &                        CNTMSR(MLTM) // '.OUT'
+            FNSND(MLTM,NX)='SND'// CNSND(NX) // 'TS' // CNTMSR(MLTM) // '.OUT'
             OPEN(JHFNSND,FILE=FNSND(MLTM,NX),STATUS='UNKNOWN')
             CLOSE(JHFNSND,STATUS='DELETE')
             OPEN(JHFNSND,FILE=FNSND(MLTM,NX),STATUS='UNKNOWN')
@@ -320,13 +305,12 @@ cjah        CLOSE(41)
            ENDIF
             WRITE (JHFNSND,104) OUTLOC,CLTMSR(MLTM)
             WRITE (JHFNSND,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah        CLOSE(41)
+!jah        CLOSE(41)
             ENDDO
             DO NX=1,NSND
             JHFNSBL=400+NSND+NX
            IF(MLTM.EQ.1) THEN
-            FNSBL(MLTM,NX)='SBL'// CNSBL(NX) // 'TS' //
-     &                        CNTMSR(MLTM) // '.OUT'
+            FNSBL(MLTM,NX)='SBL'// CNSBL(NX) // 'TS' // CNTMSR(MLTM) // '.OUT'
             OPEN(JHFNSBL,FILE=FNSBL(MLTM,NX),STATUS='UNKNOWN')
             CLOSE(JHFNSBL,STATUS='DELETE')
             OPEN(JHFNSBL,FILE=FNSBL(MLTM,NX),STATUS='UNKNOWN')
@@ -335,17 +319,17 @@ cjah        CLOSE(41)
            ENDIF
             WRITE (JHFNSBL,104) OUTLOC,CLTMSR(MLTM)
             WRITE (JHFNSBL,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah        CLOSE(41)
+!jah        CLOSE(41)
             ENDDO
-C            FNSND(MLTM)='SNDTS' // CNTMSR(MLTM) // '.OUT'
-C            OPEN(41,FILE=FNSND(MLTM),STATUS='UNKNOWN')
-C            CLOSE(41,STATUS='DELETE')
-C            OPEN(41,FILE=FNSND(MLTM),STATUS='UNKNOWN')
-C            WRITE (41,100) TITLE4
-C            WRITE (41,101) CLTMSR(MLTM)
-C            WRITE (41,103)ILTMSR(MLTM),JLTMSR(MLTM)
-C            WRITE (41,102) CTUNIT
-C            CLOSE(41)
+!            FNSND(MLTM)='SNDTS' // CNTMSR(MLTM) // '.OUT'
+!            OPEN(41,FILE=FNSND(MLTM),STATUS='UNKNOWN')
+!            CLOSE(41,STATUS='DELETE')
+!            OPEN(41,FILE=FNSND(MLTM),STATUS='UNKNOWN')
+!            WRITE (41,100) TITLE4
+!            WRITE (41,101) CLTMSR(MLTM)
+!            WRITE (41,103)ILTMSR(MLTM),JLTMSR(MLTM)
+!            WRITE (41,102) CTUNIT
+!            CLOSE(41)
           ENDIF
           IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
             JHFNBED=600
@@ -359,7 +343,7 @@ C            CLOSE(41)
            ENDIF
             WRITE (JHFNBED,104) OUTLOC,CLTMSR(MLTM)
             WRITE (JHFNBED,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah        CLOSE(41)
+!jah        CLOSE(41)
           ENDIF
           IF(ISTRAN(8).GE.1)THEN
             FNDOX(MLTM)='DOXTS' // CNTMSR(MLTM) // '.OUT'
@@ -394,8 +378,7 @@ cjah        CLOSE(41)
             DO NT=1,NTOX
               JHFNTOX=310+NT
              IF(MLTM.EQ.1) THEN
-              FNTOX(MLTM,NT)='TOX' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTOX(MLTM,NT)='TOX' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTOX,FILE=FNTOX(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTOX,STATUS='DELETE')
               OPEN(JHFNTOX,FILE=FNTOX(MLTM,NT),STATUS='UNKNOWN')
@@ -404,11 +387,10 @@ cjah        CLOSE(41)
              ENDIF
               WRITE (JHFNTOX,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTOX,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
               JHFNTXWT=310+NTOX+NT
              IF(MLTM.EQ.1) THEN
-              FNTXWT(MLTM,NT)='TXWT' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXWT(MLTM,NT)='TXWT' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXWT,FILE=FNTXWT(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXWT,STATUS='DELETE')
               OPEN(JHFNTXWT,FILE=FNTXWT(MLTM,NT),STATUS='UNKNOWN')
@@ -417,11 +399,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXWT,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXWT,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
               JHFNTXWF=310+NTOX*2+NT
              IF(MLTM.EQ.1) THEN
-              FNTXWF(MLTM,NT)='TXWF' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXWF(MLTM,NT)='TXWF' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXWF,FILE=FNTXWF(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXWF,STATUS='DELETE')
               OPEN(JHFNTXWF,FILE=FNTXWF(MLTM,NT),STATUS='UNKNOWN')
@@ -430,11 +411,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXWF,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXWF,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
               JHFNTXWC=310+NTOX*3+NT
              IF(MLTM.EQ.1) THEN
-              FNTXWC(MLTM,NT)='TXWC' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXWC(MLTM,NT)='TXWC' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXWC,FILE=FNTXWC(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXWC,STATUS='DELETE')
               OPEN(JHFNTXWC,FILE=FNTXWC(MLTM,NT),STATUS='UNKNOWN')
@@ -443,11 +423,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXWC,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXWC,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
               JHFNTXWP=310+NTOX*4+NT
              IF(MLTM.EQ.1) THEN
-              FNTXWP(MLTM,NT)='TXWP' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXWP(MLTM,NT)='TXWP' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXWP,FILE=FNTXWP(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXWP,STATUS='DELETE')
               OPEN(JHFNTXWP,FILE=FNTXWP(MLTM,NT),STATUS='UNKNOWN')
@@ -456,11 +435,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE(JHFNTXWP,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXWP,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
              JHFNTXBT=310+NTOX*5+NT
              IF(MLTM.EQ.1) THEN
-              FNTXBT(MLTM,NT)='TXBT' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXBT(MLTM,NT)='TXBT' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXBT,FILE=FNTXBT(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXBT,STATUS='DELETE')
               OPEN(JHFNTXBT,FILE=FNTXBT(MLTM,NT),STATUS='UNKNOWN')
@@ -469,11 +447,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXBT,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXBT,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
              JHFNTXBF=310+NTOX*6+NT
              IF(MLTM.EQ.1) THEN
-              FNTXBF(MLTM,NT)='TXBF' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXBF(MLTM,NT)='TXBF' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXBF,FILE=FNTXBF(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXBF,STATUS='DELETE')
               OPEN(JHFNTXBF,FILE=FNTXBF(MLTM,NT),STATUS='UNKNOWN')
@@ -482,11 +459,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXBF,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXBF,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
              JHFNTXBC=310+NTOX*7+NT
              IF(MLTM.EQ.1) THEN
-              FNTXBC(MLTM,NT)='TXBC' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXBC(MLTM,NT)='TXBC' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXBC,FILE=FNTXBC(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXBC,STATUS='DELETE')
               OPEN(JHFNTXBC,FILE=FNTXBC(MLTM,NT),STATUS='UNKNOWN')
@@ -495,11 +471,10 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXBC,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXBC,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
               JHFNTXBP=310+NTOX*8+NT
              IF(MLTM.EQ.1) THEN
-              FNTXBP(MLTM,NT)='TXBP' // CNTOX(NT) // 'TS' //
-     &                           CNTMSR(MLTM) // '.OUT'
+              FNTXBP(MLTM,NT)='TXBP' // CNTOX(NT) // 'TS' // CNTMSR(MLTM) // '.OUT'
               OPEN(JHFNTXBP,FILE=FNTXBP(MLTM,NT),STATUS='UNKNOWN')
               CLOSE(JHFNTXBP,STATUS='DELETE')
               OPEN(JHFNTXBP,FILE=FNTXBP(MLTM,NT),STATUS='UNKNOWN')
@@ -508,7 +483,7 @@ cjah          CLOSE(51)
              ENDIF
               WRITE (JHFNTXBP,104) OUTLOC,CLTMSR(MLTM)
               WRITE (JHFNTXBP,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah          CLOSE(51)
+!jah          CLOSE(51)
             ENDDO
           ENDIF
         ENDIF
@@ -544,7 +519,7 @@ cjah          CLOSE(51)
          ENDIF
           WRITE (JHFNSEL,104) OUTLOC,CLTMSR(MLTM)
           WRITE (JHFNSEL,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah      CLOSE(11)
+!jah      CLOSE(11)
         ENDIF
         IF(MTMSRUE(MLTM).EQ.1)THEN
           JHFNUVE=611
@@ -558,7 +533,7 @@ cjah      CLOSE(11)
          ENDIF
           WRITE (JHFNUVE,104)OUTLOC, CTUNIT
           WRITE (JHFNUVE,105)OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah      CLOSE(21)
+!jah      CLOSE(21)
         ENDIF
         IF(MTMSRUT(MLTM).EQ.1)THEN
           JHFNUVT=612
@@ -572,7 +547,7 @@ cjah      CLOSE(21)
          ENDIF
           WRITE (JHFNUVT,104) OUTLOC, CLTMSR(MLTM)
           WRITE (JHFNUVT,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah      CLOSE(31)
+!jah      CLOSE(31)
         ENDIF
         IF(MTMSRU(MLTM).EQ.1)THEN
           FNU3D(MLTM)='U3DTS' // CNTMSR(MLTM) // '.OUT'
@@ -606,7 +581,7 @@ cjah      CLOSE(31)
          ENDIF
           WRITE (JHFNQQE,104) OUTLOC,CLTMSR(MLTM)
           WRITE (JHFNQQE,105) OUTLOC,ILTMSR(MLTM),JLTMSR(MLTM)
-cjah      CLOSE(61)
+!jah      CLOSE(61)
         ENDIF
         IF(MTMSRQ(MLTM).EQ.1)THEN
           FNQ3D(MLTM)='Q3DTS' // CNTMSR(MLTM) // '.OUT'
@@ -620,25 +595,25 @@ cjah      CLOSE(61)
           CLOSE(71)
         ENDIF
       ENDDO
-C
+!
       JSTMSR=0
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
   300 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=(DT*FLOAT(N)+TCON*TBEGIN)/TCTMSR
       ELSE
         TIME=TIMESEC/TCTMSR
       ENDIF
-C
+!
       FOURDPI=4./PI
-C
-C **  STEP CURRENT TIME INTERVALS FOR WRITE SCENARIOS
-C
+!
+! **  STEP CURRENT TIME INTERVALS FOR WRITE SCENARIOS
+!
       DO NTSSS=1,NTSSTSP
        DO MTSSS=1,MTSSTSP(NTSSS)
         IF(TIME.GE.TSSTRT(MTSSS,NTSSS))THEN
@@ -648,7 +623,7 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       IF(MDCHH.GE.1)THEN
         DO L=2,LA
           QCHANUIJ(L)=0.0
@@ -679,7 +654,7 @@ C
           QCHANVIJ(L)=0.0
         ENDDO
       ENDIF
-C
+!
       DO MLTM=1,MLTMSR
        WRITE(OUTLOC(3:5),107) MLTM
        IF(OUTLOC(3:3).EQ.' ') OUTLOC(3:3)='0'
@@ -715,55 +690,51 @@ C
           ENDIF
           IF(ISTRAN(6).GE.1)THEN
             JHFNSED=305
-cjah        OPEN(41,FILE=FNSED(MLTM),POSITION='APPEND')
+!jah        OPEN(41,FILE=FNSED(MLTM),POSITION='APPEND')
             IF(ISNDAL.EQ.2)THEN
                 SEDBTMP=SEDBT(L,KBT(L))+SEDBT(L,KBT(L)-1)
             ELSE
                 SEDBTMP=SEDBT(L,KBT(L))
             ENDIF
             WRITE(JHFNSED,301)OUTLOC,TIME,SEDBTMP,(SEDT(L,K),K=1,KC)
-cjah        CLOSE(41)
+!jah        CLOSE(41)
           ENDIF
           IF(ISTRAN(7).GE.1)THEN
             DO NX=1,NSND
             JHFNSND=400+NX
-cjah        OPEN(JHFNSND,FILE=FNSND(MLTM,NX),POSITION='APPEND')
+!jah        OPEN(JHFNSND,FILE=FNSND(MLTM,NX),POSITION='APPEND')
             IF(ISNDAL.EQ.2)THEN
                 SNDBTMP=SNDB(L,KBT(L),NX)+SNDB(L,KBT(L)-1,NX)
             ELSE
                 SNDBTMP=SNDB(L,KBT(L),NX)
             ENDIF
-            WRITE(JHFNSND,301)OUTLOC,TIME,SNDBTMP,(SND(L,K,NX),K=1,KC),
-     &                                 SNDEQSAV(L,NX)
-cjah        CLOSE(41)
+            WRITE(JHFNSND,301)OUTLOC,TIME,SNDBTMP,(SND(L,K,NX),K=1,KC),SNDEQSAV(L,NX)
+!jah        CLOSE(41)
             ENDDO
             DO NX=1,NSND
             JHFNSBL=400+NSND+NX
-cjah        OPEN(JHFNSBL,FILE=FNSBL(MLTM,NX),POSITION='APPEND')
-c            CQBEDLOADX=0.
-c            CQBEDLOADY=0.
+!jah        OPEN(JHFNSBL,FILE=FNSBL(MLTM,NX),POSITION='APPEND')
+!            CQBEDLOADX=0.
+!            CQBEDLOADY=0.
             IF(UHDYE(L).NE.0.0)CQBEDLOADX(L,NX)=QSBDLDX(L,NX)/UHDYE(L)
             IF(VHDXE(L).NE.0.0)CQBEDLOADY(L,NX)=QSBDLDY(L,NX)/VHDXE(L)
-            WRITE(JHFNSBL,301)OUTLOC,TIME,QSBDLDX(L,NX),QSBDLDY(L,NX),
-     &               CQBEDLOADX(L,NX),CQBEDLOADY(L,NX),SNDFBL(L,NX)
-cjah        CLOSE(41)
+            WRITE(JHFNSBL,301)OUTLOC,TIME,QSBDLDX(L,NX),QSBDLDY(L,NX),CQBEDLOADX(L,NX),CQBEDLOADY(L,NX),SNDFBL(L,NX)
+!jah        CLOSE(41)
             ENDDO
-C            OPEN(41,FILE=FNSND(MLTM,NX),POSITION='APPEND')
-C            WRITE(41,201)TIME,SNDBT(L,KBT(L)),(SNDT(L,K),K=1,KC)
-C            CLOSE(41)
+!            OPEN(41,FILE=FNSND(MLTM,NX),POSITION='APPEND')
+!            WRITE(41,201)TIME,SNDBT(L,KBT(L)),(SNDT(L,K),K=1,KC)
+!            CLOSE(41)
           ENDIF
           IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
             JHFNBED=600
-cjah        OPEN(41,FILE=FNBED(MLTM),POSITION='APPEND')
+!jah        OPEN(41,FILE=FNBED(MLTM),POSITION='APPEND')
             KTMP=KBT(L)
             KTMP1=KBT(L)-1
             KTMP1=MAX(KTMP1,1)
             NSXD=NSED+NSND
-c            WRITE(41,221)TIME,KTMP,HBED(L,KTMP),HBED(L,KTMP1),
-            WRITE(JHFNBED,321)OUTLOC,TIME,KTMP,HBED(L,KTMP),
-     &             HBED(L,KTMP1),
-     &             HBEDA(L),VDRBED(L,KTMP),(VFRBED(L,KTMP,NX),NX=1,NSXD)
-cjah        CLOSE(41)
+!            WRITE(41,221)TIME,KTMP,HBED(L,KTMP),HBED(L,KTMP1),
+            WRITE(JHFNBED,321)OUTLOC,TIME,KTMP,HBED(L,KTMP),HBED(L,KTMP1),HBEDA(L),VDRBED(L,KTMP),(VFRBED(L,KTMP,NX),NX=1,NSXD)
+!jah        CLOSE(41)
           ENDIF
           IF(ISTRAN(8).GE.1)THEN
             OPEN(41,FILE=FNDOX(MLTM),POSITION='APPEND')
@@ -778,16 +749,16 @@ cjah        CLOSE(41)
           ENDIF
           IF(ISTRAN(5).GE.1)THEN
             DO NT=1,NTOX
-C
-cjah          OPEN(51,FILE=FNTOX(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(52,FILE=FNTXWT(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(53,FILE=FNTXWF(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(54,FILE=FNTXWC(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(55,FILE=FNTXWP(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(56,FILE=FNTXBT(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(57,FILE=FNTXBF(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(58,FILE=FNTXBC(MLTM,NT),POSITION='APPEND')
-cjah          OPEN(59,FILE=FNTXBP(MLTM,NT),POSITION='APPEND')
+!
+!jah          OPEN(51,FILE=FNTOX(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(52,FILE=FNTXWT(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(53,FILE=FNTXWF(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(54,FILE=FNTXWC(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(55,FILE=FNTXWP(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(56,FILE=FNTXBT(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(57,FILE=FNTXBF(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(58,FILE=FNTXBC(MLTM,NT),POSITION='APPEND')
+!jah          OPEN(59,FILE=FNTXBP(MLTM,NT),POSITION='APPEND')
               JHFNTOX=310+NT
               JHFNTXWT=310+NTOX+NT
               JHFNTXWF=310+NTOX*2+NT
@@ -797,7 +768,7 @@ cjah          OPEN(59,FILE=FNTXBP(MLTM,NT),POSITION='APPEND')
               JHFNTXBF=310+NTOX*6+NT
               JHFNTXBC=310+NTOX*7+NT
               JHFNTXBP=310+NTOX*8+NT
-C
+!
               NDOC=NSED+NSND+1
               DO K=1,KC
                 SEDSND(K)=SEDT(L,K)+SNDT(L,K)
@@ -819,18 +790,17 @@ C
                 TXBP(K)=TOXPFTB(L,K,NT)*TOXB(L,K,NT)/HBED(L,K)
                 TXBT(K)=TOXB(L,K,NT)/HBED(L,K)
               ENDDO
-C
+!
               K=KBT(L)
-              WRITE(JHFNTOX,301)OUTLOC,TIME,TXBT(K),TXBF(K),TXBC(K),
-     &           TXBP(K),TOX(L,1,NT),TXWF(1),TXWC(1),TXWP(1)
-C                WRITE(51,201)TIME,TOXFDFB(L,K,NT),TOXCDFB(L,K,NT),
-C     &          TOXPFTB(L,K,NT),TOXFDFW(L,1,NT),TOXCDFW(L,1,NT),
-C     &          TOXPFTW(L,1,NT)
-C
+              WRITE(JHFNTOX,301)OUTLOC,TIME,TXBT(K),TXBF(K),TXBC(K),TXBP(K),TOX(L,1,NT),TXWF(1),TXWC(1),TXWP(1)
+!                WRITE(51,201)TIME,TOXFDFB(L,K,NT),TOXCDFB(L,K,NT),
+!     &          TOXPFTB(L,K,NT),TOXFDFW(L,1,NT),TOXCDFW(L,1,NT),
+!     &          TOXPFTW(L,1,NT)
+!
               DO K=1,KC
                 IF(SEDSND(K).GT.0.0)TXWP(K)=1000.*TXWP(K)/SEDSND(K)
               ENDDO
-C
+!
               DO K=1,KBT(L)
                 TXBP(K)=TXBP(K)*HBED(L,K)
                 TXBF(K)=TXBF(K)*PORH(K)
@@ -845,30 +815,30 @@ C
               WRITE(JHFNTXBF,301)OUTLOC,TIME,(TXBF(K),K=1,KB)
               WRITE(JHFNTXBC,301)OUTLOC,TIME,(TXBC(K),K=1,KB)
               WRITE(JHFNTXBP,301)OUTLOC,TIME,(TXBP(K),K=1,KB)
-C
-cjah          CLOSE(51)
-cjah          CLOSE(52)
-cjah          CLOSE(53)
-cjah          CLOSE(54)
-cjah          CLOSE(55)
-cjah          CLOSE(56)
-cjah          CLOSE(57)
-cjah          CLOSE(58)
-cjah          CLOSE(59)
-C
+!
+!jah          CLOSE(51)
+!jah          CLOSE(52)
+!jah          CLOSE(53)
+!jah          CLOSE(54)
+!jah          CLOSE(55)
+!jah          CLOSE(56)
+!jah          CLOSE(57)
+!jah          CLOSE(58)
+!jah          CLOSE(59)
+!
             ENDDO
-c            DO NT=1,NTOX
-c            OPEN(51,FILE=FNTOXPF(MLTM,NT),POSITION='APPEND')
-c            WRITE(51,201)TIME,TOXPFTB(L,KBT(L),NT),
-c     &                  (TOXPFTW(L,K,NT),K=1,KC)
-c            CLOSE(51)
-c            ENDDO
-c            DO NT=1,NTOX
-c            OPEN(51,FILE=FNTOXFD(MLTM,NT),POSITION='APPEND')
-c            WRITE(51,201)TIME,TOXPFTB(L,KBT(L),NT),
-c     &                  (TOXPFTW(L,K,NT),K=1,KC)
-c            CLOSE(51)
-c            ENDDO
+!            DO NT=1,NTOX
+!            OPEN(51,FILE=FNTOXPF(MLTM,NT),POSITION='APPEND')
+!            WRITE(51,201)TIME,TOXPFTB(L,KBT(L),NT),
+!     &                  (TOXPFTW(L,K,NT),K=1,KC)
+!            CLOSE(51)
+!            ENDDO
+!            DO NT=1,NTOX
+!            OPEN(51,FILE=FNTOXFD(MLTM,NT),POSITION='APPEND')
+!            WRITE(51,201)TIME,TOXPFTB(L,KBT(L),NT),
+!     &                  (TOXPFTW(L,K,NT),K=1,KC)
+!            CLOSE(51)
+!            ENDDO
           ENDIF
         ENDIF
         IF(MTMSRA(MLTM).EQ.1)THEN
@@ -885,20 +855,17 @@ c            ENDDO
           CLOSE(61)
           CLOSE(71)
         ENDIF
-        IF(MTMSRP(MLTM).EQ.1)THEN
-          JHFNSEL=610
-cjah      OPEN(11,FILE=FNSEL(MLTM),POSITION='APPEND')
+!jah      OPEN(11,FILE=FNSEL(MLTM),POSITION='APPEND')
           PPTMP=HP(L)+BELV(L)
           TMPVAL=VDWASTE(L)/DXYP(L)
-C          HHTMP=PPTMP-BELV(L)
-C          GWELTMP=AGWELV(L)-BELAGW(L)
-          WRITE(JHFNSEL,301)OUTLOC,TIME,PPTMP,HP(L),BELV(L),HBEDA(L),
-     &          ZELBEDA(L),TMPVAL,VDWASTE(L)
-cjah      CLOSE(11)
+!          HHTMP=PPTMP-BELV(L)
+!          GWELTMP=AGWELV(L)-BELAGW(L)
+          WRITE(JHFNSEL,301)OUTLOC,TIME,PPTMP,HP(L),BELV(L),HBEDA(L),ZELBEDA(L),TMPVAL,VDWASTE(L)
+!jah      CLOSE(11)
         ENDIF
         IF(MTMSRUE(MLTM).EQ.1)THEN
           JHFNUVE=611
-cjah      OPEN(21,FILE=FNUVE(MLTM),POSITION='APPEND')
+!jah      OPEN(21,FILE=FNUVE(MLTM),POSITION='APPEND')
           UTMP1=50.*(UHDYE(L+1)+UHDYE(L))/(DYP(L)*HP(L))
           VTMP1=50.*(VHDXE(LN)+VHDXE(L))/(DXP(L)*HP(L))
           IF(SPB(L).EQ.0)THEN
@@ -911,17 +878,16 @@ cjah      OPEN(21,FILE=FNUVE(MLTM),POSITION='APPEND')
           VTMP1=5000.*(TBY(LN)+TBY(L))
           TBEAST=CUE(L)*UTMP1+CVE(L)*VTMP1
           TBNORT=CUN(L)*UTMP1+CVN(L)*VTMP1
-C          TAUBDYN=10000.*QQ(L,0)/CTURB2
+!          TAUBDYN=10000.*QQ(L,0)/CTURB2
           TAUBDYN=10000.*TAUB(L)
-c          UTMP=0.5*STCUV(L)*(U(L+1,1)+U(L,1))+1.E-12
-c          VTMP=0.5*STCUV(L)*(V(LN,1)+V(L,1))
+!          UTMP=0.5*STCUV(L)*(U(L+1,1)+U(L,1))+1.E-12
+!          VTMP=0.5*STCUV(L)*(V(LN,1)+V(L,1))
           TAUB2=TAUBDYN*TAUBDYN
           IF(ISWAVE.GT.0)THEN
             CURANG=ATAN2(VTMP,UTMP)
             TAUW1=10000.*QQWV1(L)
             TAUW2=10000.*QQWV2(L)
-            TAUB2=TAUB2+0.5*(TAUW2*TAUW2)
-     &           +FOURDPI*TAUBDYN*TAUW2*COS(CURANG-WACCWE(L))
+            TAUB2=TAUB2+0.5*(TAUW2*TAUW2)+FOURDPI*TAUBDYN*TAUW2*COS(CURANG-WACCWE(L))
           END IF
           TAUB2=MAX(TAUB2,0.)
           TAUTOT=SQRT(TAUB2)
@@ -930,14 +896,13 @@ c          VTMP=0.5*STCUV(L)*(V(LN,1)+V(L,1))
           TAUBSEDDYN=10000.*TAUBSED(L)
           TAUBSNDDYN=10000.*TAUBSND(L)
           IF(VELMAG.GT.0.0)TMPDRAG=TAUTOT/VELMAG
-C          WRITE(21,201)TIME,UTMP,VTMP,TBEAST,TBNORT,TAUB,TAUW1,
-C     &                 TAUW2,TAUTOT,TMPDRAG
-          WRITE(JHFNUVE,301)OUTLOC,TIME,UTMP,VTMP,TBEAST,TBNORT,TAUBDYN,
-     &                 TAUBSEDDYN,TAUBSNDDYN
-cjah      CLOSE(21)
+!          WRITE(21,201)TIME,UTMP,VTMP,TBEAST,TBNORT,TAUB,TAUW1,
+!     &                 TAUW2,TAUTOT,TMPDRAG
+          WRITE(JHFNUVE,301)OUTLOC,TIME,UTMP,VTMP,TBEAST,TBNORT,TAUBDYN,TAUBSEDDYN,TAUBSNDDYN
+!jah      CLOSE(21)
         ENDIF
         IF(MTMSRUT(MLTM).EQ.1)THEN
-cjah      OPEN(31,FILE=FNUVT(MLTM),POSITION='APPEND')
+!jah      OPEN(31,FILE=FNUVT(MLTM),POSITION='APPEND')
           JHFNUVT=612
           QBEDLOADX=0.
           QBEDLOADY=0.
@@ -949,12 +914,10 @@ cjah      OPEN(31,FILE=FNUVT(MLTM),POSITION='APPEND')
             CQBEDLOADXT=CQBEDLOADXT+CQBEDLOADX(L,NX)
             CQBEDLOADYT=CQBEDLOADYT+CQBEDLOADY(L,NX)
           ENDDO
-c          IF(UHDYE(L).NE.0.0)CQBEDLOADX=QBEDLOADX/UHDYE(L)
-c          IF(VHDXE(L).NE.0.0)CQBEDLOADY=QBEDLOADY/VHDXE(L)
-          WRITE(JHFNUVT,301)OUTLOC,TIME,UHDYE(L),VHDXE(L),QBEDLOADX,
-     &                 QBEDLOADY,
-     &                 CQBEDLOADXT,CQBEDLOADYT
-cjah      CLOSE(31)
+!          IF(UHDYE(L).NE.0.0)CQBEDLOADX=QBEDLOADX/UHDYE(L)
+!          IF(VHDXE(L).NE.0.0)CQBEDLOADY=QBEDLOADY/VHDXE(L)
+          WRITE(JHFNUVT,301)OUTLOC,TIME,UHDYE(L),VHDXE(L),QBEDLOADX,QBEDLOADY,CQBEDLOADXT,CQBEDLOADYT
+!jah      CLOSE(31)
         ENDIF
         IF(MTMSRU(MLTM).EQ.1)THEN
           OPEN(41,FILE=FNU3D(MLTM),POSITION='APPEND')
@@ -974,12 +937,10 @@ cjah      CLOSE(31)
         ENDIF
         IF(MTMSRQE(MLTM).EQ.1)THEN
           JHFNQQE=614
-cjah      OPEN(61,FILE=FNQQE(MLTM),POSITION='APPEND')
+!jah      OPEN(61,FILE=FNQQE(MLTM),POSITION='APPEND')
           QRNT=DXYP(L)*RAINT(L)
-          WRITE(JHFNQQE,301)OUTLOC,TIME,QSUME(L),QRNT,EVAPSW(L),
-     &      EVAPGW(L),
-     &      RIFTR(L), QCHANUIJ(L),QCHANVIJ(L),QDWASTE(L),VDWASTE(L)
-cjah      CLOSE(61)
+          WRITE(JHFNQQE,301)OUTLOC,TIME,QSUME(L),QRNT,EVAPSW(L),EVAPGW(L),RIFTR(L), QCHANUIJ(L),QCHANVIJ(L),QDWASTE(L),VDWASTE(L)
+!jah      CLOSE(61)
         ENDIF
         IF(MTMSRQ(MLTM).EQ.1)THEN
           OPEN(71,FILE=FNQ3D(MLTM),POSITION='APPEND')
@@ -989,9 +950,9 @@ cjah      CLOSE(61)
        ENDIF
        ENDIF
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   100 FORMAT(A80)
   101 FORMAT('  AT LOCATION  ',A20)
   104 FORMAT(A5,1x,'  AT LOCATION  ',A20)
@@ -1003,8 +964,12 @@ C
   221 FORMAT(F12.5,I5,14E12.4)
   301 FORMAT(a5,1x,F12.5,12E12.4)
   321 FORMAT(a5,1x,F12.5,I5,14E12.4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+      RETURN
+      END
+!**************************C
+!
       RETURN
       END

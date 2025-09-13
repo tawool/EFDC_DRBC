@@ -1,27 +1,27 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SVDCMP(A,M,N,MP,NP,W,V)
-C
-C **  FROM NUMERICAL RECIPES
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+! **  FROM NUMERICAL RECIPES
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
-C
+!
       PARAMETER (NMAX=100)
       DIMENSION A(MP,NP),W(NP),V(NP,NP),RV1(NMAX)
       G=0.0
@@ -195,7 +195,7 @@ C
        ENDIF
        GOTO 3
       ENDIF
-C     IF(ITS.EQ.30) PAUSE 'NO CONVERGENCE IN 30 ITERATIONS'
+!     IF(ITS.EQ.30) PAUSE 'NO CONVERGENCE IN 30 ITERATIONS'
       IF(ITS.EQ.60)THEN
        WRITE(6,603)
        RETURN

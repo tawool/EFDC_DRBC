@@ -1,25 +1,25 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SHOWVAL2
-C
-C **  LAST MODIFIED BY MIKE MORTON ON 8 AUGUST 2001
-C
-C
-C**********************************************************************C
-C
+!
+! **  LAST MODIFIED BY MIKE MORTON ON 8 AUGUST 2001
+!
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       CHARACTER BLANK,ASTER,CSURF(32),CSALS(20),CSALB(20)
-C
+!
       DATA BLANK/' '/
       DATA ASTER/'*'/
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(NSHOWC.EQ.NSHOWR)THEN
         OPEN(1,FILE='SHOW.INP',STATUS='UNKNOWN')
          DO NSKIP=1,6
@@ -44,20 +44,20 @@ C
             WRITE(6,2)
             WRITE(6,3)
             WRITE(6,4)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,6)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,2)
            ELSE
             IF(NSHTYPE.EQ.3)THEN
             NSHOWC=0        
             WRITE(6,2)
-C            WRITE(6,3)                                                      
+!            WRITE(6,3)                                                      
             WRITE(6,33)                                                      
             WRITE(6,44)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,66)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,2)
             ENDIF
             IF(NSHTYPE.EQ.4)THEN
@@ -65,9 +65,9 @@ C            WRITE(6,5)
             WRITE(6,2)
             WRITE(6,33)
             WRITE(6,44)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,67)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,2)
             ENDIF
             IF(NSHTYPE.EQ.5)THEN
@@ -75,15 +75,15 @@ C            WRITE(6,5)
             WRITE(6,2)
             WRITE(6,34)
             WRITE(6,44)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,68)
-C            WRITE(6,5)                                                      
+!            WRITE(6,5)                                                      
             WRITE(6,2)
             ENDIF
           ENDIF
         ENDIF
       ENDIF
-C
+!
       IF(NSHTYPE.EQ.1)THEN
         NSHOWC=NSHOWC+1
         DO M=1,32
@@ -94,7 +94,7 @@ C
         CSALB(M)=BLANK
         ENDDO
         L=LIJ(ICSHOW,JCSHOW)
-c        ZSURF=(HP(L)+BELV(L))*100.
+!        ZSURF=(HP(L)+BELV(L))*100.
         ZSURF=(HP(L)+BELV(L))                        !hnr show wse in meters
         ZSTMP=(31.*(ZSURF-ZSSMIN)/(ZSSMAX-ZSSMIN))+1.
         IZSTMP=NINT(ZSTMP)
@@ -111,8 +111,7 @@ c        ZSURF=(HP(L)+BELV(L))*100.
         IF(ISBTMP.LT.1)ISBTMP=1
         CSALS(ISSTMP)=ASTER
         CSALB(ISBTMP)=ASTER
-        WRITE(6,11)N,ICSHOW,JCSHOW,(CSURF(I),I=1,32),(CSALS(J),J=1,20),
-     &                                               (CSALB(K),K=1,20)
+        WRITE(6,11)N,ICSHOW,JCSHOW,(CSURF(I),I=1,32),(CSALS(J),J=1,20),(CSALB(K),K=1,20)
       ELSE
        IF(MOD(N,ISHPRT) .EQ. 0)THEN                                      
         NSHOWC=NSHOWC+1
@@ -123,7 +122,7 @@ c        ZSURF=(HP(L)+BELV(L))*100.
         ENDIF
         L=LIJ(ICSHOW,JCSHOW)
         LN=LNC(L)
-c        ZSURF=(HP(L)+BELV(L))*100.
+!        ZSURF=(HP(L)+BELV(L))*100.
         ZSURF=(HP(L)+BELV(L))                        !hnr show wse in meters
         UTMP=0.5*STCUV(L)*(U(L+1,KC)+U(L,KC))*100.
         VTMP=0.5*STCUV(L)*(V(LN,KC)+V(L,KC))*100.
@@ -139,156 +138,129 @@ c        ZSURF=(HP(L)+BELV(L))*100.
         ABKB=AB(L,1)*10000.*HP(L)
         SALKC=SAL(L,KC)
         SALKB=SAL(L,1)
-C       SEDKC=SEDT(L,KC)/1000.
-C       SEDKB=SEDT(L,1)/1000.
-C       SNDKC=SNDT(L,KC)/1000.
-C       SNDKB=SNDT(L,1)/1000.
+!       SEDKC=SEDT(L,KC)/1000.
+!       SEDKB=SEDT(L,1)/1000.
+!       SNDKC=SNDT(L,KC)/1000.
+!       SNDKB=SNDT(L,1)/1000.
         SEDKC=SEDT(L,KC)
         SEDKB=SEDT(L,1)
         SNDKC=SNDT(L,KC)
         SNDKB=SNDT(L,1)
         TEMKC=TEM(L,KC)                                                      
         TEMKB=TEM(L,1)                                                       
-C        IZSURF=NINT(ZSURF)
-C        IVELEKC=NINT(VELEKC)
-C        IVELNKC=NINT(VELNKC)
-C        ISALKC=NINT(SALKC)
-C        ISEDKC=NINT(SEDKC)
-C        ISNDKC=NINT(SNDKC)
-C        ITEMKC=NINT(TEM(L,KC))
-C        IAVKS=NINT(AVKS)
-C        IABKS=NINT(ABKS)
-C        IVELEKB=NINT(VELEKB)
-C        IVELNKB=NINT(VELNKB)
-C        ISALKB=NINT(SALKB)
-C        ISEDKB=NINT(SEDKB)
-C        ISNDKB=NINT(SNDKB)
-C        ITEMKB=NINT(TEM(L,1))
-C        IAVKB=NINT(AVKB)
-C        IABKB=NINT(ABKB)
+!        IZSURF=NINT(ZSURF)
+!        IVELEKC=NINT(VELEKC)
+!        IVELNKC=NINT(VELNKC)
+!        ISALKC=NINT(SALKC)
+!        ISEDKC=NINT(SEDKC)
+!        ISNDKC=NINT(SNDKC)
+!        ITEMKC=NINT(TEM(L,KC))
+!        IAVKS=NINT(AVKS)
+!        IABKS=NINT(ABKS)
+!        IVELEKB=NINT(VELEKB)
+!        IVELNKB=NINT(VELNKB)
+!        ISALKB=NINT(SALKB)
+!        ISEDKB=NINT(SEDKB)
+!        ISNDKB=NINT(SNDKB)
+!        ITEMKB=NINT(TEM(L,1))
+!        IAVKB=NINT(AVKB)
+!        IABKB=NINT(ABKB)
         IF(NSHTYPE.EQ.2)THEN
-C          WRITE(6,7)N,ICSHOW,JCSHOW,IZSURF,                                 
-C     &                            IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,       
-C     &                            IVELEKB,IVELNKB,ISALKB,IAVKB,IABKB        
-C M. MORTON WRITES REAL VARIABLES TO PC SCREEN:                              
-          WRITE(6,7)N,ICSHOW,JCSHOW, ZSURF,                                  
-     +                             VELEKC, VELNKC, SALKC, AVKS, ABKS,        
-     +                             VELEKB, VELNKB, SALKB, AVKB, ABKB         
+!          WRITE(6,7)N,ICSHOW,JCSHOW,IZSURF,                                 
+!     &                            IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,       
+!     &                            IVELEKB,IVELNKB,ISALKB,IAVKB,IABKB        
+! M. MORTON WRITES REAL VARIABLES TO PC SCREEN:                              
+          WRITE(6,7)N,ICSHOW,JCSHOW, ZSURF,VELEKC, VELNKC, SALKC, AVKS, ABKS,VELEKB, VELNKB, SALKB, AVKB, ABKB         
          ELSE
           IF(NSHTYPE.EQ.3)THEN
-C          WRITE(6,77)TIME,ICSHOW,JCSHOW,IZSURF,                             
-C     &                            IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,       
-C     &                            IVELEKB,IVELNKB,ISALKB,IAVKB,IABKB        
-          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,                        
-     &                             VELEKC, VELNKC, SALKC,                    
-     &                             VELEKB, VELNKB, SALKB                     
+!          WRITE(6,77)TIME,ICSHOW,JCSHOW,IZSURF,                             
+!     &                            IVELEKC,IVELNKC,ISALKC,IAVKS,IABKS,       
+!     &                            IVELEKB,IVELNKB,ISALKB,IAVKB,IABKB        
+          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,VELEKC, VELNKC, SALKC,VELEKB, VELNKB, SALKB                     
           ENDIF
           IF(NSHTYPE.EQ.4)THEN
-C          WRITE(6,7)N,ICSHOW,JCSHOW,IZSURF,                                 
-C     &                            IVELEKC,IVELNKC,ISEDKC,IAVKS,IABKS,       
-C     &                            IVELEKB,IVELNKB,ISEDKB,IAVKB,IABKB        
-C          WRITE(6,7)N,ICSHOW,JCSHOW,IZSURF,                                 
-C     &                            IVELEKC,IVELNKC,ISNDKC,IAVKS,IABKS,       
-C     &                            IVELEKB,IVELNKB,ISNDKB,IAVKB,IABKB        
-          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,                        
-     &                             VELEKC, VELNKC, SEDKC,                    
-     &                             VELEKB, VELNKB, SEDKB                     
-          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,                        
-     &                             VELEKC, VELNKC, SNDKC,                    
-     &                             VELEKB, VELNKB, SNDKB                     
+!          WRITE(6,7)N,ICSHOW,JCSHOW,IZSURF,                                 
+!     &                            IVELEKC,IVELNKC,ISEDKC,IAVKS,IABKS,       
+!     &                            IVELEKB,IVELNKB,ISEDKB,IAVKB,IABKB        
+!          WRITE(6,7)N,ICSHOW,JCSHOW,IZSURF,                                 
+!     &                            IVELEKC,IVELNKC,ISNDKC,IAVKS,IABKS,       
+!     &                            IVELEKB,IVELNKB,ISNDKB,IAVKB,IABKB        
+          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,VELEKC, VELNKC, SEDKC,VELEKB, VELNKB, SEDKB                     
+          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,VELEKC, VELNKC, SNDKC,VELEKB, VELNKB, SNDKB                     
           ENDIF
           IF(NSHTYPE.EQ.5)THEN
-C          WRITE(6,77)TIME,ICSHOW,JCSHOW,IZSURF,                             
-C     &                            IVELEKC,IVELNKC,ITEMKC,IAVKS,IABKS,       
-C     &                            IVELEKB,IVELNKB,ITEMKB,IAVKB,IABKB        
-          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,                        
-     &                             VELEKC, VELNKC, TEMKC,                    
-     &                             VELEKB, VELNKB, TEMKB                     
+!          WRITE(6,77)TIME,ICSHOW,JCSHOW,IZSURF,                             
+!     &                            IVELEKC,IVELNKC,ITEMKC,IAVKS,IABKS,       
+!     &                            IVELEKB,IVELNKB,ITEMKB,IAVKB,IABKB        
+          WRITE(6,77) TIME, N, ICSHOW, JCSHOW, ZSURF,VELEKC, VELNKC, TEMKC,VELEKB, VELNKB, TEMKB                     
           ENDIF
         ENDIF
        ENDIF                                                                
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
     1 FORMAT (80X)
-C NOTE: M. MORTON CHANGED FORMAT STATEMENTS FOR CLEANER APPEARENCE ON PC:    
-    2 FORMAT(' --------------------------------------------',                
-     &       '-----------------------------------')                          
-    3 FORMAT('      TIME  I  J  ZSUR  VELE  VELN  SAL    AV ',               
-     &       '   AB  VELE  VELN  SAL    AV    AB')                           
-    4 FORMAT('      STEP              SURF  SURF SURF  SURF ',               
-     &       ' SURF  BOTT  BOTT BOTT  BOTT  BOTT')                           
+! NOTE: M. MORTON CHANGED FORMAT STATEMENTS FOR CLEANER APPEARENCE ON PC:    
+    2 FORMAT(' --------------------------------------------','-----------------------------------')                          
+    3 FORMAT('      TIME  I  J  ZSUR  VELE  VELN  SAL    AV ','   AB  VELE  VELN  SAL    AV    AB')                           
+    4 FORMAT('      STEP              SURF  SURF SURF  SURF ',' SURF  BOTT  BOTT BOTT  BOTT  BOTT')                           
     5 FORMAT(' ')                                                            
-    6 FORMAT('                    CM  CM/S  CM/S  PPT CMSQS ',               
-     &       'CMSQS  CM/S  CM/S  PPT CMSQS CMSQS')                           
-    7 FORMAT(' ',I9,1X,I2,1X,I2,1X,F5.1,1X,F5.0,1X,                          
-     &       F5.0,1X,F4.1,1X,F5.1,1X,F5.1,1X,F5.0,1X,                        
-     &       F5.0,1X,F4.1,1X,F5.1,1X,F5.1)                                   
+    6 FORMAT('                    CM  CM/S  CM/S  PPT CMSQS ','CMSQS  CM/S  CM/S  PPT CMSQS CMSQS')                           
+    7 FORMAT(' ',I9,1X,I2,1X,I2,1X,F5.1,1X,F5.0,1X,F5.0,1X,F4.1,1X,F5.1,1X,F5.1,1X,F5.0,1X,F5.0,1X,F4.1,1X,F5.1,1X,F5.1)                                   
 
-    8 FORMAT('| TIME |  I  |  J  |     FREE SURFACE ELEVATION     |',
-     &       1X,' SURFACE SALINITY  |   BOTTOM SALINITY  |')
-    9 FORMAT('| STEP |     |     |              (CM)              |',        
-     &       1X,'       (PSU)       |       (PSU)        |')
-   10 FORMAT('|      |     |     |',I3,'                          ',
-     &        I3,'| 0               ',I3,'| 0               ',I3,'|')
-   11 FORMAT('|',I5,1X,'|',I4,1X,'|',I4,1X,'|',32A1,'|',20A1,'|',
-     &       20A1,'|')
-   33 FORMAT('     MODEL      TIME   I   J    WSE   VELE   VELN    SAL',        
-     &       '   VELE   VELN    SAL')                                        
-   34 FORMAT('     MODEL      TIME   I   J   ZSUR   VELE   VELN    TEM',        
-     +       '   VELE   VELN    TEM')                                        
-   44 FORMAT('      TIME      STEP                  SURF   SURF   SURF',        
-     &       '   BOTT   BOTT   BOTT')                                        
-   66 FORMAT('      DAYS                        M   CM/S   CM/S    PPT',        
-     &       '   CM/S   CM/S    PPT')                                        
-   67 FORMAT('      DAYS                        M   CM/S   CM/S   MG/L',        
-     +       '   CM/S   CM/S   MG/L')                                        
-   68 FORMAT('      DAYS                        M   CM/S   CM/S   DEGC',        
-     +       '   CM/S   CM/S   DEGC')                                        
-   77 FORMAT(' ',F9.3,1X,I9,1X,I3,1X,I3,1X,F6.2,1X,F6.1,1X,                  
-     &       F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1)                           
+    8 FORMAT('| TIME |  I  |  J  |     FREE SURFACE ELEVATION     |',1X,' SURFACE SALINITY  |   BOTTOM SALINITY  |')
+    9 FORMAT('| STEP |     |     |              (CM)              |',1X,'       (PSU)       |       (PSU)        |')
+   10 FORMAT('|      |     |     |',I3,'                          ',I3,'| 0               ',I3,'| 0               ',I3,'|')
+   11 FORMAT('|',I5,1X,'|',I4,1X,'|',I4,1X,'|',32A1,'|',20A1,'|',20A1,'|')
+   33 FORMAT('     MODEL      TIME   I   J    WSE   VELE   VELN    SAL','   VELE   VELN    SAL')                                        
+   34 FORMAT('     MODEL      TIME   I   J   ZSUR   VELE   VELN    TEM','   VELE   VELN    TEM')                                        
+   44 FORMAT('      TIME      STEP                  SURF   SURF   SURF','   BOTT   BOTT   BOTT')                                        
+   66 FORMAT('      DAYS                        M   CM/S   CM/S    PPT','   CM/S   CM/S    PPT')                                        
+   67 FORMAT('      DAYS                        M   CM/S   CM/S   MG/L','   CM/S   CM/S   MG/L')                                        
+   68 FORMAT('      DAYS                        M   CM/S   CM/S   DEGC','   CM/S   CM/S   DEGC')                                        
+   77 FORMAT(' ',F9.3,1X,I9,1X,I3,1X,I3,1X,F6.2,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1,1X,F6.1)                           
 
-C NOTE: THE FOLLOWING FORMAT STATEMENTS WERE JOHN HAMRICK'S ORIGINAL 
-C       CODE:   
-C   2 FORMAT('----------------------------------------------------',
-C     &       '-------------------------------------------')
-C    3 FORMAT('| TIME |  I  |  J  | ZSUR | VELE | VELN | SAL |  AV ',
-C     &       1X,'|  AB  | VELE | VELN | SAL |  AV  |  AB  |')
-C   33 FORMAT('| TIME |  I  |  J  | ZSUR | VELE | VELN | SED |  AV ',
-C     &       1X,'|  AB  | VELE | VELN | SED |  AV  |  AB  |')
-C   34 FORMAT('| TIME |  I  |  J  | ZSUR | VELE | VELN | TEM |  AV ',
-C     &       1X,'|  AB  | VELE | VELN | TEM |  AV  |  AB  |')
-C    4 FORMAT('| STEP |     |     |      | SURF | SURF | SUR | SURF',
-C     &       1X,'| SURF | BOTT | BOTT | BOT | BOTT | BOTT |')
-C    5 FORMAT('|      |     |     |      |      |      |     |     ',
-C     &       1X,'|      |      |      |     |      |      |')
-C    6 FORMAT('|      |     |     |  CM  | CM/S | CM/S | PSU',
-C     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S | PSU |CMSQ/S|CMSQ/S|')
-C    7 FORMAT('|',I6   ,'|',I4,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,
-C     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|',I5,1X,
-C     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|')
-C    8 FORMAT('| TIME |  I  |  J  |     FREE SURFACE ELEVATION     |',
-C     &       1X,' SURFACE SALINITY  |   BOTTOM SALINITY  |')
-C    9 FORMAT('| STEP |     |     |              (CM)              |',
-C     &       1X,'       (PSU)       |       (PSU)        |')
-C   10 FORMAT('|      |     |     |',I3,'                          ',
-C     &        I3,'| 0               ',I3,'| 0               ',I3,'|')
-C   11 FORMAT('|',I5,1X,'|',I4,1X,'|',I4,1X,'|',32A1,'|',20A1,'|',
-C     &       20A1,'|')
-C   44 FORMAT('|      |     |     |      | SURF | SURF | SUR | SURF',
-C     &       1X,'| SURF | BOTT | BOTT | BOT | BOTT | BOTT |')
-C   66 FORMAT('| DAYS |     |     |  CM  | CM/S | CM/S | PSU',
-C     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S | PSU |CMSQ/S|CMSQ/S|')
-C   67 FORMAT('|      |     |     |  CM  | CM/S | CM/S |MG/L',
-C     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S |MG/L |CMSQ/S|CMSQ/S|')
-C   68 FORMAT('| DAYS |     |     |  CM  | CM/S | CM/S | D:C',
-C     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S | D:C |CMSQ/S|CMSQ/S|')
-C   77 FORMAT('|',F6.2 ,'|',I4,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,
-C     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|',I5,1X,
-C     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|')
-C
-C**********************************************************************C
-C
+! NOTE: THE FOLLOWING FORMAT STATEMENTS WERE JOHN HAMRICK'S ORIGINAL 
+!       CODE:   
+!   2 FORMAT('----------------------------------------------------',
+!     &       '-------------------------------------------')
+!    3 FORMAT('| TIME |  I  |  J  | ZSUR | VELE | VELN | SAL |  AV ',
+!     &       1X,'|  AB  | VELE | VELN | SAL |  AV  |  AB  |')
+!   33 FORMAT('| TIME |  I  |  J  | ZSUR | VELE | VELN | SED |  AV ',
+!     &       1X,'|  AB  | VELE | VELN | SED |  AV  |  AB  |')
+!   34 FORMAT('| TIME |  I  |  J  | ZSUR | VELE | VELN | TEM |  AV ',
+!     &       1X,'|  AB  | VELE | VELN | TEM |  AV  |  AB  |')
+!    4 FORMAT('| STEP |     |     |      | SURF | SURF | SUR | SURF',
+!     &       1X,'| SURF | BOTT | BOTT | BOT | BOTT | BOTT |')
+!    5 FORMAT('|      |     |     |      |      |      |     |     ',
+!     &       1X,'|      |      |      |     |      |      |')
+!    6 FORMAT('|      |     |     |  CM  | CM/S | CM/S | PSU',
+!     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S | PSU |CMSQ/S|CMSQ/S|')
+!    7 FORMAT('|',I6   ,'|',I4,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,
+!     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|',I5,1X,
+!     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|')
+!    8 FORMAT('| TIME |  I  |  J  |     FREE SURFACE ELEVATION     |',
+!     &       1X,' SURFACE SALINITY  |   BOTTOM SALINITY  |')
+!    9 FORMAT('| STEP |     |     |              (CM)              |',
+!     &       1X,'       (PSU)       |       (PSU)        |')
+!   10 FORMAT('|      |     |     |',I3,'                          ',
+!     &        I3,'| 0               ',I3,'| 0               ',I3,'|')
+!   11 FORMAT('|',I5,1X,'|',I4,1X,'|',I4,1X,'|',32A1,'|',20A1,'|',
+!     &       20A1,'|')
+!   44 FORMAT('|      |     |     |      | SURF | SURF | SUR | SURF',
+!     &       1X,'| SURF | BOTT | BOTT | BOT | BOTT | BOTT |')
+!   66 FORMAT('| DAYS |     |     |  CM  | CM/S | CM/S | PSU',
+!     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S | PSU |CMSQ/S|CMSQ/S|')
+!   67 FORMAT('|      |     |     |  CM  | CM/S | CM/S |MG/L',
+!     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S |MG/L |CMSQ/S|CMSQ/S|')
+!   68 FORMAT('| DAYS |     |     |  CM  | CM/S | CM/S | D:C',
+!     &       1X,'|CMSQ/S|CMSQ/S| CM/S | CM/S | D:C |CMSQ/S|CMSQ/S|')
+!   77 FORMAT('|',F6.2 ,'|',I4,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,
+!     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|',I5,1X,
+!     &       '|',I5,1X,'|',I4,1X,'|',I5,1X,'|',I5,1X,'|')
+!
+!**********************************************************************C
+!
       RETURN
       END

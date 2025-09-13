@@ -1,103 +1,103 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SSEDTOXHOUS(ISTLX,IS2TLX,CORDTX)
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 11/02/2001        John Hamrick       11/02/2001       John Hamrick
-C  changed add and remove bed layer algorithm - see sections under
-C  ibmech=0,1, and ge 2
-C 11/06/2001        John Hamrick       11/06/2001        John Hamrick
-C  changed add and remove bed layer algorithm - see sections under
-C   ibmech=0,1, and ge 2
-C  modified noncohesive resuspension formulation to be consistent
-C   with add and remove bed layer modification
-C  added noncohesive bedload-suspended load distribution factor
-C   calculated by function fsedmode.f
-C  added hiding factor correction to bagnold form of bed load transport
-C   calculation
-C 11/14/2001        John Hamrick       11/14/2001       John Hamrick
-C   changed dimensions of QSBDLDX and QSBDLDY
-C 11/15/2001        john hamrick       11/15/2001       john hamrick
-C  modified calls functions FHYDCN, FDSTRSE,and FSTRSE to added use
-C  standard exponential form constitutive relationships
-C 11/16/2001        john hamrick       11/16/2001       john hamrick
-C  fixed errors in finite strain consolidation (IBMECH.ge.2)
-C 11/20/2001        john hamrick       11/2/2001       john hamrick
-C  added bed load outflow/recirculation boundary condition options
-C  and by pass array RBPSBL
-C 12/03/2001        john hamrick       12/03/2001       john hamrick
-C  increased dimensions of bedload flux SNDFBL
-C  corrected calculation of SNDFBL
-C  modified function FSBDLD call
-C  added exposure and hiding functions PEXP and PHID
-C 12/13/2001        john hamrick       12/13/2001       john hamrick
-C  added additional logic to prevent divide by zeros
-C 12/15/2001        john hamrick       12/15/2001       john hamrick
-C  corrected spelling error SNDDMX (was SNDDMAX)
-C  corrected spelling error SEDVRDT (was SEDVRT)
-C 01/21/2002        john hamrick       01/21/2002       john hamrick
-C  added belv1, fixed errors in general bed load function, and
-C  eliminated errorneous return based on toxic parameter value
-C 01/31/2002        john hamrick       01/31/2002       john hamrick
-C  modified toxic-organic carbon partitioning options
-C 02/19/2002        john hamrick       02/19/2002       john hamrick
-C  fix some inconsistencies involving sedb1,sndb1,toxb1. added
-C  adjustment to water column concentrations when morphological mode
-C  is activated.  fixed error in pore water advection and diffusion
-C  solution
-C 03/05/2002        john hamrick       03/05/2002       john hamrick
-C  added by pass of bed load transport for dry cells
-C 03/06/2002        john hamrick       03/06/2002       john hamrick
-C  added adjustment to toxic pore water advection and diffusion to
-C  guarantee mass conservation, including variables derrb,toxbbalo,
-C  toxbbaln,toxwbalo,toxwbaln
-C 05/22/2002        John Hamrick       05/22/2002       John Hamrick
-C  fixed bed load transport of sorbed contaminant. and added bed load
-C  toxic flux TOXFBL(L,NT), bed load toxic flux on out flow boundry
-C  TOXBLB(NT) and sed-tox debug flag ISDTXBUG
-C 05/29/2002        john hamrick       05/29/2002       john hamrick
-C  moved toxic initializations to bedinit.for
-C 06/05/2002        John Hamrick       06/06/2002       John Hamrick
-C  added roundoff control to sediment-water column exchange of
-C  toxics.  moved local array SNDFBL to global common
-C 06/06/2002        John Hamrick       06/06/2002       John Hamrick
-C  made local arrays TAUB(L),USTAR(L),UCELLCTR(L),VCELLCTR(L) of former
-C  scaler variables of same names.  calculated each once at start
-C  of sediment transport.
-C 06/06/2002        John Hamrick       06/06/2002       John Hamrick
-C  rewrote sediment bed flow and recirculation boundary condition
-C  implementation in bed load transport section added global arrays
-C  QSBDLOT and QSBDLIN
-C 06/06/2002        John Hamrick       06/06/2002       John Hamrick
-C  added QMORPH(L), the equivalent water column volume source associate
-C  with change in bed elevation, for use in mass balance
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE SSEDTOX CALCULATES SETTLING AND WATER COLUMN-BED
-C **  EXCHANGE OF SEDIMENT AND SORBED TOXIC CONTAMINANTS
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 11/02/2001        John Hamrick       11/02/2001       John Hamrick
+!  changed add and remove bed layer algorithm - see sections under
+!  ibmech=0,1, and ge 2
+! 11/06/2001        John Hamrick       11/06/2001        John Hamrick
+!  changed add and remove bed layer algorithm - see sections under
+!   ibmech=0,1, and ge 2
+!  modified noncohesive resuspension formulation to be consistent
+!   with add and remove bed layer modification
+!  added noncohesive bedload-suspended load distribution factor
+!   calculated by function fsedmode.f
+!  added hiding factor correction to bagnold form of bed load transport
+!   calculation
+! 11/14/2001        John Hamrick       11/14/2001       John Hamrick
+!   changed dimensions of QSBDLDX and QSBDLDY
+! 11/15/2001        john hamrick       11/15/2001       john hamrick
+!  modified calls functions FHYDCN, FDSTRSE,and FSTRSE to added use
+!  standard exponential form constitutive relationships
+! 11/16/2001        john hamrick       11/16/2001       john hamrick
+!  fixed errors in finite strain consolidation (IBMECH.ge.2)
+! 11/20/2001        john hamrick       11/2/2001       john hamrick
+!  added bed load outflow/recirculation boundary condition options
+!  and by pass array RBPSBL
+! 12/03/2001        john hamrick       12/03/2001       john hamrick
+!  increased dimensions of bedload flux SNDFBL
+!  corrected calculation of SNDFBL
+!  modified function FSBDLD call
+!  added exposure and hiding functions PEXP and PHID
+! 12/13/2001        john hamrick       12/13/2001       john hamrick
+!  added additional logic to prevent divide by zeros
+! 12/15/2001        john hamrick       12/15/2001       john hamrick
+!  corrected spelling error SNDDMX (was SNDDMAX)
+!  corrected spelling error SEDVRDT (was SEDVRT)
+! 01/21/2002        john hamrick       01/21/2002       john hamrick
+!  added belv1, fixed errors in general bed load function, and
+!  eliminated errorneous return based on toxic parameter value
+! 01/31/2002        john hamrick       01/31/2002       john hamrick
+!  modified toxic-organic carbon partitioning options
+! 02/19/2002        john hamrick       02/19/2002       john hamrick
+!  fix some inconsistencies involving sedb1,sndb1,toxb1. added
+!  adjustment to water column concentrations when morphological mode
+!  is activated.  fixed error in pore water advection and diffusion
+!  solution
+! 03/05/2002        john hamrick       03/05/2002       john hamrick
+!  added by pass of bed load transport for dry cells
+! 03/06/2002        john hamrick       03/06/2002       john hamrick
+!  added adjustment to toxic pore water advection and diffusion to
+!  guarantee mass conservation, including variables derrb,toxbbalo,
+!  toxbbaln,toxwbalo,toxwbaln
+! 05/22/2002        John Hamrick       05/22/2002       John Hamrick
+!  fixed bed load transport of sorbed contaminant. and added bed load
+!  toxic flux TOXFBL(L,NT), bed load toxic flux on out flow boundry
+!  TOXBLB(NT) and sed-tox debug flag ISDTXBUG
+! 05/29/2002        john hamrick       05/29/2002       john hamrick
+!  moved toxic initializations to bedinit.for
+! 06/05/2002        John Hamrick       06/06/2002       John Hamrick
+!  added roundoff control to sediment-water column exchange of
+!  toxics.  moved local array SNDFBL to global common
+! 06/06/2002        John Hamrick       06/06/2002       John Hamrick
+!  made local arrays TAUB(L),USTAR(L),UCELLCTR(L),VCELLCTR(L) of former
+!  scaler variables of same names.  calculated each once at start
+!  of sediment transport.
+! 06/06/2002        John Hamrick       06/06/2002       John Hamrick
+!  rewrote sediment bed flow and recirculation boundary condition
+!  implementation in bed load transport section added global arrays
+!  QSBDLOT and QSBDLIN
+! 06/06/2002        John Hamrick       06/06/2002       John Hamrick
+!  added QMORPH(L), the equivalent water column volume source associate
+!  with change in bed elevation, for use in mass balance
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE SSEDTOX CALCULATES SETTLING AND WATER COLUMN-BED
+! **  EXCHANGE OF SEDIMENT AND SORBED TOXIC CONTAMINANTS
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-czzdiff      COMMON/PMC/CCSHEAR(LCM),DSTAR(NSTM),BDLDFACTOR(NSTM)
-czzdiff      REAL*4 TMPVAL,TMPVAL1,TMPVAL2
-czzdiff      REAL*4 DSTAR
-czzdiff      REAL*4 CCUSTAR(LCM)
-C
+!
+!zzdiff      COMMON/PMC/CCSHEAR(LCM),DSTAR(NSTM),BDLDFACTOR(NSTM)
+!zzdiff      REAL*4 TMPVAL,TMPVAL1,TMPVAL2
+!zzdiff      REAL*4 DSTAR
+!zzdiff      REAL*4 CCUSTAR(LCM)
+!
       COMMON/SSEDTOX1/ CTMPDRY(LCM),CSHIELDS50(LCM),
      &                 USTAR(LCM),UCELLCTR(LCM),VCELLCTR(LCM),
      &                 QWBDTOP(LCM),QSBDTOP(LCM),ZETATOP(LCM),
@@ -108,11 +108,11 @@ C
      &                 TOXWBALN(LCM),FACSUSL(LCM),FACBEDL(LCM),
      &                 PEXP(LCM,NSNM),PHID(LCM,NSNM),
      &                 SEDFPA(LCM,NSCM),SNDFPA(LCM,NSNM)
-C
+!
       COMMON/SSEDTOX1A/ CBEDTOTAL(LCM),QCELLCTR(LCM),HGDH(LCM),
      &                  FRACCOH(LCM,KBM),FRACNON(LCM,KBM),USTARSED(LCM),
      &                  USTARSND(LCM),QWATPA(LCM),QSSDPA(LCM)
-C
+!
       COMMON/SSEDTOX2/ CDECAYW(LCM,KCM),CDECAYB(LCM,KBM),STRSE(LCM,KBM),
      &                 HYDCN(LCM,KBM),COEFK(LCM,KBM),COEFSK(LCM,KBM),
      &                 PRESE(LCM,KBM),PRESH(LCM,KBM),PREST(LCM,KBM),
@@ -121,48 +121,45 @@ C
      &                 DSTRSE(LCM,KBM),DZBTR(LCM,KBM),STRSEM(LCM,KBM),
      &                 SEDDIA90(LCM,KBM),SEDGEOSTD(LCM,KBM),
      &                 SEDDIAGS(LCM,KBM),ZOTOTAL(LCM),ZOGRAIN(LCM)
-C
+!
       COMMON/SSEDTOX3/ ALOW(LCM,KBM+1),BMNN(LCM,KBM+1),CUPP(LCM,KBM+1),
      &                 RRHS(LCM,KBM+1),TOXTMP(LCM,KBM+1),
      &                 GAMTMP(LCM,KBM+1),ACOEF(LCM,0:KBM),
      &                 QCOEF(LCM,0:KBM),ZBEDG(LCM,0:KBM)
-C
+!
       COMMON/SSEDTOX4/ WSETA(LCM,0:KSM,NSTM),SEDS(LCM,KCM,NSCM),
      &                 SNDS(LCM,KCM,NSNM),TOXS(LCM,KCM,NTXM),
      &                 SEDBS(LCM,KBM,NSCM),SNDBS(LCM,KBM,NSNM),
      &                 TOXBS(LCM,KBM,NTXM)
-C
+!
       COMMON/SSEDTOX5/ NSP2(NTXM),DERRB(KBM),STRESSS(0:KSM)
-C
-      COMMON/SSEDTOX6/ DELT,DELTI,DSEDGMM,FOURDPI,SEDMDGM,S2TL,S3TL,
-     &                 CORDT,DIASED,GPDIASED,BEDEX
-C
+!
+      COMMON/SSEDTOX6/ DELT,DELTI,DSEDGMM,FOURDPI,SEDMDGM,S2TL,S3TL,CORDT,DIASED,GPDIASED,BEDEX
+!
       COMMON/SSEDTOX7/ ISTL,IS2TL,ISUD
-C
+!
       DIMENSION QCELLAD1SQ(LCM),QCELLAD1ZZ(LCM),SESNFA(LCM),
      &          SESNFP(LCM),DELBED(LCM),TAUBSEDS(LCM),TAUBSNDS(LCM),
      &          ISSBCP(LCM)
-C
-C**********************************************************************C
-C
-C#############################################################################
-C     HQI change to input parameters to maintain a constant TSS in the reach
-C     5D backwaters
-C     RM 07/30/04
+!
+!**********************************************************************C
+!
+!#############################################################################
+!     HQI change to input parameters to maintain a constant TSS in the reach
+!     5D backwaters
+!     RM 07/30/04
       DO L=1,LABKWTR
          IF(SED(IJBKWTR(L),1,1).LT.SED_MIN) THEN
-            BKWTRSED(IJBKWTR(L)) = BKWTRSED(IJBKWTR(L)) +
-     +          ((SED_MIN-SED(IJBKWTR(L),1,1))*DXYP(IJBKWTR(L))*
-     +          HP(IJBKWTR(L)))
+            BKWTRSED(IJBKWTR(L)) = BKWTRSED(IJBKWTR(L)) + ((SED_MIN-SED(IJBKWTR(L),1,1))*DXYP(IJBKWTR(L))*HP(IJBKWTR(L)))
             SED(IJBKWTR(L),1,1) = SED_MIN
          ENDIF
       ENDDO
-C#############################################################################
+!#############################################################################
 
       ISTL=ISTLX
       IS2TL=IS2TLX
       CORT=CORDTX
-C
+!
       DELT=DT2
       S3TL=1.0
       S2TL=0.0
@@ -183,61 +180,61 @@ C
         S2TL=0.0
         ISUD=1
       ENDIF
-C
+!
       IF(ISEDDT.GT.1) DELT=DTSED
-C
+!
 !      IF(N.EQ.1)THEN
 !        WRITE(8,*)'S3TL,S2TL,ISUD'     !hnr 7/27/2009
 !        WRITE(8,*)S3TL,S2TL,ISUD       !hnr 7/27/2009
 !      END IF
-C
+!
       DELTI=1./DELT
-C
+!
       SEDMDGM=SQRT(SEDMDMX*SEDMDMN)
-CBEGMOD
+!BEGMOD
       BEDEX=1.
-CENDMOD
-CJH      BEDEX=0.
+!ENDMOD
+!JH      BEDEX=0.
       NVAL=MOD(N,2)
-CJH      IF(NVAL.EQ.0)THEN
-CJH        IF(ISTL.EQ.3) BEDEX=1.
-CJH      ENDIF
-C
+!JH      IF(NVAL.EQ.0)THEN
+!JH        IF(ISTL.EQ.3) BEDEX=1.
+!JH      ENDIF
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=(DT*FLOAT(N)+TCON*TBEGIN)/TCON
       ELSE
         TIME=TIMESEC/TCON
       ENDIF
       FOURDPI=4./PI
-C
+!
       DO L=2,LA
         CTMPDRY(L)=1.
-C       IF(ISCDRY(L).NE.0) CTMPDRY(L)=0.
+!       IF(ISCDRY(L).NE.0) CTMPDRY(L)=0.
       ENDDO
-C
-C**********************************************************************C
-C
-C **  SET FLAGS FOR CORNER CELL BED STRESS CORRECTIONS
-C
+!
+!**********************************************************************C
+!
+! **  SET FLAGS FOR CORNER CELL BED STRESS CORRECTIONS
+!
       IF(ISCORTBC.GE.1) THEN
-C
-C **  SET FLAG FOR CELLS HAVING VOLUME SOURCE OR SINKS
-C
+!
+! **  SET FLAG FOR CELLS HAVING VOLUME SOURCE OR SINKS
+!
       DO L=1,LC
         ISSBCP(L)=0
       ENDDO
-C
+!
       DO L=2,LA
         IF(RSSBCE(L).GT.1.5)ISSBCP(L)=1
         IF(RSSBCW(L).GT.1.5)ISSBCP(L)=1
         IF(RSSBCN(L).GT.1.5)ISSBCP(L)=1
         IF(RSSBCS(L).GT.1.5)ISSBCP(L)=1
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ISDTXBUG.EQ.1)THEN
       IF(N.EQ.1)THEN
         OPEN(1,FILE='SSEDTOX0.DIA',STATUS='UNKNOWN')
@@ -263,73 +260,73 @@ C
         OPEN(41,FILE='SSEDTOX4.DIA',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  IF N=1 CALCULATE INITIAL SEDIMENT BED THICKNESS
-C **  MOVED TO SUBROUTINE BEDINIT  IN 8 AUGUST 2001 VERSION
-C
-C      IF(N.EQ.1)THEN
-C
-C      DO K=1,KB
-C      DO L=2,LA
-C       HBED(L,K)=0.
-C       SEDBALL(L,K)=0.
-C      ENDDO
-C      ENDDO
-C
-C      IF(ISTRAN(6).GE.1)THEN
-C      DO NS=1,NSED
-C       DO K=1,KB
-C       DO L=2,LA
-C        HBED(L,K)=HBED(L,K)+SDEN(NS)*SEDB(L,K,NS)
-C        SEDBALL(L,K)=SEDBALL(L,K)+SEDB(L,K,NS)
-C       ENDDO
-C       ENDDO
-C      ENDDO
-C      ENDIF
-C
-C      IF(ISTRAN(7).GE.1)THEN
-C      DO NX=1,NSND
-C       NS=NSED+NX
-C       DO K=1,KB
-C       DO L=2,LA
-C        HBED(L,K)=HBED(L,K)+SDEN(NS)*SNDB(L,K,NX)
-C        SEDBALL(L,K)=SEDBALL(L,K)+SNDB(L,K,NX)
-C       ENDDO
-C       ENDDO
-C      ENDDO
-C      ENDIF
-C
-C      TMPVAL=1./(1.-PORBED(L,K))
-C      DO K=1,KB
-C      DO L=2,LA
-C       HBED(L,K)=TMPVAL*HBED(L,K)
-C       HBED(L,K)=MAX(1.E-9,HBED(L,K))
-C       VOLBW2(L,K)=HBED(L,K)
-C      ENDDO
-C      ENDDO
-C
-C ** DIAGNOSTICS OF INITIALIZATION
-C
-C       OPEN(2,FILE='DEPBED.DIA')
-C       CLOSE(2,STATUS='DELETE')
-C       OPEN(2,FILE='DEPBED.DIA')
-C       DO L=2,LA
-C        WRITE(2,2222)IL(L),JL(L),HP(L),SEDB(L,1,1),SNDB(L,1,1),HBED(L,1)
-C       ENDDO
-C       CLOSE(2)
-C
-C      ENDIF
-C
-C**********************************************************************C
-C
-C **   UPDATE SEDIMENT PROCESSES
-C
-C----------------------------------------------------------------------C
-C
-C **  CALCULATE TOTAL SEDIMENT IN THE BED
-C
+!
+!**********************************************************************C
+!
+! **  IF N=1 CALCULATE INITIAL SEDIMENT BED THICKNESS
+! **  MOVED TO SUBROUTINE BEDINIT  IN 8 AUGUST 2001 VERSION
+!
+!      IF(N.EQ.1)THEN
+!
+!      DO K=1,KB
+!      DO L=2,LA
+!       HBED(L,K)=0.
+!       SEDBALL(L,K)=0.
+!      ENDDO
+!      ENDDO
+!
+!      IF(ISTRAN(6).GE.1)THEN
+!      DO NS=1,NSED
+!       DO K=1,KB
+!       DO L=2,LA
+!        HBED(L,K)=HBED(L,K)+SDEN(NS)*SEDB(L,K,NS)
+!        SEDBALL(L,K)=SEDBALL(L,K)+SEDB(L,K,NS)
+!       ENDDO
+!       ENDDO
+!      ENDDO
+!      ENDIF
+!
+!      IF(ISTRAN(7).GE.1)THEN
+!      DO NX=1,NSND
+!       NS=NSED+NX
+!       DO K=1,KB
+!       DO L=2,LA
+!        HBED(L,K)=HBED(L,K)+SDEN(NS)*SNDB(L,K,NX)
+!        SEDBALL(L,K)=SEDBALL(L,K)+SNDB(L,K,NX)
+!       ENDDO
+!       ENDDO
+!      ENDDO
+!      ENDIF
+!
+!      TMPVAL=1./(1.-PORBED(L,K))
+!      DO K=1,KB
+!      DO L=2,LA
+!       HBED(L,K)=TMPVAL*HBED(L,K)
+!       HBED(L,K)=MAX(1.E-9,HBED(L,K))
+!       VOLBW2(L,K)=HBED(L,K)
+!      ENDDO
+!      ENDDO
+!
+! ** DIAGNOSTICS OF INITIALIZATION
+!
+!       OPEN(2,FILE='DEPBED.DIA')
+!       CLOSE(2,STATUS='DELETE')
+!       OPEN(2,FILE='DEPBED.DIA')
+!       DO L=2,LA
+!        WRITE(2,2222)IL(L),JL(L),HP(L),SEDB(L,1,1),SNDB(L,1,1),HBED(L,1)
+!       ENDDO
+!       CLOSE(2)
+!
+!      ENDIF
+!
+!**********************************************************************C
+!
+! **   UPDATE SEDIMENT PROCESSES
+!
+!----------------------------------------------------------------------C
+!
+! **  CALCULATE TOTAL SEDIMENT IN THE BED
+!
       DO K=1,KB
         DO L=1,LC
           SEDBT(L,K)=0.
@@ -337,7 +334,7 @@ C
           SEDBALL(L,K)=0.
         ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -347,7 +344,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NS=1,NSND
           DO K=1,KB
@@ -357,42 +354,42 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       DO K=1,KB
         DO L=1,LC
           SEDBALL(L,K)=SEDBT(L,K)+SNDBT(L,K)
         ENDDO
       ENDDO
-C
-CZZDIFF C APPLY CONSOLIDATION TO BULK DENSITY
-CZZDIFF C GM/CC TO BE USED FOR CRITICAL SHEARS
-CZZDIFF C
-CZZDIFF      IF(IBMECH.GT.0)THEN
-CZZDIFF        DO K=1,KB
-CZZDIFF          DO L=2,LA
-CZZDIFF            BDENBED1(L,K)=BDENBED(L,K)
-CZZDIFF            IF(HBED(L,K).GT.0.)THEN
-CZZDIFF C            BB := PORBED*GM/CC+1/1000000*(SEDB+SNDB)*M^3/(HBED*CC)
-CZZDIFF             BDENBED(L,K)=1.*PORBED(L,K)+0.000001*SEDBALL(L,K)/HBED(L,K)
-CZZDIFF            ELSE
-CZZDIFF              BDENBED(L,K)=0.
-CZZDIFF            ENDIF
-CZZDIFF          ENDDO
-CZZDIFF        ENDDO
-CZZDIFF      ENDIF
-CZZDIFF C
-C
-C----------------------------------------------------------------------C
-C
-C **  SET SEDIMENT VOLUME FRACTIONS
-C
+!
+!ZZDIFF C APPLY CONSOLIDATION TO BULK DENSITY
+!ZZDIFF C GM/CC TO BE USED FOR CRITICAL SHEARS
+!ZZDIFF C
+!ZZDIFF      IF(IBMECH.GT.0)THEN
+!ZZDIFF        DO K=1,KB
+!ZZDIFF          DO L=2,LA
+!ZZDIFF            BDENBED1(L,K)=BDENBED(L,K)
+!ZZDIFF            IF(HBED(L,K).GT.0.)THEN
+!ZZDIFF C            BB := PORBED*GM/CC+1/1000000*(SEDB+SNDB)*M^3/(HBED*CC)
+!ZZDIFF             BDENBED(L,K)=1.*PORBED(L,K)+0.000001*SEDBALL(L,K)/HBED(L,K)
+!ZZDIFF            ELSE
+!ZZDIFF              BDENBED(L,K)=0.
+!ZZDIFF            ENDIF
+!ZZDIFF          ENDDO
+!ZZDIFF        ENDDO
+!ZZDIFF      ENDIF
+!ZZDIFF C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET SEDIMENT VOLUME FRACTIONS
+!
       DO K=1,KB
         DO L=2,LA
           BEDLINIT(L,K)=0.
           BEDDINIT(L,K)=0.
         ENDDO
       ENDDO
-C
+!
       DO NX=1,NSED+NSND
       DO K=1,KB
         DO L=2,LA
@@ -412,7 +409,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           NS=NSED+NX
@@ -424,7 +421,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -435,7 +432,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           NS=NSED+NX
@@ -447,7 +444,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -466,7 +463,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           NS=NSED+NX
@@ -486,46 +483,46 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       DO L=2,LA
         QWBDTOP(L)=0.
         QSBDTOP(L)=0.
       ENDDO
-C
+!
       DO K=1,KB
       DO L=2,LA
         FRACCOH(L,K)=0.0
         FRACNON(L,K)=0.0
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSED
       DO K=1,KB
       DO L=2,LA
         IF(K.LE.KBT(L))THEN
-c          FRACCOH(L,K)=FRACCOH(L,K)+VFRBED(L,KBT(L),NS)
+!          FRACCOH(L,K)=FRACCOH(L,K)+VFRBED(L,KBT(L),NS)
           FRACCOH(L,K)=FRACCOH(L,K)+VFRBED(L,K,NS)
         ENDIF
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NX=1,NSND
       NS=NX+NSED
       DO K=1,KB
       DO L=2,LA
         IF(K.LE.KBT(L))THEN
-c          FRACNON(L,K)=FRACNON(L,K)+VFRBED(L,KBT(L),NS)
+!          FRACNON(L,K)=FRACNON(L,K)+VFRBED(L,KBT(L),NS)
           FRACNON(L,K)=FRACNON(L,K)+VFRBED(L,K,NS)
         ENDIF
       ENDDO
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
+!
       IF(ISTRAN(6).GE.1)THEN
         IF(IWRSP(1).EQ.0)THEN
           DO K=1,KB
@@ -546,37 +543,32 @@ C
         IF(IWRSP(1).GE.1.AND.IWRSP(1).LT.99)THEN
           DO K=1,KB
             DO L=2,LA
-              TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
-              WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1))
+              TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
+              WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1))
             ENDDO
           ENDDO
         ENDIF
         IF(IWRSPB(1).GE.1)THEN
           DO K=1,KB
             DO L=2,LA
-              TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                          VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
-              WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                          VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+              TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+              WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
             ENDDO
           ENDDO
         ENDIF
-C#######################################################################
-C     HQI Change, 01/05/04, SO and RM
-C     Change to implement HQI Sed-flume analysis based critical shear
-C     stress options
+!#######################################################################
+!     HQI Change, 01/05/04, SO and RM
+!     Change to implement HQI Sed-flume analysis based critical shear
+!     stress options
         IF(IWRSP(1).EQ.99)THEN
           DO K=1,KB
             DO L=2,LA
-              TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                VDRBED(L,K),VDRBEDSED(L,K),IWRSP(1),L)
+              TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBEDSED(L,K),IWRSP(1),L)
               TAURB(L,K)=1.0E6
-C     HQI change to implement spatially varying coefficient and exponent
-C     in resuspension formulation based on Ed G analysis of Sed-flume data
-C     RM 12/11/03
-c             WRSPS(L,K)=WRSPO(1)
+!     HQI change to implement spatially varying coefficient and exponent
+!     in resuspension formulation based on Ed G analysis of Sed-flume data
+!     RM 12/11/03
+!             WRSPS(L,K)=WRSPO(1)
               if(L.LE.265) then  ! Woods Pond
                  WRSPS(L,K) = 7.20
               else               ! North of Woods Pond
@@ -591,26 +583,25 @@ c             WRSPS(L,K)=WRSPO(1)
             DO L=2,LA
               TAURS(L,K)=TAUCRCOH(L,K)
               TAURB(L,K)=1.0E6
-C     HQI change to implement spatially varying coefficient and exponent
-C     in resuspension formulation based on Ed G analysis of Sed-flume data
-C     RM 12/11/03
-cSO           WRSPS(L,K)=WRSPO(1)
-cSO           if(L.LE.265) then  ! Woods Pond
-cSO              WRSPS(L,K) = 7.20
-cSO           else               ! North of Woods Pond
-cSO 05.11.04     WRSPS(L,K) = 12.8
-cSO              WRSPS(L,K) = 16.8
-cSO           endif
-
-cSO   HQI change to implement new coefficient and exponent in spatially
-cSO       varying resuspension formula based on new partition of domain
-cSO 05/12/04
-c             IF ( L.LE.2042 ) THEN
-c               WRSPS(L,K) = 6.69   ! All of 5C + Woods Pond
-c             ELSE
-c               WRSPS(L,K) = 7.78   ! North of (All of 5C + Woods Pond)
-c             END IF
-cSO 05/14/04
+!     HQI change to implement spatially varying coefficient and exponent
+!     in resuspension formulation based on Ed G analysis of Sed-flume data
+!     RM 12/11/03
+!SO           WRSPS(L,K)=WRSPO(1)
+!SO           if(L.LE.265) then  ! Woods Pond
+!SO              WRSPS(L,K) = 7.20
+!SO           else               ! North of Woods Pond
+!SO 05.11.04     WRSPS(L,K) = 12.8
+!SO              WRSPS(L,K) = 16.8
+!SO           endif
+!cSO   HQI change to implement new coefficient and exponent in spatially
+!SO       varying resuspension formula based on new partition of domain
+!SO 05/12/04
+!             IF ( L.LE.2042 ) THEN
+!               WRSPS(L,K) = 6.69   ! All of 5C + Woods Pond
+!             ELSE
+!               WRSPS(L,K) = 7.78   ! North of (All of 5C + Woods Pond)
+!             END IF
+!SO 05/14/04
               IF ( L.LE.2042 ) THEN
                 WRSPS(L,K) = COEFF_DS  ! All of 5C + Woods Pond
               ELSE
@@ -621,161 +612,161 @@ cSO 05/14/04
             ENDDO
           ENDDO
         ENDIF
-C#######################################################################
-C
+!#######################################################################
+!
         DO L=2,LA
         DO K=1,KB
            WRSPS(L,K)=SPB(L)*WRSPS(L,K)
            WRSPB(L,K)=SPB(L)*WRSPB(L,K)
         ENDDO
         ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  IF N=1 AND ISTRAN(5)=1 CHECK INITIAL TOXIC CONCENTRATIONS IN
-C **  BED AND REINITILIZE IF NECESSARY
-C
-c      IF(N.EQ.1.AND.ISTRAN(5).GE.1)THEN
-c        IF(ISRESTI.EQ.0.OR.ISCI(5).EQ.0)THEN
-C
-C **  CALCULATE TOTAL PARTICULATE FRACTION OF EACH TOXIC IN THE BED
-C
-c          DO NT=1,NTOX
-c            NSP2(NT)=NSED+NSND
-c            IF(ISTOC(NT).EQ.2) NSP2(NT)=NSP2(NT)+1
-c            IF(ISTOC(NT).EQ.3) NSP2(NT)=NSP2(NT)+2
-c          END DO
-C
-c          DO NT=1,NTOX
-c            DO NS=1,NSP2(NT)
-c              DO K=1,KB
-c                DO L=2,LA
-c                  TOXPFB(L,K,NS,NT)=0.
-c                ENDDO
-c              ENDDO
-c            ENDDO
-c          ENDDO
-C
-c          DO NT=1,NTOX
-c           IF(ISTRAN(6).GE.1)THEN
-c             DO NS=1,NSED
-c               DO K=1,KB
-c                 DO L=2,LA
-c                   TOXPFB(L,K,NS,NT)=SEDB(L,K,NS)*TOXPARB(NS,NT)
-c                 ENDDO
-c               ENDDO
-c             ENDDO
-c            ENDIF
-c            IF(ISTRAN(7).GE.1)THEN
-c              DO NX=1,NSND
-c                NS=NX+NSED
-c                DO K=1,KB
-c                  DO L=2,LA
-c                    TOXPFB(L,K,NS,NT)=SNDB(L,K,NX)*TOXPARB(NS,NT)
-c                  ENDDO
-c                ENDDO
-c              ENDDO
-c            ENDIF
-c            IF(ISTOC(NT).EQ.2)THEN
-c              NS=1+NSED+NSND
-c              DO K=1,KB
-c                DO L=2,LA
-c                  TOXPFB(L,K,NS,NT)=STDOCB(L,K)*TOXPARBC(1,NT)
-c                ENDDO
-c              ENDDO
-c            ENDIF
-c            IF(ISTOC(NT).EQ.3)THEN
-c              NS=2+NSED+NSND
-c              DO K=1,KB
-c                DO L=2,LA
-c                  TOXPFB(L,K,NS,NT)=STPOCB(L,K)*TOXPARBC(2,NT)
-c                ENDDO
-c              ENDDO
-c            ENDIF
-c          ENDDO
-C
-c          DO NT=1,NTOX
-c            DO K=1,KB
-c              DO L=2,LA
-c                TOXPFTB(L,K,NT)=0.
-c              ENDDO
-c            ENDDO
-c            DO NS=1,NSP2(NT)
-c              DO K=1,KB
-c                DO L=2,LA
-c                  TOXPFTB(L,K,NT)=TOXPFTB(L,K,NT)+TOXPFB(L,K,NS,NT)
-c                ENDDO
-c              ENDDO
-c            ENDDO
-c          ENDDO
-C
-c          DO NT=1,NTOX
-c            DO K=1,KB
-c              DO L=2,LA
-c               IF(SEDBALL(L,K).GT.0.0)THEN
-c                  TOXPFTB(L,K,NT)=TOXPFTB(L,K,NT)
-c     &                     /(PORBED(L,K)*HBED(L,K)+TOXPFTB(L,K,NT))
-c                ELSE
-c                  TOXPFTB(L,K,NT)=1.
-c                ENDIF
-c              ENDDO
-c            ENDDO
-c          ENDDO
-C
-C **  CONVERT MASS TOX/MASS SED INITIAL CONDITION TO TOTAL TOXIC
-C **  CONCENTRATION IN BED 0.001 CONVERTS TOXINTB UNITS OF MG/KG
-C **  TO TOXB UNITS OF OF MG/M**2
-C
-c          DO NT=1,NTOX
-c            IF(ITXBDUT(NT).EQ.0)THEN
-c              DO K=1,KB
-c                DO L=2,LA
-c                  TOXB(L,K,NT)=HBED(L,K)*TOXB(L,K,NT)
-c                  TOXB1(L,K,NT)=TOXB(L,K,NT)
-c                ENDDO
-c              ENDDO
-c            ENDIF
-c            IF(ITXBDUT(NT).EQ.1)THEN
-c              DO K=1,KB
-c                DO L=2,LA
-c                  TOXB(L,K,NT)=0.001*TOXB(L,K,NT)*(SEDBT(L,K)
-c     &               +SNDBT(L,K))/TOXPFTB(L,K,NT)
-c                  TOXB1(L,K,NT)=TOXB(L,K,NT)
-c                ENDDO
-c              ENDDO
-c            ENDIF
-c          ENDDO
-C
-C ** DIAGNOSTICS OF INITIALIZATION
-C
-c          IF(ISDTXBUG.EQ.1)THEN
-c            OPEN(2,FILE='TOXBED.DIA')
-c            CLOSE(2,STATUS='DELETE')
-c            OPEN(2,FILE='TOXBED.DIA')
-c            DO L=2,LA
-C             TMP1=-999.
-C             TMP2=-999.
-C             IF(HBED(L).GT.0.)TMP1=TOXB(L,1)/HBED(L)
-C             IF(HBED(L).GT.0.)TMP2=TOXB(L,2)/HBED(L)
-C             WRITE(2,2222)IL(L),JL(L),HBED(L),TOXB(L,1),TOXB(L,2),TMP1,TMP2
-c              TMP1=TOXB(L,1,1)/(HBED(L,1)+1.E-12)
-c              WRITE(2,2222)IL(L),JL(L),TOXPFTB(L,1,1),TOXB(L,1,1),
-c     &              TMP1,TOX(L,1,1)
-c            ENDDO
-c            CLOSE(2)
-c          ENDIF
-C
-c        ENDIF
-c      ENDIF
-C
+!
+!**********************************************************************C
+!
+! **  IF N=1 AND ISTRAN(5)=1 CHECK INITIAL TOXIC CONCENTRATIONS IN
+! **  BED AND REINITILIZE IF NECESSARY
+!
+!      IF(N.EQ.1.AND.ISTRAN(5).GE.1)THEN
+!        IF(ISRESTI.EQ.0.OR.ISCI(5).EQ.0)THEN
+!
+! **  CALCULATE TOTAL PARTICULATE FRACTION OF EACH TOXIC IN THE BED
+!
+!          DO NT=1,NTOX
+!            NSP2(NT)=NSED+NSND
+!            IF(ISTOC(NT).EQ.2) NSP2(NT)=NSP2(NT)+1
+!            IF(ISTOC(NT).EQ.3) NSP2(NT)=NSP2(NT)+2
+!          END DO
+!
+!          DO NT=1,NTOX
+!            DO NS=1,NSP2(NT)
+!              DO K=1,KB
+!                DO L=2,LA
+!                  TOXPFB(L,K,NS,NT)=0.
+!                ENDDO
+!              ENDDO
+!            ENDDO
+!          ENDDO
+!
+!          DO NT=1,NTOX
+!           IF(ISTRAN(6).GE.1)THEN
+!             DO NS=1,NSED
+!               DO K=1,KB
+!                 DO L=2,LA
+!                   TOXPFB(L,K,NS,NT)=SEDB(L,K,NS)*TOXPARB(NS,NT)
+!                 ENDDO
+!               ENDDO
+!             ENDDO
+!            ENDIF
+!            IF(ISTRAN(7).GE.1)THEN
+!              DO NX=1,NSND
+!                NS=NX+NSED
+!                DO K=1,KB
+!                  DO L=2,LA
+!                    TOXPFB(L,K,NS,NT)=SNDB(L,K,NX)*TOXPARB(NS,NT)
+!                  ENDDO
+!                ENDDO
+!              ENDDO
+!            ENDIF
+!            IF(ISTOC(NT).EQ.2)THEN
+!              NS=1+NSED+NSND
+!              DO K=1,KB
+!                DO L=2,LA
+!                  TOXPFB(L,K,NS,NT)=STDOCB(L,K)*TOXPARBC(1,NT)
+!                ENDDO
+!              ENDDO
+!            ENDIF
+!            IF(ISTOC(NT).EQ.3)THEN
+!              NS=2+NSED+NSND
+!              DO K=1,KB
+!                DO L=2,LA
+!                  TOXPFB(L,K,NS,NT)=STPOCB(L,K)*TOXPARBC(2,NT)
+!                ENDDO
+!              ENDDO
+!            ENDIF
+!          ENDDO
+!
+!          DO NT=1,NTOX
+!            DO K=1,KB
+!              DO L=2,LA
+!                TOXPFTB(L,K,NT)=0.
+!              ENDDO
+!            ENDDO
+!            DO NS=1,NSP2(NT)
+!              DO K=1,KB
+!                DO L=2,LA
+!                  TOXPFTB(L,K,NT)=TOXPFTB(L,K,NT)+TOXPFB(L,K,NS,NT)
+!                ENDDO
+!              ENDDO
+!            ENDDO
+!          ENDDO
+!
+!          DO NT=1,NTOX
+!            DO K=1,KB
+!              DO L=2,LA
+!               IF(SEDBALL(L,K).GT.0.0)THEN
+!                  TOXPFTB(L,K,NT)=TOXPFTB(L,K,NT)
+!     &                     /(PORBED(L,K)*HBED(L,K)+TOXPFTB(L,K,NT))
+!                ELSE
+!                  TOXPFTB(L,K,NT)=1.
+!                ENDIF
+!              ENDDO
+!            ENDDO
+!          ENDDO
+!
+! **  CONVERT MASS TOX/MASS SED INITIAL CONDITION TO TOTAL TOXIC
+! **  CONCENTRATION IN BED 0.001 CONVERTS TOXINTB UNITS OF MG/KG
+! **  TO TOXB UNITS OF OF MG/M**2
+!
+!          DO NT=1,NTOX
+!            IF(ITXBDUT(NT).EQ.0)THEN
+!              DO K=1,KB
+!                DO L=2,LA
+!                  TOXB(L,K,NT)=HBED(L,K)*TOXB(L,K,NT)
+!                  TOXB1(L,K,NT)=TOXB(L,K,NT)
+!                ENDDO
+!              ENDDO
+!            ENDIF
+!            IF(ITXBDUT(NT).EQ.1)THEN
+!              DO K=1,KB
+!                DO L=2,LA
+!                  TOXB(L,K,NT)=0.001*TOXB(L,K,NT)*(SEDBT(L,K)
+!     &               +SNDBT(L,K))/TOXPFTB(L,K,NT)
+!                  TOXB1(L,K,NT)=TOXB(L,K,NT)
+!                ENDDO
+!              ENDDO
+!            ENDIF
+!          ENDDO
+!
+! ** DIAGNOSTICS OF INITIALIZATION
+!
+!          IF(ISDTXBUG.EQ.1)THEN
+!            OPEN(2,FILE='TOXBED.DIA')
+!            CLOSE(2,STATUS='DELETE')
+!            OPEN(2,FILE='TOXBED.DIA')
+!            DO L=2,LA
+!             TMP1=-999.
+!             TMP2=-999.
+!             IF(HBED(L).GT.0.)TMP1=TOXB(L,1)/HBED(L)
+!             IF(HBED(L).GT.0.)TMP2=TOXB(L,2)/HBED(L)
+!             WRITE(2,2222)IL(L),JL(L),HBED(L),TOXB(L,1),TOXB(L,2),TMP1,TMP2
+!              TMP1=TOXB(L,1,1)/(HBED(L,1)+1.E-12)
+!              WRITE(2,2222)IL(L),JL(L),TOXPFTB(L,1,1),TOXB(L,1,1),
+!     &              TMP1,TOX(L,1,1)
+!            ENDDO
+!            CLOSE(2)
+!          ENDIF
+!
+!        ENDIF
+!      ENDIF
+!
  2222 FORMAT(2I5,7E13.4)
-C
-C**********************************************************************C
-C
-C **  SAVE OLD VALUES
-C
+!
+!**********************************************************************C
+!
+! **  SAVE OLD VALUES
+!
       IF(ISTRAN(5).GE.1)THEN
         DO NT=1,NTOX
           DO K=1,KC
@@ -792,7 +783,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KC
@@ -809,7 +800,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           DO K=1,KC
@@ -826,13 +817,13 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SET MEAN D50 AND D90
-C
+!
+!**********************************************************************C
+!
+! **  SET MEAN D50 AND D90
+!
       IF(ISTRAN(7).GE.1)THEN
-C
+!
         DO K=1,KB
           DO L=2,LA
             SEDDIA50(L,K)=0.
@@ -841,7 +832,7 @@ C
             SNDBT(L,K)=0.
           ENDDO
         ENDDO
-C
+!
         DO NX=1,NSND
           NS=NSED+NX
           DO K=1,KB
@@ -851,7 +842,7 @@ C
             ENDDO
           ENDDO
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(SNDBT(L,K).GT.0.)THEN
@@ -859,17 +850,16 @@ C
             ENDIF
           ENDDO
         ENDDO
-C
+!
         DO NX=1,NSND
           NS=NSED+NX
           DO K=1,KB
             DO L=2,LA
-              SEDGEOSTD(L,K)=SEDGEOSTD(L,K)
-     &         +SNDB(L,K,NX)*(( LOG(SEDDIA(NS))-SEDDIA50(L,K) )**2)
+              SEDGEOSTD(L,K)=SEDGEOSTD(L,K)+SNDB(L,K,NX)*(( LOG(SEDDIA(NS))-SEDDIA50(L,K) )**2)
             ENDDO
           ENDDO
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(SNDBT(L,K).GT.0.)THEN
@@ -877,7 +867,7 @@ C
             ENDIF
           ENDDO
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(SNDBT(L,K).GT.0.)THEN
@@ -889,13 +879,13 @@ C
             ENDIF
           ENDDO
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             SEDDIA90(L,K)=(SEDGEOSTD(L,K)**1.28)*SEDDIA50(L,K)
           ENDDO
         ENDDO
-C
+!
         IF(ISBSDIAM.EQ.0)THEN
         DO K=1,KB
           DO L=2,LA
@@ -903,7 +893,7 @@ C
           ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISBSDIAM.EQ.1)THEN
         DO K=1,KB
           DO L=2,LA
@@ -911,7 +901,7 @@ C
           ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISBSDIAM.EQ.2)THEN
         DO K=1,KB
           DO L=2,LA
@@ -919,7 +909,7 @@ C
           ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISBSDIAM.EQ.3)THEN
         DO K=1,KB
           DO L=2,LA
@@ -927,21 +917,20 @@ C
           ENDDO
         ENDDO
         ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SET CELL CENTER BED STRESS FOR SEDIMENT RESUSPENSION AND DEPOSITION
-C
+!
+!**********************************************************************C
+!
+! **  SET CELL CENTER BED STRESS FOR SEDIMENT RESUSPENSION AND DEPOSITION
+!
       IF(ISWAVE.GT.0)THEN
         DO L=2,LA
           TAUBC=QQ(L,0)/CTURB2
           UTMP=0.5*STCUV(L)*(U(L+1,1)+U(L,1))+1.E-12
           VTMP=0.5*STCUV(L)*(V(LNC(L),1)+V(L,1))
           CURANG=ATAN2(VTMP,UTMP)
-          TAUB2=TAUBC*TAUBC+0.5*(QQWV2(L)*QQWV2(L))
-     &       +FOURDPI*TAUBC*QQWV2(L)*COS(CURANG-WACCWE(L))
+          TAUB2=TAUBC*TAUBC+0.5*(QQWV2(L)*QQWV2(L))+FOURDPI*TAUBC*QQWV2(L)*COS(CURANG-WACCWE(L))
           TAUB2=MAX(TAUB2,0.)
           TAUB(L)=SQRT(TAUB2)
           USTAR(L)=SQRT(TAUB(L))
@@ -950,23 +939,20 @@ C
         DO L=2,LA
           TAUBC=QQ(L,0)/CTURB2
           TAUB(L)=TAUBC
-C          DROUGH=SEDDIA50(L,KBT(L))
-C          TOPTMP=(LOG(2.))**2
-C          BOTTMP=(LOG(0.8*ZBR(L)/DROUGH))**2
-C          TAUB(L)=TOPTMP*TAUB(L)/BOTTMP
+!          DROUGH=SEDDIA50(L,KBT(L))
+!          TOPTMP=(LOG(2.))**2
+!          BOTTMP=(LOG(0.8*ZBR(L)/DROUGH))**2
+!          TAUB(L)=TOPTMP*TAUB(L)/BOTTMP
           USTAR(L)=SQRT(TAUB(L))
         ENDDO
       ENDIF
-C
+!
       IF(IGRIDV.EQ.0)THEN
       DO L=2,LA
         LN=LNC(L)
-        UCELLCTR(L)=0.5*(RSSBCW(L)*WCORWST(L)*U(L,1)
-     &                  +RSSBCE(L)*WCOREST(L)*U(L+1,1))
-        VCELLCTR(L)=0.5*(RSSBCS(L)*WCORSTH(L)*V(L,1)
-     &                  +RSSBCN(L)*WCORNTH(L)*V(LN ,1))
-        QCELLCTR(L)=SQRT(UCELLCTR(L)*UCELLCTR(L)
-     &                  +VCELLCTR(L)*VCELLCTR(L))
+        UCELLCTR(L)=0.5*(RSSBCW(L)*WCORWST(L)*U(L,1)+RSSBCE(L)*WCOREST(L)*U(L+1,1))
+        VCELLCTR(L)=0.5*(RSSBCS(L)*WCORSTH(L)*V(L,1)+RSSBCN(L)*WCORNTH(L)*V(LN ,1))
+        QCELLCTR(L)=SQRT(UCELLCTR(L)*UCELLCTR(L)+VCELLCTR(L)*VCELLCTR(L))
         IF(QCELLCTR(L).GT.0.0) THEN
           UCELLCTR(L)=UCELLCTR(L)/QCELLCTR(L)
           VCELLCTR(L)=VCELLCTR(L)/QCELLCTR(L)
@@ -978,16 +964,13 @@ C
         ENDIF
       ENDDO
 	ENDIF
-C
+!
       IF(IGRIDV.EQ.1)THEN
       DO L=2,LA
         LN=LNC(L)
-        UCELLCTR(L)=0.5*(RSSBCW(L)*WCORWST(L)*UHDYE(L)
-     &             +RSSBCE(L)*WCOREST(L)*UHDYE(L+1))/(DYP(L)*HP(L))
-        VCELLCTR(L)=0.5*(RSSBCS(L)*WCORSTH(L)*VHDXE(L)
-     &             +RSSBCN(L)*WCORNTH(L)*VHDXE(LN ))/(DXP(L)*HP(L))
-        QCELLCTR(L)=SQRT(UCELLCTR(L)*UCELLCTR(L)
-     &                  +VCELLCTR(L)*VCELLCTR(L))
+        UCELLCTR(L)=0.5*(RSSBCW(L)*WCORWST(L)*UHDYE(L)+RSSBCE(L)*WCOREST(L)*UHDYE(L+1))/(DYP(L)*HP(L))
+        VCELLCTR(L)=0.5*(RSSBCS(L)*WCORSTH(L)*VHDXE(L)+RSSBCN(L)*WCORNTH(L)*VHDXE(LN ))/(DXP(L)*HP(L))
+        QCELLCTR(L)=SQRT(UCELLCTR(L)*UCELLCTR(L)+VCELLCTR(L)*VCELLCTR(L))
         IF(QCELLCTR(L).GT.0.0) THEN
           UCELLCTR(L)=UCELLCTR(L)/QCELLCTR(L)
           VCELLCTR(L)=VCELLCTR(L)/QCELLCTR(L)
@@ -999,32 +982,28 @@ C
         ENDIF
       ENDDO
 	ENDIF
-C
-C **  CALCULATE CELL CENTER DEPTH DEVIATION FROM UNIFORM FLOW
-C
+!
+! **  CALCULATE CELL CENTER DEPTH DEVIATION FROM UNIFORM FLOW
+!
       IF(ISBSDFUF.GE.1)THEN
       DO L=2,LA
         LN=LNC(L)
-        HDFUFXX=0.5*(RSSBCW(L)*WCORWST(L)*HDFUFX(L)
-     &                  +RSSBCE(L)*WCOREST(L)*HDFUFX(L+1))
+        HDFUFXX=0.5*(RSSBCW(L)*WCORWST(L)*HDFUFX(L)+RSSBCE(L)*WCOREST(L)*HDFUFX(L+1))
         IF(HDFUFXX.LE.0.0)HDFUFXX=1.0
-        HDFUFYY=0.5*(RSSBCS(L)*WCORSTH(L)*HDFUFY(L)
-     &                  +RSSBCN(L)*WCORNTH(L)*HDFUFY(LN ))
+        HDFUFYY=0.5*(RSSBCS(L)*WCORSTH(L)*HDFUFY(L)+RSSBCN(L)*WCORNTH(L)*HDFUFY(LN ))
         IF(HDFUFYY.LE.0.0)HDFUFYY=1.0
         HDFUF(L)=SQRT(HDFUFXX*HDFUFXX+HDFUFYY*HDFUFYY)
         HDFUF(L)=MIN(HDFUF(L),1.0)
-CJH060305        IF(HDFUF(L).EQ.0.0)HDFUF(L)=1.
+!JH060305        IF(HDFUF(L).EQ.0.0)HDFUF(L)=1.
       ENDDO
       ENDIF
-C
+!
       IF(KC.GT.1)THEN
         TMPEXP=16./7.
         DO L=2,LA
           LN=LNC(L)
-          UTMP=0.5*(RSSBCW(L)*WCORWST(L)*UHDYE(L)
-     &             +RSSBCE(L)*WCOREST(L)*UHDYE(L+1))/(DYP(L)*HP(L))
-          VTMP=0.5*(RSSBCS(L)*WCORSTH(L)*VHDXE(L)
-     &             +RSSBCN(L)*WCORNTH(L)*VHDXE(LN ))/(DXP(L)*HP(L))
+          UTMP=0.5*(RSSBCW(L)*WCORWST(L)*UHDYE(L)+RSSBCE(L)*WCOREST(L)*UHDYE(L+1))/(DYP(L)*HP(L))
+          VTMP=0.5*(RSSBCS(L)*WCORSTH(L)*VHDXE(L)+RSSBCN(L)*WCORNTH(L)*VHDXE(LN ))/(DXP(L)*HP(L))
           QCELLCTRA=SQRT(UTMP*UTMP+VTMP*VTMP)
           IF(QCELLCTR(L).GT.0.0) THEN
             QCELLAD1SQ(L)=(QCELLCTRA/QCELLCTR(L))**2
@@ -1040,39 +1019,39 @@ C
           QCELLAD1ZZ(L)=1.
         ENDDO
       ENDIF
-C
+!
       DO L=2,LA
         TAUBSEDS(L)=TAUBSED(L)
         TAUBSNDS(L)=TAUBSND(L)
       ENDDO
-C
+!
       DO L=2,LA
         TAUBSED(L)=TAUB(L)
         TAUBSND(L)=TAUB(L)
         USTARSED(L)=USTAR(L)
         USTARSND(L)=USTAR(L)
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
-C     ORIGINAL MIXED FORM
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
+!     ORIGINAL MIXED FORM
+!
       IF(ISBEDSTR.EQ.1.OR.ISBEDSTR.EQ.2)THEN
 
        TMPEXP=2./7.
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
-C         TVAR3S(L)=0.375E+6*HP(L)*QCELLCTR(L)
-C HAMRICK CORRECTED 052504
+!         TVAR3S(L)=0.375E+6*HP(L)*QCELLCTR(L)
+! HAMRICK CORRECTED 052504
          TMPVAL=1./(COEFTSBL*VISMUDST)
          TVAR3S(L)=TMPVAL*HP(L)*QCELLCTR(L)
          TVAR3N(L)=SEDDIAGS(L,KBT(L))*HPI(L)
          HGDH(L)=0.0
          ENDIF
        ENDDO
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          IF(TVAR3S(L).GT.0.0)THEN
@@ -1080,7 +1059,7 @@ C
          ENDIF
          ENDIF
        ENDDO
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          IF(TAUBSEDS(L).GT.0.0)THEN
@@ -1090,11 +1069,11 @@ C
          ENDIF
          ENDIF
        ENDDO
-C
-C      TVAR3S(L)=4*KINIMATIC_VISCOSITY/(DEPTH*VELOCITY_MAGNITUDE)
-C      TVAR3E(L)=VELOCITY_MAGNITUDE/COHESIVE_BEDSTRESS
-C      TVAR3N(L)=D50/DEPTH
-C
+!
+!      TVAR3S(L)=4*KINIMATIC_VISCOSITY/(DEPTH*VELOCITY_MAGNITUDE)
+!      TVAR3E(L)=VELOCITY_MAGNITUDE/COHESIVE_BEDSTRESS
+!      TVAR3N(L)=D50/DEPTH
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          TVAR3W(L)=TVAR3S(L)**0.333333
@@ -1102,53 +1081,51 @@ C
          TVAR3N(L)=TVAR3N(L)**0.333333
          ENDIF
        ENDDO
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          TVAR3S(L)=TVAR3S(L)**TMPEXP
          ENDIF
        ENDDO
-C
-C      TVAR3S(L)=(4*KINIMATIC_VISCOSITY/(DEPTH*VELOCITY_MAGNITUDE))**(1/4)
-C      TVAR3W(L)=(4*KINIMATIC_VISCOSITY/(DEPTH*VELOCITY_MAGNITUDE))**(1/3)
-C      TVAR3E(L)=(VELOCITY_MAGNITUDE/COHESIVE_BEDSTRESS)**(1/3)
-C      TVAR3N(L)=(D50/DEPTH)**1/3
-C
+!
+!      TVAR3S(L)=(4*KINIMATIC_VISCOSITY/(DEPTH*VELOCITY_MAGNITUDE))**(1/4)
+!      TVAR3W(L)=(4*KINIMATIC_VISCOSITY/(DEPTH*VELOCITY_MAGNITUDE))**(1/3)
+!      TVAR3E(L)=(VELOCITY_MAGNITUDE/COHESIVE_BEDSTRESS)**(1/3)
+!      TVAR3N(L)=(D50/DEPTH)**1/3
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          IF(CBEDTOTAL(L).GT.0.0)THEN
            K=KBT(L)
-C           HGDH(L)=0.025*QCELLAD1SQ(L)*(FRACCOH(L,K)*TVAR3W(L)*TVAR3E(L)
-C HAMRICK CORRECTED 052504 and added non-uniform flow factor
-           HGDH(L)=0.014*HDFUF(L)*QCELLAD1SQ(L)
-     &                   *(FRACCOH(L,K)*TVAR3W(L)*TVAR3E(L)
-     &                    +FRACNON(L,K)*TVAR3N(L))/CBEDTOTAL(L)
+!           HGDH(L)=0.025*QCELLAD1SQ(L)*(FRACCOH(L,K)*TVAR3W(L)*TVAR3E(L)
+! HAMRICK CORRECTED 052504 and added non-uniform flow factor
+           HGDH(L)=0.014*HDFUF(L)*QCELLAD1SQ(L)*(FRACCOH(L,K)*TVAR3W(L)*TVAR3E(L)+FRACNON(L,K)*TVAR3N(L))/CBEDTOTAL(L)
          ENDIF
          ENDIF
        ENDDO
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          HGDH(L)=HGDH(L)**0.75
          ENDIF
        ENDDO
-C
-c       DO L=2,LA
-c         IF(LMASKDRY(L))THEN
-c         IF(HGDH(L).GT.1.0)THEN
-c           WRITE(8,869)IL(L),JL(L),HGDH(L)
-c         ENDIF
-c         ENDIF
-c       ENDDO
-C
+!
+!       DO L=2,LA
+!         IF(LMASKDRY(L))THEN
+!         IF(HGDH(L).GT.1.0)THEN
+!           WRITE(8,869)IL(L),JL(L),HGDH(L)
+!         ENDIF
+!         ENDIF
+!       ENDDO
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          HGDH(L)=MIN(HGDH(L),1.0)
          ENDIF
        ENDDO
-C
-C   convert hgdh to 1/hgdh  ie hdhg
-C
+!
+!   convert hgdh to 1/hgdh  ie hdhg
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          IF(HGDH(L).GT.0.0)THEN
@@ -1156,7 +1133,7 @@ C
          ENDIF
          ENDIF
        ENDDO
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          IF(TAUB(L).GT.0.0)THEN
@@ -1166,37 +1143,37 @@ C
          ENDIF
          ENDIF
        ENDDO
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          IF(TAUB(L).GT.0.0)THEN
            TAUBSEDS(L)=TAUBSED(L)
            TAUBSNDS(L)=TAUBSND(L)
-c          TAUBSED(L)=0.042*TVAR3S(L)*TAUBSED(L)*TVAR3W(L)*QCELLAD1ZZ(L)
-c           TAUBSND(L)=0.025*TVAR3N(L)*TAUBSND(L)*TVAR3W(L)*QCELLAD1SQ(L)
-c hamrick corrected 052504
+!          TAUBSED(L)=0.042*TVAR3S(L)*TAUBSED(L)*TVAR3W(L)*QCELLAD1ZZ(L)
+!           TAUBSND(L)=0.025*TVAR3N(L)*TAUBSND(L)*TVAR3W(L)*QCELLAD1SQ(L)
+! hamrick corrected 052504
            TAUBSED(L)=0.026*TVAR3S(L)*TAUBSED(L)*TVAR3W(L)*QCELLAD1ZZ(L)
            TAUBSND(L)=0.014*TVAR3N(L)*TAUBSND(L)*TVAR3W(L)*QCELLAD1SQ(L)
          ENDIF
          ENDIF
        ENDDO
-C
-C
-C       OPEN(1,FILE='GRAINSTR.OUT')
-C       CLOSE(1,STATUS='DELETE')
-C       OPEN(1,FILE='GRAINSTR.OUT')
-C       DO L=2,LA
-C         IF(LMASKDRY(L))THEN
-C         WRITE(1,4344)IL(L),JL(L),HGDH(L),TAUB(L),TAUBSED(L),TVAR3S(L),
-C     &     TAUBSEDS(L),TVAR3W(L),QCELLAD1ZZ(L),TAUBSND(L),
-C     &     TVAR3N(L),TAUBSNDS(L),TVAR3W(L),QCELLAD1SQ(L)
-C         ENDIF
-C       ENDDO
-C       CLOSE(1)
-C 4344 FORMAT(2I5,12E14.5)
-C
-C **  IF ISBEDSTR=2, APPLY WEIGHTED AVERAGE TO BOTH SED AND SND
-C
+!
+!
+!       OPEN(1,FILE='GRAINSTR.OUT')
+!       CLOSE(1,STATUS='DELETE')
+!       OPEN(1,FILE='GRAINSTR.OUT')
+!       DO L=2,LA
+!         IF(LMASKDRY(L))THEN
+!         WRITE(1,4344)IL(L),JL(L),HGDH(L),TAUB(L),TAUBSED(L),TVAR3S(L),
+!     &     TAUBSEDS(L),TVAR3W(L),QCELLAD1ZZ(L),TAUBSND(L),
+!     &     TVAR3N(L),TAUBSNDS(L),TVAR3W(L),QCELLAD1SQ(L)
+!         ENDIF
+!       ENDDO
+!       CLOSE(1)
+! 4344 FORMAT(2I5,12E14.5)
+!
+! **  IF ISBEDSTR=2, APPLY WEIGHTED AVERAGE TO BOTH SED AND SND
+!
       IF(ISBEDSTR.EQ.2.OR.N.EQ.1)THEN
        DO L=2,LA
          IF(LMASKDRY(L))THEN
@@ -1211,25 +1188,25 @@ C
          ENDIF
        ENDDO
       ENDIF
-C
+!
        DO L=2,LA
          IF(LMASKDRY(L))THEN
          USTARSED(L)=SQRT(TAUBSED(L))
          USTARSND(L)=SQRT(TAUBSND(L))
          ENDIF
        ENDDO
-C
+!
       ENDIF
-C
-C  ENDIF ON GRAIN STRESS PARTITIONING FOR ISBEDSTR.EQ.1.OR.ISBEDSTR.EQ.2
-C
-C----------------------------------------------------------------------C
-C
-C **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
-C     INDEPENDENTLY SET GRAIN STRESS
-C
+!
+!  ENDIF ON GRAIN STRESS PARTITIONING FOR ISBEDSTR.EQ.1.OR.ISBEDSTR.EQ.2
+!
+!----------------------------------------------------------------------C
+!
+! **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
+!     INDEPENDENTLY SET GRAIN STRESS
+!
       IF(ISBEDSTR.EQ.3)THEN
-C
+!
        DO L=2,LA
          HDZBR=HP(L)/ZBRSED(L)
          TVAR3E(L)=0.16/( (LOG(HDZBR)-1.)**2 )
@@ -1244,18 +1221,18 @@ C
          USTARSED(L)=SQRT(TAUBSED(L))
          USTARSND(L)=SQRT(TAUBSND(L))
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
-C     USING WEIGHTED ROUGHNESS AND LOG RESISTANCE LAW
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
+!     USING WEIGHTED ROUGHNESS AND LOG RESISTANCE LAW
+!
       IF(ISBEDSTR.EQ.4)THEN
-C
-C     RECALCUATE ZOTOTAL AND CALCULATE ZOGRAIN
-C
+!
+!     RECALCUATE ZOTOTAL AND CALCULATE ZOGRAIN
+!
       DO L=2,LA
         IF(CBEDTOTAL(L).GT.0.0)THEN
           TMP=EXP(1.+0.4/SQRT(CBEDTOTAL(L)))
@@ -1265,7 +1242,7 @@ C
         ENDIF
         ZOGRAIN(L)=FRACNON(L,KBT(L))*SEDDIAGS(L,KBT(L))/30.
       ENDDO
-C
+!
       DO L=2,LA
         IF(TAUBSED(L).GT.0.0)THEN
           ZOGRAINCOH=0.041*VISMUDST/SQRT(TAUBSED(L))
@@ -1273,15 +1250,15 @@ C
           ZOGRAIN(L)=MAX(ZOGRAIN(L),ZOGRAINCOH)
         ENDIF
       ENDDO
-C
-C     ITERATE RVAL = SQRT(HG/H)
-C
+!
+!     ITERATE RVAL = SQRT(HG/H)
+!
       IF(ISBSDFUF.EQ.0)THEN
       DO L=2,LA
         HDFUF(L)=1.0
       ENDDO
       ENDIF
-C
+!
       DO L=2,LA
         TMPTOP=LOG(HP(L)/ZOTOTAL(L))-1.
         TMPTOP=TMPTOP*SQRT(HDFUF(L))
@@ -1294,33 +1271,33 @@ C
         TAUBSED(L)=RVAL*RVAL*TAUB(L)/HDFUF(L)
         TAUBSND(L)=RVAL*RVAL*TAUB(L)/HDFUF(L)
       ENDDO
-C
+!
       DO L=2,LA
         USTARSED(L)=SQRT(TAUBSED(L))
         USTARSND(L)=SQRT(TAUBSND(L))
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
-C     USING WEIGHTED ROUGHNESS AND POWER RESISTANCE LAW
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  PARTITION BED STRESS BETWEEN TOTAL AND GRAIN STRESS
+!     USING WEIGHTED ROUGHNESS AND POWER RESISTANCE LAW
+!
       IF(ISBEDSTR.EQ.5)THEN
-C
-C     RECALCUATE ZOTOTAL AND CALCULATE ZOGRAIN
-C
+!
+!     RECALCUATE ZOTOTAL AND CALCULATE ZOGRAIN
+!
       DO L=2,LA
         IF(CBEDTOTAL(L).GT.0.0)THEN
-cjah
+!jah
           IF(CBEDTOTAL(L).GT.1.0) THEN
-cjah        WRITE(6,*) 'AT TIME=',TIME,'  RUNTIME= ',TIME-TBEGIN,
-cjah .     '  L,CBEDTOTAL(L),HP(L)=',L,CBEDTOTAL(L),HP(L),LMASKDRY(L)
-cjah         WRITE(6,*) 'CBEDTOTAL RESET TO 1.0'
+!jah        WRITE(6,*) 'AT TIME=',TIME,'  RUNTIME= ',TIME-TBEGIN,
+!jah .     '  L,CBEDTOTAL(L),HP(L)=',L,CBEDTOTAL(L),HP(L),LMASKDRY(L)
+!jah         WRITE(6,*) 'CBEDTOTAL RESET TO 1.0'
             CBEDTOTAL(L)=1.0
           ENDIF
-cjah_end
+!jah_end
           TMP=CBEDTOTAL(L)/0.04736
           ZOTOTAL(L)=HP(L)*(TMP**3)
         ELSE
@@ -1328,7 +1305,7 @@ cjah_end
         ENDIF
         ZOGRAIN(L)=FRACNON(L,KBT(L))*SEDDIAGS(L,KBT(L))/30.
       ENDDO
-C
+!
       DO L=2,LA
         IF(TAUBSED(L).GT.0.0)THEN
           ZOGRAINCOH=0.041*VISMUDST/SQRT(TAUBSED(L))
@@ -1336,15 +1313,15 @@ C
           ZOGRAIN(L)=MAX(ZOGRAIN(L),ZOGRAINCOH)
         ENDIF
       ENDDO
-C
-C     CALCULATE GRAIN STRESS DIRECTLY
-C
+!
+!     CALCULATE GRAIN STRESS DIRECTLY
+!
       IF(ISBSDFUF.EQ.0)THEN
       DO L=2,LA
         HDFUF(L)=1.0
       ENDDO
       ENDIF
-C
+!
       DO L=2,LA
         TMP=(ZOGRAIN(L)/ZOTOTAL(L))**0.25
         TMP=TMP*(HDFUF(L)**0.75)
@@ -1352,35 +1329,35 @@ C
         TAUBSED(L)=TMP*TAUB(L)/HDFUF(L)
         TAUBSND(L)=TMP*TAUB(L)/HDFUF(L)
       ENDDO
-C
+!
       DO L=2,LA
         USTARSED(L)=SQRT(TAUBSED(L))
         USTARSND(L)=SQRT(TAUBSND(L))
       ENDDO
-C
+!
       ENDIF
-C
+!
 
-C----------------------------------------------------------------------C
-C
+!----------------------------------------------------------------------C
+!
   869 FORMAT(' I,J,HGDH = ',2I5,F10.3)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
         DO L=2,LA
           HBEDA(L)=0.0
           DO K=1,KBT(L)
             HBEDA(L)=HBEDA(L)+HBED(L,K)
           END DO
         ENDDO
-C
-C**********************************************************************C
-C
-C**********************************************************************C
-C
-C **  CALCULATE BANK EROSION AND ADJUST SEDIMENT AND WATER VOLUME
-C     FLUXES
-C
+!
+!**********************************************************************C
+!
+!**********************************************************************C
+!
+! **  CALCULATE BANK EROSION AND ADJUST SEDIMENT AND WATER VOLUME
+!     FLUXES
+!
       IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
         IF(ISBKERO.GE.1) THEN
           DO NP=1,NBEPAIR
@@ -1393,37 +1370,37 @@ C
           ENDDO
         ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  CALCULATE PARENT TO ACTIVE LAYER SEDIMENT FLUX
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE PARENT TO ACTIVE LAYER SEDIMENT FLUX
+!
       DO L=2,LA
         QWATPA(L)=0.0
         QSSDPA(L)=0.0
       ENDDO
-C
+!
       IF(ISNDAL.EQ.2)THEN
-C
-c      DO L=2,LA
-c        SESNFA(L)=0.0
-c        SESNFP(L)=0.0
-c      ENDDO
-c      DO NS=1,NSED
-c        DO L=2,LA
-c          SESNFA(L)=SESNFA(L)+SEDF(L,0,NS)
-c        ENDDO
-c      ENDDO
-c      DO NS=1,NSND
-c        DO L=2,LA
-c          SESNFA(L)=SESNFA(L)+SNDF(L,0,NS)
-c        ENDDO
-c      ENDDO
-C
+!
+!      DO L=2,LA
+!        SESNFA(L)=0.0
+!        SESNFP(L)=0.0
+!      ENDDO
+!      DO NS=1,NSED
+!        DO L=2,LA
+!          SESNFA(L)=SESNFA(L)+SEDF(L,0,NS)
+!        ENDDO
+!      ENDDO
+!      DO NS=1,NSND
+!        DO L=2,LA
+!          SESNFA(L)=SESNFA(L)+SNDF(L,0,NS)
+!        ENDDO
+!      ENDDO
+!
       IF(IALTYP.EQ.0)THEN
-C
-C     CONSTANT ACTIVE ARMOR LAYER THICKNESS
-C
+!
+!     CONSTANT ACTIVE ARMOR LAYER THICKNESS
+!
       DO NS=1,NSED
         DSEDGMM=1./(1.E6*SSG(NS))
         DSEDGMMI=1.E6*SSG(NS)
@@ -1432,17 +1409,14 @@ C
           KTOPM1=KBT(L)-1
           QSWPOS=(QSBDTOP(L)+QWBDTOP(L))/(1.+VDRBED1(L,KTOPM1))
           QSWNEG=(QSBDTOP(L)+QWBDTOP(L))/(1.+VDRBED1(L,KTOPTP))
-          SEDFPA(L,NS)=DSEDGMMI*(VFRBED(L,KTOPM1,NS)*MAX(QSWPOS,0.)
-     &                          +VFRBED(L,KTOPTP,NS)*MIN(QSWNEG,0.))
+          SEDFPA(L,NS)=DSEDGMMI*(VFRBED(L,KTOPM1,NS)*MAX(QSWPOS,0.)+VFRBED(L,KTOPTP,NS)*MIN(QSWNEG,0.))
           QSSDPA(L)=QSSDPA(L)+DSEDGMM*SEDFPA(L,NS)
-          QWATPA(L)=QWATPA(L)+DSEDGMM*
-     &                 ( VDRBED(L,KTOPM1)*MAX(SEDFPA(L,NS),0.)
-     &                  +VDRBED(L,KTOPTP)*MIN(SEDFPA(L,NS),0.))
+          QWATPA(L)=QWATPA(L)+DSEDGMM*( VDRBED(L,KTOPM1)*MAX(SEDFPA(L,NS),0.)+VDRBED(L,KTOPTP)*MIN(SEDFPA(L,NS),0.))
           SEDB(L,KTOPTP,NS)=SEDB(L,KTOPTP,NS)+DELT*SEDFPA(L,NS)
           SEDB(L,KTOPM1,NS)=SEDB(L,KTOPM1,NS)-DELT*SEDFPA(L,NS)
         ENDDO
       ENDDO
-C
+!
       DO NX=1,NSND
         NS=NX+NSED
         DSEDGMM=1./(1.E6*SSG(NS))
@@ -1452,39 +1426,34 @@ C
           KTOPM1=KBT(L)-1
           QSWPOS=(QSBDTOP(L)+QWBDTOP(L))/(1.+VDRBED1(L,KTOPM1))
           QSWNEG=(QSBDTOP(L)+QWBDTOP(L))/(1.+VDRBED1(L,KTOPTP))
-          SNDFPA(L,NX)=DSEDGMMI*(VFRBED(L,KTOPM1,NS)*MAX(QSWPOS,0.)
-     &                          +VFRBED(L,KTOPTP,NS)*MIN(QSWNEG,0.))
+          SNDFPA(L,NX)=DSEDGMMI*(VFRBED(L,KTOPM1,NS)*MAX(QSWPOS,0.)+VFRBED(L,KTOPTP,NS)*MIN(QSWNEG,0.))
           QSSDPA(L)=QSSDPA(L)+DSEDGMM*SNDFPA(L,NX)
-          QWATPA(L)=QWATPA(L)+DSEDGMM*
-     &                 ( VDRBED(L,KTOPM1)*MAX(SNDFPA(L,NX),0.)
-     &                  +VDRBED(L,KTOPTP)*MIN(SNDFPA(L,NX),0.))
+          QWATPA(L)=QWATPA(L)+DSEDGMM*( VDRBED(L,KTOPM1)*MAX(SNDFPA(L,NX),0.)+VDRBED(L,KTOPTP)*MIN(SNDFPA(L,NX),0.))
           SNDB(L,KTOPTP,NX)=SNDB(L,KTOPTP,NX)+DELT*SNDFPA(L,NX)
           SNDB(L,KTOPM1,NX)=SNDB(L,KTOPM1,NX)-DELT*SNDFPA(L,NX)
         ENDDO
       ENDDO
-C
+!
       ELSE
-C
-C     CONSTANT ACTIVE ARMOR LAYER TOTAL SEDIMENT MASS
-C
+!
+!     CONSTANT ACTIVE ARMOR LAYER TOTAL SEDIMENT MASS
+!
       DO NS=1,NSED
         DSEDGMM=1./(1.E6*SSG(NS))
         DSEDGMMI=1.E6*SSG(NS)
         DO L=2,LA
           KTOPTP=KBT(L)
           KTOPM1=KBT(L)-1
-          SEDFPA(L,NS)=VFRBED(L,KTOPM1,NS)*MAX(QSBDTOP(L),0.)
-     &                +VFRBED(L,KTOPTP,NS)*MIN(QSBDTOP(L),0.)
+          SEDFPA(L,NS)=VFRBED(L,KTOPM1,NS)*MAX(QSBDTOP(L),0.)+VFRBED(L,KTOPTP,NS)*MIN(QSBDTOP(L),0.)
           QSSDPA(L)=QSSDPA(L)+SEDFPA(L,NS)
-          QWATPA(L)=QWATPA(L)+VDRBED(L,KTOPM1)*MAX(SEDFPA(L,NS),0.)
-     &                       +VDRBED(L,KTOPTP)*MIN(SEDFPA(L,NS),0.)
+          QWATPA(L)=QWATPA(L)+VDRBED(L,KTOPM1)*MAX(SEDFPA(L,NS),0.)+VDRBED(L,KTOPTP)*MIN(SEDFPA(L,NS),0.)
           SEDFPA(L,NS)=DSEDGMMI*SEDFPA(L,NS)
           SEDB(L,KTOPTP,NS)=SEDB(L,KTOPTP,NS)+DELT*SEDFPA(L,NS)
           SEDB(L,KTOPM1,NS)=SEDB(L,KTOPM1,NS)-DELT*SEDFPA(L,NS)
-c          SESNFP(L)=SESNFP(L)+SEDFPA(L,NS)
+!          SESNFP(L)=SESNFP(L)+SEDFPA(L,NS)
         ENDDO
       ENDDO
-C
+!
       DO NX=1,NSND
         NS=NX+NSED
         DSEDGMM=1./(1.E6*SSG(NS))
@@ -1492,42 +1461,39 @@ C
         DO L=2,LA
           KTOPTP=KBT(L)
           KTOPM1=KBT(L)-1
-          SNDFPA(L,NX)=VFRBED(L,KTOPM1,NS)*MAX(QSBDTOP(L),0.)
-     &                +VFRBED(L,KTOPTP,NS)*MIN(QSBDTOP(L),0.)
+          SNDFPA(L,NX)=VFRBED(L,KTOPM1,NS)*MAX(QSBDTOP(L),0.)+VFRBED(L,KTOPTP,NS)*MIN(QSBDTOP(L),0.)
           QSSDPA(L)=QSSDPA(L)+SNDFPA(L,NX)
-          QWATPA(L)=QWATPA(L)+VDRBED(L,KTOPM1)*MAX(SNDFPA(L,NX),0.)
-     &                       +VDRBED(L,KTOPTP)*MIN(SNDFPA(L,NX),0.)
+          QWATPA(L)=QWATPA(L)+VDRBED(L,KTOPM1)*MAX(SNDFPA(L,NX),0.)+VDRBED(L,KTOPTP)*MIN(SNDFPA(L,NX),0.)
           SNDFPA(L,NX)=DSEDGMMI*SNDFPA(L,NX)
           SNDB(L,KTOPTP,NX)=SNDB(L,KTOPTP,NX)+DELT*SNDFPA(L,NX)
           SNDB(L,KTOPM1,NX)=SNDB(L,KTOPM1,NX)-DELT*SNDFPA(L,NX)
-c          SESNFP(L)=SESNFP(L)+SNDFPA(L,NX)
+!          SESNFP(L)=SESNFP(L)+SNDFPA(L,NX)
         ENDDO
       ENDDO
-C
-c      ERR=SESNFA(11)-SESNFP(11)
-c      WRITE(8,8669)N,TIME,ERR,SESNFA(11),SESNFP(11),QSSDPA(11),
-c     &             QSBDTOP(11),QWATPA(11),QWBDTOP(11)
-c      WRITE(8,8669)KBT(11),TIME,HBED(11,KBT(11)-1),
-c     &         (VFRBED(11,KBT(11)-1,NS),NS=1,NSED+NSND)
-C
+!
+!      ERR=SESNFA(11)-SESNFP(11)
+!      WRITE(8,8669)N,TIME,ERR,SESNFA(11),SESNFP(11),QSSDPA(11),
+!     &             QSBDTOP(11),QWATPA(11),QWBDTOP(11)
+!      WRITE(8,8669)KBT(11),TIME,HBED(11,KBT(11)-1),
+!     &         (VFRBED(11,KBT(11)-1,NS),NS=1,NSED+NSND)
+!
       ENDIF
       ENDIF
-C
+!
  8669 FORMAT('PA ERR ',I10,F10.5,8E14.6)
-C
-C**********************************************************************C
-C
-C **  UPDATE TOP BED LAYER THICKNESS AND VOID RATIO
-C **  FOR DEPOSITION-RESUSPENSION STEP
-C
+!
+!**********************************************************************C
+!
+! **  UPDATE TOP BED LAYER THICKNESS AND VOID RATIO
+! **  FOR DEPOSITION-RESUSPENSION STEP
+!
       DO L=2,LA
         K=KBT(L)
         HBED1(L,K)=HBED(L,K)
         VDRBED1(L,K)=VDRBED(L,K)
         QWTRBEDA(L)=QSBDTOP(L)
         QWTRBEDA1(L)=QWBDTOP(L)
-        HBED(L,K)=HBED(L,K)-DELT*(QSBDTOP(L)+QWBDTOP(L))
-     &                     +DELT*(QSSDPA(L)+QWATPA(L))
+        HBED(L,K)=HBED(L,K)-DELT*(QSBDTOP(L)+QWBDTOP(L))+DELT*(QSSDPA(L)+QWATPA(L))
         TMPVAL=HBED1(L,K)/(1.+VDRBED1(L,K))
         TMPVAL=TMPVAL-DELT*(QSBDTOP(L)-QSSDPA(L))
         IF(TMPVAL.GT.0.0) THEN
@@ -1536,12 +1502,12 @@ C
           VDRBED(L,K)=0.0
         END IF
       ENDDO
-C
-C **  UPDATE PARENT LAYER BED LAYER THICKNESS AND VOID RATIO
-C **  FOR DEPOSITION-RESUSPENSION STEP
-C
+!
+! **  UPDATE PARENT LAYER BED LAYER THICKNESS AND VOID RATIO
+! **  FOR DEPOSITION-RESUSPENSION STEP
+!
       IF(ISNDAL.EQ.2)THEN
-C
+!
       DO L=2,LA
         K=KBT(L)-1
         HBED1(L,K)=HBED(L,K)
@@ -1555,11 +1521,11 @@ C
           VDRBED(L,K)=0.0
         END IF
       ENDDO
-C
+!
       ENDIF
-C
+!
       IF(ISNDAL.EQ.0)THEN
-C
+!
       DO K=1,KB
         DO L=2,LA
           IF(K.LT.KBT(L))THEN
@@ -1568,9 +1534,9 @@ C
           ENDIF
         ENDDO
       ENDDO
-C
+!
       ELSE
-C
+!
       DO K=1,KB
         DO L=2,LA
           IF(K.LT.KBT(L)-1)THEN
@@ -1579,15 +1545,15 @@ C
           ENDIF
         ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C
-C**********************************************************************C
-C
-C **  ADJUST SEDIMENT AND WATER VOLUME FLUXES TO ORGINAL VALUES
-C **  IF BANK EROSION IS ACTIVE
-C
+!
+!
+!**********************************************************************C
+!
+! **  ADJUST SEDIMENT AND WATER VOLUME FLUXES TO ORGINAL VALUES
+! **  IF BANK EROSION IS ACTIVE
+!
       IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
         IF(ISBKERO.GE.1) THEN
           DO NP=1,NBEPAIR
@@ -1600,47 +1566,47 @@ C
           ENDDO
         ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  CALCULATE TOXIC SETTLING, DEPOSITION AND RESUSPENSION
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE TOXIC SETTLING, DEPOSITION AND RESUSPENSION
+!
       IF(ISTRAN(5).GT.0)THEN
 	  IF(IGRIDV.EQ.0) CALL CALTOX
 	  IF(IGRIDV.EQ.1) CALL CALTOXGVC
 	ENDIF
-C
-C**********************************************************************C
-C
-C **  UPDATE TOP BED LAYER THICKNESS AND VOID RATIO
-C **  FOR DEPOSITION-RESUSPENSION STEP
-C **  PRESENTLY ACTIVE BEFORE THE WATER COLUMN-BED TOXICS EXCHANGE
-C **  CHECK PLACEMENT THERE AND HERE FOR
-C
-C      DO L=2,LA
-C        K=KBT(L)
-C        HBED(L,K)=HBED1(L,K)-DELT*(QSBDTOP(L)+QWBDTOP(L))
-C        TMPVAL=HBED1(L,K)/(1.+VDRBED(L,K))
-C        TMPVAL=TMPVAL-DELT*QSBDTOP(L)
-C        VDRTMP=(TMPVAL/HBED(L,K))-1.
-C        HBED1(L,K)=S3TL*HBED(L,K)+S2TL*HBED1(L,K)
-C        VDRBED1(L,K)=S3TL*VDRBED(L,K)+S2TL*VDRBED1(L,K)
-C        VDRBED(L,K)=VDRTMP
-C      ENDDO
-C
-C      DO K=1,KB
-C      DO L=2,LA
-C       IF(K.LT.KBT(L))THEN
-C         HBED1(L,K)=S3TL*HBED(L,K)+S2TL*HBED1(L,K)
-C         VDRBED1(L,K)=S3TL*VDRBED(L,K)+S2TL*VDRBED1(L,K)
-C       ENDIF
-C      ENDDO
-C      ENDDO
-C
-C**********************************************************************C
-C
-C **  UPDATE SEDIMENT BED LAYERING
-C
+!
+!**********************************************************************C
+!
+! **  UPDATE TOP BED LAYER THICKNESS AND VOID RATIO
+! **  FOR DEPOSITION-RESUSPENSION STEP
+! **  PRESENTLY ACTIVE BEFORE THE WATER COLUMN-BED TOXICS EXCHANGE
+! **  CHECK PLACEMENT THERE AND HERE FOR
+!
+!      DO L=2,LA
+!        K=KBT(L)
+!        HBED(L,K)=HBED1(L,K)-DELT*(QSBDTOP(L)+QWBDTOP(L))
+!        TMPVAL=HBED1(L,K)/(1.+VDRBED(L,K))
+!        TMPVAL=TMPVAL-DELT*QSBDTOP(L)
+!        VDRTMP=(TMPVAL/HBED(L,K))-1.
+!        HBED1(L,K)=S3TL*HBED(L,K)+S2TL*HBED1(L,K)
+!        VDRBED1(L,K)=S3TL*VDRBED(L,K)+S2TL*VDRBED1(L,K)
+!        VDRBED(L,K)=VDRTMP
+!      ENDDO
+!
+!      DO K=1,KB
+!      DO L=2,LA
+!       IF(K.LT.KBT(L))THEN
+!         HBED1(L,K)=S3TL*HBED(L,K)+S2TL*HBED1(L,K)
+!         VDRBED1(L,K)=S3TL*VDRBED(L,K)+S2TL*VDRBED1(L,K)
+!       ENDIF
+!      ENDDO
+!      ENDDO
+!
+!**********************************************************************C
+!
+! **  UPDATE SEDIMENT BED LAYERING
+!
       IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)CALL CALBLAY
 C
 C**********************************************************************C
@@ -1652,7 +1618,7 @@ C
           BEDLINIT(L,K)=0.
         ENDDO
       ENDDO
-C
+!
       DO NX=1,NSED+NSND
       DO K=1,KB
         DO L=2,LA
@@ -1670,7 +1636,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           NS=NSED+NX
@@ -1681,7 +1647,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -1691,7 +1657,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           NS=NSED+NX
@@ -1702,7 +1668,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -1716,7 +1682,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NX=1,NSND
           NS=NSED+NX
@@ -1731,14 +1697,14 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       DO K=1,KB
       DO L=2,LA
         FRACCOH(L,K)=0.0
         FRACNON(L,K)=0.0
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSED
       DO K=1,KB
       DO L=2,LA
@@ -1748,7 +1714,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NX=1,NSND
       NS=NX+NSED
       DO K=1,KB
@@ -1759,18 +1725,16 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
-C **  CALCULATE COHESIVE AND NONCOHESIVE VOID RATIOS
-C
+!
+! **  CALCULATE COHESIVE AND NONCOHESIVE VOID RATIOS
+!
       DO K=1,KB
       DO L=2,LA
         IF(K.LE.KBT(L))THEN
           VDRBEDSND(L,K)=SNDVDRD
           VDRBEDSED(L,K)=0.0
           IF(FRACCOH(L,K).GT.0.0)THEN
-            VDRBEDSED(L,K)=
-     &        ( (FRACCOH(L,K)+FRACNON(L,K))*VDRBED(L,K)
-     &         -FRACNON(L,K)*SNDVDRD )/FRACCOH(L,K)
+            VDRBEDSED(L,K)=( (FRACCOH(L,K)+FRACNON(L,K))*VDRBED(L,K)-FRACNON(L,K)*SNDVDRD )/FRACCOH(L,K)
           ENDIF
         ELSE
           VDRBEDSND(L,K)=0.0
@@ -1778,11 +1742,11 @@ C
         ENDIF
       ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  UPDATE SEDIMENT BED PHYSICAL PROPERTIES
-C
+!
+!**********************************************************************C
+!
+! **  UPDATE SEDIMENT BED PHYSICAL PROPERTIES
+!
       IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
         IF(IBMECH.EQ.9)THEN
           CALL CALBED9
@@ -1790,13 +1754,13 @@ C
           CALL CALBED
         ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C ++  CHANGE BED MORPHOLOGY
-C
+!
+!**********************************************************************C
+!
+! ++  CHANGE BED MORPHOLOGY
+!
       IF(IMORPH.GT.0.OR.ISGWIT.GE.2)THEN
-C
+!
         DO L=2,LA
           TVAR3S(L)=HBEDA(L)
           BELV1(L)=BELV(L)
@@ -1804,12 +1768,12 @@ C
           H1P(L)=HP(L)
           P1(L)=P(L)
         ENDDO
-C
+!
         DO L=2,LA
           HBEDA(L)=0.0
           DELBED(L)=TVAR3S(L)
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(K.LE.KBT(L))THEN
@@ -1817,7 +1781,7 @@ C
             ENDIF
           END DO
         ENDDO
-C
+!
         DO L=2,LA
           IF(HBEDA(L).NE.DELBED(L))THEN
              DELBED(L)=DELBED(L)-HBEDA(L)
@@ -1825,51 +1789,51 @@ C
              DELBED(L)=0.0
           ENDIF
         ENDDO
-C
+!
 
         DO L=2,LA
           BELV(L)=ZELBEDA(L)+HBEDA(L)
         ENDDO
-C
+!
         IF(ISGWIT.GE.2)THEN
           DO L=2,LA
-C            DELBED(L)=TVAR3S(L)-HBEDA(L)+DELT*QGW(L)*DXYIP(L)
+!            DELBED(L)=TVAR3S(L)-HBEDA(L)+DELT*QGW(L)*DXYIP(L)
             HP(L)=HP(L)+DELBED(L)+DELT*QGW(L)*DXYIP(L)
             P(L)=P(L)+G*DELT*QGW(L)*DXYIP(L)
             WSEL1=GI*P1(L)
             WSEL=GI*P(L)
-c            write(8,8800)L,P1(L),P(L),WSEL1,WSEL,H1P(L),HP(L)
+!            write(8,8800)L,P1(L),P(L),WSEL1,WSEL,H1P(L),HP(L)
           ENDDO
         ELSE
           DO L=2,LA
-C            DELBED(L)=TVAR3S(L)-HBEDA(L)
+!            DELBED(L)=TVAR3S(L)-HBEDA(L)
             HP(L)=HP(L)+DELBED(L)
           ENDDO
         ENDIF
-C
+!
         DO L=2,LA
           HPI(L)=1./HP(L)
           QMORPH(L)=DELTI*DXYP(L)*(HP(L)-H1P(L))
         ENDDO
-C
+!
         ITMP=0
         DO L=2,LA
-c          IF(JL(L).EQ.233)THEN
-c            IF(IL(L).GE.29.AND.IL(L).LE.33)THEN
-c              WRITE(8,2346)IL(L),JL(L),HP(L),HTMP(L),DELBED(L),
-c     &                         TVAR3S(L),HBEDA(L)
-c            ENDIF
-c          ENDIF
-cjah         No Morph Bombouts for Now
+!          IF(JL(L).EQ.233)THEN
+!            IF(IL(L).GE.29.AND.IL(L).LE.33)THEN
+!              WRITE(8,2346)IL(L),JL(L),HP(L),HTMP(L),DELBED(L),
+!     &                         TVAR3S(L),HBEDA(L)
+!            ENDIF
+!          ENDIF
+!jah         No Morph Bombouts for Now
           IF(HP(L).LT.0.0) THEN
             HP(L)=HDRY
             IMASKDRY(L)=2
-CJMH FIXED LOGICAL ASSIGNMENT
-C            LMASKDRY(L)=0
+!JMH FIXED LOGICAL ASSIGNMENT
+!            LMASKDRY(L)=0
             LMASKDRY(L)=.FALSE.
-CJMH
+!JMH
           ENDIF
-cjah
+!jah
           IF(HP(L).LT.0.0)THEN
             ITMP=1
 !            WRITE(8,2345)IL(L),JL(L),HBED1(L,KBT(L)),HBED(L,KBT(L)),  !hnr 7/27/2009
@@ -1879,7 +1843,7 @@ cjah
 !            WRITE(8,2347)L,KBT(L),DELT,QSBDTOP(L),QWBDTOP(L)          !hnr 7/27/2009
           ENDIF
         ENDDO
-C
+!
         IF(ITMP.EQ.1)THEN
           CALL EEXPOUT(0)
           CALL SURFPLT
@@ -1898,21 +1862,21 @@ C
           ENDIF
           STOP
         ENDIF
-C
+!
       END IF
-C
+!
  2345 FORMAT('NEG DEPTH DUE TO MORPH CHANGE', 2I5,12F12.5)
  2347 FORMAT('                             ', 2I5,12F12.5)
  2346 FORMAT('MORP ERR ',2I5,6E15.6)
  1993 FORMAT(2I6,4E14.6)
-C
-C**********************************************************************C
-C
-C ++  ADJUST CONCENTRATIONS OF TRANSPORT VARIABLES IN RESPONSE TO
-C ++  CHANGE IN BED MORPHOLOGY
-C
+!
+!**********************************************************************C
+!
+! ++  ADJUST CONCENTRATIONS OF TRANSPORT VARIABLES IN RESPONSE TO
+! ++  CHANGE IN BED MORPHOLOGY
+!
       IF(IMORPH.GT.0.OR.ISGWIT.GE.2)THEN
-C
+!
         IF(ISTRAN(1).GT.0)THEN
           DO K=1,KC
             DO L=2,LA
@@ -1920,7 +1884,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(2).GT.0)THEN
           DO K=1,KC
             DO L=2,LA
@@ -1928,7 +1892,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(3).GT.0)THEN
           DO K=1,KC
             DO L=2,LA
@@ -1936,7 +1900,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(4).GT.0)THEN
           DO K=1,KC
             DO L=2,LA
@@ -1944,7 +1908,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(5).GT.0)THEN
           DO NT=1,NTOX
             DO K=1,KC
@@ -1954,7 +1918,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GT.0)THEN
           DO NS=1,NSED
             DO K=1,KC
@@ -1964,7 +1928,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GT.0)THEN
           DO NS=1,NSND
             DO K=1,KC
@@ -1974,34 +1938,34 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
       END IF
-C
-C**********************************************************************C
-C
-C **  POREWATER ADVECTION AND DIFFUSION OF TOXICS
-C
+!
+!**********************************************************************C
+!
+! **  POREWATER ADVECTION AND DIFFUSION OF TOXICS
+!
       IF(ISTRAN(5).GT.0)CALL CALTOXB
-C
-C**********************************************************************C
-C
-C **  TOXIC CONTAMINANT REACTIONS
-C
+!
+!**********************************************************************C
+!
+! **  TOXIC CONTAMINANT REACTIONS
+!
       IF(ISTRAN(5).GE.1)CALL TOXCHEM
-C
-C**********************************************************************C
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+!**********************************************************************C
+!
  8800 FORMAT(I5,8E14.5)
-C
+!
       CLOSE(1)
       CLOSE(11)
       CLOSE(21)
       CLOSE(31)
       CLOSE(41)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

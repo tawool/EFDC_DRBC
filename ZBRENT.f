@@ -1,23 +1,22 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       FUNCTION ZBRENT(ISMERR)
-C
-C**********************************************************************C
-C
-C USING BRENT'S METHOD, FIND THE ROOT OF A FUNC SEDFLUX KNOWN TO LIE
-C   BETWEENRMIN & RMAX WITHIN AN ACCURACY OF TOL (P. 253 IN NUMERICAL
-C   RECIPE).
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! USING BRENT'S METHOD, FIND THE ROOT OF A FUNC SEDFLUX KNOWN TO LIE
+!   BETWEENRMIN & RMAX WITHIN AN ACCURACY OF TOL (P. 253 IN NUMERICAL
+!   RECIPE).
+!
+!**********************************************************************C
+!
       EXTERNAL SEDFLUX
-C
-      PARAMETER (IZMAX=100,EPS=3.0E-8,TOL=1.0E-5,
-     &             RMIN=1.0E-4,RMAX=100.0)
-C
+!
+      PARAMETER (IZMAX=100,EPS=3.0E-8,TOL=1.0E-5,RMIN=1.0E-4,RMAX=100.0)
+!
       ISMERR = 0
       A = RMIN
       B = RMAX
@@ -27,7 +26,7 @@ C
         ISMERR = 1
         RETURN
       ENDIF
-C
+!
       FC = FB
       DO II=1,IZMAX
         IF(FB*FC.GT.0.0)THEN
@@ -74,7 +73,7 @@ C
           D = XM
           E = D
         ENDIF
-C
+!
         A = B
         FA = FB
         IF(ABS(D).GT.TOL1)THEN
@@ -84,10 +83,9 @@ C
         ENDIF
         FB = SEDFLUX(B)
       ENDDO
-C
+!
       ISMERR = 2
       ZBRENT = B
-C
+!
       RETURN
       END
-

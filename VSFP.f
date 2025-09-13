@@ -1,55 +1,53 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE VSFP
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINES VSFP WRITES INSTANTANEOUS VERTICAL SCALAR FIELD
-C **  PROFILES AT SPECIFIED HORIZONTAL SPACE-TIME LOCATIONS TO
-C **  FILE VSFP.OUT
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINES VSFP WRITES INSTANTANEOUS VERTICAL SCALAR FIELD
+! **  PROFILES AT SPECIFIED HORIZONTAL SPACE-TIME LOCATIONS TO
+! **  FILE VSFP.OUT
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-      DIMENSION SALVS(KCM),TEMVS(KCM),DYEVS(KCM),SFLVS(KCM),
-     &          TOXVS(KCM,NTXM),SEDVS(KCM,NSCM),SNDVS(KCM,NSNM)
-C
-      DIMENSION SALOT(MDVSM),TEMOT(MDVSM),DYEOT(MDVSM),SFLOT(MDVSM),
-     &        TOXOT(MDVSM,NTXM),SEDOT(MDVSM,NSCM),SNDOT(MDVSM,NSNM)
-C
+!
+      DIMENSION SALVS(KCM),TEMVS(KCM),DYEVS(KCM),SFLVS(KCM),TOXVS(KCM,NTXM),SEDVS(KCM,NSCM),SNDVS(KCM,NSNM)
+!
+      DIMENSION SALOT(MDVSM),TEMOT(MDVSM),DYEOT(MDVSM),SFLOT(MDVSM),TOXOT(MDVSM,NTXM),SEDOT(MDVSM,NSCM),SNDOT(MDVSM,NSNM)
+!
       DIMENSION DBLWSF(KCM),DABVBT(KCM)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(JSVSFP.EQ.0) GOTO 100
       OPEN(1,FILE='VSFP1.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='VSFP1.OUT')
-C      WRITE(1,101)
-C      WRITE(1,102)
+!      WRITE(1,101)
+!      WRITE(1,102)
       CLOSE(1)
       OPEN(1,FILE='VSFP2.OUT')
       CLOSE(1,STATUS='DELETE')
       JSVSFP=0
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   100 CONTINUE
-C
+!
       DO ML=1,MLVSFP
       IF(NTVSFP(ML).EQ.N)THEN
         MDMAX=1
@@ -149,7 +147,7 @@ C
           ENDIF
         ENDIF
         ENDDO
-C
+!
         OPEN(1,FILE='VSFP1.OUT',POSITION='APPEND')
         WRITE(1,103)TIMVSFP(ML),NTVSFP(ML),I,J,HP(L)
         WRITE(1,104)
@@ -160,8 +158,7 @@ C
         WRITE(1,103)TIMVSFP(ML),NTVSFP(ML),I,J,HP(L)
         WRITE(1,114)
         DO MD=1,MDMAX
-         WRITE(1,105)DMVSFP(MD),(SEDOT(MD,NS),NS=1,NSED),
-     &                          (SNDOT(MD,NX),NX=1,NSND)
+         WRITE(1,105)DMVSFP(MD),(SEDOT(MD,NS),NS=1,NSED),(SNDOT(MD,NX),NX=1,NSND)
         ENDDO
         WRITE(1,102)
         NTXX=MIN(NTOX,6)
@@ -199,20 +196,18 @@ C
           WRITE(1,102)
         ENDIF
         CLOSE(1)
-C
+!
         OPEN(1,FILE='VSFP2.OUT',POSITION='APPEND')
         WRITE(1,103)TIMVSFP(ML),NTVSFP(ML),I,J,HP(L)
         WRITE(1,204)
         DO K=KC,1,-1
-         WRITE(1,106)K,DBLWSF(K),DABVBT(K),SALVS(K),TEMVS(K),DYEVS(K),
-     &                                    SFLVS(K)
+         WRITE(1,106)K,DBLWSF(K),DABVBT(K),SALVS(K),TEMVS(K),DYEVS(K),SFLVS(K)
         ENDDO
         WRITE(1,102)
         WRITE(1,103)TIMVSFP(ML),NTVSFP(ML),I,J,HP(L)
         WRITE(1,214)
         DO K=KC,1,-1
-         WRITE(1,106)K,DBLWSF(K),DABVBT(K),(SEDVS(K,NS),NS=1,NSED),
-     &                          (SNDVS(K,NX),NX=1,NSND)
+         WRITE(1,106)K,DBLWSF(K),DABVBT(K),(SEDVS(K,NS),NS=1,NSED),(SNDVS(K,NX),NX=1,NSND)
         ENDDO
         WRITE(1,102)
         NTXX=MIN(NTOX,6)
@@ -250,16 +245,15 @@ C
           WRITE(1,102)
         ENDIF
         CLOSE(1)
-C
+!
       ENDIF
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   101 FORMAT('  INSTANTANEOUS VERTICAL SCALAR FIELD PROFILES')
   102 FORMAT(/)
-  103 FORMAT('  TIME = ',F12.4,' N = ',I8,'  I,J = ',2I4,
-     &          '  H = ',F10.2)
+  103 FORMAT('  TIME = ',F12.4,' N = ',I8,'  I,J = ',2I4,'  H = ',F10.2)
   104 FORMAT('  DEP BEL SURF     SAL,TEM,DYE,SFL',/)
   114 FORMAT('  DEP BEL SURF     SED(N=1,NSED),SND(N=1,NSND)',/)
   124 FORMAT('  DEP BEL SURF     TOX(N= 1, 6)',/)
@@ -267,16 +261,15 @@ C
   144 FORMAT('  DEP BEL SURF     TOX(N=13,18)',/)
   154 FORMAT('  DEP BEL SURF     TOX(N=19,24)',/)
   204 FORMAT('  LAY     DBS     HAB       SAL,TEM,DYE,SFL',/)
-  214 FORMAT('  LAY     DBS     HAB       ',
-     &          'SED(N=1,NSED),SND(N=1,NSND)',/)
+  214 FORMAT('  LAY     DBS     HAB       ','SED(N=1,NSED),SND(N=1,NSND)',/)
   224 FORMAT('  LAY     DBS     HAB       TOX(N= 1, 6)',/)
   234 FORMAT('  LAY     DBS     HAB       TOX(N= 7,12)',/)
   244 FORMAT('  LAY     DBS     HAB       TOX(N=13,18)',/)
   254 FORMAT('  LAY     DBS     HAB       TOX(N=19,24)',/)
   105 FORMAT(1X,F8.2,4X,6F11.4)
   106 FORMAT(1X,I2,2X,2F8.2,2X,6F11.4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

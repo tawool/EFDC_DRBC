@@ -1,49 +1,49 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE RSALPLTV(ITMP)
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE RSALPLTV WRITES A FILE FOR VERTICAL PLANE CONTOURING
-C **  OF RESIDUAL SALINITY AND VERTICAL DIFFUSIVITY ALONG AN ARBITARY
-C **  SEQUENCE OF (I,J) POINTS 
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE RSALPLTV WRITES A FILE FOR VERTICAL PLANE CONTOURING
+! **  OF RESIDUAL SALINITY AND VERTICAL DIFFUSIVITY ALONG AN ARBITARY
+! **  SEQUENCE OF (I,J) POINTS 
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       CHARACTER*80 TITLE1,TITLE2,TITLE3,TITLE5
       DIMENSION ABTMP(KCM)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ITMP.EQ.2) RETURN
       IF(ITMP.EQ.3) RETURN
       IF(ITMP.EQ.4) RETURN
       IF(ITMP.GE.5) GOTO 1000
       IF(JSRSPV(ITMP).NE.1) GOTO 300
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       TITLE1='RESIDUAL SALINITY CONTOURS'
       TITLE2='RESIDUAL VERTICAL DIFFUSIVITY CONTOURS'
       TITLE3='FLUX AVG RESID VERT DIFF CONTOURS'
-C
+!
       IF(ISECSPV.GE.1)THEN
         OPEN(11,FILE='RSALCV1.OUT',STATUS='UNKNOWN')
         OPEN(21,FILE='RVISCV1.OUT',STATUS='UNKNOWN')
@@ -143,7 +143,7 @@ C
         OPEN(29,FILE='RVISCV9.OUT',STATUS='UNKNOWN')
         OPEN(39,FILE='RVEFCV9.OUT',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECSPV
       LUN1=10+IS
       LUN2=20+IS
@@ -162,22 +162,22 @@ C
       CLOSE(LUN1)
       CLOSE(LUN2)
       CLOSE(LUN3)
-CREMOVE LATER      CLOSE(LUN5)
+!REMOVE LATER      CLOSE(LUN5)
       ENDDO
-C
+!
       JSRSPV(ITMP)=0
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
   300 CONTINUE
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=DT*FLOAT(N)+TCON*TBEGIN
         TIME=TIME/TCON    
       ELSE
         TIME=TIMESEC/TCON
       ENDIF
-C
+!
       IF(ISECSPV.GE.1)THEN
         OPEN(11,FILE='RSALCV1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
         OPEN(21,FILE='RVISCV1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
@@ -223,7 +223,7 @@ C
         OPEN(29,FILE='RVISCV9.OUT',POSITION='APPEND',STATUS='UNKNOWN')
         OPEN(39,FILE='RVEFCV9.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECSPV
       LUN1=10+IS
       LUN2=20+IS
@@ -237,13 +237,13 @@ C
        L=LIJ(I,J)
        ZETA=HLPF(L)-HMP(L)
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN1,250)(SALLPF(L,K),K=1,KC)
-C      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
-C      WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        ABTMP(1)=5000.*ABLPF(L,1)*HLPF(L)
        ABTMP(KC)=5000.*ABLPF(L,KS)*HLPF(L)
@@ -251,11 +251,11 @@ C      WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
         ABTMP(K)=5000.*(ABLPF(L,K-1)+ABLPF(L,K))*HLPF(L)
         ENDDO
        WRITE(LUN2,250)(ABTMP(K),K=1,KC)
-C      ABTMP(1)=5000.*ABEFF(L,1)*HLPF(L)
-C      ABTMP(KC)=5000.*ABEFF(L,KS)*HLPF(L)
-C       DO K=2,KS
-C       ABTMP(K)=5000.*(ABEFF(L,K-1)+ABEFF(L,K))*HLPF(L)
-C       ENDDO
+!      ABTMP(1)=5000.*ABEFF(L,1)*HLPF(L)
+!      ABTMP(KC)=5000.*ABEFF(L,KS)*HLPF(L)
+!       DO K=2,KS
+!       ABTMP(K)=5000.*(ABEFF(L,K-1)+ABEFF(L,K))*HLPF(L)
+!       ENDDO
        ABTMP(1)=-50.*ABEFF(L,1)
        ABTMP(KC)=50.*ABEFF(L,KS)
         DO K=2,KS
@@ -267,19 +267,19 @@ C       ENDDO
       CLOSE(LUN2)
       CLOSE(LUN3)
       ENDDO
-C
+!
       GOTO 2000
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  1000 CONTINUE
-C
+!
       IF(JSRSPV(ITMP).NE.1) GOTO 1300
 
       TITLE1='RESIDUAL TOXIC CONTAMIANT CONTOURS'
       TITLE2='RESIDUAL COHESIVE SED CONTOURS'
       TITLE2='RESIDUAL NONCOHESIVE SED CONTOURS'
-C
+!
       IF(ISECSPV.GE.1)THEN
         IF(ITMP.EQ.5) OPEN(11,FILE='RTOXCV1.OUT',STATUS='UNKNOWN')
         IF(ITMP.EQ.6) OPEN(21,FILE='RSEDCV1.OUT',STATUS='UNKNOWN')
@@ -379,7 +379,7 @@ C
         IF(ITMP.EQ.6) OPEN(29,FILE='RSEDCV9.OUT',STATUS='UNKNOWN')
         IF(ITMP.EQ.7) OPEN(39,FILE='RSNDCV9.OUT',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECSPV
       LUN1=10+IS
       LUN2=20+IS
@@ -399,24 +399,24 @@ C
       IF(ITMP.EQ.6) CLOSE(LUN2)
       IF(ITMP.EQ.7) CLOSE(LUN3)
       ENDDO
-C
+!
       JSRSPV(ITMP)=0
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
  1300 CONTINUE
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=DT*FLOAT(N)+TCON*TBEGIN
         TIME=TIME/TCON    
       ELSE
         TIME=TIMESEC/TCON
       ENDIF
-C
-C ** TOXICS
-C
+!
+! ** TOXICS
+!
       IF(ITMP.EQ.5)THEN
-C  
+!  
       IF(ISECSPV.GE.1)THEN
         OPEN(11,FILE='RTOXCV1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF 
@@ -444,7 +444,7 @@ C
       IF(ISECSPV.GE.9)THEN
         OPEN(19,FILE='RTOXCV9.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECSPV
       LUN1=10+IS
       WRITE (LUN1,100)N,TIME
@@ -454,20 +454,20 @@ C
        L=LIJ(I,J)
        ZETA=HLPF(L)-HMP(L)
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN1,250)(TOXLPF(L,K,1),K=1,KC)
        ENDDO
       CLOSE(LUN1)
       ENDDO
-C
+!
       ENDIF
-C
-C **  COHESIVE SEDIMENT
-C
+!
+! **  COHESIVE SEDIMENT
+!
       IF(ITMP.EQ.6)THEN
-C
+!
       IF(ISECSPV.GE.1)THEN
         OPEN(21,FILE='RSEDCV1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF 
@@ -495,7 +495,7 @@ C
       IF(ISECSPV.GE.9)THEN
         OPEN(29,FILE='RSEDCV9.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECSPV
       LUN2=20+IS
       WRITE (LUN2,100)N,TIME
@@ -505,20 +505,20 @@ C
        L=LIJ(I,J)
        ZETA=HLPF(L)-HMP(L)
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN2,250)(SEDTLPF(L,K),K=1,KC)
        ENDDO
       CLOSE(LUN2)
       ENDDO
-C
+!
       ENDIF
-C
-C ** NONCHOESIVE SEDIMENT
-C
+!
+! ** NONCHOESIVE SEDIMENT
+!
       IF(ITMP.EQ.7)THEN
-C
+!
       IF(ISECSPV.GE.1)THEN
         OPEN(31,FILE='RSNDCV1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF 
@@ -546,7 +546,7 @@ C
       IF(ISECSPV.GE.9)THEN
         OPEN(39,FILE='RSNDCV9.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECSPV
       LUN3=30+IS
       WRITE (LUN3,100)N,TIME
@@ -556,33 +556,33 @@ C
        L=LIJ(I,J)
        ZETA=HLPF(L)-HMP(L)
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN3,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN3,250)(SNDTLPF(L,K),K=1,KC)
        ENDDO
       CLOSE(LUN3)
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  2000 CONTINUE
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
    99 FORMAT(A40,2X,A20)
   100 FORMAT(I10,F12.4)
   101 FORMAT(2I10)
-C 200 FORMAT(2I4,1X,10F12.6)
-C 250 FORMAT(12F10.6)
+! 200 FORMAT(2I4,1X,10F12.6)
+! 250 FORMAT(12F10.6)
   200 FORMAT(2I5,1X,6E14.6)
   250 FORMAT(12E12.4)
-CMRM  200 FORMAT(2I5,1X,1P,6E13.5) 
-CMRM  250 FORMAT(1P,12E11.3)
-C
-C**********************************************************************C
-C
+!MRM  200 FORMAT(2I5,1X,1P,6E13.5) 
+!MRM  250 FORMAT(1P,12E11.3)
+!
+!**********************************************************************C
+!
       RETURN
       END

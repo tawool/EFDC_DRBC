@@ -1,38 +1,38 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SSEDTOXGVC(ISTLX,IS2TLX,CORDTX)
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE SSEDTOXGVC SHIFT VARIABLES INTO POSITION TO USE
-C **  SIGMA VERSION OF SSEDTOX AND DAUGHTER SUBROUTINES
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE SSEDTOXGVC SHIFT VARIABLES INTO POSITION TO USE
+! **  SIGMA VERSION OF SSEDTOX AND DAUGHTER SUBROUTINES
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       COMMON/SSEDTOX1A/ CBEDTOTAL(LCM),QCELLCTR(LCM),HGDH(LCM),
      &                  FRACCOH(LCM,KBM),FRACNON(LCM,KBM),USTARSED(LCM),
      &                  USTARSND(LCM),QWATPA(LCM),QSSDPA(LCM)
-C
-C**********************************************************************C
-C
-C     DIAGNOSTICS
-C
+!
+!**********************************************************************C
+!
+!     DIAGNOSTICS
+!
       NTSTBCM=NTSTBC-1
       IF(N.EQ.NTSTBCM)THEN
 	  OPEN(1,FILE='SSEDTOXGVC1.OUT')
@@ -43,20 +43,20 @@ C
 	  ENDDO
 	  CLOSE(1)
 	ENDIF
-C
-C**********************************************************************C
-C
-C     SHIFT DOWN
-C
+!
+!**********************************************************************C
+!
+!     SHIFT DOWN
+!
       DO L=2,LA
  	  KTMP=KC+1-KGVCP(L)
 	  KTMPP=KTMP+1
 	  KO=KGVCP(L)-1
 	  IF(KGVCP(L).GT.1)THEN
-c
+!
 	  KBPM=KGVCP(L)-1
         QQ(L,0)=QQ(L,KBPM)
-C
+!
 	  DO K=1,KTMP
           U(L,K)=U(L,K+KO)
           U(L,K)=V(L,K+KO)
@@ -82,7 +82,7 @@ C
             TOX(L,K,NT)=TOX(L,K+KO,NT)
           ENDDO
 	  ENDDO
-c
+!
         IF(KTMPP.LE.KC)THEN
 	    DO K=KTMPP,KC
             U(L,K)=0.0
@@ -110,10 +110,10 @@ c
             ENDDO
           ENDDO
 	  ENDIF
-c
+!
         ENDIF
       ENDDO
-C
+!
       IF(N.EQ.NTSTBCM)THEN
 	  OPEN(1,FILE='SSEDTOXGVC2.OUT')
 	  CLOSE(1,STATUS='DELETE')
@@ -123,7 +123,7 @@ C
 	  ENDDO
 	  CLOSE(1)
 	ENDIF
-C
+!
       IF(N.EQ.NTSTBCM)THEN
 	  DO L=2,LA
           TAUB(L)=QQ(L,0)/CTURB2
@@ -132,17 +132,17 @@ C
 	  ENDDO
       ENDIF
 
-C**********************************************************************C
-C
-C     CALL SSEDTOX
-C
+!**********************************************************************C
+!
+!     CALL SSEDTOX
+!
 	IF(ISHOUSATONIC.EQ.0)THEN
         CALL SSEDTOX(ISTLX,IS2TLX,CORDTX)
       ELSE
         CALL SSEDTOXHOUS(ISTLX,IS2TLX,CORDTX)
       ENDIF
-C
-C
+!
+!
       IF(N.EQ.NTSTBCM)THEN
 	  OPEN(1,FILE='SSEDTOXGVC3.OUT')
 	  CLOSE(1,STATUS='DELETE')
@@ -152,7 +152,7 @@ C
 	  ENDDO
 	  CLOSE(1)
 	ENDIF
-C
+!
       IF(N.EQ.NTSTBCM)THEN
 	  OPEN(1,FILE='SSEDTOXGVC0.OUT')
 	  CLOSE(1,STATUS='DELETE')
@@ -160,26 +160,26 @@ C
 	  DO L=2,LA
 	    WRITE(1,102)IL(L),JL(L),KGVCP(L),QCELLCTR(L),CBEDTOTAL(L),
      &                                TAUB(L),TAUBSED(L),TAUBSND(L)
-c	    WRITE(1,103)IL(L),JL(L),KGVCP(L),RSSBCW(L),WCORWST(L),
-c     &                                     RSSBCE(L),WCOREST(L),
-c     &                                     RSSBCS(L),WCORSTH(L),
-c     &                                     RSSBCN(L),WCORNTH(L)
+!	    WRITE(1,103)IL(L),JL(L),KGVCP(L),RSSBCW(L),WCORWST(L),
+!     &                                     RSSBCE(L),WCOREST(L),
+!     &                                     RSSBCS(L),WCORSTH(L),
+!     &                                     RSSBCN(L),WCORNTH(L)
 	  ENDDO
 	  CLOSE(1)
 	ENDIF
-C
-C**********************************************************************C
-C
-C     SHIFT UP
-C
+!
+!**********************************************************************C
+!
+!     SHIFT UP
+!
       NSORB=NSED+NSND+2
-C
+!
       DO L=2,LA
  	  KTMP=KC+1-KGVCP(L)
 	  KTMPP=KTMP+1
 	  KO=KGVCP(L)-1
 	  IF(KGVCP(L).GT.1)THEN
-C
+!
         DO K=KC,KGVCP(L),-1
 	    U(L,K)=U(L,K-KO)
 	    V(L,K)=V(L,K-KO)
@@ -213,7 +213,7 @@ C
 	      ENDDO
           ENDDO
         ENDDO
-C
+!
         DO K=1,KGVCP(L)-1
           U(L,K)=0.0
           V(L,K)=0.0
@@ -247,10 +247,10 @@ C
 	      ENDDO
           ENDDO
         ENDDO
-C
+!
         ENDIF
       ENDDO
-C
+!
       IF(N.EQ.NTSTBCM)THEN
 	  OPEN(1,FILE='SSEDTOXGVC4.OUT')
 	  CLOSE(1,STATUS='DELETE')
@@ -260,14 +260,14 @@ C
 	  ENDDO
 	  CLOSE(1)
 	ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   101 FORMAT(3I5,25E10.2)
   102 FORMAT(3I5,8E14.5)
   103 FORMAT(3I5,8F8.2)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
 	END

@@ -1,49 +1,49 @@
-c
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SETGVC
-C
-C **  THIS SUBROUTINE IS PART OF EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 08/01/2004        John Hamrick       01/11/2002       John Hamrick
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE SETGVC READS INFORMATION FOR THE GENERALIZED VERTICAL 
-C **  COORDINATE OPTION AND SETS REAL AND LOCICAL MASK
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 08/01/2004        John Hamrick       01/11/2002       John Hamrick
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE SETGVC READS INFORMATION FOR THE GENERALIZED VERTICAL 
+! **  COORDINATE OPTION AND SETS REAL AND LOCICAL MASK
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       DIMENSION IJKLAY(ICM,JCM),IHEADER(ICM)
       DIMENSION BELVCOR(LCM)
 	DIMENSION ZCELLTOP(0:KCM)
 	CHARACTER*4 CV3D(ICM,JCM,KCM)
 	CHARACTER*4 CUP3D(ICM,JCM,KCM),CW3D(ICM,JCM,KCM)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       DO I=1,IC
 	  IHEADER(I)=I
 	ENDDO
-C
+!
       DO J=1,JC
 	  DO I=1,IC
 	    IJKLAY(I,J)=0
 	  ENDDO
 	ENDDO
-C
+!
       DO K=1,KC
 	  DO J=1,JC
 	    DO I=1,IC
@@ -53,7 +53,7 @@ C
           ENDDO
 	  ENDDO
 	ENDDO
-C
+!
       GVCSCLP(1)=1.0
 	GVCSCLU(1)=1.0
 	GVCSCLV(1)=1.0
@@ -66,28 +66,28 @@ C
       GVCSCLPI(LC)=1.0
 	GVCSCLUI(LC)=1.0
 	GVCSCLVI(LC)=1.0
-C
+!
       DO L=1,LC
 	  KGVCP(L)=1
 	  KGVCU(L)=1
 	  KGVCV(L)=1
 	ENDDO
-C
+!
       ZCELLTOP(KC)=0.0
       DO K=KC-1,0,-1
       ZCELLTOP(K)=ZCELLTOP(K+1)+DZC(K+1)
 	ENDDO
-C
-C**********************************************************************C
-C
-C **  READ VERTICAL GRID CELL MAPPING FROM CELLGVC.INP
-C
+!
+!**********************************************************************C
+!
+! **  READ VERTICAL GRID CELL MAPPING FROM CELLGVC.INP
+!
       OPEN(1,FILE='CELLGVC.INP',STATUS='UNKNOWN')
-C
+!
       DO IS=1,4
       READ(1,100)
       ENDDO
-C
+!
       IF(IC.GT.120)THEN
         IACROSS=120
         DO IT=1,IC,IACROSS
@@ -113,20 +113,20 @@ C
 	    ENDIF
         ENDDO
       ENDIF
-C
+!
       CLOSE(1)
-C
-C**********************************************************************C
-C
-C **  SET LCTV(L) USING IJCTV(I,J)
-C
-C     LCTV AND IJCTV EQUAL 1 FOR FOR RESCALED HEIGHT CELLS AND 
-C     2 FOR SIGMA CELLS
-C
+!
+!**********************************************************************C
+!
+! **  SET LCTV(L) USING IJCTV(I,J)
+!
+!     LCTV AND IJCTV EQUAL 1 FOR FOR RESCALED HEIGHT CELLS AND 
+!     2 FOR SIGMA CELLS
+!
       DO L=1,LC
 	  LCTV(L)=0
 	ENDDO
-C
+!
       DO J=1,JC
 	  DO I=1,IC
 	    IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LE.5)THEN
@@ -140,20 +140,20 @@ C
           ENDIF
 	  ENDDO
 	ENDDO
-C
-C**********************************************************************C
-C
-C **  READ NUMBER OF ACTIVE VERTICAL LAYERS FROM GVCLAYER.INP
-C **  AND WRITE SUMMARY TO GVCLAYER.OUT FOR ISETGVC=0
-C
+!
+!**********************************************************************C
+!
+! **  READ NUMBER OF ACTIVE VERTICAL LAYERS FROM GVCLAYER.INP
+! **  AND WRITE SUMMARY TO GVCLAYER.OUT FOR ISETGVC=0
+!
       IF(ISETGVC.EQ.0) THEN
-C
+!
       OPEN(1,FILE='GVCLAYER.INP',STATUS='UNKNOWN')
-C
+!
       DO IS=1,4
       READ(1,100)
       ENDDO
-C
+!
       DO LL=2,LA
 	  READ(1,*)I,J,KLTMP
 	  IJKLAY(I,J)=KLTMP
@@ -169,35 +169,33 @@ C
 	    GVCSCLPI(L)=1./GVCSCLP(L)
         ENDIF
 	ENDDO
-C
+!
       CLOSE(1)
-C
+!
       OPEN(1,FILE='GVCLAYER.OUT',STATUS='UNKNOWN')
-C
+!
       DO L=2,LA
 	  IF(LCTV(L).EQ.2) THEN
-          WRITE(1,110)IL(L),JL(L),KSIG,KGVCP(L),GVCSCLP(L),
-     &                BELV(L),BELV(L)
+          WRITE(1,110)IL(L),JL(L),KSIG,KGVCP(L),GVCSCLP(L),BELV(L),BELV(L)
         ENDIF
 	  IF(LCTV(L).EQ.1) THEN
 	    KLTMP=KC-KGVCP(L)+1
-          WRITE(1,110)IL(L),JL(L),KLTMP,KGVCP(L),GVCSCLP(L),
-     &                BELV(L),BELV(L)
+          WRITE(1,110)IL(L),JL(L),KLTMP,KGVCP(L),GVCSCLP(L),BELV(L),BELV(L)
         ENDIF
 	ENDDO
-C
+!
       CLOSE(1)
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  AUTOMATICALLY SET BOTTOM LAYER K INDEX USING SELVREF, SELVREF
-C **  AND BELV (IN DXDY.INP), ADJUST BELV, AND WRITE RESULTS 
-C **  TO GVCLAYER.OUT FOR ISETGVC=1
-C
+!
+!**********************************************************************C
+!
+! **  AUTOMATICALLY SET BOTTOM LAYER K INDEX USING SELVREF, SELVREF
+! **  AND BELV (IN DXDY.INP), ADJUST BELV, AND WRITE RESULTS 
+! **  TO GVCLAYER.OUT FOR ISETGVC=1
+!
       IF(ISETGVC.EQ.1) THEN
-C
+!
       DO L=2,LA
 	  IF(LCTV(L).EQ.2) THEN
 	    KGVCP(L)=KC-KSIG+1
@@ -206,22 +204,22 @@ C
 		IJKLAY(IL(L),JL(L))=KSIG
         ENDIF
 	ENDDO
-C
+!
 	TMPSCL=SELVREF-BELVREF
-C
-C      DO L=2,LA
-C	  IF(LCTV(L).EQ.1) THEN
-C	    TMPVAL=(SELVREF-BELV(L))/TMPSCL
-C          TMPVAL=TMPVAL*FLOAT(KC)
-C		KLTMP=NINT(TMPVAL)
-C	    GVCSCLP(L)=FLOAT(KC)/FLOAT(KLTMP)
-C	    GVCSCLPI(L)=1./GVCSCLP(L)
-C	    BELVCOR(L)=SELVREF-TMPSCL/GVCSCLP(L)
-C	    KGVCP(L)=KC-KLTMP+1 
-C 		IJKLAY(IL(L),JL(L))=KLTMP
-C       ENDIF
-C	ENDDO
-C
+!
+!      DO L=2,LA
+!	  IF(LCTV(L).EQ.1) THEN
+!	    TMPVAL=(SELVREF-BELV(L))/TMPSCL
+!          TMPVAL=TMPVAL*FLOAT(KC)
+!		KLTMP=NINT(TMPVAL)
+!	    GVCSCLP(L)=FLOAT(KC)/FLOAT(KLTMP)
+!	    GVCSCLPI(L)=1./GVCSCLP(L)
+!	    BELVCOR(L)=SELVREF-TMPSCL/GVCSCLP(L)
+!	    KGVCP(L)=KC-KLTMP+1 
+! 		IJKLAY(IL(L),JL(L))=KLTMP
+!       ENDIF
+!	ENDDO
+!
       DO L=2,LA
 	  IF(LCTV(L).EQ.1) THEN
 	    TMPVAL=(SELVREF-BELV(L))/TMPSCL
@@ -244,43 +242,41 @@ C
  		IJKLAY(IL(L),JL(L))=KLTMP
        ENDIF
 	ENDDO
-C
+!
       OPEN(1,FILE='GVCLAYER.OUT',STATUS='UNKNOWN')
-C
+!
       DO L=2,LA
 	  IF(LCTV(L).EQ.2) THEN
-          WRITE(1,110)IL(L),JL(L),KSIG,KGVCP(L),GVCSCLP(L),
-     &                BELV(L),BELV(L)
+          WRITE(1,110)IL(L),JL(L),KSIG,KGVCP(L),GVCSCLP(L),BELV(L),BELV(L)
         ENDIF
 	  IF(LCTV(L).EQ.1) THEN
 	    KLTMP=KC-KGVCP(L)+1
-          WRITE(1,110)IL(L),JL(L),KLTMP,KGVCP(L),GVCSCLP(L),
-     &                BELV(L),BELVCOR(L)
+          WRITE(1,110)IL(L),JL(L),KLTMP,KGVCP(L),GVCSCLP(L),BELV(L),BELVCOR(L)
         ENDIF
 	ENDDO
-C
+!
       CLOSE(1)
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(KC.LT.10)THEN
-C
+!
       OPEN(1,FILE='CELLLAY.OUT')
-C
+!
       DO J=JC,1,-1
 	WRITE(1,101)J,(IJKLAY(I,J),I=1,IC)
 	ENDDO
-C
+!
       CLOSE(1)
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  INITIALIZE LOGICAL MASK
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZE LOGICAL MASK
+!
       DO K=1,KC
       DO L=1,LC
 	  LGVCP(L,K)=.FALSE.
@@ -289,28 +285,28 @@ C
 	  LGVCW(L,K)=.FALSE.
 	ENDDO
 	ENDDO
-C
-C **  SET CELL CENTER LOGICAL MASK
-C
+!
+! **  SET CELL CENTER LOGICAL MASK
+!
       DO K=1,KC
       DO L=2,LA
 	  IF(K.GE.KGVCP(L))LGVCP(L,K)=.TRUE.
 	ENDDO
 	ENDDO
-C
-C **  SET U FACE LOGICAL AND REAL MASKS
-C
+!
+! **  SET U FACE LOGICAL AND REAL MASKS
+!
       DO L=2,LA
 	  IF(SUB(L).LT.0.5)KGVCU(L)=KGVCP(L)
 	  IF(SVB(L).LT.0.5)KGVCV(L)=KGVCP(L)
 	ENDDO
-C
+!
       DO L=2,LA
 	  GVCSCLU(L)=1.0
 	  IF(SUB(L).GT.0.5)THEN
 	    KGVCU(L)=MAX(KGVCP(L),KGVCP(L-1))
-C	    KLTMP=KC-KGVCU(L)+1 
-c	    GVCSCLU(L)=FLOAT(KC)/FLOAT(KLTMP)
+!	    KLTMP=KC-KGVCU(L)+1 
+!	    GVCSCLU(L)=FLOAT(KC)/FLOAT(KLTMP)
 	    GVCSCLU(L)=MAX(GVCSCLP(L),GVCSCLP(L-1))
 		DO K=KGVCU(L),KC 
             LGVCU(L,K)=.TRUE.
@@ -330,16 +326,16 @@ c	    GVCSCLU(L)=FLOAT(KC)/FLOAT(KLTMP)
 	    ENDDO
 	  ENDIF
 	ENDDO
-C
-C **  SET V FACE LOGICAL AND REAL MASKS
-C
+!
+! **  SET V FACE LOGICAL AND REAL MASKS
+!
       DO L=2,LA
 	  GVCSCLV(L)=1.0
 	  LS=LSC(L)
 	  IF(SVB(L).GT.0.5)THEN
 	    KGVCV(L)=MAX(KGVCP(L),KGVCP(LS))
-C	    KLTMP=KC-KGVCV(L)+1 
-C	    GVCSCLV(L)=FLOAT(KC)/FLOAT(KLTMP)
+!	    KLTMP=KC-KGVCV(L)+1 
+!	    GVCSCLV(L)=FLOAT(KC)/FLOAT(KLTMP)
 	    GVCSCLV(L)=MAX(GVCSCLP(L),GVCSCLP(LS))
 		DO K=KGVCV(L),KC 
             LGVCV(L,K)=.TRUE.
@@ -359,21 +355,21 @@ C	    GVCSCLV(L)=FLOAT(KC)/FLOAT(KLTMP)
 	    ENDDO
 	  ENDIF
 	ENDDO
-C
+!
       DO L=2,LA
 	  GVCSCLUI(L)=1./GVCSCLU(L)
 	  GVCSCLVI(L)=1./GVCSCLV(L)
 	ENDDO
-C
-C **  SET W FACE LOGICAL AND REAL MASKS
-C
+!
+! **  SET W FACE LOGICAL AND REAL MASKS
+!
       DO L=2,LA
         SWB3D(L,0)=0.0
 	  SWB3DO(L,0)=0.0
         SWB3D(L,KC)=0.0
 	  SWB3DO(L,KC)=0.0
 	ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
 	  IF(LGVCP(L,K))THEN
@@ -383,7 +379,7 @@ C
 	  ENDIF
 	ENDDO
 	ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
 	  IF(LGVCW(L,K))THEN
@@ -395,21 +391,17 @@ C
 	  ENDIF
 	ENDDO
 	ENDDO
-C
-C**********************************************************************C
-C
-C **  RESET CELL CENTER DEPTHS
-C
+!
+!**********************************************************************C
+!
+! **  RESET CELL CENTER DEPTHS
+!
       DO L=2,LA
       LS=LSC(L)      
        IF(SUB(L).GT.0.5)THEN
-	   HU(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*HP(L)
-     &           +DXP(L-1)*DYP(L-1)*GVCSCLP(L-1)*HP(L-1))
-     &           /(GVCSCLU(L)*DXU(L)*DYU(L))
+	   HU(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*HP(L)+DXP(L-1)*DYP(L-1)*GVCSCLP(L-1)*HP(L-1))/(GVCSCLU(L)*DXU(L)*DYU(L))
 	   HUI(L)=1./HU(L)
-	   H1U(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*H1P(L)
-     &           +DXP(L-1)*DYP(L-1)*GVCSCLP(L-1)*H1P(L-1))
-     &           /(GVCSCLU(L)*DXU(L)*DYU(L))
+	   H1U(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*H1P(L)+DXP(L-1)*DYP(L-1)*GVCSCLP(L-1)*H1P(L-1))/(GVCSCLU(L)*DXU(L)*DYU(L))
 	   H1UI(L)=1./H1U(L)
 	 ELSE
 	   HU(L)=HP(L)
@@ -418,13 +410,9 @@ C
 	   H1UI(L)=1./H1U(L)
 	 ENDIF
         IF(SVB(L).GT.0.5)THEN
-          HV(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*HP(L)
-     &           +DXP(LS )*DYP(LS)*GVCSCLP(LS)*HP(LS ))
-     &           /(GVCSCLV(L)*DXV(L)*DYV(L))
+          HV(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*HP(L)+DXP(LS )*DYP(LS)*GVCSCLP(LS)*HP(LS ))/(GVCSCLV(L)*DXV(L)*DYV(L))
 	    HVI(L)=1./HV(L)
-          H1V(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*H1P(L)
-     &           +DXP(LS )*DYP(LS)*GVCSCLP(LS)*H1P(LS ))
-     &           /(GVCSCLV(L)*DXV(L)*DYV(L))
+          H1V(L)=0.5*(DXP(L)*DYP(L)*GVCSCLP(L)*H1P(L)+DXP(LS )*DYP(LS)*GVCSCLP(LS)*H1P(LS ))/(GVCSCLV(L)*DXV(L)*DYV(L))
 	    H1VI(L)=1./H1V(L)
         ELSE
 	   HV(L)=HP(L)
@@ -433,29 +421,29 @@ C
 	   H1VI(L)=1./H1V(L)
 	 ENDIF
       ENDDO
-C
-C
-C**********************************************************************C
-C
-C **  SET INTERNAL MODE SOLUTION COEFFICIENTS
-C
-c           CDZR(1)=DZC(1)-1.
-c
-c           DO K=2,KS
-c           CDZR(K)=DZC(K)+CDZR(K-1)
-c           ENDDO
-c
-c           DO K=1,KS
-c           CDZR(K)=CDZR(K)*DZG(K)*CDZL(1)
-c           ENDDO
-C
+!
+!
+!**********************************************************************C
+!
+! **  SET INTERNAL MODE SOLUTION COEFFICIENTS
+!
+!           CDZR(1)=DZC(1)-1.
+!
+!           DO K=2,KS
+!           CDZR(K)=DZC(K)+CDZR(K-1)
+!           ENDDO
+!
+!           DO K=1,KS
+!           CDZR(K)=CDZR(K)*DZG(K)*CDZL(1)
+!           ENDDO
+!
       DO K=1,KC
 	 DO L=1,LC
 	   CDZRGVCU(L,K)=0.0
 	   CDZRGVCV(L,K)=0.0
 	 ENDDO
 	ENDDO
-C
+!
       DO L=2,LA
 	  KBTMPU=KGVCU(L)
 	  KBPLUS=KBTMPU+1
@@ -468,7 +456,7 @@ C
         ENDDO
       ENDDO
   800 FORMAT('CDZR,I,J,K',4I5,2E14.6)
-C
+!
       DO L=2,LA
 	  KBTMPV=KGVCV(L)
 	  KBPLUS=KBTMPV+1
@@ -480,17 +468,17 @@ C
 	    CDZRGVCV(L,K)=CDZRGVCV(L,K)*DZG(K)*CDZL(KBTMPV)
         ENDDO
       ENDDO
-C
-C        CDZDGVCU(L,K)=GVCSCLU(L)*(CDZD(K) FIXED FOR GVC)
-C	   CDZDGVCU(L,K)=GVCSCLV(L)*(CDZD(K) FIXED FOR GVC)
-C
+!
+!        CDZDGVCU(L,K)=GVCSCLU(L)*(CDZD(K) FIXED FOR GVC)
+!	   CDZDGVCU(L,K)=GVCSCLV(L)*(CDZD(K) FIXED FOR GVC)
+!
       DO K=1,KC
 	 DO L=1,LC
 	   CDZDGVCU(L,K)=0.0
 	   CDZDGVCV(L,K)=0.0
 	 ENDDO
 	ENDDO
-C
+!
       DO L=2,LA
 	  KBTMPU=KGVCU(L)
 	  KBPLUS=KBTMPU+1
@@ -499,7 +487,7 @@ C
 	    CDZDGVCU(L,K)=GVCSCLU(L)*DZC(K)+CDZDGVCU(L,K-1)
         ENDDO
       ENDDO
-C
+!
       DO L=2,LA
 	  KBTMPV=KGVCV(L)
 	  KBPLUS=KBTMPV+1
@@ -508,11 +496,11 @@ C
 	    CDZDGVCV(L,K)=GVCSCLV(L)*DZC(K)+CDZDGVCV(L,K-1)
         ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  RESET SCALAR VARIABLES
-C
+!
+!**********************************************************************C
+!
+! **  RESET SCALAR VARIABLES
+!
        IF(ISTRAN(1).GE.1)THEN
          DO K=1,KC
          DO L=1,LC
@@ -564,17 +552,17 @@ C
         ENDDO
          ENDDO
        ENDIF
-C
-C**********************************************************************C
-C
-C **  SET TURBULENCE MODEL PROXIMITY FUNCTION
-C
+!
+!**********************************************************************C
+!
+! **  SET TURBULENCE MODEL PROXIMITY FUNCTION
+!
       DO K=0,KC
 	DO L=2,LA
 	  FPROXGVC(L,K)=0.0
 	ENDDO
 	ENDDO
-C
+!
       IF(IFPROX.EQ.1)THEN
 	  DO K=1,KS
 	  DO L=2,LA
@@ -585,32 +573,31 @@ C
         ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(IFPROX.EQ.2)THEN
 	  DO K=1,KS
 	  DO L=2,LA
 		KBOT=KGVCP(L)-1
 	    IF(K.GE.KGVCP(L))THEN
-	      FPROXGVC(L,K)=(1./(VKC*(Z(K)-Z(KBOT)))**2)
-     &          +CTE5*(1./(VKC*(1.-Z(K)))**2)/(CTE4+0.00001)
+	      FPROXGVC(L,K)=(1./(VKC*(Z(K)-Z(KBOT)))**2)+CTE5*(1./(VKC*(1.-Z(K)))**2)/(CTE4+0.00001)
 	    ENDIF
         ENDDO
         ENDDO
       ENDIF
-C
+!
       OPEN(1,FILE='GVCPROX.OUT',STATUS='UNKNOWN')
 	DO L=2,LA
 	  WRITE(1,1947)IL(L),JL(L),KGVCP(L),(FPROXGVC(L,K),K=0,KC)
       ENDDO
 	CLOSE(1)
-C
+!
  1947 FORMAT(3I6,65F12.5)
-C
-C**********************************************************************C
-C
-C **  ADJUST STEADY INFLOWS TO SUM TO TOTAL
-C
-
+!
+!**********************************************************************C
+!
+! **  ADJUST STEADY INFLOWS TO SUM TO TOTAL
+!
+!
       DO LL=1,NQSIJ
         L=LQS(LL)
         DO K=1,KC
@@ -621,14 +608,14 @@ C
           ENDIF
         ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  OUTPUT MASKING RESULTS
-C
+!
+!**********************************************************************C
+!
+! **  OUTPUT MASKING RESULTS
+!
 
       OPEN(1,FILE='GVCMASK.OUT',STATUS='UNKNOWN')
-C
+!
       DO K=1,KC
 	  DO J=1,JC
 	    DO I=1,IC
@@ -646,7 +633,7 @@ C
           ENDDO
 	  ENDDO
 	ENDDO
-C
+!
       DO K=2,KC
 	  DO J=1,JC
 	    DO I=1,IC
@@ -669,7 +656,7 @@ C
           ENDDO
 	  ENDDO
 	ENDDO
-C
+!
         K=1
 	  DO J=1,JC
 	    DO I=1,IC
@@ -683,7 +670,7 @@ C
 	      ENDIF
           ENDDO
 	  ENDDO
-C
+!
       DO K=KC,1,-1
 	  WRITE(1,120)
 	  WRITE(1,121)K
@@ -701,11 +688,11 @@ C
 	    WRITE(1,123)(CV3D(I,J,K),I=1,IC)
         ENDDO
 	ENDDO	   
-C
+!
       CLOSE(1)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   100 FORMAT(1X)
   101 FORMAT(I3,2X,120I1)
   102 FORMAT(' READ ERROR FOR FILE CELLGVC.INP ON J = ',I5)
@@ -717,8 +704,8 @@ C
   122 FORMAT(I3,2X,200A4)
   123 FORMAT(5X,200A4)
   124 FORMAT(4X,200I4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

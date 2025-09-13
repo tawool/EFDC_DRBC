@@ -1,54 +1,53 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE ROUT3D
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C     DIMENSION APT(KPCM,KCM), AP(KPCM), IAP(KPCM)
+!     DIMENSION APT(KPCM,KCM), AP(KPCM), IAP(KPCM)
       DIMENSION  AKL(KPCM,LCM),  AIJ(IGM,JGM)
-C
-C     CHARACTER BLANK,LET(0:50),CHARY(ICM,JCM,KPCM)
-C     CHARACTER *80 TITLE
-      CHARACTER *12 SALFN,TEMFN,DYEFN,SEDFN,UUUFN,VVVFN,WWWFN,
-     &              CMPFN,SNDFN,TOXFN
-C
-C     DATA BLANK/' '/
-C
-C     DATA LET/' ','Y','Y','X','X','W','W','V','V','U','U','T','T',
-C    &         'S','S','R','R','Q','Q','P','P','O','O','N','N',
-C    &         'M','M','L','L','K','K','J','J','I','I','H','H',
-C    &         'G','G','F','F','E','E','D','D','C','C','B','B',
-C    &         'A','A'/    
-C
-C**********************************************************************C
-C
-C **  INITIALIZE OUTPUT FILES
-C
-C----------------------------------------------------------------------C
-C
+!
+!     CHARACTER BLANK,LET(0:50),CHARY(ICM,JCM,KPCM)
+!     CHARACTER *80 TITLE
+      CHARACTER *12 SALFN,TEMFN,DYEFN,SEDFN,UUUFN,VVVFN,WWWFN,CMPFN,SNDFN,TOXFN
+!
+!     DATA BLANK/' '/
+!
+!     DATA LET/' ','Y','Y','X','X','W','W','V','V','U','U','T','T',
+!    &         'S','S','R','R','Q','Q','P','P','O','O','N','N',
+!    &         'M','M','L','L','K','K','J','J','I','I','H','H',
+!    &         'G','G','F','F','E','E','D','D','C','C','B','B',
+!    &         'A','A'/    
+!
+!**********************************************************************C
+!
+! **  INITIALIZE OUTPUT FILES
+!
+!----------------------------------------------------------------------C
+!
       IAD=I3DMAX-I3DMIN+1
       JAD=J3DMAX-J3DMIN+1
-C
-C     NEED TO REPLACE .ASC WITH (KPCXJADXIAD) IN FILE NAMES BELOW
-C
+!
+!     NEED TO REPLACE .ASC WITH (KPCXJADXIAD) IN FILE NAMES BELOW
+!
       NRCAL3D=NRCAL3D+1
-C
+!
       IF(NRCAL3D.EQ.1)THEN
         SALFN='RSAL3D01.ASC'
         TEMFN='RTEM3D01.ASC'
@@ -337,7 +336,7 @@ C
         WWWFN='RWWW3D24.ASC'
         CMPFN='RCMP3D24.ASC'
       ENDIF
-C
+!
       IF(NRCAL3D.EQ.1)THEN
         OPEN(50,FILE='ROUT3D.DIA',STATUS='UNKNOWN')
         CLOSE(50,STATUS='DELETE')
@@ -351,7 +350,7 @@ C
         OPEN(50,FILE='ROUT3D.DIA',POSITION='APPEND',STATUS='UNKNOWN')
         WRITE(50,530)NRCAL3D
        ENDIF             
-C
+!
       IF(IS3DSAL.GE.1)THEN
          ASALMAX=-99999999.
          ASALMIN= 99999999.
@@ -574,32 +573,32 @@ C
          CLOSE(59,STATUS='DELETE')
          OPEN(59,FILE=TOXFN,STATUS='UNKNOWN')
       ENDIF
-C
+!
       OPEN(99,FILE=CMPFN,STATUS='UNKNOWN')
       CLOSE(99,STATUS='DELETE')
       OPEN(99,FILE=CMPFN,STATUS='UNKNOWN')
-C
-C**********************************************************************C
-C
-C **  BEGIN LOOP TO LOAD OUTPUT FILES 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  BEGIN LOOP TO LOAD OUTPUT FILES 
+!
+!----------------------------------------------------------------------C
+!
       DO L=2,LA
       LN=LNC(L)
       LS=LSC(L)
-C
+!
       DO KP=1,KPC
       IAP(KP)=0
       AP(KP)=0.
       ENDDO
-C
+!
       DO K=1,KC
       DO KP=1,KPC
       APT(KP,K)=0.
       ENDDO
       ENDDO
-C
+!
       DO KP=1,KPC
       ZZPS=(ZZP(KP)-BELV(L))/HLPF(L)
       IF(ZZPS.GE.0.)THEN
@@ -616,12 +615,12 @@ C
       ENDIF
       ENDDO
   195 CONTINUE
-C
-C*DIAGNOSTIC
-C     WRITE(50,500)NRCAL3D
-C     WRITE(50,500)L,IL(L),JL(L),KPB(L),KPS(L)
-C*DIAGNOSTIC
-C
+!
+!*DIAGNOSTIC
+!     WRITE(50,500)NRCAL3D
+!     WRITE(50,500)L,IL(L),JL(L),KPB(L),KPS(L)
+!*DIAGNOSTIC
+!
       DO KP=KPB(L),KPS(L)
       ZZPS=(ZZP(KP)-BELV(L))*HPI(L)
       IF(ZZPS.GE.0.0.AND.ZZPS.LE.1.0)THEN
@@ -645,17 +644,17 @@ C
         ENDIF
       ENDIF
       ENDDO
-C
-C*DIAGNOSTIC
-C     IF(NRCAL3D.EQ.1)THEN
-C       IF(L.EQ.2)THEN
-C          DO KP=1,KPC
-C          WRITE(50,505)(APT(KP,K),K=1,KC)
-C          ENDDO
-C       ENDIF
-C     ENDIF
-C*DIAGNOSTIC
-C
+!
+!*DIAGNOSTIC
+!     IF(NRCAL3D.EQ.1)THEN
+!       IF(L.EQ.2)THEN
+!          DO KP=1,KPC
+!          WRITE(50,505)(APT(KP,K),K=1,KC)
+!          ENDDO
+!       ENDIF
+!     ENDIF
+!*DIAGNOSTIC
+!
       DO K=1,KC
        TMP3D(K)=1.0
       ENDDO
@@ -669,7 +668,7 @@ C
        IAP(KP)=NINT(AP(KP))
       ENDDO
       WRITE(99,559)IL(L),JL(L),(IAP(K),K=1,KPC)
-C
+!
       IF(IS3DSAL.GE.1)THEN
         DO K=1,KC
         TMP3D(K)=SALLPF(L,K)
@@ -679,13 +678,13 @@ C
         AP(KP)=0.
         DO K=1,KC
         AP(KP)=AP(KP)+APT(KP,K)*TMP3D(K)
-C*DIAGNOSTIC
-C       IF(NRCAL3D.EQ.1)THEN
-C         IF(L.EQ.2)THEN
-C         WRITE(50,510)KP,K,AP(KP),APT(KP,K),TMP3D(K),SAL(L,K)
-C         ENDIF
-C       ENDIF
-C*DIAGNOSTIC
+!*DIAGNOSTIC
+!       IF(NRCAL3D.EQ.1)THEN
+!         IF(L.EQ.2)THEN
+!         WRITE(50,510)KP,K,AP(KP),APT(KP,K),TMP3D(K),SAL(L,K)
+!         ENDIF
+!       ENDIF
+!*DIAGNOSTIC
         ENDDO
         ENDDO
         DO KP=KPB(L),KPS(L)
@@ -695,15 +694,15 @@ C*DIAGNOSTIC
         ENDDO
         IF(JS3DSAL.LE.2) WRITE(51,501)(IAP(K),K=1,KPC)
         IF(JS3DSAL.EQ.3) WRITE(51,551)(AP(K),K=1,KPC)
-C*DIAGNOSTIC
-C       IF(NCALL3D.EQ.1)THEN
-C         IF(L.EQ.2)THEN
-C           DO KP=1,KPC
-C           WRITE(50,506)KP,AP(KP),IAP(KP)
-C           ENDDO
-C         ENDIF
-C       ENDIF
-C*DIAGNOSTIC
+!*DIAGNOSTIC
+!       IF(NCALL3D.EQ.1)THEN
+!         IF(L.EQ.2)THEN
+!           DO KP=1,KPC
+!           WRITE(50,506)KP,AP(KP),IAP(KP)
+!           ENDDO
+!         ENDIF
+!       ENDIF
+!*DIAGNOSTIC
       ENDIF
       IF(IS3DTEM.GE.1)THEN
         DO K=1,KC
@@ -870,9 +869,9 @@ C*DIAGNOSTIC
         IF(JS3DSND.LE.2) WRITE(59,501)(IAP(K),K=1,KPC)
         IF(JS3DSND.EQ.3) WRITE(59,551)(AP(K),K=1,KPC)
       ENDIF
-C
+!
       ENDDO
-C
+!
       IF(IS3DSAL.GE.1) CLOSE(51)
       IF(IS3DTEM.GE.1) CLOSE(52)
       IF(IS3DDYE.GE.1) CLOSE(53)
@@ -883,24 +882,24 @@ C
       IF(IS3DSND.GE.1) CLOSE(58)
       IF(IS3DTOX.GE.1) CLOSE(59)
       CLOSE(99)
-C
-C**********************************************************************C
-C
-C **  REWRITE OUTPUT ARRAYS INTO CORRECT ORDER IF I3DRW.EQ.1
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  REWRITE OUTPUT ARRAYS INTO CORRECT ORDER IF I3DRW.EQ.1
+!
+!----------------------------------------------------------------------C
+!
       IF(I3DRW.EQ.1)THEN
-C
+!
       DO J=1,JG
       DO I=1,IG
       IAIJ(I,J)=0
       AIJ(I,J)=0
       ENDDO
       ENDDO
-C
+!
       IF(ISCLO.EQ.0.OR.NWGG.EQ.0)THEN
-C  
+!  
       IF(IS3DSAL.GE.1)THEN
          OPEN(51,FILE=SALFN,STATUS='UNKNOWN')
          DO L=2,LA
@@ -1225,9 +1224,9 @@ C
          ENDIF
          CLOSE(59)
       ENDIF
-C
+!
       ELSE
-C  
+!  
       IF(IS3DSAL.GE.1)THEN
          OPEN(51,FILE=SALFN,STATUS='UNKNOWN')
          DO L=2,LA
@@ -1426,13 +1425,13 @@ C
          ENDDO
          CLOSE(59)
       ENDIF
-C
+!
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   500 FORMAT(5I5)
   501 FORMAT(72I4)
   502 FORMAT(I5,F10.4)
@@ -1452,9 +1451,9 @@ C
   530 FORMAT('NRCAL3D = ',I5/)
   551 FORMAT(72F7.1)
   559 FORMAT(2I4,2X,72I2)
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       CLOSE(50)
       RETURN
-      END 
+      END

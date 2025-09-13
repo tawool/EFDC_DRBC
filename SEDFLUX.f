@@ -1,16 +1,16 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       FUNCTION SEDFLUX(SMSOD1)
-C
-C**********************************************************************C
-C
-C SOLVE MASS-BALANCE EQ'S FOR NH4, NO3 & H2S/CH4 AND THEIR FLUXES.
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! SOLVE MASS-BALANCE EQ'S FOR NH4, NO3 & H2S/CH4 AND THEIR FLUXES.
+!
+!**********************************************************************C
+!
       COMMON/BPMNNHC/SMO20,SMO2JC,SMO2NO3,SMO2NH4,SMFD1NH4,SMFD1H2S,
      * RSMSS,RSM1NH4,RSM2NH4,SK1NH4SM,A1NH4SM,A2NH4SM,A22NH4SM,B1NH4SM,
      * B2NH4SM,RJNITSM, RSM1NO3,RSM2NO3,SK1NO3SM,A1NO3SM,A2NO3SM,
@@ -20,29 +20,27 @@ C
      * CSODSM,CSODMSM,RNSODSM
 
       RSMSS = SMSOD1 / (SMO20+ 1.E-18)
-C
-C NH4
-C
+!
+! NH4
+!
       RRNH4 = SK1NH4SM/(RSMSS+ 1.E-18)
       A11NH4 = RSMSS*SMFD1NH4 + A1NH4SM + RRNH4
       B11NH4 = RSMSS*B1NH4SM
       B22NH4 = B2NH4SM
-      CALL SOLVSMBE(RSM1NH4,RSM2NH4,A11NH4,A22NH4SM,A1NH4SM,A2NH4SM,
-     *  B11NH4,B22NH4)
+      CALL SOLVSMBE(RSM1NH4,RSM2NH4,A11NH4,A22NH4SM,A1NH4SM,A2NH4SM,B11NH4,B22NH4)
       RJNITSM = RRNH4 * RSM1NH4
-C
-C NO3
-C
+!
+! NO3
+!
       RRNO3 = SK1NO3SM/(RSMSS+ 1.E-18)
       A11NO3 = RSMSS + A1NO3SM + RRNO3
       B11NO3 = RJNITSM + RSMSS*B1NO3SM
       B22NO3 = B2NO3SM
-      CALL SOLVSMBE(RSM1NO3,RSM2NO3,A11NO3,A22NO3SM,A1NO3SM,A2NO3SM,
-     *  B11NO3,B22NO3)
+      CALL SOLVSMBE(RSM1NO3,RSM2NO3,A11NO3,A22NO3SM,A1NO3SM,A2NO3SM,B11NO3,B22NO3)
       RJDENSM = RRNO3*RSM1NO3 + RK2NO3SM*RSM2NO3
-C
-C H2S/CH4: SMCH4S=2*SMKL12*SMCH4S
-C
+!
+! H2S/CH4: SMCH4S=2*SMKL12*SMCH4S
+!
       SMJ2H2S = MAX(SMO2JC - SMO2NO3*RJDENSM, 0.0)
       IF(SMSAL0.GT.SMCSHSCH)THEN
         RRH2S = SK1H2SSM/(RSMSS+ 1.E-18)
@@ -50,8 +48,7 @@ C
         A11H2S = SMTT1 + A1H2SSM + RRH2S
         B11H2S = B1H2SSM
         B22H2S = B2H2SSM + SMJ2H2S
-        CALL SOLVSMBE(RSM1H2S,RSM2H2S,A11H2S,A22H2SSM,A1H2SSM,A2H2SSM,
-     *    B11H2S,B22H2S)
+        CALL SOLVSMBE(RSM1H2S,RSM2H2S,A11H2S,A22H2SSM,A1H2SSM,A2H2SSM,B11H2S,B22H2S)
         AQJH2SSM = SMTT1*RSM1H2S
         CSODSM = RRH2S*RSM1H2S
         AQJCH4SM = 0.0
@@ -70,10 +67,10 @@ C
         GJCH4SM = SMJ2H2S - CSODMSM
         AQJH2SSM = 0.0
       ENDIF
-C
+!
       RNSODSM = SMO2NH4*RJNITSM
       SMSOD = CSODSM + RNSODSM
       SEDFLUX = SMSOD - SMSOD1
-C
+!
       RETURN
       END

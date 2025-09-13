@@ -1,21 +1,21 @@
       SUBROUTINE WASPHYDROLINKgvc
-C
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C 05/08/2019        DRBC LZ - SET inumsegconsts VALUE FOR SALINITY
-C 06/13/2019        DRBC LZ - ADDED TEMPORAL SALINITY OUTPUT TO HYDRO-LINKAGE FILE
-C 06/24/2019        HNR_GHD - ADJUSTED VALUES FOR DRY CELLS WHEN W/D IS USED
-C 06/28/2019        DRBC LZ - ADDED INITIAL SALINITY OUTPUT TO HYDRO-LINKAGE FILE DURING A HOT-START
-C 07/23/2019        DRBC LZ - ADJUSTED THE LOGIC SEQUENCE IF A SOUTH CELL IS WITH ID 8
-C 08/26/2020        DRBC LZ - MODIFIED MAX DISPERSION CHECK TO AVOID FEEDBACK TO OTHER EFDC SUBROUTINES
-C 12/20/2020        DRBC LZ - ADDED TKE DISSIPATION RATE
-C 04/21/2022        HNR_GHD - UNLINKED DISPRATE FROM SALINITY - NOT IT CAN BE SETUP WHEN SALINITY IS NOT SIMULATED
-C
+!
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+! 05/08/2019        DRBC LZ - SET inumsegconsts VALUE FOR SALINITY
+! 06/13/2019        DRBC LZ - ADDED TEMPORAL SALINITY OUTPUT TO HYDRO-LINKAGE FILE
+! 06/24/2019        HNR_GHD - ADJUSTED VALUES FOR DRY CELLS WHEN W/D IS USED
+! 06/28/2019        DRBC LZ - ADDED INITIAL SALINITY OUTPUT TO HYDRO-LINKAGE FILE DURING A HOT-START
+! 07/23/2019        DRBC LZ - ADJUSTED THE LOGIC SEQUENCE IF A SOUTH CELL IS WITH ID 8
+! 08/26/2020        DRBC LZ - MODIFIED MAX DISPERSION CHECK TO AVOID FEEDBACK TO OTHER EFDC SUBROUTINES
+! 12/20/2020        DRBC LZ - ADDED TKE DISSIPATION RATE
+! 04/21/2022        HNR_GHD - UNLINKED DISPRATE FROM SALINITY - NOT IT CAN BE SETUP WHEN SALINITY IS NOT SIMULATED
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
       INCLUDE 'ALLset.INT'
       parameter(nf=44000,nsg=20000)
-C
+!
       DIMENSION LAUX(ICM,JCM,KCM)
       INTEGER LU,LD,IU,ID,JU,JD,NAUX,nlay,SUR
       INTEGER istartyear,istartmonth,istartday,istarthour,istartminute
@@ -34,31 +34,31 @@ C
         REAL  SegSalt(nsg),SegTemp(nsg),vol1,vol2,ad,adcoeff,abwmax
         real  abwmx(nsg),SegDispr(nsg)
         REAL  ABTMP      !DRBC LZ, 8/26/2020
-C
-C
-C**********************************************************************C
-C
-C **  READ CONTROL DATA FILE EFDC.WSP
-C
-C----------------------------------------------------------------------C
-C
+!
+!
+!**********************************************************************C
+!
+! **  READ CONTROL DATA FILE EFDC.WSP
+!
+!----------------------------------------------------------------------C
+!
       SVPT=1.
       IF(NTSMMT.LT.NTSPTC)SVPT=0.
-C
+!
       IF(JSWASP.EQ.1) THEN
 
         OPEN(1,FILE='EFDC.WSP',STATUS='UNKNOWN')
         WRITE(6,*)'EFDC.WSP opened'
 
-C
-C1**  READ CELL VOLUME PARAMETERS
-C
+!
+!1**  READ CELL VOLUME PARAMETERS
+!
         READ(1,1)
         READ(1,1)
         READ(1,*) IVOPT,IBEDV,SCALV,CONVV,VMULT,VEXP,DMULT,DEXP
-C
-C2**  READ DIFFUSION PARAMETERS
-C
+!
+!2**  READ DIFFUSION PARAMETERS
+!
         READ(1,1)
         READ(1,1)
         READ(1,*) NRFLD,SCALR,CONVR,ISNKH,adcoeff,abwmax
@@ -67,19 +67,19 @@ C
           l=lij(illt(lt),jllt(lt))
           abwmx(l)=abwmax
         END DO
-C
-C3**  READ ADVECTION PARAMETERS
-C
+!
+!3**  READ ADVECTION PARAMETERS
+!
         READ(1,1)
         READ(1,1)
         READ(1,*) IQOPT,NFIELD,SCALQ,CONVQ,HYDFIL,ISWASPD,ISDHD,IDAYS
-C
-C4**  READ SEDIMENT VOLUME DEPTH AND TDINTS(GROUP C RECORD 1)
-C
+!
+!4**  READ SEDIMENT VOLUME DEPTH AND TDINTS(GROUP C RECORD 1)
+!
         READ(1,1)
         READ(1,1)
         READ(1,*) DEPSED,TDINTS,SEDIFF, WSS1, WSS2, WSS3
-C
+!
         do i=1,5
           read(1,*,err=11)
         end do
@@ -102,20 +102,19 @@ C
         close(1)
 21      format(2I5,f10.6)
         WRITE(6,*)'EFDC.WSP read succesfully and ABmax.txt written'
-C
+!
     1   FORMAT (80X)
-C
+!
 
         IF(NQSER.GE.1)THEN
           OPEN(1,FILE='QSER.INP',STATUS='UNKNOWN')
-C
+!
           DO IS=1,14
            READ(1,1)
           ENDDO
-C
+!
           DO NS=1,NQSER
-            READ(1,*,IOSTAT=ISO)ISTYP, MQSER(NS),TCQSER(NS),TAQSER(NS),
-     &                   RMULADJ,ADDADJ,ICHGQS
+            READ(1,*,IOSTAT=ISO)ISTYP, MQSER(NS),TCQSER(NS),TAQSER(NS),RMULADJ,ADDADJ,ICHGQS
             IF(ISO.GT.0) GOTO 860
             IF(ISTYP.EQ.1)THEN
               READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
@@ -140,10 +139,10 @@ C
 860     WRITE(6,861)
 861     FORMAT('  READ ERROR FOR FILE QSER.INP ')
 862     continue
-C
-c=======================================================================
-c      hlopen parameters
-c=======================================================================
+!
+!=======================================================================
+!      hlopen parameters
+!=======================================================================
         Ihl_handle = 0
         Ihl_debug = 0
         Ihl_mode = 1	!Ihl_mode=0 to READ from dll hyd file, =1 to WRITE to dll hyd file
@@ -247,8 +246,7 @@ c=======================================================================
         write(6,500)NJUN,NSG
         STOP
         END IF
-500     FORMAT('THE NUMBER OF WASP SEGMENTS IN YOUR APPLICATION',I6,1x,
-     +'IS GREATER THAN THE ARRAY DIMENSION:',I7)
+500     FORMAT('THE NUMBER OF WASP SEGMENTS IN YOUR APPLICATION',I6,1x,'IS GREATER THAN THE ARRAY DIMENSION:',I7)
         call hlsetnumsegments(Ihl_handle,njun,ierror)
         if(ierror .gt. 0)then
           call hlgetlasterror(errstring)
@@ -402,8 +400,7 @@ c=======================================================================
         write(6,600)NCHN,NF
         STOP
         END IF
-600     FORMAT('THE NUMBER OF WASP FLOWS IN YOUR APPLICATION',I6,1X,
-     +   'IS GREATER THAN THE ARRAY DIMENSION:',I7)
+600     FORMAT('THE NUMBER OF WASP FLOWS IN YOUR APPLICATION',I6,1X,'IS GREATER THAN THE ARRAY DIMENSION:',I7)
         call hlsetnumflowpaths(Ihl_handle, NCHN, ierror)
         if(ierror .gt. 0)then
           call hlgetlasterror(errstring)
@@ -451,16 +448,16 @@ c=======================================================================
               LWASP=LWASP+1
               LSLT=LSCLT(LT)
               LDTM=LAUX(I,J,K)
-C
-CLZ              LUTM=LAUX(ILLT(LSLT),JLLT(LSLT),K)
-CLZ              IF(IJCTLT(I,J-1).EQ.8) LUTM=0
-C
+!
+!LZ              LUTM=LAUX(ILLT(LSLT),JLLT(LSLT),K)
+!LZ              IF(IJCTLT(I,J-1).EQ.8) LUTM=0
+!
               IF(IJCTLT(I,J-1).EQ.8) THEN          !DRBC LZ, 7/23/2019 ADJUST THE LOGIC SEQUENCE IF A SOUTH CELL IS WITH ID 8
                 LUTM=0
               ELSE
                 LUTM=LAUX(ILLT(LSLT),JLLT(LSLT),K)
               END IF
-C
+!
                call hlsetflowpath(Ihl_handle,LWASP,LUTM,LDTM,2,ierror)
                if(ierror .gt. 0)then
                   call hlgetlasterror(errstring)
@@ -801,7 +798,7 @@ C
               END IF
             END DO
           END DO
-C Advection and dispersion in the X-direction:
+! Advection and dispersion in the X-direction:
           LWASP=0
           DO K=KC,1,-1
             DO LT=2,LALT
@@ -810,10 +807,8 @@ C Advection and dispersion in the X-direction:
               L=LIJ(I,J)
               ADDLW=0.0
               IF (LGVCU(L,K)) THEN
-                vol1=DYP(L)*AH(L,K)*DZC(K)*
-     +              GVCSCLP(L)*HP(L)/DXP(L)
-                vol2=DYP(L-1)*AH(L-1,K)*DZC(K)*
-     +               GVCSCLP(L-1)*HP(L-1)/DXP(L-1)
+                vol1=DYP(L)*AH(L,K)*DZC(K)*GVCSCLP(L)*HP(L)/DXP(L)
+                vol2=DYP(L-1)*AH(L-1,K)*DZC(K)*GVCSCLP(L-1)*HP(L-1)/DXP(L-1)
                 ADDLW=0.5*(vol1+vol2)
                   vol1=DXYP(L)*HP(L)*DZC(K)*GVCSCLP(L)         
                   vol2=DXYP(L-1)*HP(L-1)*DZC(K)*GVCSCLP(L-1)       
@@ -863,9 +858,9 @@ C Advection and dispersion in the X-direction:
                 END IF
               END IF
             END DO
-C
-C Advection and dispersion in the Y-direction:
-C
+!
+! Advection and dispersion in the Y-direction:
+!
             DO LT=2,LALT
               I=ILLT(LT)
               J=JLLT(LT)
@@ -873,10 +868,8 @@ C
               ADDLS=0.0
               LS=LSC(L)
               IF (LGVCV(L,K)) THEN
-                vol1=DXP(L)*AH(L,K)*DZC(K)*
-     +              GVCSCLP(L)*HP(L)/DYP(L)
-                vol2=DXP(LS)*AH(LS,K)*DZC(K)*
-     +               GVCSCLP(LS)*HP(LS)/DYP(LS)
+                vol1=DXP(L)*AH(L,K)*DZC(K)*GVCSCLP(L)*HP(L)/DYP(L)
+                vol2=DXP(LS)*AH(LS,K)*DZC(K)*GVCSCLP(LS)*HP(LS)/DYP(LS)
                 ADDLS=0.5*(vol1+vol2)
                   vol1=DXYP(L)*HP(L)*DZC(K)*GVCSCLP(L)         
                   vol2=DXYP(Ls)*HP(Ls)*DZC(K)*GVCSCLP(Ls)      
@@ -929,7 +922,7 @@ C
             END DO
           END DO
 
-c Advection in input flows
+! Advection in input flows
           DO K=KC,1,-1
             DO LT=1,nqsij
               I=Iqs(LT)
@@ -940,15 +933,13 @@ c Advection in input flows
               IF(flagwaspbC(ns,k).EQ.1) GOTO 310                       
               IF (LGVCP(L,K)) THEN
                 LWASP=LWASP+1
-                FLOW(LWASP)=RQSMUL(Lt)*(QSS(K,Lt)+
-     &                   qfactor(lt)*QSERT(K,NS))
-                CRNU(LWASP)=flow(LWASP)/DXp(L)/dyp(l)
-     $                     /(dzc(k)*HP(L)*GVCSCLP(L))
+                FLOW(LWASP)=RQSMUL(Lt)*(QSS(K,Lt)+qfactor(lt)*QSERT(K,NS))
+                CRNU(LWASP)=flow(LWASP)/DXp(L)/dyp(l)/(dzc(k)*HP(L)*GVCSCLP(L))
                 BRINTT(LWASP)=0.0
               END IF
 310         END DO
           END DO
-c  Advection in structure flows
+!  Advection in structure flows
           DO K=KC,1,-1
             DO LT=1,nqctl
               Iu=Iqctlu(LT)
@@ -966,9 +957,9 @@ c  Advection in structure flows
               BRINTT(LWASP)=0.0
 410         END DO
           END DO
-C
-C Advection and dispersion in the Z-direction:
-C
+!
+! Advection and dispersion in the Z-direction:
+!
           IF (KC.GT.1) THEN
             DO K=KS,1,-1
               DO LT=2,LALT
@@ -977,14 +968,14 @@ C
                 L=LIJ(I,J)
                 ADDL=ab(l,k)*hp(l)                         
                 if (addl.gt.abwmx(l)) then
-C ORIGINAL CODE                  ab(l,k)=abwmx(l)/hp(l)  
+! ORIGINAL CODE                  ab(l,k)=abwmx(l)/hp(l)  
                   ABTMP=abwmx(l)/hp(l)                      !8/26/2020, DRBC LZ, AVOID FEEDBACK TO OTHER EFDC SUBROUTINES
                 ELSE                                        !8/26/2020, DRBC LZ 
                   ABTMP=AB(L,K)                             !8/26/2020, DRBC LZ 
                 end if
                 addl=0.0
                 IF (LGVCW(L,K)) THEN
-C ORIGINAL CODE                  ADDL=DXYP(L)*AB(L,K)*DZIG(K)*GVCSCLPI(L) 
+! ORIGINAL CODE                  ADDL=DXYP(L)*AB(L,K)*DZIG(K)*GVCSCLPI(L) 
                   ADDL=DXYP(L)*ABTMP*DZIG(K)*GVCSCLPI(L)    !8/26/2020, DRBC LZ              
                   vol1=DXYP(L)*HP(L)*DZC(K)*GVCSCLP(L)               
                   vol2=DXYP(L)*HP(L)*DZC(K+1)*GVCSCLP(L)             
@@ -1078,13 +1069,13 @@ C ORIGINAL CODE                  ADDL=DXYP(L)*AB(L,K)*DZIG(K)*GVCSCLPI(L)
       GOTO 3000
       END IF
       IF(N.LT.IBEGIN) GOTO 3000
-C
-C----------------------------------------------------------------------C
-C
-C **  WRITE TIME STEP DATA
-C
-C Advection and dispersion in the X-direction:
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  WRITE TIME STEP DATA
+!
+! Advection and dispersion in the X-direction:
+!
       LWASP=0
       DO K=KC,1,-1
         DO LT=2,LALT
@@ -1142,9 +1133,9 @@ C
             END IF
           END IF
         END DO
-C
-C Advection and dispersion in the Y-direction:
-C
+!
+! Advection and dispersion in the Y-direction:
+!
         DO LT=2,LALT
           I=ILLT(LT)
           J=JLLT(LT)
@@ -1203,7 +1194,7 @@ C
         END DO
       END DO
 
-c Advection in input flows
+! Advection in input flows
       DO K=KC,1,-1
         DO LT=1,nqsij
           I=Iqs(LT)
@@ -1222,7 +1213,7 @@ c Advection in input flows
           END IF
 300     END DO
       END DO
-c  Advection and dispersion in structure flows
+!  Advection and dispersion in structure flows
       DO K=KC,1,-1
         DO LT=1,nqctl
           Iu=Iqctlu(LT)
@@ -1243,9 +1234,9 @@ c  Advection and dispersion in structure flows
 	  BRINTT(LWASP)=0.0
 400     END DO
       END DO
-C
-C Advection and dispersion in the Z-direction:
-C
+!
+! Advection and dispersion in the Z-direction:
+!
       IF (KC.GT.1) THEN
         DO K=KS,1,-1
           DO LT=2,LALT
@@ -1254,14 +1245,14 @@ C
             L=LIJ(I,J)
             ADDL=ablpf(l,k)*hlpf(l)                                
             if(addl.gt.abwmx(l)) then
-C ORIGINAL CODE               ablpf(l,k)=abwmx(l)/hlpf(l) 
+! ORIGINAL CODE               ablpf(l,k)=abwmx(l)/hlpf(l) 
               ABTMP=abwmx(l)/hlpf(l)                      !8/26/2020, DRBC LZ, AVOID FEEDBACK TO OTHER EFDC SUBROUTINES
             ELSE                                          !8/26/2020, DRBC LZ
               ABTMP=ABLPF(L,K)                            !8/26/2020, DRBC LZ
             end if
             ADDL=0.0
             IF (LGVCW(L,K)) THEN
-C ORIGINAL CODE              ADDL=DXYP(L)*ABLPF(L,K)*DZIG(K)*GVCSCLPI(L)    
+! ORIGINAL CODE              ADDL=DXYP(L)*ABLPF(L,K)*DZIG(K)*GVCSCLPI(L)    
               ADDL=DXYP(L)*ABTMP*DZIG(K)*GVCSCLPI(L)      !8/26/2020, DRBC LZ        
               vol1=DXYP(L)*HLPF(L)*DZC(K)*GVCSCLP(L)               
               vol2=DXYP(L)*HLPF(L)*DZC(K+1)*GVCSCLP(L)             
@@ -1281,9 +1272,9 @@ C ORIGINAL CODE              ADDL=DXYP(L)*ABLPF(L,K)*DZIG(K)*GVCSCLPI(L)
           END DO
         END DO
       END IF
-C
-C Segment Properties:
-C
+!
+! Segment Properties:
+!
       LCELTMP=0
       DO K=KC,1,-1
         DO LT=2,LALT
@@ -1305,12 +1296,9 @@ C
             END IF
           
             DEPTH=HLPF(L)*DZC(K)*GVCSCLP(L)
-            VELX=0.5*(UHLPF(L,K)+SVPT*UVPT(L,K) +UHLPF(L+1,K)+SVPT*UVPT
-     +      (L+1,K))/HLPF(L)
-            VELY=0.5*(VHLPF(L,K)+SVPT*VVPT(L,K) +VHLPF(LN,K)+SVPT*VVPT
-     +      (LN,K) )/HLPF(L)
-            VELZ=0.5*(WLPF(L,K-1)+SVPT*WVPT(L,K-1) +WLPF(L,K)+SVPT*WVPT
-     +      (L,K) )
+            VELX=0.5*(UHLPF(L,K)+SVPT*UVPT(L,K) +UHLPF(L+1,K)+SVPT*UVPT(L+1,K))/HLPF(L)
+            VELY=0.5*(VHLPF(L,K)+SVPT*VVPT(L,K) +VHLPF(LN,K)+SVPT*VVPT(LN,K) )/HLPF(L)
+            VELZ=0.5*(WLPF(L,K-1)+SVPT*WVPT(L,K-1) +WLPF(L,K)+SVPT*WVPT(L,K) )
             VELMAG=SQRT(VELX*VELX+VELY*VELY+VELZ*VELZ)
             SegSalt(LCELTMP)=SALLPF(L,K)
             SegTemp(LCELTMP)=TEMLPF(L,K)
@@ -1321,7 +1309,7 @@ C
           END IF
         END DO
       END DO
-C
+!
 	   call hlsetseginfo(Ihl_handle,1,SegVolume,ierror)
 	   if(ierror .gt. 0)then
             call hlgetlasterror(errstring)
@@ -1387,7 +1375,7 @@ C
             stop
          end if
 
-C
+!
 3000  JSWASP=0
 6000  format('Error ',I10, ' : ', A30,I3)
       RETURN

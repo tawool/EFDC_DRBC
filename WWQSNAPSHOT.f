@@ -1,41 +1,41 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE WWQSNAPSHOT
-C
-C**********************************************************************C
-C
-C **  SHEN'S MODIFICATION TO OUTPUT MACROALGAE
-C
-C **  LAST MODIFIED BY JOHN HAMRICK AND MIKE MORTON ON 8 AUGUST 2001
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-c hugo rodriguez  10/2010  algae chla/C time variable in algae kinetic file
-C
-C**********************************************************************C
-C
-C WRITE TIME-SERIES OUTPUT: WQCHLX=1/WQCHLX
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  SHEN'S MODIFICATION TO OUTPUT MACROALGAE
+!
+! **  LAST MODIFIED BY JOHN HAMRICK AND MIKE MORTON ON 8 AUGUST 2001
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! hugo rodriguez  10/2010  algae chla/C time variable in algae kinetic file
+!
+!**********************************************************************C
+!
+! WRITE TIME-SERIES OUTPUT: WQCHLX=1/WQCHLX
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       CHARACTER*12 FNWQSS(22)
       DIMENSION WQVOUT(NWQVM+6)
-C
+!
       FNWQSS( 1)='wqCHLaC1.OUT'
       FNWQSS( 2)='wqCHLaG2.OUT'
       FNWQSS( 3)='wqCHLaD3.OUT'
@@ -58,19 +58,19 @@ C
       FNWQSS(20)='wqTAMeta.OUT'
       FNWQSS(21)='wqFColBa.OUT'
       FNWQSS(22)='wqBenAlg.OUT'
-C
-C
-C      TINDAY=TINDAY
-C
+!
+!
+!      TINDAY=TINDAY
+!
       OPEN(1,FILE='WQWCSNAPSHOT.OUT',STATUS='UNKNOWN',POSITION='APPEND')
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIMTMP=DT*FLOAT(N)+TCON*TBEGIN
         TIMTMP=TIMTMP/TCTMSR  
       ELSE
         TIMTMP=TIMESEC/TCTMSR  
       ENDIF
-C
+!
       DO K=1,KC
         WRITE(1,101)TIMTMP,K
 	  DO L=2,LA
@@ -107,11 +107,11 @@ C
 	    WRITE(1,102)(WQVOUT(NW),NW=1,NWQOUT)
 	  ENDDO
 	ENDDO
-C
+!
       CLOSE(1)
-C
+!
   101 FORMAT(F12.5,I6)
   102 FORMAT(25E12.4)
-C
+!
       RETURN
       END

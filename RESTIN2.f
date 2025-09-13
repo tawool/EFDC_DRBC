@@ -1,39 +1,39 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE RESTIN2
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE RESTINP READS A RESTART FILE FOR (KC/2) LAYERS AND 
-C **  AND INITIALIZES FOR KC LAYERS
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE RESTINP READS A RESTART FILE FOR (KC/2) LAYERS AND 
+! **  AND INITIALIZES FOR KC LAYERS
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       OPEN(1,FILE='RESTART.INP',STATUS='UNKNOWN')
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       READ(1,908,ERR=1000)NREST
-C
+!
       DO L=2,LA
       READ(1,*,ERR=1000)HP(L),H1P(L),HWQ(L),H2WQ(L)
       READ(1,*,ERR=1000)UHDYE(L),UHDY1E(L),VHDXE(L),VHDX1E(L)
@@ -98,15 +98,15 @@ C
          ENDDO
       ENDIF
       ENDDO
-C
+!
       DO M=1,5
       IF(ISCI(M).EQ.1)THEN
-C
+!
        DO LL=1,NCBS
        READ(1,*,ERR=1000)(NLOS(LL,K,M),K=2,KC,2)
        READ(1,*,ERR=1000)(CLOS(LL,K,M),K=2,KC,2)
        ENDDO
-C
+!
        DO LL=1,NCBW
        READ(1,*,ERR=1000)(NLOW(LL,K,M),K=2,KC,2)
        READ(1,*,ERR=1000)(CLOW(LL,K,M),K=2,KC,2)
@@ -116,43 +116,43 @@ C
        READ(1,*,ERR=1000)(NLOE(LL,K,M),K=2,KC,2)
        READ(1,*,ERR=1000)(CLOE(LL,K,M),K=2,KC,2)
        ENDDO
-C
+!
        DO LL=1,NCBN
        READ(1,*,ERR=1000)(NLON(LL,K,M),K=2,KC,2)
        READ(1,*,ERR=1000)(CLON(LL,K,M),K=2,KC,2)
        ENDDO
-C
+!
       ENDIF
       ENDDO
-C
+!
       DO M=1,5
       DO K=1,KS,2
-C
+!
       DO LL=1,NCBS
       NLOS(LL,K,M)=NLOS(LL,K+1,M)
       CLOS(LL,K,M)=CLOS(LL,K+1,M)
       ENDDO
-C
+!
       DO LL=1,NCBW
       NLOW(LL,K,M)=NLOW(LL,K+1,M)
       CLOW(LL,K,M)=CLOW(LL,K+1,M)
       ENDDO
-C
+!
       DO LL=1,NCBE
       NLOE(LL,K,M)=NLOE(LL,K+1,M)
       CLOE(LL,K,M)=CLOE(LL,K+1,M)
       ENDDO
-C
+!
       DO LL=1,NCBN
       NLON(LL,K,M)=NLON(LL,K+1,M)
       CLON(LL,K,M)=CLON(LL,K+1,M)
       ENDDO
-C
+!
       ENDDO
       ENDDO
-C
+!
       CLOSE(1)
-C
+!
       DO K=1,KC
       SAL(1,K)=0.
       TEM(1,K)=0.
@@ -191,9 +191,9 @@ C
       VHDXWQ(LC,K)=0.
       UHDYWQ(LC,K)=0.
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       DO L=2,LA
       LS=LSC(L)
       H1U(L)=0.5*(H1P(L)+H1P(L-1))
@@ -208,7 +208,7 @@ C
       H1UI(L)=1./H1U(L)
       H1VI(L)=1./H1V(L)
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
       UHDY1(L,K)=DYU(L)*H1U(L)*U1(L,K)
@@ -219,10 +219,10 @@ C
       SAL1(L,K)=MAX(SAL1(L,K),0.)
       ENDDO
       ENDDO
-C
+!
       N=0
       CALL CALQVS (2)
-C
+!
       DO K=1,KS
       RDZC=DZC(K)
       DO L=2,LA
@@ -237,24 +237,24 @@ C
      &        +SWB(L)*( QSUM(L,K)-RDZC*QSUME(L) )*DXYIP(L)
       ENDDO       
       ENDDO       
-C
-C**********************************************************************C
-C
-C **  WRITE READ ERRORS ON RESTART
-C
+!
+!**********************************************************************C
+!
+! **  WRITE READ ERRORS ON RESTART
+!
       GOTO 1002
  1000 WRITE(6,1001)
  1001 FORMAT('  READ ERROR ON FILE RESTART.INP ')
       STOP
  1002 CONTINUE
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   906 FORMAT(4E15.7)
   907 FORMAT(12E12.4)
   908 FORMAT(12I10)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

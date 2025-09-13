@@ -1,75 +1,75 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE VCONGRAD(ISTL)
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE VCONGRAD SOLVES THE EXTERNAL MODE LINEAR SYSTEM
-C **  BY A PRECONDITIONED CONJUGATE GRADIENT SCHEME USING
-C **  ALTIVEC VECTOR PROCESSING
-C
-C **  THE LINEAR SYSTEM P IS SPECIFIED ON A 5 POINT STENCIL BY
-C
-C     CCC(L)*P(L)+CCS(L)*P(LS)+CCW(L)*P(L-1)+CCE(L)*P(L+1)+CCN(L)*P(LN)
-C     =FPTMP(L)
-C
-C     WHERE LN=LNC(L) AND LS=LSC(L) ARE LOOK UP TABLES FOR THE NORTH
-C     AND SOUTH STENCIL POINTS.
-C
-C     THE ACTUAL SIZE OF THE SYSTEM IS LC-2, WITH VARIABLES OCCUPING
-C     POSITIONS (2:LC-1) IN THE ARRAYS WHICH MUST BE DIMENSIONED
-C     AT LCM = OR > THAN LC.  THE LOCATIONS 1 AND LC ARE DUMMIES SUCH
-C     THAT L-1 AND L+1 ARE DEFINED AND ARE DEFINED AND CAN BE SET TO
-C     ZERO.  VECTOR ALTIVEC OPERATIONS MUST THE CARRIED OUT ON THE
-C     FULL STORAGE DIMENSION, LCM WHICH IS AN INTEGER MULTIPE OF 4, OF
-C     THE ARRAYS FOR PROPER DIMENSIONING OF THE C VECTOR SUBROUTINE
-C     ARGUMENTS AS VECTOR FLOATS.
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE VCONGRAD SOLVES THE EXTERNAL MODE LINEAR SYSTEM
+! **  BY A PRECONDITIONED CONJUGATE GRADIENT SCHEME USING
+! **  ALTIVEC VECTOR PROCESSING
+!
+! **  THE LINEAR SYSTEM P IS SPECIFIED ON A 5 POINT STENCIL BY
+!
+!     CCC(L)*P(L)+CCS(L)*P(LS)+CCW(L)*P(L-1)+CCE(L)*P(L+1)+CCN(L)*P(LN)
+!     =FPTMP(L)
+!
+!     WHERE LN=LNC(L) AND LS=LSC(L) ARE LOOK UP TABLES FOR THE NORTH
+!     AND SOUTH STENCIL POINTS.
+!
+!     THE ACTUAL SIZE OF THE SYSTEM IS LC-2, WITH VARIABLES OCCUPING
+!     POSITIONS (2:LC-1) IN THE ARRAYS WHICH MUST BE DIMENSIONED
+!     AT LCM = OR > THAN LC.  THE LOCATIONS 1 AND LC ARE DUMMIES SUCH
+!     THAT L-1 AND L+1 ARE DEFINED AND ARE DEFINED AND CAN BE SET TO
+!     ZERO.  VECTOR ALTIVEC OPERATIONS MUST THE CARRIED OUT ON THE
+!     FULL STORAGE DIMENSION, LCM WHICH IS AN INTEGER MULTIPE OF 4, OF
+!     THE ARRAYS FOR PROPER DIMENSIONING OF THE C VECTOR SUBROUTINE
+!     ARGUMENTS AS VECTOR FLOATS.
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
-C ** HAMRICK'S C VECTOR SUBROUTINES MUST BE LINKED WITH EXECUTABLE
-C ** FOR VECTOR EXECUTION ON MAC G4.  FOR PC'S, A DUMMY SUBROUTINE
-C ** CVMULAD2 IS INCLUDED IN THE SOURCE CODE
-C
-C     CVMULAD2(VAL(N),A,B,C,D) => [A]=[B]+[C]*[D]
-C
-C     [A],[B],[C] AND [D] ARE 1D REAL*4 ARRAYS OF DIMENSION (1:LCM)
-C
-C**********************************************************************C
-C
-C **  START TIMER
-C
+!
+!**********************************************************************C
+!
+! ** HAMRICK'S C VECTOR SUBROUTINES MUST BE LINKED WITH EXECUTABLE
+! ** FOR VECTOR EXECUTION ON MAC G4.  FOR PC'S, A DUMMY SUBROUTINE
+! ** CVMULAD2 IS INCLUDED IN THE SOURCE CODE
+!
+!     CVMULAD2(VAL(N),A,B,C,D) => [A]=[B]+[C]*[D]
+!
+!     [A],[B],[C] AND [D] ARE 1D REAL*4 ARRAYS OF DIMENSION (1:LCM)
+!
+!**********************************************************************C
+!
+! **  START TIMER
+!
       IF(ISCRAY.EQ.0)THEN
         TTMP=SECNDS(0.0)
        ELSE
         T1TMP=SECOND( )
         CALL TIMEF(WT1TMP)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  INITIALIZATION
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZATION
+!
       IVECDIG=0
       LCM4=LCM/4
-C
+!
       P(1)=0.0
       PW(1)=0.0
       PE(1)=0.0
@@ -93,7 +93,7 @@ C
       CCS(1)=0.0
       CCN(1)=0.0
       CCCI(1)=0.0
-C
+!
       DO L=LC,LCM
         P(L)=0.0
         PW(L)=0.0
@@ -119,7 +119,7 @@ C
         CCN(L)=0.0
         CCCI(L)=0.0
       ENDDO
-C
+!
       DO L=2,LA
         LN=LNC(L)
         LS=LSC(L)
@@ -128,127 +128,127 @@ C
         PS(L)=P(LS)
         PN(L)=P(LN)
       ENDDO
-C
-C**********************************************************************C
-C
-C     NOTE: LA=LC-1
-C
-C     DO L=2,LA
-C       LN=LNC(L)
-C       LS=LSC(L)
-C       RCG(L)=CCC(L)*P(L)+CCS(L)*P(LS)+CCW(L)*P(L-1)+CCE(L)*P(L+1)
-C    &     +CCN(L)*P(LN)-FPTMP(L)
-C     ENDDO
-C
+!
+!**********************************************************************C
+!
+!     NOTE: LA=LC-1
+!
+!     DO L=2,LA
+!       LN=LNC(L)
+!       LS=LSC(L)
+!       RCG(L)=CCC(L)*P(L)+CCS(L)*P(LS)+CCW(L)*P(L-1)+CCE(L)*P(L+1)
+!    &     +CCN(L)*P(LN)-FPTMP(L)
+!     ENDDO
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 0'      !hnr 7/27/2009
       IF(IVECDIG.EQ.1)THEN
         DO L=1,LC
 !          WRITE(8,800)L,CCW(L),CCC(L),CCE(L),CCS(L),CCCI(L),CCN(L),P(L)     !hnr 7/27/2009
         END DO
       ENDIF
-C
+!
       DO L=2,LA
         RCG(L)=-FPTMP(L)
         RNULL(L)=0.0
         RTMP(L)=0.0
         RTMP1(L)=0.0
       END DO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 1'      !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,RCG(L)     !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RCG,CCC,P)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RCG,CCC,P)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 2'     !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,RTMP(L)       !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-cval      CALL CVMULAD2(VAL(LCM),RCG,RTMP,CCS,PS)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RCG,RTMP,CCS,PS)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 3'      !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,RCG(L)       !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RCG,CCW,PW)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RCG,CCW,PW)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 4'     !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,RTMP(L)       !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-cval      CALL CVMULAD2(VAL(LCM),RCG,RTMP,CCE,PE)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RCG,RTMP,CCE,PE)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 5'  !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,RCG(L)  !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RCG,CCN,PN)
-C
-C     DO L=2,LA
-C       RCG(L)=-RCG(L)
-C       PCG(L)=RCG(L)*CCCI(L)
-C     ENDDO
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RCG,CCN,PN)
+!
+!     DO L=2,LA
+!       RCG(L)=-RCG(L)
+!       PCG(L)=RCG(L)*CCCI(L)
+!     ENDDO
+!
       DO L=2,LA
         RCG(L)=-RTMP(L)
       END DO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 6'   !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,RCG(L)      !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-cval      CALL CVMULAD2(VAL(LCM),PCG,RNULL,RCG,CCCI)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),PCG,RNULL,RCG,CCCI)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 7'   !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,PCG(L)     !hnr 7/27/2009
 !        END DO
 !      ENDIF
-C
-C     RPCG=0.
-C     DO L=2,LA
-C       RPCG=RPCG+RCG(L)*RCG(L)*CCCI(L)
-C     ENDDO
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,RCG,CCCI)
-cval      CALL CVMULAD2(VAL(LCM),RTMP1,RNULL,RCG,RTMP)
-C
+!
+!     RPCG=0.
+!     DO L=2,LA
+!       RPCG=RPCG+RCG(L)*RCG(L)*CCCI(L)
+!     ENDDO
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,RCG,CCCI)
+!val      CALL CVMULAD2(VAL(LCM),RTMP1,RNULL,RCG,RTMP)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 8'    !hnr 7/27/2009
-C
+!
       RPCG=0.
       DO L=2,LA
         RPCG=RPCG+RTMP1(L)
       ENDDO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,800)LA,RPCG      !hnr 7/27/2009
-C
+!
       ITER=0
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   100 CONTINUE
-C
+!
       ITER=ITER+1
-C
+!
       DO L=2,LA
         LN=LNC(L)
         LS=LSC(L)
@@ -257,175 +257,175 @@ C
         PCGE(L)=PCG(L+1)
         PCGN(L)=PCG(LN)
       ENDDO
-C
-C     DO L=2,LA
-C       LN=LNC(L)
-C       LS=LSC(L)
-C       APCG(L)=CCC(L)*PCG(L)+CCS(L)*PCG(LS)+CCW(L)*PCG(L-1)
-C    &         +CCE(L)*PCG(L+1)+CCN(L)*PCG(LN)
-C     ENDDO
-C
-cval      CALL CVMULAD2(VAL(LCM),APCG,RNULL,CCC,PCG)
-C
+!
+!     DO L=2,LA
+!       LN=LNC(L)
+!       LS=LSC(L)
+!       APCG(L)=CCC(L)*PCG(L)+CCS(L)*PCG(LS)+CCW(L)*PCG(L-1)
+!    &         +CCE(L)*PCG(L+1)+CCN(L)*PCG(LN)
+!     ENDDO
+!
+!val      CALL CVMULAD2(VAL(LCM),APCG,RNULL,CCC,PCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 9'  !hnr 7/27/2009
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,APCG,CCS,PCGS)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,APCG,CCS,PCGS)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 10'  !hnr 7/27/2009
-C
-cval      CALL CVMULAD2(VAL(LCM),APCG,RTMP,CCW,PCGW)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),APCG,RTMP,CCW,PCGW)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 11'  !hnr 7/27/2009
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,APCG,CCE,PCGE)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,APCG,CCE,PCGE)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 12' !hnr 7/27/2009
-C
-cval      CALL CVMULAD2(VAL(LCM),APCG,RTMP,CCN,PCGN)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),APCG,RTMP,CCN,PCGN)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 13'  !hnr 7/27/2009
       IF(IVECDIG.EQ.1)THEN
         DO L=1,LC
 !          WRITE(8,800)L,APCG(L)   !hnr 7/27/2009
         END DO
       END IF
-C
-C     PAPCG=0.
-C     DO L=2,LA
-C       PAPCG=PAPCG+APCG(L)*PCG(L)
-C     END DO
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,APCG,PCG)
-C
+!
+!     PAPCG=0.
+!     DO L=2,LA
+!       PAPCG=PAPCG+APCG(L)*PCG(L)
+!     END DO
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,APCG,PCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 14'     !hnr 7/27/2009
-C
+!
       PAPCG=0.
       DO L=2,LA
         PAPCG=PAPCG+RTMP(L)
         RTMP1(L)=P(L)
       ENDDO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,800)LA,PAPCG     !hnr 7/27/2009
-C
+!
       ALPHA=RPCG/PAPCG
-C
-C     DO L=2,LA
-C       P(L)=P(L)+ALPHA*PCG(L)
-C     ENDDO
-C
+!
+!     DO L=2,LA
+!       P(L)=P(L)+ALPHA*PCG(L)
+!     ENDDO
+!
       DO L=2,LA
         RA4(L)=ALPHA
       END DO
-C
-cval      CALL CVMULAD2(VAL(LCM),P,RTMP1,RA4,PCG)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),P,RTMP1,RA4,PCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 15'    !hnr 7/27/2009
       IF(IVECDIG.EQ.1)THEN
         DO L=1,LC
 !          WRITE(8,800)L,P(L)     !hnr 7/27/2009
         END DO
       END IF
-C
-C**********************************************************************C
-C
-C     DO L=2,LA
-C       RCG(L)=RCG(L)-ALPHA*APCG(L)
-C     ENDDO
-C
+!
+!**********************************************************************C
+!
+!     DO L=2,LA
+!       RCG(L)=RCG(L)-ALPHA*APCG(L)
+!     ENDDO
+!
       DO L=2,LA
         RA4(L)=-ALPHA
         RTMP(L)=RCG(L)
       END DO
-C
-cval      CALL CVMULAD2(VAL(LCM),RCG,RTMP,RA4,APCG)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RCG,RTMP,RA4,APCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 16'    !hnr 7/27/2009
       IF(IVECDIG.EQ.1)THEN
         DO L=1,LC
 !          WRITE(8,800)L,RCG(L)  !hnr 7/27/2009
         END DO
       END IF
-C
-C     RPCGN=0.
-C     DO L=2,LA
-C       RPCGN=RPCGN+RCG(L)*RCG(L)*CCCI(L)
-C     ENDDO
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,RCG,CCCI)
-C
+!
+!     RPCGN=0.
+!     DO L=2,LA
+!       RPCGN=RPCGN+RCG(L)*RCG(L)*CCCI(L)
+!     ENDDO
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,RCG,CCCI)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 17'    !hnr 7/27/2009
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP1,RNULL,RTMP,RCG)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP1,RNULL,RTMP,RCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 18'     !hnr 7/27/2009
-C
+!
       RPCGN=0.
       DO L=2,LA
         RPCGN=RPCGN+RTMP1(L)
         RTMP(L)=RCG(L)
       ENDDO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,800)LA,RPCGN   !hnr 7/27/2009
-C
-C     RSQ=0.
-C     DO L=2,LA
-C       RSQ=RSQ+RCG(L)*RCG(L)
-C     ENDDO
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP1,RNULL,RTMP,RCG)
-C
+!
+!     RSQ=0.
+!     DO L=2,LA
+!       RSQ=RSQ+RCG(L)*RCG(L)
+!     ENDDO
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP1,RNULL,RTMP,RCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 19'  !hnr 7/27/2009
-C
+!
       RSQ=0.
       DO L=2,LA
         RSQ=RSQ+RTMP1(L)
       ENDDO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,800)LA,RSQ  !hnr 7/27/2009
-C
+!
       IF(RSQ.LE.RSQM)GOTO 200
-C
+!
       IF(ITER.GE.ITERM)THEN
         WRITE(6,600)
         STOP
       ENDIF
-C
+!
       BETA=RPCGN/RPCG
       RPCG=RPCGN
-C
-C     DO L=2,LA
-C       PCG(L)=CCCI(L)*RCG(L)+BETA*PCG(L)
-C     ENDDO
-C
+!
+!     DO L=2,LA
+!       PCG(L)=CCCI(L)*RCG(L)+BETA*PCG(L)
+!     ENDDO
+!
       DO L=2,LA
         RA4(L)=BETA
       ENDDO
-C
-cval      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,PCG,RA4)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),RTMP,RNULL,PCG,RA4)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 20'    !hnr 7/27/2009
-C
-cval      CALL CVMULAD2(VAL(LCM),PCG,RTMP,CCCI,RCG)
-C
+!
+!val      CALL CVMULAD2(VAL(LCM),PCG,RTMP,CCCI,RCG)
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 21'    !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)THEN
 !        DO L=1,LC
 !          WRITE(8,800)L,PCG(L)      !hnr 7/27/2009
 !        ENDDO
 !      ENDIF
-C
+!
       GOTO 100
-C
+!
   600 FORMAT(1X,'MAXIMUM ITERATIONS EXCEEDED IN EXTERNAL SOLUTION')
-C
-C**********************************************************************C
-C
-C ** CALCULATE FINAL RESIDUAL
-C
+!
+!**********************************************************************C
+!
+! ** CALCULATE FINAL RESIDUAL
+!
   200 CONTINUE
-C
+!
       RSQ=0.
-C
+!
       DO L=2,LA
         LN=LNC(L)
         LS=LSC(L)
@@ -434,12 +434,12 @@ C
         RSD=RSD*CCCI(L)
         RSQ=RSQ+RSD*RSD
       ENDDO
-C
+!
 !      IF(IVECDIG.EQ.1)WRITE(8,*)'VCONGRAD 22'  !hnr 7/27/2009
 !      IF(IVECDIG.EQ.1)WRITE(8,800)LA,RSQ     !hnr 7/27/2009
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ISCRAY.EQ.0)THEN
         TCONG=TCONG+SECNDS(TTMP)
       ELSE
@@ -448,10 +448,10 @@ C
         TCONG=TCONG+T2TMP-T1TMP
         WTCONG=WTCONG+(WT2TMP-WT1TMP)*0.001
       ENDIF
-C
+!
   800 FORMAT(I5,8E13.4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

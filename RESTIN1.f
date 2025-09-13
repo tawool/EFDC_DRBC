@@ -1,44 +1,43 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE RESTIN1
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 03/19/2002        John Hamrick       03/19/2002       John Hamrick
-C  added code to properly initial restart input for drying and wetting
-
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE RESTIN1 READS A RESTART FILE
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 03/19/2002        John Hamrick       03/19/2002       John Hamrick
+!  added code to properly initial restart input for drying and wetting
+!C----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE RESTIN1 READS A RESTART FILE
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       DIMENSION TDUMMY(KCM)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       OPEN(1,FILE='RESTART.INP',STATUS='UNKNOWN')
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       ISBELVC=0
-C
+!
       READ(1,908,ERR=1000)NREST
-C
+!
       DO L=2,LA
       IF(ISRESTI.EQ.1)THEN
 	  IF(IMORPH.EQ.0)THEN
@@ -57,36 +56,36 @@ C
           H2WQ(L)=H2WQ(L)+BELTMP-BELV(L)
         ENDIF
       ENDIF
-C
+!
       IF(HP(L).LT.0.0.OR.H1P(L).LT.0.0)THEN
-C      IF(HP(L).LT.0.0)THEN
+!      IF(HP(L).LT.0.0)THEN
         WRITE(6,9696)L,IL(L),JL(L),HP(L),H1P(L)
         STOP
       ENDIF
-C
+!
       READ(1,*,ERR=1003)UHDYE(L),UHDY1E(L),VHDXE(L),VHDX1E(L)
       READ(1,*,ERR=1004)(U(L,K),K=1,KC)
       READ(1,*,ERR=1005)(U1(L,K),K=1,KC)
       READ(1,*,ERR=1006)(V(L,K),K=1,KC)
       READ(1,*,ERR=1007)(V1(L,K),K=1,KC)
-c
-C      READ(1,*,ERR=1008)(QQ(L,K),K=0,KS)
-C      READ(1,*,ERR=1008) QQ(L,KC)
-C      READ(1,*,ERR=1009)(QQ1(L,K),K=0,KS)
-C      READ(1,*,ERR=1009) QQ1(L,KC)
-C      READ(1,*,ERR=1010)(QQL(L,K),K=0,KS)
-C      READ(1,*,ERR=1010) QQL(L,KC)
-C      READ(1,*,ERR=1011)(QQL1(L,K),K=0,KS)
-C      READ(1,*,ERR=1011) QQL1(L,KC)
-C      READ(1,*,ERR=1012)(DML(L,K),K=0,KS)
-C      READ(1,*,ERR=1012) DML(L,KC)
+!
+!      READ(1,*,ERR=1008)(QQ(L,K),K=0,KS)
+!      READ(1,*,ERR=1008) QQ(L,KC)
+!      READ(1,*,ERR=1009)(QQ1(L,K),K=0,KS)
+!      READ(1,*,ERR=1009) QQ1(L,KC)
+!      READ(1,*,ERR=1010)(QQL(L,K),K=0,KS)
+!      READ(1,*,ERR=1010) QQL(L,KC)
+!      READ(1,*,ERR=1011)(QQL1(L,K),K=0,KS)
+!      READ(1,*,ERR=1011) QQL1(L,KC)
+!      READ(1,*,ERR=1012)(DML(L,K),K=0,KS)
+!      READ(1,*,ERR=1012) DML(L,KC)
 
       READ(1,*,ERR=1008)(QQ(L,K),K=0,KC)
       READ(1,*,ERR=1009)(QQ1(L,K),K=0,KC)
       READ(1,*,ERR=1010)(QQL(L,K),K=0,KC)
       READ(1,*,ERR=1011)(QQL1(L,K),K=0,KC)
       READ(1,*,ERR=1012)(DML(L,K),K=0,KC)
-c
+!
       IF(ISCI(1).EQ.1)THEN
        READ(1,*,ERR=1013)(SAL(L,K),K=1,KC)
        READ(1,*,ERR=1014)(SAL1(L,K),K=1,KC)
@@ -100,8 +99,8 @@ c
        READ(1,*,ERR=1018)(DYE1(L,K),K=1,KC)
       ENDIF
       IF(ISCI(4).EQ.1)THEN
-C       READ(1,*,ERR=1021)(SFL(L,K),K=1,KC)
-C       READ(1,*,ERR=1022)(SFL2(L,K),K=1,KC)
+!       READ(1,*,ERR=1021)(SFL(L,K),K=1,KC)
+!       READ(1,*,ERR=1022)(SFL2(L,K),K=1,KC)
        READ(1,*,ERR=1021)SFLSBOT(L),(SFL(L,K),K=1,KC)
        READ(1,*,ERR=1022)SFLSBOT(L),(SFL2(L,K),K=1,KC)
       ENDIF
@@ -136,128 +135,127 @@ C       READ(1,*,ERR=1022)(SFL2(L,K),K=1,KC)
        READ(1,*,ERR=1019)(VDRBED1(L,K),K=1,KB)
       ENDIF
       ENDDO
-C
+!
       DO M=1,4
       IF(ISCI(M).EQ.1)THEN
-C
+!
        DO LL=1,NCBS
        READ(1,*,ERR=1023)(NLOS(LL,K,M),K=1,KC)
        READ(1,*,ERR=1024)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        READ(1,*,ERR=1025)(NLOW(LL,K,M),K=1,KC)
        READ(1,*,ERR=1026)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        READ(1,*,ERR=1027)(NLOE(LL,K,M),K=1,KC)
        READ(1,*,ERR=1028)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        READ(1,*,ERR=1029)(NLON(LL,K,M),K=1,KC)
        READ(1,*,ERR=1030)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDIF
       ENDDO
-C
+!
       IF(ISCI(5).EQ.1)THEN
       DO NT=1,NTOX
       M=MSVTOX(NT)
-C
+!
        DO LL=1,NCBS
        READ(1,*,ERR=1023)(NLOS(LL,K,M),K=1,KC)
        READ(1,*,ERR=1024)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        READ(1,*,ERR=1025)(NLOW(LL,K,M),K=1,KC)
        READ(1,*,ERR=1026)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        READ(1,*,ERR=1027)(NLOE(LL,K,M),K=1,KC)
        READ(1,*,ERR=1028)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        READ(1,*,ERR=1029)(NLON(LL,K,M),K=1,KC)
        READ(1,*,ERR=1030)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDDO
       ENDIF
-C
+!
       IF(ISCI(6).EQ.1)THEN
       DO NT=1,NSED
       M=MSVSED(NT)
-C
+!
        DO LL=1,NCBS
        READ(1,*,ERR=1023)(NLOS(LL,K,M),K=1,KC)
        READ(1,*,ERR=1024)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        READ(1,*,ERR=1025)(NLOW(LL,K,M),K=1,KC)
        READ(1,*,ERR=1026)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        READ(1,*,ERR=1027)(NLOE(LL,K,M),K=1,KC)
        READ(1,*,ERR=1028)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        READ(1,*,ERR=1029)(NLON(LL,K,M),K=1,KC)
        READ(1,*,ERR=1030)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDDO
       ENDIF
-C
+!
       IF(ISCI(7).EQ.1)THEN
       DO NT=1,NSND
       M=MSVSND(NT)
-C
+!
        DO LL=1,NCBS
        READ(1,*,ERR=1023)(NLOS(LL,K,M),K=1,KC)
        READ(1,*,ERR=1024)(CLOS(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBW
        READ(1,*,ERR=1025)(NLOW(LL,K,M),K=1,KC)
        READ(1,*,ERR=1026)(CLOW(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBE
        READ(1,*,ERR=1027)(NLOE(LL,K,M),K=1,KC)
        READ(1,*,ERR=1028)(CLOE(LL,K,M),K=1,KC)
        ENDDO
-C
+!
        DO LL=1,NCBN
        READ(1,*,ERR=1029)(NLON(LL,K,M),K=1,KC)
        READ(1,*,ERR=1030)(CLON(LL,K,M),K=1,KC)
        ENDDO
-C
+!
       ENDDO
       ENDIF
-C
-c     IF(ISDRY.GT.0)THEN
+!
+!     IF(ISDRY.GT.0)THEN
         DO L=2,LA
         READ(1,*,ERR=1031)QSUME(L),(QSUM(L,K),K=1,KC)
-C       WRITE(6,6666)L,IL(L),JL(L),QSUME(L)
+!       WRITE(6,6666)L,IL(L),JL(L),QSUME(L)
         ENDDO
-c      ENDIF
-C
+!      ENDIF
+!
       IF(MDCHH.GE.1)THEN
-c      IF(MDCHH.EQ.2.AND.MDCHHD.EQ.1)THEN
+!      IF(MDCHH.EQ.2.AND.MDCHHD.EQ.1)THEN
         DO NMD=1,MDCHH
-        READ(1,*,ERR=1032)ITMP1,JTMP1,ITMP2,JTMP2,
-     &                    ITMP3,JTMP3,QCHANU(NMD),QCHANV(NMD)
-C       WRITE(6,6667)NMD,ITMP1,JTMP1,ITMP2,JTMP2,
-C    &                   ITMP3,JTMP3,QCHANU(NMD),QCHANV(NMD)
+        READ(1,*,ERR=1032)ITMP1,JTMP1,ITMP2,JTMP2,ITMP3,JTMP3,QCHANU(NMD),QCHANV(NMD)
+!       WRITE(6,6667)NMD,ITMP1,JTMP1,ITMP2,JTMP2,
+!    &                   ITMP3,JTMP3,QCHANU(NMD),QCHANV(NMD)
         ENDDO
        ELSE
         DO NMD=1,MDCHH
@@ -266,20 +264,20 @@ C    &                   ITMP3,JTMP3,QCHANU(NMD),QCHANV(NMD)
          QCHANUN(NMD)=0.
          QCHANVN(NMD)=0.
         ENDDO
-c      ENDIF
+!      ENDIF
       ENDIF
-C
+!
       IF(ISGWIE.GE.1)THEN
         DO L=2,LA
         READ(1,*,ERR=1033)AGWELV(L),AGWELV1(L)
         ENDDO
       ENDIF
-C
+!
       CLOSE(1)
-C
+!
  6666 FORMAT(3I10,F12.6)
  6667 FORMAT(7I5,2X,E12.4,2X,E12.4)
-C
+!
       DO K=1,KC
       SAL(1,K)=0.
       TEM(1,K)=0.
@@ -326,14 +324,14 @@ C
       VHDXWQ(LC,K)=0.
       UHDYWQ(LC,K)=0.
       ENDDO
-C
+!
       DO L=2,LA
       UHDYE(L)=SUB(L)*UHDYE(L)
       UHDY1E(L)=SUB(L)*UHDY1E(L)
       VHDXE(L)=SVB(L)*VHDXE(L)
       VHDX1E(L)=SVB(L)*VHDX1E(L)
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
       U(L,K)=SUB(L)*U(L,K)
@@ -342,24 +340,20 @@ C
       V1(L,K)=SVB(L)*V1(L,K)
       ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       DO L=2,LA
       LS=LSC(L)
-C      H1U(L)=0.5*(H1P(L)+H1P(L-1))
-C      H1V(L)=0.5*(H1P(L)+H1P(LS))
-       H1U(L)=0.5*(DXP(L)*DYP(L)*H1P(L)+DXP(L-1)*DYP(L-1)*H1P(L-1))
-     &           /(DXU(L)*DYU(L))
-       H1V(L)=0.5*(DXP(L)*DYP(L)*H1P(L)+DXP(LS )*DYP(L-1)*H1P(LS ))
-     &           /(DXV(L)*DYV(L))
+!      H1U(L)=0.5*(H1P(L)+H1P(L-1))
+!      H1V(L)=0.5*(H1P(L)+H1P(LS))
+       H1U(L)=0.5*(DXP(L)*DYP(L)*H1P(L)+DXP(L-1)*DYP(L-1)*H1P(L-1))/(DXU(L)*DYU(L))
+       H1V(L)=0.5*(DXP(L)*DYP(L)*H1P(L)+DXP(LS )*DYP(L-1)*H1P(LS ))/(DXV(L)*DYV(L))
        P1(L)=G*(H1P(L)+BELV(L))
-C      HU(L)=0.5*(HP(L)+HP(L-1))
-C      HV(L)=0.5*(HP(L)+HP(LS))
-       HU(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(L-1)*DYP(L-1)*HP(L-1))
-     &           /(DXU(L)*DYU(L))
-       HV(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(LS )*DYP(L-1)*HP(LS ))
-     &           /(DXV(L)*DYV(L))
+!      HU(L)=0.5*(HP(L)+HP(L-1))
+!      HV(L)=0.5*(HP(L)+HP(LS))
+       HU(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(L-1)*DYP(L-1)*HP(L-1))/(DXU(L)*DYU(L))
+       HV(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(LS )*DYP(L-1)*HP(LS ))/(DXV(L)*DYV(L))
        P(L)=G*(HP(L)+BELV(L))
        HPI(L)=1./HP(L)
        HUI(L)=1./HU(L)
@@ -367,7 +361,7 @@ C      HV(L)=0.5*(HP(L)+HP(LS))
        H1UI(L)=1./H1U(L)
        H1VI(L)=1./H1V(L)
       ENDDO
-C
+!
       H1U(1)=H1U(2)
       H1V(1)=H1V(2)
       P1(1)=P1(2)
@@ -379,7 +373,7 @@ C
       HVI(1)=1./HV(2)
       H1UI(1)=1./H1U(2)
       H1VI(1)=1./H1V(2)
-C
+!
       H1U(LC)=H1U(LA)
       H1V(LC)=H1V(LA)
       P1(LC)=P1(LA)
@@ -391,7 +385,7 @@ C
       HVI(LC)=1./HV(LA)
       H1UI(LC)=1./H1U(LA)
       H1VI(LC)=1./H1V(LA)
-C
+!
       DO K=1,KC
       DO L=2,LA
       UHDY1(L,K)=DYU(L)*H1U(L)*U1(L,K)
@@ -402,25 +396,25 @@ C
       SAL1(L,K)=MAX(SAL1(L,K),0.)
       ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  CORRECT FOR CHANGED BOTTOM ELEV
-C
+!
+!**********************************************************************C
+!
+! **  CORRECT FOR CHANGED BOTTOM ELEV
+!
       IF(ISRESTI.EQ.-1.AND.ISBELVC.EQ.1)THEN
-C
+!
         DO L=2,LA
         UHE(L)=0.
         VHE(L)=0.
         ENDDO
-C
+!
         DO K=1,KC
         DO L=2,LA
         UHE(L)=UHE(L)+UHDY1(L,K)
         VHE(L)=VHE(L)+VHDX1(L,K)
         ENDDO
         ENDDO
-C
+!
         DO L=2,LA
         IF(UHE(L).NE.0.)THEN
           TMPVAL=UHDY1E(L)/UHE(L)
@@ -435,19 +429,19 @@ C
           ENDDO
         ENDIF
         ENDDO
-C      
+!      
         DO L=2,LA
         UHE(L)=0.
         VHE(L)=0.
         ENDDO
-C
+!
         DO K=1,KC
         DO L=2,LA
         UHE(L)=UHE(L)+UHDY(L,K)
         VHE(L)=VHE(L)+VHDX(L,K)
         ENDDO
         ENDDO
-C
+!
         DO L=2,LA
         IF(UHE(L).NE.0.)THEN
           TMPVAL=UHDYE(L)/UHE(L)
@@ -462,7 +456,7 @@ C
           ENDDO
         ENDIF
         ENDDO
-C      
+!      
         DO K=1,KC
         DO L=2,LA
         UHDY1(L,K)=DYU(L)*H1U(L)*U1(L,K)
@@ -471,17 +465,17 @@ C
         VHDX(L,K)=DXV(L)*HV(L)*V(L,K)
         ENDDO
         ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       N=0
       IF(ISDRY.EQ.0)THEN
         CALL CALTSXY
         CALL CALQVS (2)
       ENDIF
-C
+!
       DO K=1,KS
       RDZC=DZC(K)
       DO L=2,LA
@@ -496,7 +490,7 @@ C
      &        +SWB(L)*( QSUM(L,K)-RDZC*QSUME(L) )*DXYIP(L)
       ENDDO       
       ENDDO       
-C
+!
       OPEN(1,FILE='NEWSALT.INP',STATUS='UNKNOWN')
       IONE=1
       WRITE(1,101)IONE
@@ -504,51 +498,50 @@ C
       WRITE(1,102)L,IL(L),JL(L),(SAL(L,K),K=1,KC)
       ENDDO
       CLOSE(1)
-C
-C ** READ BED TEMPERATURE  HTBED1 HTBED2
-C
+!
+! ** READ BED TEMPERATURE  HTBED1 HTBED2
+!
       IF(ISCO(2).GE.1.)THEN
        OPEN(1,FILE='TEMPB.RST',STATUS='UNKNOWN')
        DO L=2,LA
-C        READ(1,*)LDUM,IDUM,JDUM,(TDUMMY(K),K=1,KC),TEMB(L) 
+!        READ(1,*)LDUM,IDUM,JDUM,(TDUMMY(K),K=1,KC),TEMB(L) 
         READ(1,*)LDUM,IDUM,JDUM,(TEMB(L,K),K=1,KBHM)
        ENDDO
        CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  WRITE NEW DXDY FILES TO INCORPORATE RESTART DEPTH
-C
+!
+!**********************************************************************C
+!
+! **  WRITE NEW DXDY FILES TO INCORPORATE RESTART DEPTH
+!
       IDUMMY=0
       OPEN(1,FILE='RSTDXDY.INP',STATUS='UNKNOWN')
       DO J=1,JC
       DO I=1,IC
       L=LIJ(I,J)
       IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LT.9)THEN
-        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HP(L),BELV(L),
-     &              ZBR(L),IDUMMY
+        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HP(L),BELV(L),ZBR(L),IDUMMY
       ENDIF
       ENDDO
       ENDDO
       CLOSE(1)
-C
+!
   339 FORMAT(2I5,5F14.5,I5)
-C
-C**********************************************************************C
-C
-C **  SET DRYING AND WETTING FLAGS
-C
-C
+!
+!**********************************************************************C
+!
+! **  SET DRYING AND WETTING FLAGS
+!
+!
       IF(ISDRY.EQ.0)THEN
       DO L=2,LA
         IMASKDRY(L)=0
         LMASKDRY(L)=.TRUE.
 	ENDDO
 	ENDIF
-C
+!
       IF(ISDRY.GT.0.AND.ISDRY.LT.97)THEN
-C
+!
       DO L=2,LA
         ISCDRY(L)=0
         LS=LSC(L)
@@ -565,23 +558,23 @@ C
           SBY(LN)=0.
         ENDIF
       ENDDO
-C
+!
       ENDIF
-C
+!
       IF(ISDRY.EQ.98)THEN
-C
+!
         HDRY2=2.*HDRY
         DO L=2,LA
         LS=LSC(L)
         LN=LNC(L)
         IF(HP(L).LE.HDRY)THEN
-CZZ	    SUBW=SUB(L)
-CZZ	    SUBE=SUB(L+1)
-CZZ	    SVBS=SVB(L)
-CZZ	    SVBN=SVB(LN)
+!ZZ	    SUBW=SUB(L)
+!ZZ	    SUBE=SUB(L+1)
+!ZZ	    SVBS=SVB(L)
+!ZZ	    SVBN=SVB(LN)
 	    DHPDT=(HP(L)-H1P(L))/DT
 	    IF(DHPDT.GT.0.0)THEN
-CZZ
+!ZZ
 	      SUBW=SUB(L)
 	      SUBE=SUB(L+1)
 	      SVBS=SVB(L)
@@ -594,7 +587,7 @@ CZZ
             SBX(L+1)=0.0  
             SBY(L)=0.0  
             SBY(LN)=0.0  
-CZZ
+!ZZ
 	      IF(SUBO(L).GT.0.5)THEN
 	        IF(UHDYE(L).GT.0.0.AND.HP(L-1).GT.HDRY2)THEN
 	          SUB(L)=1.
@@ -634,7 +627,7 @@ CZZ
 	      IF(TMPVAL.GT.0.5)ICORDRY=1
 	      TMPVAL=ABS(SVB(LN)-SVBN)
 	      IF(TMPVAL.GT.0.5)ICORDRY=1
-CZZ            IF(IDFLAG.GT.0) ICORDRY=1
+!ZZ            IF(IDFLAG.GT.0) ICORDRY=1
 	    ELSE
 	      SUB(L)=0.0
 	      SUB(L+1)=0.0
@@ -649,49 +642,47 @@ CZZ            IF(IDFLAG.GT.0) ICORDRY=1
             ENDIF
 	    ENDIF
 	  ENDIF
-C
+!
         ENDDO
-C
+!
       ENDIF
-C
+!
       IF(ISDRY.EQ.99)THEN
        OPEN(1,FILE='RSTWD.INP',STATUS='UNKNOWN')
        OPEN(2,FILE='RSTWD.RCK',STATUS='UNKNOWN')
        CLOSE(2,STATUS='DELETE')
        OPEN(2,FILE='RSTWD.RCK',STATUS='UNKNOWN')
        DO L=2,LA
-        READ(1,*)LDUM,IDUM,JDUM,ISCDRY(L),NATDRY(L),
-     &           IMASKDRY(L),SUB(L),SVB(L) 
-        WRITE(2,913)LDUM,IDUM,JDUM,ISCDRY(L),NATDRY(L),
-     &           IMASKDRY(L),SUB(L),SVB(L),SUBO(L),SVBO(L) 
+        READ(1,*)LDUM,IDUM,JDUM,ISCDRY(L),NATDRY(L),IMASKDRY(L),SUB(L),SVB(L) 
+        WRITE(2,913)LDUM,IDUM,JDUM,ISCDRY(L),NATDRY(L),IMASKDRY(L),SUB(L),SVB(L),SUBO(L),SVBO(L) 
        ENDDO
        CLOSE(1)
        CLOSE(2)
       ENDIF
-C
+!
   913 FORMAT(6I5,4F7.3)
 
-C
-C      DO L=2,LA
-C        IMASKDRY(L)=0
-C        LMASKDRY(L)=.TRUE.
-C      END DO
-C
-C
+!
+!      DO L=2,LA
+!        IMASKDRY(L)=0
+!        LMASKDRY(L)=.TRUE.
+!      END DO
+!
+!
       DO L=2,LA
         IF(IMASKDRY(L).EQ.0) LMASKDRY(L)=.TRUE.
         IF(IMASKDRY(L).GT.0) LMASKDRY(L)=.FALSE.
       END DO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   101 FORMAT(I5)
   102 FORMAT(3I5,16F8.2)
-C
-C**********************************************************************C
-C
-C **  WRITE READ ERRORS ON RESTART
-C
+!
+!**********************************************************************C
+!
+! **  WRITE READ ERRORS ON RESTART
+!
       GOTO 3000
  1000 WRITE(6,2000)
       STOP
@@ -762,9 +753,9 @@ C
  1033 WRITE(6,2033)L
       STOP
  3000 CONTINUE
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   600 FORMAT(2X,'I,J,BELVOLD,BELVNEW',2I5,2F12.2)
   906 FORMAT(5E15.7)
   907 FORMAT(12E12.4)
@@ -803,10 +794,9 @@ C
  2031 FORMAT('  READ ERROR ON FILE RESTART.INP ERR 1031 L =',I6)
  2032 FORMAT('  READ ERROR ON FILE RESTART.INP ERR 1032 NMD =',I6)
  2033 FORMAT('  READ ERROR ON FILE RESTART.INP ERR 1033 L =',I6)
- 9696 FORMAT('  NEGATIVE DEPTH RESTART, L,I,J,HP,H1P = ',
-     &           3I7,2F10.4)
-C
-C**********************************************************************C
-C
+ 9696 FORMAT('  NEGATIVE DEPTH RESTART, L,I,J,HP,H1P = ',3I7,2F10.4)
+!
+!**********************************************************************C
+!
       RETURN
       END

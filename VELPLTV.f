@@ -1,49 +1,49 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE VELPLTV
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE VELPLTV WRITES A FIL FOR VERTICAL PLANE CONTOURING
-C **  OF VELOCITY NORMAL TO AN ARBITARY SEQUENCE OF (I,J) POINTS AND
-C **  AND VERTICAL PLANE TANGENTIAL-VERTICAL VELOCITY VECTORS
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE VELPLTV WRITES A FIL FOR VERTICAL PLANE CONTOURING
+! **  OF VELOCITY NORMAL TO AN ARBITARY SEQUENCE OF (I,J) POINTS AND
+! **  AND VERTICAL PLANE TANGENTIAL-VERTICAL VELOCITY VECTORS
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       REAL VELN (KCM,100)
       REAL VELT (KCM,100)
       REAL WZCORD (KCM,100)
       CHARACTER*80 TITLE1,TITLE2
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(JSVPV.NE.1) GOTO 300
-C
-C----------------------------------------------------------------------C
-C
-C **  WRITE HEADINGS
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  WRITE HEADINGS
+!
       LEVELS=KC
       TITLE1='INSTANTANEOUS NORMAL VELOCITY CONTOURS'
       TITLE2='INSTANTANEOUS TANGENTIAL VELOCITY VECTORS'
-C
+!
       IF(ISECVPV.GE.1)THEN
         OPEN(11,FILE='VELCNV1.OUT')
         OPEN(21,FILE='VELVCV1.OUT')
@@ -116,7 +116,7 @@ C
         OPEN(19,FILE='VELCNV9.OUT')
         OPEN(29,FILE='VELVCV9.OUT')
       ENDIF
-C
+!
       DO IS=1,ISECVPV
       LUN1=10+IS
       LUN2=20+IS
@@ -130,20 +130,20 @@ C
       CLOSE(LUN1)
       CLOSE(LUN2)
       ENDDO
-C
+!
       JSVPV=0
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
   300 CONTINUE
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=DT*FLOAT(N)+TCON*TBEGIN
         TIME=TIME/TCON
       ELSE
         TIME=TIMESEC/TCON
       ENDIF
-C
+!
       IF(ISECVPV.GE.1)THEN
         OPEN(11,FILE='VELCNV1.OUT',POSITION='APPEND')
         OPEN(21,FILE='VELVCV1.OUT',POSITION='APPEND')
@@ -180,7 +180,7 @@ C
         OPEN(19,FILE='VELCNV9.OUT',POSITION='APPEND')
         OPEN(29,FILE='VELVCV9.OUT',POSITION='APPEND')
       ENDIF
-C
+!
       DO IS=1,ISECVPV
       LUN1=10+IS
       LUN2=20+IS
@@ -195,10 +195,8 @@ C
        LN=LNC(L)
        LS=LSC(L)
         DO K=1,KC
-        VELN(K,NN)=50.*((U(L+1,K)+U(L,K))*COSC+(V(LN,K)
-     &                                         +V(L,K))*SINC)
-        VELT(K,NN)=-50.*((U(L+1,K)+U(L,K))*SINC-(V(LN,K)
-     &                                          +V(L,K))*COSC)
+        VELN(K,NN)=50.*((U(L+1,K)+U(L,K))*COSC+(V(LN,K)+V(L,K))*SINC)
+        VELT(K,NN)=-50.*((U(L+1,K)+U(L,K))*SINC-(V(LN,K)+V(L,K))*COSC)
         WZCORD(K,NN)=50.*(W(L,K)+W(L,K-1))+GI*ZZ(K)*(DTI*(P(L)-P1(L))
      &         +50.*(U(L+1,K)*(P(L+1)-P(L))*DXIU(L+1)
      &              +U(L,K)*(P(L)-P(L-1))*DXIU(L)
@@ -208,11 +206,11 @@ C
      &                         +U(L,K)*(BELV(L)-BELV(L-1))*DXIU(L)
      &                         +V(LN,K)*(BELV(LN)-BELV(L))*DYIV(LN)
      &                         +V(L,K)*(BELV(L)-BELV(LS))*DYIV(L))
-C    &         -50.*(1.-ZZ(K))*(U(L+1,K)*(HMP(L+1)-HMP(L))*DXIU(L+1)
-C    &                         +U(L,K)*(HMP(L)-HMP(L-1))*DXIU(L)
-C    &                         +V(LN,K)*(HMP(LN)-HMP(L))*DYIV(LN)
-C    &                         +V(L,K)*(HMP(L)-HMP(LS))*DYIV(L))
-C
+!    &         -50.*(1.-ZZ(K))*(U(L+1,K)*(HMP(L+1)-HMP(L))*DXIU(L+1)
+!    &                         +U(L,K)*(HMP(L)-HMP(L-1))*DXIU(L)
+!    &                         +V(LN,K)*(HMP(LN)-HMP(L))*DYIV(LN)
+!    &                         +V(L,K)*(HMP(L)-HMP(LS))*DYIV(L))
+!
         ENDDO
        ENDDO
        DO NN=1,NIJVPV(IS)
@@ -221,9 +219,9 @@ C
        L=LIJ(I,J)
        ZETA=P(L)*GI-SBPLTV(1)*(HMP(L)+BELV(L))
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
-C      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN1,250)(VELN(K,NN),K=1,KC)
@@ -233,18 +231,18 @@ C      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
       CLOSE(LUN1)
       CLOSE(LUN2)
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
    99 FORMAT(A40,2X,A20)
   100 FORMAT(I10,F17.9)
   101 FORMAT(2I10)
   200 FORMAT(2I5,1X,6E14.6)
   250 FORMAT(12E12.4)
-CMRM  200 FORMAT(2I5,1X,1P,6E13.5)
-CMRM  250 FORMAT(1P,12E11.3)
-C
-C**********************************************************************C
-C
+!MRM  200 FORMAT(2I5,1X,1P,6E13.5)
+!MRM  250 FORMAT(1P,12E11.3)
+!
+!**********************************************************************C
+!
       RETURN
       END

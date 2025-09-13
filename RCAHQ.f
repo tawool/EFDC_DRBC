@@ -1,90 +1,87 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE RCAHQ
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE FOR INTERFACING RCA MODEL
-C **  MODIFIED FROM WCA2A PROUDCTION VERSION
-C **  WITH WITHDRAWL-RETURN FLOW OPTION DEACTIVATED BY CNWR
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE FOR INTERFACING RCA MODEL
+! **  MODIFIED FROM WCA2A PROUDCTION VERSION
+! **  WITH WITHDRAWL-RETURN FLOW OPTION DEACTIVATED BY CNWR
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C      PARAMETER ( NQINFLM=96 )
-C
-      DIMENSION DZRCA(KCM+1),DZZRCA(KCM+1),QINRCA(NQSIJM),
-     &          QINTFL(NQINFLM,KCM),TMPARA(ICM,JCM)
-C
-C**********************************************************************C
-C
-C **  WRITE TIME INVARIANT FILES ON FIRST ENTRY
-C
+!
+!      PARAMETER ( NQINFLM=96 )
+!
+      DIMENSION DZRCA(KCM+1),DZZRCA(KCM+1),QINRCA(NQSIJM),QINTFL(NQINFLM,KCM),TMPARA(ICM,JCM)
+!
+!**********************************************************************C
+!
+! **  WRITE TIME INVARIANT FILES ON FIRST ENTRY
+!
       IF(JSWASP.EQ.0) GOTO 1000
       JSWASP=0
-C
+!
       OPEN(1,FILE='EFDC.RCA',STATUS='UNKNOWN')
-C
-C **  READ I,J LOCATION OF THE DUMP CELL (AN ACTIVE WATER CELL)
-C
+!
+! **  READ I,J LOCATION OF THE DUMP CELL (AN ACTIVE WATER CELL)
+!
       DO NSKIP=1,4
       READ(1,100)
       ENDDO
       READ(1,*)ISDRCA,IDMPCL,JDMPCL
-C
+!
       CLOSE(1)
-C
-C
-C **  WRITE I,J INDICES DEFINING FLOWS BETWEEN ARBITARY CELLS
-C **  (POSTIVE FLOW DIRECTION DEFINED FROM FIRST TO SECOND I,J PAIR)
-C
+!
+!
+! **  WRITE I,J INDICES DEFINING FLOWS BETWEEN ARBITARY CELLS
+! **  (POSTIVE FLOW DIRECTION DEFINED FROM FIRST TO SECOND I,J PAIR)
+!
       OPEN(1,FILE='FLWMAP.INP',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='FLWMAP.INP',STATUS='UNKNOWN')
-C
+!
       NINTFL=0
-C
+!
       IF(NQSIJ.GT.0)THEN
         DO NS=1,NQSIJ
          NINTFL=NINTFL+1
          WRITE(1,101)IDMPCL,JDMPCL,IQS(NS),JQS(NS)
         ENDDO
       ENDIF
-C
+!
       IF(NQCTL.GT.0)THEN
         DO NCTL=1,NQCTL
          NINTFL=NINTFL+1
          IF(IQCTLD(NCTL).GT.0)THEN
-           WRITE(1,101) IQCTLU(NCTL),JQCTLU(NCTL),
-     &                  IQCTLD(NCTL),JQCTLD(NCTL) 
+           WRITE(1,101) IQCTLU(NCTL),JQCTLU(NCTL),IQCTLD(NCTL),JQCTLD(NCTL) 
           ELSE
-           WRITE(1,101)IQCTLU(NCTL),JQCTLU(NCTL),
-     &                 IDMPCL,JDMPCL 
+           WRITE(1,101)IQCTLU(NCTL),JQCTLU(NCTL),IDMPCL,JDMPCL 
          ENDIF         
         ENDDO 
       ENDIF
-C
+!
       IF(NQWR.GT.0)THEN
         DO NWR=1,NQWR
          NINTFL=NINTFL+1
          WRITE(1,101)IQWRU(NWR),JQWRU(NWR),IQWRD(NWR),JQWRD(NWR)
         ENDDO
       ENDIF
-C
+!
       IF(MDCHH.GT.0)THEN
         DO NMD=1,MDCHH
          IF(IMDCHU(NMD).GT.1)THEN
@@ -99,77 +96,77 @@ C
          ENDIF
         ENDDO
       ENDIF
-C
+!
       CLOSE(1)
-C
+!
       OPEN(1,FILE='EFDCRCA.LOG',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='EFDCRCA.LOG',STATUS='UNKNOWN')
-C
+!
       ICRCA1=IDMPCL
       ICRCA2=JDMPCL
       ICRCA3=ISDRCA
       NCRCA1=NINTFL
-C
+!
       WRITE(1,102)IC,JC,KC
       WRITE(1,103)NINTFL
       WRITE(1,104)IDMPCL,JDMPCL
       TIMTMP=TCON*TBEGIN/86400.
       WRITE(1,105)TIMTMP
-C
+!
       CLOSE(1)
-C
+!
       OPEN(1,FILE='INFLWIJ.DAT',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='INFLWIJ.DAT',STATUS='UNKNOWN')
-C
+!
       WRITE(1,110)
       WRITE(1,111)
-C
+!
       IF(NQSIJ.GE.1)THEN
         DO NS=1,NQSIJ
          WRITE(1,112)NS,IQS(NS),JQS(NS) 
         ENDDO
       ENDIF
-C
+!
       CLOSE(1)
-C
-C **  WRITE GRID GEOMETRY, INCLUDING INITIAL DEPTH
-C
+!
+! **  WRITE GRID GEOMETRY, INCLUDING INITIAL DEPTH
+!
       OPEN(1,FILE='GCM_GEOM',FORM='UNFORMATTED',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='GCM_GEOM',FORM='UNFORMATTED',STATUS='UNKNOWN')
-C
+!
       DO L=1,LC
       HTMP(L)=HMP(L)
       ENDDO
-C
+!
       DZRCA(KC+1)=0.
       DZZRCA(KC+1)=0.
       DZZRCA(1)=0.
-C
+!
       DO K=1,KC
        KK=KC+1-K
        DZRCA(KK)=DZC(K)
       ENDDO
-C
+!
       IF(KC.GT.1)THEN
         DO K=1,KS
          KK=KS+2-K
          DZZRCA(KK)=DZG(K)
         ENDDO
       ENDIF
-C
+!
       WRITE(1)DZRCA,DZZRCA
-C
+!
       SQRTMP=SQRT(0.5)
-C
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=1.E-6
        ENDDO
       ENDDO
-C
+!
       DO J=1,JC
        DO I=1,IC
         IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LE.5)THEN
@@ -177,15 +174,15 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       WRITE(1)TMPARA
-C
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=DX
        ENDDO
       ENDDO
-C
+!
       DO J=1,JC
        DO I=1,IC
         IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LE.4)THEN
@@ -196,15 +193,15 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       WRITE(1)TMPARA
-C
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=DY
        ENDDO
       ENDDO
-C
+!
       DO J=1,JC
        DO I=1,IC
         IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LE.4)THEN
@@ -215,15 +212,15 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       WRITE(1)TMPARA
-C
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO J=1,JC
        DO I=1,IC
         IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LE.5)THEN
@@ -231,43 +228,42 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       WRITE(1)TMPARA
-C
+!
       CLOSE(1)
-C
+!
       OPEN(1,FILE='EFDCHYD.INP',FORM='UNFORMATTED',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
-C
+!
       IF(ICRCA3.EQ.1)THEN
       OPEN(1,FILE='EFDCHYD.ASC',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       ENDIF
-C
+!
       OPEN(1,FILE='INFLOW.DAT',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
-C
+!
       OPEN(1,FILE='HYDRLGY.INP',FORM='UNFORMATTED',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
-C
+!
       IF(ICRCA3.EQ.1)THEN
       OPEN(1,FILE='HYDRLGY.ASC',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       ENDIF
-C
+!
       OPEN(1,FILE='INTFLW.INP',FORM='UNFORMATTED',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
-C
+!
       IF(ICRCA3.EQ.1)THEN
       OPEN(1,FILE='INTFLW.ASC',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       ENDIF
-C
+!
   100 FORMAT(120X)
   101 FORMAT(4I10)
   102 FORMAT(' NROW,NCOL,NLAYR = ',3I10/)
-  103 FORMAT(' NO INTERNAL FLOWS, NINTFL (LINES) IN FLWMAP.INP = ',
-     &         I10/)
+  103 FORMAT(' NO INTERNAL FLOWS, NINTFL (LINES) IN FLWMAP.INP = ',I10/)
   104 FORMAT(' ROW, COLUMN INDICES OF DUMP CELL = ',2I10/)
   105 FORMAT(' SIMULATION STARTING TIME IN DAYS = ',F12.6/)
   106 FORMAT(' TIME IN DAYS AT MIDDLE OF AVERAGING PERIOD = ',F12.6/)
@@ -275,11 +271,11 @@ C
   111 FORMAT(' INFLOW #   ROW INDEX   COLUMN INDEX ',/)
   112 FORMAT(2X,I5,7X,I5,7X,I5)
   120 FORMAT(F12.6,13F12.4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  1000 CONTINUE
-C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=(DT*FLOAT(N)+TCON*TBEGIN)/86400.
       ELSE
@@ -287,21 +283,21 @@ C
       ENDIF
       NMID=N-(NTSMMT/2)
       TIMMID=(DT*FLOAT(NMID)+TCON*TBEGIN)/86400.
-C
-C **  WRITE TIME AT END OF AVERAGING PERIOD TO EFDCRCA.LOG
-C
+!
+! **  WRITE TIME AT END OF AVERAGING PERIOD TO EFDCRCA.LOG
+!
       OPEN(1,FILE='EFDCRCA.LOG',STATUS='UNKNOWN',POSITION='APPEND')
       WRITE(1,106)TIMMID
       CLOSE(1)
-C
-C **  WRITE INFLOWS AT END OF AVERAGING PERIOD TO INFLOW.DAT
-C
+!
+! **  WRITE INFLOWS AT END OF AVERAGING PERIOD TO INFLOW.DAT
+!
       OPEN(1,FILE='INFLOW.DAT',STATUS='UNKNOWN',POSITION='APPEND')
-C
+!
       DO NS=1,NQSIJ
        QINRCA(NS)=0.
       ENDDO
-C
+!
       DO NS=1,NQSIJ     
        NQSTMP=NQSERQ(NS)
        IF(NQSTMP.GT.0)THEN
@@ -314,37 +310,35 @@ C
          ENDDO
        ENDIF
       ENDDO
-C
+!
       WRITE(1,120)TIME,(QINRCA(NS),NS=1,NQSIJ)
-C
+!
       CLOSE(1)
-C
-C **  WRITE INTERNAL FLOWS TO INTFLW.INP
-C
-      OPEN(1,FILE='INTFLW.INP',FORM='UNFORMATTED',STATUS='UNKNOWN'
-     &                         ,POSITION='APPEND')
-C
+!
+! **  WRITE INTERNAL FLOWS TO INTFLW.INP
+!
+      OPEN(1,FILE='INTFLW.INP',FORM='UNFORMATTED',STATUS='UNKNOWN',POSITION='APPEND')
+!
       IF(ICRCA3.EQ.1)THEN
        OPEN(2,FILE='INTFLW.ASC',STATUS='UNKNOWN',POSITION='APPEND')
        WRITE(2,106)TIME
       ENDIF
-C
+!
       DO K=1,KC
        DO NS=1,NCRCA1
         QINTFL(NS,K)=0.
        ENDDO
       ENDDO
-C
+!
       NINTFL=0
-C
+!
       IF(NQSIJ.GT.0)THEN
       DO NS=1,NQSIJ 
        NINTFL=NINTFL+1    
        NQSTMP=NQSERQ(NS)
        IF(NQSTMP.GT.0)THEN
          DO K=1,KC
-          QINTFL(NINTFL,K)=QINTFL(NINTFL,K)+QSRTLPN(K,NQSTMP)
-     &                     +MIN(QSS(K,NS),0.)
+          QINTFL(NINTFL,K)=QINTFL(NINTFL,K)+QSRTLPN(K,NQSTMP)+MIN(QSS(K,NS),0.)
          ENDDO
         ELSE
          DO K=1,KC
@@ -353,7 +347,7 @@ C
        ENDIF
       ENDDO
       ENDIF
-C
+!
       IF(NQCTL.GT.0)THEN
         DO NCTL=1,NQCTL
          NINTFL=NINTFL+1
@@ -362,20 +356,19 @@ C
          ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(NQWR.GT.0)THEN
         DO NWR=1,NQWR
          NQSTMP=NQWRSERQ(NWR)
          NINTFL=NINTFL+1
          DO K=1,KC
          IF(K.EQ.KQWRU(NWR))THEN
-           QINTFL(NINTFL,K)=QINTFL(NINTFL,K)+QWRSERTLP(NQSTMP)
-     &                    +QWR(NWR)
+           QINTFL(NINTFL,K)=QINTFL(NINTFL,K)+QWRSERTLP(NQSTMP)+QWR(NWR)
          ENDIF
          ENDDO
         ENDDO
       ENDIF
-C 
+! 
       IF(MDCHH.GT.0)THEN
         DO NMD=1,MDCHH
          IF(IMDCHU(NMD).GT.1)THEN
@@ -394,40 +387,39 @@ C
          ENDIF
         ENDDO
       ENDIF
-C
+!
       WRITE(1)QINTFL
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,213)
         DO NS=1,NINTFL
         WRITE(2,211)NS,(QINTFL(NS,K),K=1,KC)
         ENDDO
       ENDIF
-C
+!
       CLOSE(1)
       IF(ICRCA3.EQ.1) CLOSE(2)
-C
-C **  WRITE TRANSPORTS TO EFDCHDY.INP
-C
-      OPEN(1,FILE='EFDCHYD.INP',FORM='UNFORMATTED',STATUS='UNKNOWN'
-     &                         ,POSITION='APPEND')
+!
+! **  WRITE TRANSPORTS TO EFDCHDY.INP
+!
+      OPEN(1,FILE='EFDCHYD.INP',FORM='UNFORMATTED',STATUS='UNKNOWN',POSITION='APPEND')
       WRITE(1)TIMMID
-C
+!
       IF(ICRCA3.EQ.1)THEN
        OPEN(2,FILE='EFDCHYD.ASC',STATUS='UNKNOWN',POSITION='APPEND')
        WRITE(2,106) TIMMID
       ENDIF
-C
+!
       TAVGTMP=FLOAT(NTSMMT)*DT
-C
-C **  WRITE QX
-C
+!
+! **  WRITE QX
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO KK=1,KC
        K=KC+1-KK
        DO L=2,LA
@@ -437,7 +429,7 @@ C
        ENDDO
        WRITE(1)TMPARA
       ENDDO
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,201)   
         DO L=2,LA
@@ -445,15 +437,15 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  WRITE QY
-C
+!
+! **  WRITE QY
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO KK=1,KC
        K=KC+1-KK
        DO L=2,LA
@@ -463,7 +455,7 @@ C
        ENDDO
        WRITE(1)TMPARA
       ENDDO
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,202)   
         DO L=2,LA
@@ -471,53 +463,45 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  LOAD NET DEPTH INTEGRATED INFLOWS INTO TVAR3E AND
-C **  OUT FLOWS INTO TVAR3N
-C
+!
+! **  LOAD NET DEPTH INTEGRATED INFLOWS INTO TVAR3E AND
+! **  OUT FLOWS INTO TVAR3N
+!
       DO L=2,LA
        LN=LNC(L)
        TVAR3E(L)=0.
        TVAR3N(L)=0.
        DO K=1,KC
-        TVAR3E(L)=TVAR3E(L)+DZC(K)*( DYU(L)*UHLPF(L,K)
-     &                           +DXV(L)*VHLPF(L,K) )
-        TVAR3N(L)=TVAR3N(L)+DZC(K)*( DYU(L+1)*UHLPF(L+1,K)
-     &                           +DXV(LN )*VHLPF(LN ,K) )
+        TVAR3E(L)=TVAR3E(L)+DZC(K)*( DYU(L)*UHLPF(L,K)+DXV(L)*VHLPF(L,K) )
+        TVAR3N(L)=TVAR3N(L)+DZC(K)*( DYU(L+1)*UHLPF(L+1,K)+DXV(LN )*VHLPF(LN ,K) )
        ENDDO
       ENDDO
-C
+!
       IF(MDCHH.GE.1)THEN
         DO NMD=1,MDCHH
         IF(MDCHTYP(NMD).EQ.1)THEN
-          TVAR3E(LMDCHH(NMD))=TVAR3E(LMDCHH(NMD))
-     &                   +QCHNULP(NMD)
-          TVAR3N(LMDCHU(NMD))=TVAR3N(LMDCHU(NMD))
-     &                   +QCHNULP(NMD)
+          TVAR3E(LMDCHH(NMD))=TVAR3E(LMDCHH(NMD))+QCHNULP(NMD)
+          TVAR3N(LMDCHU(NMD))=TVAR3N(LMDCHU(NMD))+QCHNULP(NMD)
         ENDIF            
         IF(MDCHTYP(NMD).EQ.2)THEN
-          TVAR3E(LMDCHH(NMD))=TVAR3E(LMDCHH(NMD))
-     &                   +QCHNVLP(NMD)
-          TVAR3N(LMDCHV(NMD))=TVAR3N(LMDCHV(NMD))
-     &                   +QCHNVLP(NMD)
+          TVAR3E(LMDCHH(NMD))=TVAR3E(LMDCHH(NMD))+QCHNVLP(NMD)
+          TVAR3N(LMDCHV(NMD))=TVAR3N(LMDCHV(NMD))+QCHNVLP(NMD)
         ENDIF            
         IF(MDCHTYP(NMD).EQ.3)THEN
-          TVAR3E(LMDCHH(NMD))=TVAR3E(LMDCHH(NMD))
-     &                   +QCHNULP(NMD)+QCHNVLP(NMD)
-          TVAR3N(LMDCHU(NMD))=TVAR3N(LMDCHU(NMD))
-     &                   +QCHNULP(NMD)+QCHNVLP(NMD)
+          TVAR3E(LMDCHH(NMD))=TVAR3E(LMDCHH(NMD))+QCHNULP(NMD)+QCHNVLP(NMD)
+          TVAR3N(LMDCHU(NMD))=TVAR3N(LMDCHU(NMD))+QCHNULP(NMD)+QCHNVLP(NMD)
         ENDIF
         ENDDO
       ENDIF
-C
-C **  WRITE QZ
-C
+!
+! **  WRITE QZ
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       IF(KC.GT.1)THEN
       DO K=1,KS
        DO L=2,LA
@@ -532,7 +516,7 @@ C
        ENDDO
       ENDDO
       ENDIF   
-C
+!
       IF(KC.GT.1)THEN
         DO KK=0,KC
          K=KC+1-KK
@@ -547,7 +531,7 @@ C
          ENDIF
         ENDDO
       ENDIF
-C
+!
       IF(ICRCA3.EQ.1.AND.KC.GT.1)THEN
         WRITE(2,203)   
         DO L=2,LA
@@ -555,63 +539,63 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  WRITE AHX
-C
+!
+! **  WRITE AHX
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
-C     DO KK=1,KC
-C      K=KC+1-KK
-C      DO L=2,LA
-C       TMPARA(IL(L),JL(L))=AHULPF(L,K)
-C      ENDDO
-C      WRITE(1)TMPARA
-C     ENDDO
-C
-C     IF(ICRCA3.EQ.1)THEN
-C       WRITE(2,204)   
-C       DO L=2,LA
-C        WRITE(2,200)L,IL(L),JL(L),(AHULPF(L,K),K=1,KC)
-C       ENDDO
-C       WRITE(2,210)
-C     ENDIF
-C
-C **  WRITE AHY
-C
+!
+!     DO KK=1,KC
+!      K=KC+1-KK
+!      DO L=2,LA
+!       TMPARA(IL(L),JL(L))=AHULPF(L,K)
+!      ENDDO
+!      WRITE(1)TMPARA
+!     ENDDO
+!
+!     IF(ICRCA3.EQ.1)THEN
+!       WRITE(2,204)   
+!       DO L=2,LA
+!        WRITE(2,200)L,IL(L),JL(L),(AHULPF(L,K),K=1,KC)
+!       ENDDO
+!       WRITE(2,210)
+!     ENDIF
+!
+! **  WRITE AHY
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
-C     DO KK=1,KC
-C      K=KC+1-KK
-C      DO L=2,LA
-C       TMPARA(IL(L),JL(L))=AHVLPF(L,K)
-C      ENDDO
-C      WRITE(1)TMPARA
-C     ENDDO
-C
-C     IF(ICRCA3.EQ.1)THEN
-C       WRITE(2,205)   
-C       DO L=2,LA
-C        WRITE(2,200)L,IL(L),JL(L),(AHVLPF(L,K),K=1,KC)
-C       ENDDO
-C       WRITE(2,210)
-C     ENDIF
-C
-C **  WRITE AZ
-C
+!
+!     DO KK=1,KC
+!      K=KC+1-KK
+!      DO L=2,LA
+!       TMPARA(IL(L),JL(L))=AHVLPF(L,K)
+!      ENDDO
+!      WRITE(1)TMPARA
+!     ENDDO
+!
+!     IF(ICRCA3.EQ.1)THEN
+!       WRITE(2,205)   
+!       DO L=2,LA
+!        WRITE(2,200)L,IL(L),JL(L),(AHVLPF(L,K),K=1,KC)
+!       ENDDO
+!       WRITE(2,210)
+!     ENDIF
+!
+! **  WRITE AZ
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       IF(KC.GT.1)THEN
         DO KK=0,KC
          K=KC+1-KK
@@ -632,7 +616,7 @@ C
          ENDIF
         ENDDO
       ENDIF
-C
+!
       IF(ICRCA3.EQ.1.AND.KC.GT.1)THEN
         WRITE(2,206)   
         DO L=2,LA
@@ -640,22 +624,22 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  WRITE WATER SURF ELV AT START OF AVG INTERVAL
-C
+!
+! **  WRITE WATER SURF ELV AT START OF AVG INTERVAL
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO L=2,LA
        TMPARA(IL(L),JL(L))=HTMP(L)-HMP(L)
        TVAR3W(L)=HTMP(L)-HMP(L)
       ENDDO
-C
+!
       WRITE(1)TMPARA
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,215)   
         DO L=2,LA
@@ -663,36 +647,34 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  CALCULATE TOTAL DEPTH AT END OF AVG INTERVAL
-C **  HTMP IS NEW DEPTH, TMPARA IS DETA
-C
+!
+! **  CALCULATE TOTAL DEPTH AT END OF AVG INTERVAL
+! **  HTMP IS NEW DEPTH, TMPARA IS DETA
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
-C **  UPDATE FOR TRANSPORTS, INTERNAL CHANNEL EXCHANGES AND
-C **  HYDROLOGY
-C
+!
+! **  UPDATE FOR TRANSPORTS, INTERNAL CHANNEL EXCHANGES AND
+! **  HYDROLOGY
+!
       DO L=2,LA
-       TMPARA(IL(L),JL(L))=TAVGTMP*SPB(L)*DXYIP(L)*( TVAR3E(L)
-     &                -TVAR3N(L)+RAINLPF(L)-EVPSLPF(L)-RINFLPF(L) )
+       TMPARA(IL(L),JL(L))=TAVGTMP*SPB(L)*DXYIP(L)*( TVAR3E(L)-TVAR3N(L)+RAINLPF(L)-EVPSLPF(L)-RINFLPF(L) )
       ENDDO
-C
-C **  UPDATE FOR EXTERNAL INFLOWS
-C
+!
+! **  UPDATE FOR EXTERNAL INFLOWS
+!
       DO NS=1,NQSIJ
        L=LIJ(IQS(NS),JQS(NS))
-       TMPARA(IQS(NS),JQS(NS))=TMPARA(IQS(NS),JQS(NS))
-     &                        +TAVGTMP*SPB(L)*DXYIP(L)*QINRCA(NS)
+       TMPARA(IQS(NS),JQS(NS))=TMPARA(IQS(NS),JQS(NS))+TAVGTMP*SPB(L)*DXYIP(L)*QINRCA(NS)
       ENDDO
-C
-C **  UPDATE FOR NON CHANNEL EXCHANGE INTERNAL FLOWS 
-C
+!
+! **  UPDATE FOR NON CHANNEL EXCHANGE INTERNAL FLOWS 
+!
       NINTFL=0
-C
+!
       IF(NQSIJ.GT.0)THEN
       DO NS=1,NQSIJ 
        L=LIJ(IQS(NS),JQS(NS))
@@ -704,7 +686,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
       IF(NQCTL.GT.0)THEN
       DO NCTL=1,NQCTL
        LU=LIJ(IQCTLU(NCTL),JQCTLU(NCTL))
@@ -720,7 +702,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
       IF(NQWR.GT.0)THEN
       DO NWR=1,NQWR
        LU=LIJ(IQWRU(NWR),JQWRU(NWR))
@@ -738,17 +720,16 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
-C **  COMPLETE UPDATE 
-C
+!
+! **  COMPLETE UPDATE 
+!
       DO L=2,LA
-       HTMP(L)=(1.-SPB(L))*HP(L)+SPB(L)*( HTMP(L)
-     &          +TMPARA(IL(L),JL(L)) )
+       HTMP(L)=(1.-SPB(L))*HP(L)+SPB(L)*( HTMP(L)+TMPARA(IL(L),JL(L)) )
        TVAR3S(L)=HTMP(L)-HMP(L)
       ENDDO
-C
+!
       WRITE(1)TMPARA
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,216)   
         DO L=2,LA
@@ -756,24 +737,23 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,207)   
         DO L=2,LA
-         WRITE(2,200)L,IL(L),JL(L),TVAR3W(L),HTMP(L),
-     &               TMPARA(IL(L),JL(L)),TVAR3S(L) 
+         WRITE(2,200)L,IL(L),JL(L),TVAR3W(L),HTMP(L),TMPARA(IL(L),JL(L)),TVAR3S(L) 
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  WRITE SALINITY
-C
+!
+! **  WRITE SALINITY
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO KK=1,KC
        K=KC+1-KK
        DO L=2,LA
@@ -781,7 +761,7 @@ C
        ENDDO
        WRITE(1)TMPARA
       ENDDO
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,208)   
         DO L=2,LA
@@ -789,15 +769,15 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
-C **  WRITE TEMPERATURE
-C
+!
+! **  WRITE TEMPERATURE
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO KK=1,KC
        K=KC+1-KK
        DO L=2,LA
@@ -805,7 +785,7 @@ C
        ENDDO
        WRITE(1)TMPARA
       ENDDO
-C
+!
       IF(ICRCA3.EQ.1)THEN
         WRITE(2,209)   
         DO L=2,LA
@@ -813,52 +793,50 @@ C
         ENDDO
         WRITE(2,210)
       ENDIF
-C
+!
       CLOSE(1)
       IF(ICRCA3.EQ.1) CLOSE(2)
-C
-C **  WRITE HYDROLOGY
-C
-      OPEN(1,FILE='HYDRLGY.INP',FORM='UNFORMATTED',STATUS='UNKNOWN'
-     &                         ,POSITION='APPEND')
-C
+!
+! **  WRITE HYDROLOGY
+!
+      OPEN(1,FILE='HYDRLGY.INP',FORM='UNFORMATTED',STATUS='UNKNOWN',POSITION='APPEND')
+!
       WRITE(1)TIMMID
-C
+!
       DO J=1,JC
        DO I=1,IC
         TMPARA(I,J)=0.
        ENDDO
       ENDDO
-C
+!
       DO L=2,LA
         TMPARA(IL(L),JL(L))=RAINLPF(L)
       ENDDO
       WRITE(1)TMPARA
-C
+!
       DO L=2,LA
         TMPARA(IL(L),JL(L))=EVPSLPF(L)
       ENDDO
       WRITE(1)TMPARA
-C
+!
       DO L=2,LA
         TMPARA(IL(L),JL(L))=RINFLPF(L)
       ENDDO
       WRITE(1)TMPARA
-C
+!
       CLOSE(1)
-C
+!
       IF(ICRCA3.EQ.1)THEN
         OPEN(2,FILE='HYDRLGY.ASC',STATUS='UNKNOWN',POSITION='APPEND')
         WRITE(2,106)TIME
         WRITE(2,212)
-C
+!
         DO L=2,LA
-         WRITE(2,200)L,IL(L),JL(L),RAINLPF(L),EVPSLPF(L),EVPGLPF(L),
-     &               RINFLPF(L),GWLPF(L) 
+         WRITE(2,200)L,IL(L),JL(L),RAINLPF(L),EVPSLPF(L),EVPGLPF(L),RINFLPF(L),GWLPF(L) 
         ENDDO
-C
+!
         CLOSE(2)             
-C
+!
       ENDIF
 
   200 FORMAT(3I5,6F15.6)
@@ -873,13 +851,12 @@ C
   209 FORMAT(' L,I(ROW),J(COL),TEM(I,J,K),K=1,KC ',/)
   210 FORMAT(//)
   211 FORMAT(I5,2X,6E15.6)
-  212 FORMAT(' L,I(ROW),J(ROW),RAINLPF(I,J),EVPSLPF(I,J),EVPGLPF(I,J),
-     &RINFLPF(I,J),GWLPF(I,J) ',/)
+  212 FORMAT(' L,I(ROW),J(ROW),RAINLPF(I,J),EVPSLPF(I,J),EVPGLPF(I,J),RINFLPF(I,J),GWLPF(I,J) ',/)
   213 FORMAT(' NQINTFL,QINTFL ',/)
   215 FORMAT(' L,I(ROW),J(COL),SURFELV START AVG INTERVAL',/)
   216 FORMAT(' L,I(ROW),J(COL),DEL SURFELV OVER INTERVAL',/)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

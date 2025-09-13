@@ -1,43 +1,43 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE SETBCS
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 01/15/2002        John Hamrick       01/11/2002       John Hamrick
-C  modified boundary condition flags for type 2 open boundaries
-C 05/02/2002        John Hamrick       05/01/2002       John Hamrick
-C  added real flags RSSBCE(L),RSSBCW(L),RSSBCN(L),RSSBCS(L)
-C  to modified calculation of cell center bed stress (stored as QQ(l,0))
-C  and the outputed cell center velocity for cells have source/sinks
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE SETBCS SETS BOUNDARY CONDITION SWITCHES
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 01/15/2002        John Hamrick       01/11/2002       John Hamrick
+!  modified boundary condition flags for type 2 open boundaries
+! 05/02/2002        John Hamrick       05/01/2002       John Hamrick
+!  added real flags RSSBCE(L),RSSBCW(L),RSSBCN(L),RSSBCS(L)
+!  to modified calculation of cell center bed stress (stored as QQ(l,0))
+!  and the outputed cell center velocity for cells have source/sinks
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE SETBCS SETS BOUNDARY CONDITION SWITCHES
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       DIMENSION SUBEW(LCM),SVBNS(LCM)
-C
-C**********************************************************************C
-C
-C **  SET LAND-WATER BOUNDARY SWITCHES
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  SET LAND-WATER BOUNDARY SWITCHES
+!
+!----------------------------------------------------------------------C
+!
       DO L=2,LA
       I=IL(L)
       J=JL(L)
@@ -156,34 +156,34 @@ C
        IF(IJCT(I,J-1).EQ.9) SVB(L)=0.
       ENDIF
       ENDDO
-C
+!
       SUB(1)=0.
       SVB(1)=0.
       SUB(LC)=0.
       SVB(LC)=0.
-C
-C**********************************************************************C
-C
-C **  MODIFY LAND-WATER BNDRY CONDS FOR PERIOD GRID IN N-S DIRECTION
-C
+!
+!**********************************************************************C
+!
+! **  MODIFY LAND-WATER BNDRY CONDS FOR PERIOD GRID IN N-S DIRECTION
+!
       IF(ISPGNS.GE.1)THEN
       DO NPN=1,NPNSBP
-C
-C     SET SOUTH CELL SVB'S TO 1
-C
+!
+!     SET SOUTH CELL SVB'S TO 1
+!
       LS=LIJ(ISPNS(NPN),JSPNS(NPN))
       SVB(LS)=1.
       SVBO(LS)=1.
-C
+!
       ENDDO
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SET WATER-WATER (P OR SURFACE ELEVATION) BOUNDARY SWITCHES  
-C     
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  SET WATER-WATER (P OR SURFACE ELEVATION) BOUNDARY SWITCHES  
+!     
+!----------------------------------------------------------------------C
+!
       DO LL=1,NPBW
       I=IPBW(LL)
       J=JPBW(LL)
@@ -201,7 +201,7 @@ C
       SAAX(L+1)=0.
       SDX(L+1)=0.
       ENDDO
-C
+!
       DO LL=1,NPBE
       I=IPBE(LL)
       J=JPBE(LL)
@@ -218,7 +218,7 @@ C
       SAAX(L)=0.
       SDX(L)=0.
       ENDDO
-C
+!
       DO LL=1,NPBS
       I=IPBS(LL)
       J=JPBS(LL)
@@ -237,7 +237,7 @@ C
       SAAY(LN)=0.
       SDY(LN)=0.
       ENDDO     
-C
+!
       DO LL=1,NPBN
       I=IPBN(LL)
       J=JPBN(LL)
@@ -255,19 +255,19 @@ C
       SAAY(L)=0.
       SDY(L)=0.
       ENDDO
-C
-C
+!
+!
       DO L=1,LC
       SUBO(L)=SUB(L)
       SVBO(L)=SVB(L)
       SUB1(L)=SUB(L)
       SVB1(L)=SVB(L)
       ENDDO
-C
-C**********************************************************************C
-C
-C ** RESET DXU,DYU,DXV,DYV BASED ON BOUNDARY CONDITION SWITCHES
-C
+!
+!**********************************************************************C
+!
+! ** RESET DXU,DYU,DXV,DYV BASED ON BOUNDARY CONDITION SWITCHES
+!
       DO L=2,LA
         IF(SUB(L).GT.0.5)THEN
           DXU(L)=0.5*(DXP(L)+DXP(L-1))
@@ -284,7 +284,7 @@ C
           DYU(L)=DYP(L)
         ENDIF
       ENDDO
-C      
+!      
       DO L=2,LA
         LN=LNC(L)
         LS=LSC(L)
@@ -303,21 +303,21 @@ C
           DYV(L)=DYP(L)
         ENDIF
       ENDDO
-C
-C**********************************************************************C
-C
-C **  SET THIN BARRIERS BY CALLING CELLMASK
-C **  CALL MOVED FROM AAEFDC ON 23 JAN 2004
-C
+!
+!**********************************************************************C
+!
+! **  SET THIN BARRIERS BY CALLING CELLMASK
+! **  CALL MOVED FROM AAEFDC ON 23 JAN 2004
+!
       IF(ISMASK.EQ.1) CALL CELLMASK	 
-C
-C**********************************************************************C
-C     
-C **  SET VOLUMETRIC & CONCENTRATION SOURCE LOCATIONS AND BED STRESS
-C **  AND CELL CENTER BED STRESS AND VELOCITY MODIFERS 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!     
+! **  SET VOLUMETRIC & CONCENTRATION SOURCE LOCATIONS AND BED STRESS
+! **  AND CELL CENTER BED STRESS AND VELOCITY MODIFERS 
+!
+!----------------------------------------------------------------------C
+!
       DO LL=1,NQSIJ
       I=IQS(LL)
       J=JQS(LL)
@@ -328,7 +328,7 @@ C
       IF(NQSMUL(LL).EQ.2)RQSMUL(LL)=DXP(LTMP)
       IF(NQSMUL(LL).EQ.3)RQSMUL(LL)=DXP(LTMP)+DYP(LTMP)
       ENDDO
-C
+!
       DO NCTL=1,NQCTL
       RQDW=1.
       IU=IQCTLU(NCTL)
@@ -339,7 +339,7 @@ C
       IF(NQCMUL(NCTL).EQ.2)RQCMUL(NCTL)=DXP(LTMP)
       IF(NQCMUL(NCTL).EQ.3)RQCMUL(NCTL)=DXP(LTMP)+DYP(LTMP)
       ENDDO
-C
+!
       DO L=2,LA
         RSSBCE(L)=1.0
 	  RSSBCW(L)=1.0
@@ -348,7 +348,7 @@ C
 	  SUBEW(L)=SUB(L)+SUB(L+1)
 	  SVBNS(L)=SVB(L)+SVB(LNC(L))
 	ENDDO
-C
+!
       DO LL=1,NQSIJ
         L=LQS(LL)
 	  LE=L+1
@@ -374,7 +374,7 @@ C
           ENDIF
         ENDIF
       ENDDO
-C
+!
       DO NCTL=1,NQCTL
         IU=IQCTLU(NCTL)
         JU=JQCTLU(NCTL)
@@ -402,7 +402,7 @@ C
           ENDIF
         ENDIF
       ENDDO
-C
+!
       DO NCTL=1,NQCTL
         ID=IQCTLD(NCTL)
         JD=JQCTLD(NCTL)
@@ -432,7 +432,7 @@ C
           ENDIF
 	  END IF
       ENDDO
-C
+!
       DO NWR=1,NQWR
         IU=IQWRU(NWR)
         JU=JQWRU(NWR)
@@ -460,7 +460,7 @@ C
           ENDIF
         ENDIF
       ENDDO
-C
+!
       DO NWR=1,NQWR
         ID=IQWRD(NWR)
         JD=JQWRD(NWR)
@@ -488,13 +488,13 @@ C
           ENDIF
         ENDIF
       ENDDO
-C
-C**********************************************************************C
-C     
-C **  SET OPEN BOUNDARY FLAGS
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!     
+! **  SET OPEN BOUNDARY FLAGS
+!
+!----------------------------------------------------------------------C
+!
       DO LL=1,NCBS
       I=ICBS(LL)
       J=JCBS(LL)
@@ -502,7 +502,7 @@ C
       L=LIJ(I,J)
       SCB(L)=0.
       ENDDO
-C
+!
       DO LL=1,NCBW
       I=ICBW(LL)
       J=JCBW(LL)
@@ -510,7 +510,7 @@ C
       L=LIJ(I,J)
       SCB(L)=0.
       ENDDO
-C
+!
       DO LL=1,NCBE
       I=ICBE(LL)
       J=JCBE(LL)
@@ -518,7 +518,7 @@ C
       L=LIJ(I,J)
       SCB(L)=0.
       ENDDO
-C
+!
       DO LL=1,NCBN
       I=ICBN(LL)
       J=JCBN(LL)
@@ -526,11 +526,11 @@ C
       L=LIJ(I,J)
       SCB(L)=0.
       ENDDO
-C
-C**********************************************************************C
-C
-C **  SET CHANNEL HOST AND GUEST LOCATION MAPPINGS
-C
+!
+!**********************************************************************C
+!
+! **  SET CHANNEL HOST AND GUEST LOCATION MAPPINGS
+!
       IF(MDCHH.GE.1)THEN
         DO NMD=1,MDCHH
         LMDCHH(NMD)=LIJ(IMDCHH(NMD),JMDCHH(NMD))
@@ -546,11 +546,11 @@ C
         ENDIF
         ENDDO
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SET CELL FACE WET DEPTHS
-C
+!
+!**********************************************************************C
+!
+! **  SET CELL FACE WET DEPTHS
+!
       HUWET(1)=HWET
       HUWET(LC)=HWET
       HVWET(1)=HWET
@@ -559,7 +559,7 @@ C
       HUDRY(LC)=HDRY
       HVDRY(1)=HDRY
       HVDRY(LC)=HDRY
-C
+!
       DO L=2,LA
       LS=LSC(L)
       HUDRY(L)=HDRY+0.5*ABS(BELV(L)-BELV(L-1))
@@ -567,7 +567,7 @@ C
       HUWET(L)=HWET+0.5*ABS(BELV(L)-BELV(L-1))
       HVWET(L)=HWET+0.5*ABS(BELV(L)-BELV(LS))
       ENDDO
-C
+!
       IF(ISDRY.GT.0)THEN
       NDRYTMP=MOD(ISDRY,2)
       IF(NDRYTMP.NE.0)THEN
@@ -579,25 +579,24 @@ C
         ENDDO
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  DIAGNOSTIC OUTPUT
-C
+!
+!**********************************************************************C
+!
+! **  DIAGNOSTIC OUTPUT
+!
       OPEN(1,FILE='SETBC.DIA')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='SETBC.DIA')
-C
+!
       DO L=2,LA
-       WRITE(1,1001)IL(L),JL(L),SUB(L),SUB(L+1),SVB(L),SVB(LNC(L)),
-     &              SPB(L)
+       WRITE(1,1001)IL(L),JL(L),SUB(L),SUB(L+1),SVB(L),SVB(LNC(L)),SPB(L)
       ENDDO
-C
+!
       CLOSE(1)
-C
+!
  1001 FORMAT(2I5,8E13.4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

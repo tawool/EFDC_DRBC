@@ -1,85 +1,84 @@
-C
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE BAL2T3A
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C 05/01/2002        john hamrick       05/01/2002       john hamrick
-C  subroutine added for 2 time-level balances including sed,snd,tox
-C 06/06/2002        john hamrick       06/06/2002       john hamrick
-C  modified snd mass balance with respect to bed load outflow
-C 06/07/2002        john hamrick       06/07/2002       john hamrick
-C  added qdwaste to water mass balance
-C  HNR_GHD, 7/2023   ADDED SALINITY AND DYE LOAD FOR BUDGET      
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINES CALBAL CALCULATE GLOBAL VOLUME, MASS, MOMENTUM,
-C **  AND ENERGY BALANCES
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+! 05/01/2002        john hamrick       05/01/2002       john hamrick
+!  subroutine added for 2 time-level balances including sed,snd,tox
+! 06/06/2002        john hamrick       06/06/2002       john hamrick
+!  modified snd mass balance with respect to bed load outflow
+! 06/07/2002        john hamrick       06/07/2002       john hamrick
+!  added qdwaste to water mass balance
+!  HNR_GHD, 7/2023   ADDED SALINITY AND DYE LOAD FOR BUDGET      
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINES CALBAL CALCULATE GLOBAL VOLUME, MASS, MOMENTUM,
+! **  AND ENERGY BALANCES
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ISDYNSTP.EQ.0)THEN
         DELT=DT
       ELSE
         DELT=DTDYN
       END IF
-C
-C**********************************************************************C
-C
-C     DIMENSION CONT(LCM,KCM)
-C
-C**********************************************************************C
-C
-C **  ACCUMULATE INTERNAL SOURCES AND SINKS
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+!     DIMENSION CONT(LCM,KCM)
+!
+!**********************************************************************C
+!
+! **  ACCUMULATE INTERNAL SOURCES AND SINKS
+!
+!----------------------------------------------------------------------C
+!
       DO L=2,LA
         VOLOUT=VOLOUT-DELT*(QSUME(L)-QDWASTE(L))
       ENDDO
-C
+!
       DO L=2,LA
         WVOLOUT=WVOLOUT-DELT*(QSUME(L)-QDWASTE(L))
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       DO LL=1,NQSIJ
       L=LQS(LL)
-C
-      PPEOUT=PPEOUT-DELT*QSS(K,LL)*G*( 0.5*(BELV(L)+BELV(L-1))
-     &       +0.125*(HP(L)+H2P(L)+HP(L-1)+H2P(L-1))*(Z(K)+Z(K-1)) )
-C
+!
+      PPEOUT=PPEOUT-DELT*QSS(K,LL)*G*( 0.5*(BELV(L)+BELV(L-1))+0.125*(HP(L)+H2P(L)+HP(L-1)+H2P(L-1))*(Z(K)+Z(K-1)) )
+!
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTRAN(1).GE.1)THEN
-C
+!
       DO K=1,KC
        DO L=2,LC
        CONT(L,K)=SAL1(L,K)
        ENDDO
       ENDDO
-C
+!
       DO NS=1,NQSIJ
       L=LQS(NS)
       NQSTMP=NQSERQ(NS)
@@ -92,11 +91,11 @@ C
      &           -DELT*MIN(QSERT(K,NQSTMP),0.)*SAL1(L,K)
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  START SALINITY ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  START SALINITY ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
+!
       DO NL=1,NLIJ(1)
         L=LLDS(NL,1)
         NLSTMP=NSERL(NL,1)
@@ -104,11 +103,11 @@ C
           SALOUTO=SALOUTO-SERLT(K,NLSTMP,1)    !LOAD IN KG/S OF SALT  
         END DO
       END DO
-C
-C **  END SALINITY ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
-C
-C----------------------------------------------------------------------C
-C
+!
+! **  END SALINITY ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
+!
+!----------------------------------------------------------------------C
+!
       DO NCTL=1,NQCTL
       RQWD=1.
       IU=IQCTLU(NCTL)
@@ -122,7 +121,7 @@ C
        ENDDO
       ENDIF
       ENDDO
-C
+!
       DO NWR=1,NQWR
        IU=IQWRU(NWR)
        JU=JQWRU(NWR)
@@ -134,27 +133,24 @@ C
        LD=LIJ(ID,JD)
        NQSTMP=NQWRSERQ(NWR)
        NCSTMP=NQWRSERQ(NWR)
-       SALOUT=SALOUT+
-     &   DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
+       SALOUT=SALOUT+DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
        IF(LD.NE.1.OR.LD.NE.LC)THEN
-         SALOUT=SALOUT-
-     &     DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,1))
-     &      +QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,1)) )
+         SALOUT=SALOUT-DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,1))+QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,1)) )
        ENDIF
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTRAN(3).GE.1)THEN
-C
+!
       DO K=1,KC
        DO L=2,LC
        CONT(L,K)=DYE1(L,K)
        ENDDO
       ENDDO
-C
+!
       DO NS=1,NQSIJ
       L=LQS(NS)
       NQSTMP=NQSERQ(NS)
@@ -172,11 +168,11 @@ C
      &           -DELT*MIN(QSERT(K,NQSTMP),0.)*DYE1(L,K)
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  START DYE ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  START DYE ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
+!
       DO NL=1,NLIJ(3)
         L=LLDS(NL,3)
         NLSTMP=NSERL(NL,3)
@@ -185,11 +181,11 @@ C
           DYEOUT2T=DYEOUT2T-SERLT(K,NLSTMP,3)    !LOAD IN KG/S OF SALT  
         END DO
       END DO
-C
-C **  END DYE ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
-C
-C----------------------------------------------------------------------C
-C
+!
+! **  END DYE ADDED AS LOAD DIRECTLY    HNR_GHD 7/2023
+!
+!----------------------------------------------------------------------C
+!
       DO NCTL=1,NQCTL
       RQWD=1.
       IU=IQCTLU(NCTL)
@@ -204,7 +200,7 @@ C
        ENDDO
       ENDIF
       ENDDO
-C
+!
       DO NWR=1,NQWR
        IU=IQWRU(NWR)
        JU=JQWRU(NWR)
@@ -216,39 +212,33 @@ C
        LD=LIJ(ID,JD)
        NQSTMP=NQWRSERQ(NWR)
        NCSTMP=NQWRSERQ(NWR)
-       DYEOUT=DYEOUT+
-     &   DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
-       DYEOUT2T=DYEOUT2T+
-     &   DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
+       DYEOUT=DYEOUT+DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
+       DYEOUT2T=DYEOUT2T+DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
        IF(LD.NE.1.OR.LD.NE.LC)THEN
-         DYEOUT=DYEOUT-
-     &     DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,3))
-     &      +QSERT(K,NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,3)) )
-         DYEOUT2T=DYEOUT2T-
-     &     DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,3))
-     &      +QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,3)) )
+         DYEOUT=DYEOUT-DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,3))+QSERT(K,NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,3)) )
+         DYEOUT2T=DYEOUT2T-DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,3))+QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,3)) )
        ENDIF
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTRAN(5).GE.1)THEN
-C
+!
       DO NT=1,NTOX
       M=MSVTOX(NT)
-cSO   WRITE(8,*)'nt m ',NT,M
-C
+!SO   WRITE(8,*)'nt m ',NT,M
+!
       DO K=1,KC
        DO L=2,LC
        CONT(L,K)=TOX1(L,K,NT)
        ENDDO
       ENDDO
-C
-C  TOXOUT2T(NT) IS NET TOXIC MASS GOING OUT OF DOMAIN DUE
-c  TO WATER COLUMN VOLUME SOURCES AND SINKS
-C
+!
+!  TOXOUT2T(NT) IS NET TOXIC MASS GOING OUT OF DOMAIN DUE
+!  TO WATER COLUMN VOLUME SOURCES AND SINKS
+!
       DO NS=1,NQSIJ
       L=LQS(NS)
       NQSTMP=NQSERQ(NS)
@@ -261,7 +251,7 @@ C
      &           -DELT*MIN(QSERT(K,NQSTMP),0.)*TOX1(L,K,NT)
        ENDDO
       ENDDO
-C
+!
       DO NCTL=1,NQCTL
       RQWD=1.
       IU=IQCTLU(NCTL)
@@ -275,7 +265,7 @@ C
        ENDDO
       ENDIF
       ENDDO
-C
+!
       DO NWR=1,NQWR
        IU=IQWRU(NWR)
        JU=JQWRU(NWR)
@@ -287,35 +277,32 @@ C
        LD=LIJ(ID,JD)
        NQSTMP=NQWRSERQ(NWR)
        NCSTMP=NQWRSERQ(NWR)
-       TOXOUT2T(NT)=TOXOUT2T(NT)+
-     &   DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
+       TOXOUT2T(NT)=TOXOUT2T(NT)+DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
        IF(LD.NE.1.OR.LD.NE.LC)THEN
-         TOXOUT2T(NT)=TOXOUT2T(NT)-
-     &     DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,M))
-     &      +QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,M)) )
+         TOXOUT2T(NT)=TOXOUT2T(NT)-DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,M))+QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,M)) )
        ENDIF
       ENDDO
-C
+!
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTRAN(6).GE.1)THEN
-C
+!
       DO NSX=1,NSED
       M=MSVSED(NSX)
-C
+!
       DO K=1,KC
        DO L=2,LC
        CONT(L,K)=SED1(L,K,NSX)
        ENDDO
       ENDDO
-C
-C SEDOUT2T(NSX) IS IS NET COHESIVE MASS GOING OUT OF DOMAIN DUE
-C   TO WATER COLUMN VOLUME SOURCES AND SINKS
-C
+!
+! SEDOUT2T(NSX) IS IS NET COHESIVE MASS GOING OUT OF DOMAIN DUE
+!   TO WATER COLUMN VOLUME SOURCES AND SINKS
+!
       DO NS=1,NQSIJ
       L=LQS(NS)
       NQSTMP=NQSERQ(NS)
@@ -328,7 +315,7 @@ C
      &           -DELT*MIN(QSERT(K,NQSTMP),0.)*SED1(L,K,NSX)
        ENDDO
       ENDDO
-C
+!
       DO NCTL=1,NQCTL
       RQWD=1.
       IU=IQCTLU(NCTL)
@@ -342,7 +329,7 @@ C
        ENDDO
       ENDIF
       ENDDO
-C
+!
       DO NWR=1,NQWR
        IU=IQWRU(NWR)
        JU=JQWRU(NWR)
@@ -354,35 +341,32 @@ C
        LD=LIJ(ID,JD)
        NQSTMP=NQWRSERQ(NWR)
        NCSTMP=NQWRSERQ(NWR)
-       SEDOUT2T(NSX)=SEDOUT2T(NSX)+
-     &   DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
+       SEDOUT2T(NSX)=SEDOUT2T(NSX)+DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
        IF(LD.NE.1.OR.LD.NE.LC)THEN
-       SEDOUT2T(NSX)=SEDOUT2T(NSX)-
-     &     DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,M))
-     &      +QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,M)) )
+       SEDOUT2T(NSX)=SEDOUT2T(NSX)-DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,M))+QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,M)) )
        ENDIF
       ENDDO
-C
+!
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTRAN(7).GE.1)THEN
-C
+!
       DO NSX=1,NSND
       M=MSVSND(NSX)
-C
+!
       DO K=1,KC
        DO L=2,LC
        CONT(L,K)=SND1(L,K,NSX)
        ENDDO
       ENDDO
-C
-C  SNDOUT2T(NSX) IS NET NONCOHESIVE MASS GOING OUT OF DOMAIN DUE
-c  TO WATER COLUMN VOLUME SOURCES AND SINKS
-C
+!
+!  SNDOUT2T(NSX) IS NET NONCOHESIVE MASS GOING OUT OF DOMAIN DUE
+!  TO WATER COLUMN VOLUME SOURCES AND SINKS
+!
       DO NS=1,NQSIJ
       L=LQS(NS)
       NQSTMP=NQSERQ(NS)
@@ -395,7 +379,7 @@ C
      &           -DELT*MIN(QSERT(K,NQSTMP),0.)*SND1(L,K,NSX)
        ENDDO
       ENDDO
-C
+!
       DO NCTL=1,NQCTL
       RQWD=1.
       IU=IQCTLU(NCTL)
@@ -409,7 +393,7 @@ C
         ENDDO
       ENDIF
       ENDDO
-C
+!
       DO NWR=1,NQWR
        IU=IQWRU(NWR)
        JU=JQWRU(NWR)
@@ -421,22 +405,19 @@ C
        LD=LIJ(ID,JD)
        NQSTMP=NQWRSERQ(NWR)
        NCSTMP=NQWRSERQ(NWR)
-       SNDOUT2T(NSX)=SNDOUT2T(NSX)+
-     &   DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
+       SNDOUT2T(NSX)=SNDOUT2T(NSX)+DELT*( (QWR(NWR)+QWRSERT(NQSTMP))*CONT(LU,KU) )
        IF(LD.NE.1.OR.LD.NE.LC)THEN
-       SNDOUT2T(NSX)=SNDOUT2T(NSX)-
-     &     DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,M))
-     &      +QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,M)) )
+       SNDOUT2T(NSX)=SNDOUT2T(NSX)-DELT*( QWR(NWR)*(CONT(LU,KU)+CQWR(NWR,M))+QWRSERT(NQSTMP)*(CONT(LU,KU)+CQWRSERT(NCSTMP,M)) )
        ENDIF
       ENDDO
-C
+!
       ENDDO
-C
+!
       ENDIF
-C
+!
   800 FORMAT('N,NS,SNDFBL2T,DEL',2I5,2E14.5)
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       RETURN
       END

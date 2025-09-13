@@ -1,42 +1,42 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE BUDGET1
-C
-C **  ADDED BY DON KINGERY, CH2M-HILL ON 15 OCTOBER 1996
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINES BUDGETN CALCULATE SEDIMENT BUDGET (TOTAL SEDIMENTS)
-C
-C**********************************************************************C
-C
+!
+! **  ADDED BY DON KINGERY, CH2M-HILL ON 15 OCTOBER 1996
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINES BUDGETN CALCULATE SEDIMENT BUDGET (TOTAL SEDIMENTS)
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(NBUD.GT.1) RETURN
-C
-C**********************************************************************C
-C
-C **  INITIALIZE VOLUME, SALT MASS, SEDIMENT, AND ASSOCIATED FLUXES
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZE VOLUME, SALT MASS, SEDIMENT, AND ASSOCIATED FLUXES
+!
+!----------------------------------------------------------------------C
+!
       VOLMBEG=0.
       SMASSBEG=0.
       BSEDBEG=0.
@@ -47,16 +47,16 @@ C
       SMASSOUT=0.
       VOLMIN=0.
       SMASSIN=0.
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       DO K=1,KB
       DO L=2,LA
         SEDBT(L,K)=0.
         SNDBT(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       IF(N.LE.1)THEN
       DO NS=1,NSED
        DO K=1,KB
@@ -73,7 +73,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
       IF(N.GT.1)THEN
       DO NS=1,NSED
        DO K=1,KB
@@ -90,14 +90,14 @@ C
        ENDDO
       ENDDO
       ENDIF
-C!VOLBW3 IS TO ACCUMULATE WC-SEDBED FLUX
+!!VOLBW3 IS TO ACCUMULATE WC-SEDBED FLUX
       DO K=1,KB
       DO L=2,LA
        VOLBW3(L,K)=0.
        BSEDBEG=BSEDBEG+SCB(L)*DXYP(L)*(SEDBT(L,K)+SNDBT(L,K))
       ENDDO
       ENDDO
-C
+!
       IF(N.LE.1)THEN
       DO NS=1,NSED
        DO K=1,KC
@@ -114,7 +114,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
       IF(N.GT.1)THEN
       DO NS=1,NSED
        DO K=1,KC
@@ -131,11 +131,11 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
       SEDBEG=BSEDBEG+SSEDBEG
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(N.LE.1)THEN
       DO L=2,LA
       VOLMBEG=VOLMBEG+SPB(L)*DXYP(L)*H1P(L)
@@ -146,7 +146,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
       IF(N.GT.1)THEN
       DO L=2,LA
       VOLMBEG=VOLMBEG+SPB(L)*DXYP(L)*HP(L)
@@ -157,8 +157,8 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

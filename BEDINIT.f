@@ -1,50 +1,50 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE BEDINIT
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE BEDINIT INITIALIZES SEDIMENT AND TOXIC VARIABLES
-C **  IT SEDIMENT BED FOR HOT AND COLD START CONDITIONS
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 02/19/2002        john hamrick       02/19/2002       john hamrick
-C  added additional diagnostic output
-C 05/29/2002        john hamrick       05/29/2002       john hamrick
-C  moved toxic initializations from ssedtox
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE BEDINIT INITIALIZES SEDIMENT AND TOXIC VARIABLES
+! **  IT SEDIMENT BED FOR HOT AND COLD START CONDITIONS
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 02/19/2002        john hamrick       02/19/2002       john hamrick
+!  added additional diagnostic output
+! 05/29/2002        john hamrick       05/29/2002       john hamrick
+!  moved toxic initializations from ssedtox
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       DIMENSION NSP2(NTXM)
       DIMENSION FRACACT(LCM),FRACPAR(LCM),SEDBALL(LCM,KBM)
 	DIMENSION FRACCOH(LCM,KBM),FRACNON(LCM,KBM)
 	DIMENSION RADJCOHSEDS(LCM)
-C
-C**********************************************************************C
-C
-c **  check initial fractions
-c
+!
+!**********************************************************************C
+!
+! **  check initial fractions
+!
       DO K=1,KB
 	DO L=2,LA
 	  SEDBALL(L,K)=0.0
 	ENDDO
 	ENDDO
-C
-c
+!
+!
       DO NS=1,NSED
       DO K=1,KB
 	DO L=2,LA
@@ -52,8 +52,8 @@ c
 	ENDDO
 	ENDDO
 	ENDDO
-C
-c
+!
+!
       DO NS=1,NSND
       DO K=1,KB
 	DO L=2,LA
@@ -61,57 +61,57 @@ c
 	ENDDO
 	ENDDO
 	ENDDO
-C
+!
       OPEN(1,FILE='BEDFRACHK.OUT')
 	DO L=2,LA
 	  WRITE(1,1492)IL(L),JL(L),(SEDBALL(L,K),K=1,KB)
 	ENDDO
 	CLOSE(1)
-C
+!
  1492 FORMAT(2I6,25F16.6)
-C
-C**********************************************************************C
-C
-C **  DETERMINE START UP MODE
-C
+!
+!**********************************************************************C
+!
+! **  DETERMINE START UP MODE
+!
       IHOTSTRT=0
-C
+!
       IF(ISRESTI.NE.0)THEN
         IF(ISCI(6).NE.0.OR.ISCI(7).NE.0)THEN
           IHOTSTRT=1
         ENDIF
       ENDIF
-C
-C     WRITE(6,*)'INTER BED INITIALIZATION'
-C
-C**********************************************************************C
-C
-C **  HOT START INITIALIZATION
-C
+!
+!     WRITE(6,*)'INTER BED INITIALIZATION'
+!
+!**********************************************************************C
+!
+! **  HOT START INITIALIZATION
+!
       IF(IHOTSTRT.NE.0)THEN
-C
-C----------------------------------------------------------------------C
-C
-C **  SET POROSITY
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET POROSITY
+!
         DO K=1,KB
           DO L=2,LA
             PORBED(L,K)=VDRBED(L,K)/(1.+VDRBED(L,K))
             PORBED1(L,K)=VDRBED1(L,K)/(1.+VDRBED1(L,K))
           ENDDO
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  SET BULK DENSITY
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET BULK DENSITY
+!
         DO K=1,KB
           DO L=2,LA
             SEDBT(L,K)=0.
             SNDBT(L,K)=0.
           ENDDO
         ENDDO
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -121,7 +121,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NS=1,NSND
             DO K=1,KB
@@ -131,25 +131,24 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(HBED(L,K).GT.0.)THEN
-              BDENBED(L,K)=1000.*PORBED(L,K)
-     &       +0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
+              BDENBED(L,K)=1000.*PORBED(L,K)+0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
             ELSE
               BDENBED(L,K)=0.
             ENDIF
           ENDDO
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             SEDBT(L,K)=0.
             SNDBT(L,K)=0.
           ENDDO
         ENDDO
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -159,7 +158,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NS=1,NSND
             DO K=1,KB
@@ -169,36 +168,35 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(HBED1(L,K).GT.0.)THEN
-              BDENBED1(L,K)=1000.*PORBED1(L,K)
-     &       +0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED1(L,K)
+              BDENBED1(L,K)=1000.*PORBED1(L,K)+0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED1(L,K)
             ELSE
               BDENBED1(L,K)=0.
             ENDIF
           ENDDO
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  SET TOP BED LAYER
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET TOP BED LAYER
+!
         DO L=2,LA
           KBT(L)=1
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(HBED(L,K).GT.0.)KBT(L)=K
           ENDDO
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
+!
         IF(ISTRAN(6).GE.1)THEN
           IF(IWRSP(1).EQ.0)THEN
             DO K=1,KB
@@ -219,10 +217,8 @@ C
           IF(IWRSP(1).GE.1.AND.IWRSP(1).LT.99)THEN
             DO K=1,KB
               DO L=2,LA
-                TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
-                WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1))
+                TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
+                WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1))
               ENDDO
             ENDDO
           ENDIF
@@ -274,8 +270,7 @@ C
 		  ENDIF
             DO L=2,LA
 	        K=KBT(L)
-              WRITE(2,222)L,IL(L),JL(L),TAURS(L,K),TAUNS(L,K),
-     &                                  WRSPS(L,K),TEXPS(L,K)
+              WRITE(2,222)L,IL(L),JL(L),TAURS(L,K),TAUNS(L,K),WRSPS(L,K),TEXPS(L,K)
             ENDDO
             CLOSE(1)
             CLOSE(2)
@@ -283,26 +278,24 @@ C
           IF(IWRSPB(1).GE.1)THEN
             DO K=1,KB
               DO L=2,LA
-                TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
-                WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+                TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+                WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
               ENDDO
             ENDDO
           ENDIF
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  SET SEDIMENT VOLUME FRACTIONS
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET SEDIMENT VOLUME FRACTIONS
+!
         DO K=1,KB
           DO L=2,LA
             BEDLINIT(L,K)=0.
             BEDDINIT(L,K)=0.
           ENDDO
         ENDDO
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -313,7 +306,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -325,7 +318,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -336,7 +329,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -348,7 +341,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -359,7 +352,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -371,36 +364,36 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C**  INITIALIZE BED BOTTOM ELEVATION
-C
+!
+!----------------------------------------------------------------------C
+!
+!**  INITIALIZE BED BOTTOM ELEVATION
+!
         DO L=2,LA
           HBEDA(L)=0.
         ENDDO
-C
+!
         DO L=2,LA
           DO K=1,KBT(L)
             HBEDA(L)=HBEDA(L)+HBED(L,K)
           END DO
         ENDDO
-C
+!
         DO L=2,LA
           ZELBEDA(L)=BELV(L)-HBEDA(L)
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C**  INITIALIZE TOTAL SEDIMENT MASS PER UNIT AREA
-C
+!
+!----------------------------------------------------------------------C
+!
+!**  INITIALIZE TOTAL SEDIMENT MASS PER UNIT AREA
+!
       DO K=1,KB
         DO L=2,LA
           SEDBT(L,K)=0.
           SNDBT(L,K)=0.
         ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -410,7 +403,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NS=1,NSND
           DO K=1,KB
@@ -420,25 +413,25 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       GOTO 1000
-C
+!
       ENDIF
-C
-C **  END HOT START INITIALIZATION
-C
-C**********************************************************************C
-C
-C **  COLD START INITIALIZATION: IBMECH=0
-C
+!
+! **  END HOT START INITIALIZATION
+!
+!**********************************************************************C
+!
+! **  COLD START INITIALIZATION: IBMECH=0
+!
       IF(IBMECH.EQ.0)THEN
-C
-C----------------------------------------------------------------------C
-C
-C **  SET POROSITY AND VOID RATIO
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET POROSITY AND VOID RATIO
+!
         DO K=1,KB
           DO L=2,LA
             PORBED(L,K)=BEDPORC
@@ -450,23 +443,23 @@ C
             KBT(L)=1
           ENDDO
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  UNIFORM SEDIMENT MASS PER UNIT AREA ALL CELLS, ALL BED LAYERS
-C **  CALCULATE LAYER THICKNESS AND BULK DENSITY
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  UNIFORM SEDIMENT MASS PER UNIT AREA ALL CELLS, ALL BED LAYERS
+! **  CALCULATE LAYER THICKNESS AND BULK DENSITY
+!
         IF(ISEDINT.LE.1)THEN
-C
-C         WRITE(6,*)'INTER BED INITIALIZATION OPTION'
-C
+!
+!         WRITE(6,*)'INTER BED INITIALIZATION OPTION'
+!
           DO K=1,KB
             DO L=2,LA
               SEDBT(L,K)=0.
               SNDBT(L,K)=0.
             ENDDO
           ENDDO
-C
+!
           IF(ISTRAN(6).GE.1)THEN
             DO NS=1,NSED
               DO K=1,KB
@@ -477,7 +470,7 @@ C
               ENDDO
             ENDDO
           ENDIF
-C
+!
           IF(ISTRAN(7).GE.1)THEN
             DO NX=1,NSND
               NS=NSED+NX
@@ -489,50 +482,49 @@ C
               ENDDO
             ENDDO
           ENDIF
-C
+!
           DO K=1,KB
             DO L=2,LA
               HBED(L,K)=(1.+VDRBED(L,K))*HBED(L,K)
               IF(HBED(L,K).GT.0.) KBT(L)=K
             ENDDO
           ENDDO
-C
+!
           DO K=1,KB
             DO L=2,LA
               IF(HBED(L,K).GT.0.)THEN
-                BDENBED(L,K)=1000.*PORBED(L,K)
-     &         +0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
+                BDENBED(L,K)=1000.*PORBED(L,K)+0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
               ELSE
                 BDENBED(L,K)=0.
               ENDIF
             ENDDO
           ENDDO
-C
+!
           DO K=1,KB
             DO L=2,LA
               HBED1(L,K)=HBED(L,K)
               BDENBED1(L,K)=BDENBED(L,K)
             ENDDO
           ENDDO
-C
+!
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  NONUNIFORM SEDIMENT MASS PER UNIT AREA ALL CELLS, ALL BED LAYERS
-C **  AND INITIAL CONDITIONS ARE IN MASS PER UNIT AREA
-C **  CALCULATE LAYER THICKNESS AND BULK DENSITY
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  NONUNIFORM SEDIMENT MASS PER UNIT AREA ALL CELLS, ALL BED LAYERS
+! **  AND INITIAL CONDITIONS ARE IN MASS PER UNIT AREA
+! **  CALCULATE LAYER THICKNESS AND BULK DENSITY
+!
         IF(ISEDINT.GE.2)THEN
           IF(ISEDBINT.EQ.0)THEN
-C
+!
             DO K=1,KB
               DO L=2,LA
                 SEDBT(L,K)=0.
                 SNDBT(L,K)=0.
               ENDDO
             ENDDO
-C
+!
             IF(ISTRAN(6).GE.1)THEN
               DO NS=1,NSED
                 DO K=1,KB
@@ -543,7 +535,7 @@ C
                 ENDDO
               ENDDO
             ENDIF
-C
+!
             IF(ISTRAN(7).GE.1)THEN
               DO NX=1,NSND
                 NS=NSED+NX
@@ -555,45 +547,44 @@ C
                 ENDDO
               ENDDO
             ENDIF
-C
+!
             DO K=1,KB
               DO L=2,LA
                 HBED(L,K)=(1.+VDRBED(L,K))*HBED(L,K)
                 IF(HBED(L,K).GT.0.) KBT(L)=K
               ENDDO
             ENDDO
-C
+!
             DO K=1,KB
               DO L=2,LA
                 IF(HBED(L,K).GT.0.)THEN
-                  BDENBED(L,K)=1000.*PORBED(L,K)
-     &           +0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
+                  BDENBED(L,K)=1000.*PORBED(L,K)+0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
                 ELSE
                   BDENBED(L,K)=0.
                 ENDIF
               ENDDO
             ENDDO
-C
+!
             DO K=1,KB
               DO L=2,LA
                 HBED1(L,K)=HBED(L,K)
                 BDENBED1(L,K)=BDENBED(L,K)
               ENDDO
             ENDDO
-C
+!
           ENDIF
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  NONUNIFORM SEDIMENT MASS PER UNIT AREA ALL CELLS, ALL BED LAYERS
-C **  AND INITIAL CONDITIONS ARE IN MASS FRACTION
-C **  CALCULATE LAYER THICKNESS AND BULK DENSITY
-C **  THIS OPTION REQUIRES INITIAL LAYER THICKNESSES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  NONUNIFORM SEDIMENT MASS PER UNIT AREA ALL CELLS, ALL BED LAYERS
+! **  AND INITIAL CONDITIONS ARE IN MASS FRACTION
+! **  CALCULATE LAYER THICKNESS AND BULK DENSITY
+! **  THIS OPTION REQUIRES INITIAL LAYER THICKNESSES
+!
         IF(ISEDINT.GE.2)THEN
           IF(ISEDBINT.EQ.1)THEN
-C
+!
             IF(IBEDLAYU.EQ.1)THEN
               DO K=1,KB
                 DO L=2,LA
@@ -601,7 +592,7 @@ C
                 ENDDO
               ENDDO
             ENDIF
-C
+!
             DO K=1,KB
               DO L=2,LA
                 HBED(L,K)=BEDLINIT(L,K)
@@ -609,51 +600,47 @@ C
                 IF(HBED(L,K).GT.0.)KBT(L)=K
               ENDDO
             ENDDO
-C
+!
             DO K=1,KB
               DO L=2,LA
                 BDENBED(L,K)=0.
               ENDDO
             ENDDO
-C
+!
             IF(ISTRAN(6).GE.1)THEN
               DO NS=1,NSED
                 DO K=1,KB
                   DO L=2,LA
-                    BDENBED(L,K)=BDENBED(L,K)
-     &             +1000.*SSG(NS)*SEDB(L,K,NS)
+                    BDENBED(L,K)=BDENBED(L,K)+1000.*SSG(NS)*SEDB(L,K,NS)
                   ENDDO
                 ENDDO
               ENDDO
             ENDIF
-C
+!
             IF(ISTRAN(7).GE.1)THEN
               DO NX=1,NSND
                 NS=NSED+NX
                 DO K=1,KB
                   DO L=2,LA
-                    BDENBED(L,K)=BDENBED(L,K)
-     &             +1000.*SSG(NS)*SNDB(L,K,NX)
+                    BDENBED(L,K)=BDENBED(L,K)+1000.*SSG(NS)*SNDB(L,K,NX)
                   ENDDO
                 ENDDO
               ENDDO
             ENDIF
-C
+!
             DO K=1,KB
               DO L=2,LA
-                BDENBED(L,K)=1000.*PORBED(L,K)
-     &         +(1.-PORBED(L,K))*BDENBED(L,K)
+                BDENBED(L,K)=1000.*PORBED(L,K)+(1.-PORBED(L,K))*BDENBED(L,K)
                 BDENBED1(L,K)=BDENBED(L,K)
               ENDDO
             ENDDO
-C
+!
             DO K=1,KB
               DO L=2,LA
-                SEDBT(L,K)=1000.*HBED(L,K)*(BDENBED(L,K)
-     &         -1000.*PORBED(L,K))
+                SEDBT(L,K)=1000.*HBED(L,K)*(BDENBED(L,K)-1000.*PORBED(L,K))
               ENDDO
             ENDDO
-C
+!
             IF(ISTRAN(6).GE.1)THEN
               DO NS=1,NSED
                 DO K=1,KB
@@ -664,7 +651,7 @@ C
                 ENDDO
               ENDDO
             ENDIF
-C
+!
             IF(ISTRAN(7).GE.1)THEN
               DO NX=1,NSND
                 DO K=1,KB
@@ -675,14 +662,14 @@ C
                 ENDDO
               ENDDO
             ENDIF
-C
+!
           ENDIF
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
+!
         IF(ISTRAN(6).GE.1)THEN
           IF(IWRSP(1).EQ.0)THEN
             DO K=1,KB
@@ -703,10 +690,8 @@ C
           IF(IWRSP(1).GE.1.AND.IWRSP(1).LT.99)THEN
             DO K=1,KB
               DO L=2,LA
-                TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
-                WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1))
+                TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
+                WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1))
               ENDDO
             ENDDO
           ENDIF
@@ -754,8 +739,7 @@ C
             ENDIF
             DO L=2,LA
 	        K=KBT(L)
-              WRITE(2,222)L,IL(L),JL(L),TAURS(L,K),TAUNS(L,K),
-     &                                  WRSPS(L,K),TEXPS(L,K)
+              WRITE(2,222)L,IL(L),JL(L),TAURS(L,K),TAUNS(L,K),WRSPS(L,K),TEXPS(L,K)
             ENDDO
             CLOSE(1)
             CLOSE(2)
@@ -763,26 +747,24 @@ C
           IF(IWRSPB(1).GE.1)THEN
             DO K=1,KB
               DO L=2,LA
-                TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
-                WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+                TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+                WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
               ENDDO
             ENDDO
           ENDIF
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  SET SEDIMENT VOLUME FRACTIONS
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET SEDIMENT VOLUME FRACTIONS
+!
         DO K=1,KB
           DO L=2,LA
             BEDLINIT(L,K)=0.
             BEDDINIT(L,K)=0.
           ENDDO
         ENDDO
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -793,7 +775,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -805,7 +787,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -816,7 +798,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -828,7 +810,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -839,7 +821,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -851,24 +833,24 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       ENDIF
-C
-C **  END COLD START INITIALIZATION: IBMECH=0
-C
-C**********************************************************************C
-C
-C **  COLD START INITIALIZATION: IBMECH.GE.1
-C
+!
+! **  END COLD START INITIALIZATION: IBMECH=0
+!
+!**********************************************************************C
+!
+! **  COLD START INITIALIZATION: IBMECH.GE.1
+!
       IF(IBMECH.GE.1)THEN
-C
-C----------------------------------------------------------------------C
-C
-C **  CONVERT AND INITIALIZE BED LAYER THICKNESS AND DEFINE
-C **  INITIAL TOP LAYER
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  CONVERT AND INITIALIZE BED LAYER THICKNESS AND DEFINE
+! **  INITIAL TOP LAYER
+!
         IF(IBEDLAYU.EQ.1)TMPCVT=0.001
         IF(IBEDLAYU.EQ.2)TMPCVT=0.01
         IF(IBEDLAYU.EQ.3)TMPCVT=1.0
@@ -880,11 +862,11 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         DO L=2,LA
           KBT(L)=1
         ENDDO
-C
+!
         DO K=1,KB
           DO L=2,LA
             HBED(L,K)=BEDLINIT(L,K)
@@ -892,17 +874,17 @@ C
             IF(HBED(L,K).GT.0.) KBT(L)=K
           ENDDO
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  CONVERT AND INITIALIZE BED BULK DENSITY
-C
-C**   IBEDBDNU=0 BEDBINIT IS NOT BULK DENSITY
-C**   IBEDBDNU=1 BEDBINIT BULK DENSITY IN KG/M**3
-C**   IBEDBDNU=3 BEDBINIT BULK DENSITY IN GM/CM**3
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  CONVERT AND INITIALIZE BED BULK DENSITY
+!
+!**   IBEDBDNU=0 BEDBINIT IS NOT BULK DENSITY
+!**   IBEDBDNU=1 BEDBINIT BULK DENSITY IN KG/M**3
+!**   IBEDBDNU=3 BEDBINIT BULK DENSITY IN GM/CM**3
+!
         IF(IBEDBDNU.GE.1)THEN
-C
+!
           IF(IBEDBDNU.EQ.2)THEN
             DO K=1,KB
               DO L=2,LA
@@ -910,21 +892,21 @@ C
               ENDDO
             ENDDO
           ENDIF
-C
+!
           DO K=1,KB
             DO L=2,LA
               BDENBED(L,K)=BEDBINIT(L,K)
               BDENBED1(L,K)=BEDBINIT(L,K)
             ENDDO
           ENDDO
-C
+!
           ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  CONVERT AND DRY DENSITY OF BED
-C **  IBEDDDNU=0,1 ACTUAL DRY DENSITY, =2  POROSITY, =3 VOID RATIO
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  CONVERT AND DRY DENSITY OF BED
+! **  IBEDDDNU=0,1 ACTUAL DRY DENSITY, =2  POROSITY, =3 VOID RATIO
+!
         IF(IBEDDDNU.EQ.1)THEN
           DO K=1,KB
             DO L=2,LA
@@ -932,11 +914,11 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  CALCULATE POROSITY AND VOID RATIO
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  CALCULATE POROSITY AND VOID RATIO
+!
         IF(IBEDDDNU.LE.1)THEN
           DO K=1,KB
             DO L=2,LA
@@ -945,7 +927,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(IBEDDDNU.EQ.2)THEN
           DO K=1,KB
             DO L=2,LA
@@ -954,7 +936,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(IBEDDDNU.EQ.3)THEN
           DO K=1,KB
             DO L=2,LA
@@ -963,25 +945,25 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         DO K=1,KB
           DO L=2,LA
             VDRBED1(L,K)=VDRBED(L,K)
             PORBED1(L,K)=PORBED(L,K)
           ENDDO
         ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  INITIALIZE BED SEDIMENT FOR MASS FRACTION INPUT BY CACLUALTING
-C **  AND STORING TOTAL MASS OF SED/AREA IN BEDDINIT(L,K)
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  INITIALIZE BED SEDIMENT FOR MASS FRACTION INPUT BY CACLUALTING
+! **  AND STORING TOTAL MASS OF SED/AREA IN BEDDINIT(L,K)
+!
         DO K=1,KB
           DO L=2,LA
             BEDDINIT(L,K)=HBED(L,K)*(BDENBED(L,K)-1000.*PORBED(L,K))
           ENDDO
         ENDDO
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             IF(ISEDBU(NS).EQ.1)THEN
@@ -994,7 +976,7 @@ C
             ENDIF
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NS=1,NSND
             IF(ISNDBU(NS).EQ.1)THEN
@@ -1007,11 +989,11 @@ C
             ENDIF
           ENDDO
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SET COHESIVE BED CRITICAL STRESSES AND RESUSPENSION RATES
+!
         IF(ISTRAN(6).GE.1)THEN
           IF(IWRSP(1).EQ.0)THEN
             DO K=1,KB
@@ -1032,10 +1014,8 @@ C
           IF(IWRSP(1).GE.1.AND.IWRSP(1).LT.99)THEN
             DO K=1,KB
               DO L=2,LA
-                TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
-                WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSP(1))
+                TAURS(L,K)=CSEDTAUS(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1),L)
+                WRSPS(L,K)=CSEDRESS(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSP(1))
               ENDDO
             ENDDO
           ENDIF
@@ -1083,8 +1063,7 @@ C
             ENDIF
             DO L=2,LA
 	        K=KBT(L)
-              WRITE(2,222)L,IL(L),JL(L),TAURS(L,K),TAUNS(L,K),
-     &                                  WRSPS(L,K),TEXPS(L,K)
+              WRITE(2,222)L,IL(L),JL(L),TAURS(L,K),TAUNS(L,K),WRSPS(L,K),TEXPS(L,K)
             ENDDO
             CLOSE(1)
             CLOSE(2)
@@ -1092,26 +1071,24 @@ C
           IF(IWRSPB(1).GE.1)THEN
             DO K=1,KB
               DO L=2,LA
-                TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
-                WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),
-     &                            VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+                TAURB(L,K)=CSEDTAUB(BDENBED(L,K),TAUR(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
+                WRSPB(L,K)=CSEDRESB(BDENBED(L,K),WRSPO(1),VDRRSPO(1),VDRBED(L,K),VDRBED(L,K),IWRSPB(1))
               ENDDO
             ENDDO
           ENDIF
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C **  SET SEDIMENT VOLUME FRACTIONS
-C
-        DO K=1,KB
+!
+!----------------------------------------------------------------------C
+!
+! **  SET SEDIMENT VOLUME FRACTIONS
+!
+c        DO K=1,KB
           DO L=2,LA
             BEDLINIT(L,K)=0.
             BEDDINIT(L,K)=0.
           ENDDO
         ENDDO
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -1122,7 +1099,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -1134,7 +1111,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -1145,7 +1122,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -1157,7 +1134,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(6).GE.1)THEN
           DO NS=1,NSED
             DO K=1,KB
@@ -1176,7 +1153,7 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTRAN(7).GE.1)THEN
           DO NX=1,NSND
             NS=NSED+NX
@@ -1196,42 +1173,42 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       ENDIF
-C
-C **  END COLD START INITIALIZATION: IBMECH.GE.1
-C
-C**********************************************************************C
-C
-C**  INITIALIZE BED BOTTOM ELEVATION
-C
+!
+! **  END COLD START INITIALIZATION: IBMECH.GE.1
+!
+!**********************************************************************C
+!
+!**  INITIALIZE BED BOTTOM ELEVATION
+!
         DO L=2,LA
           HBEDA(L)=0.
         ENDDO
-C
+!
         DO L=2,LA
           DO K=1,KBT(L)
             HBEDA(L)=HBEDA(L)+HBED(L,K)
           END DO
         ENDDO
-C
+!
         DO L=2,LA
           ZELBEDA(L)=BELV(L)-HBEDA(L)
         ENDDO
-C
-C**********************************************************************C
-C
-C**  INITIALIZE TOTAL SEDIMENT MASS PER UNIT AREA
-C
+!
+!**********************************************************************C
+!
+!**  INITIALIZE TOTAL SEDIMENT MASS PER UNIT AREA
+!
       DO K=1,KB
         DO L=2,LA
           SEDBT(L,K)=0.
           SNDBT(L,K)=0.
         ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -1241,7 +1218,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NS=1,NSND
           DO K=1,KB
@@ -1251,19 +1228,19 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
-C**********************************************************************C
-C
-C **  IF N=1 AND ISTRAN(5)=1 CHECK INITIAL TOXIC CONCENTRATIONS IN
-C **  BED AND REINITILIZE IF NECESSARY
-C
-C      IF(N.EQ.1.AND.ISTRAN(5).GE.1)THEN
+!
+!**********************************************************************C
+!
+! **  IF N=1 AND ISTRAN(5)=1 CHECK INITIAL TOXIC CONCENTRATIONS IN
+! **  BED AND REINITILIZE IF NECESSARY
+!
+!      IF(N.EQ.1.AND.ISTRAN(5).GE.1)THEN
       IF(ISTRAN(5).GE.1)THEN
         IF(ISRESTI.EQ.0.OR.ISCI(5).EQ.0)THEN
-c
-C
-C **  CALCULATE TOTAL SEDIMENT IN THE BED
-C
+!
+!
+! **  CALCULATE TOTAL SEDIMENT IN THE BED
+!
       DO K=1,KB
         DO L=1,LC
           SEDBT(L,K)=0.
@@ -1271,7 +1248,7 @@ C
           SEDBALL(L,K)=0.
         ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(6).GE.1)THEN
         DO NS=1,NSED
           DO K=1,KB
@@ -1281,7 +1258,7 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
         DO NS=1,NSND
           DO K=1,KB
@@ -1291,22 +1268,22 @@ C
           ENDDO
         ENDDO
       ENDIF
-C
+!
       DO K=1,KB
         DO L=1,LC
           SEDBALL(L,K)=SEDBT(L,K)+SNDBT(L,K)
         ENDDO
       ENDDO
-C
-C
-C **  CALCULATE TOTAL PARTICULATE FRACTION OF EACH TOXIC IN THE BED
-C
+!
+!
+! **  CALCULATE TOTAL PARTICULATE FRACTION OF EACH TOXIC IN THE BED
+!
           DO NT=1,NTOX
             NSP2(NT)=NSED+NSND
             IF(ISTOC(NT).EQ.2) NSP2(NT)=NSP2(NT)+1
             IF(ISTOC(NT).EQ.3) NSP2(NT)=NSP2(NT)+2
           END DO
-C
+!
           DO NT=1,NTOX
             DO NS=1,NSP2(NT)
               DO K=1,KB
@@ -1316,7 +1293,7 @@ C
               ENDDO
             ENDDO
           ENDDO
-C
+!
           DO NT=1,NTOX
            IF(ISTRAN(6).GE.1)THEN
              DO NS=1,NSED
@@ -1354,7 +1331,7 @@ C
               ENDDO
             ENDIF
           ENDDO
-C
+!
           DO NT=1,NTOX
             DO K=1,KB
               DO L=2,LA
@@ -1369,24 +1346,23 @@ C
               ENDDO
             ENDDO
           ENDDO
-C
+!
           DO NT=1,NTOX
             DO K=1,KB
               DO L=2,LA
                 IF(SEDBALL(L,K).GT.0.0)THEN
-                  TOXPFTB(L,K,NT)=TOXPFTB(L,K,NT)
-     &                     /(PORBED(L,K)*HBED(L,K)+TOXPFTB(L,K,NT))
+                  TOXPFTB(L,K,NT)=TOXPFTB(L,K,NT)/(PORBED(L,K)*HBED(L,K)+TOXPFTB(L,K,NT))
                 ELSE
                   TOXPFTB(L,K,NT)=1.
                 ENDIF
               ENDDO
             ENDDO
           ENDDO
-C
-C **  CONVERT MASS TOX/MASS SED INITIAL CONDITION TO TOTAL TOXIC
-C **  CONCENTRATION IN BED 0.001 CONVERTS TOXINTB UNITS OF MG/KG
-C **  TO TOXB UNITS OF OF MG/M**2
-C
+!
+! **  CONVERT MASS TOX/MASS SED INITIAL CONDITION TO TOTAL TOXIC
+! **  CONCENTRATION IN BED 0.001 CONVERTS TOXINTB UNITS OF MG/KG
+! **  TO TOXB UNITS OF OF MG/M**2
+!
           DO NT=1,NTOX
             IF(ITXBDUT(NT).EQ.0)THEN
               DO K=1,KB
@@ -1399,55 +1375,53 @@ C
             IF(ITXBDUT(NT).EQ.1)THEN
               DO K=1,KB
                 DO L=2,LA
-                  TOXB(L,K,NT)=0.001*TOXB(L,K,NT)*(SEDBT(L,K)
-     &               +SNDBT(L,K))/TOXPFTB(L,K,NT)
+                  TOXB(L,K,NT)=0.001*TOXB(L,K,NT)*(SEDBT(L,K)+SNDBT(L,K))/TOXPFTB(L,K,NT)
                   TOXB1(L,K,NT)=TOXB(L,K,NT)
                 ENDDO
               ENDDO
             ENDIF
           ENDDO
-C
-C ** DIAGNOSTICS OF INITIALIZATION
-C
+!
+! ** DIAGNOSTICS OF INITIALIZATION
+!
           IF(ISDTXBUG.EQ.1)THEN
             OPEN(2,FILE='TOXBED.DIA')
             CLOSE(2,STATUS='DELETE')
             OPEN(2,FILE='TOXBED.DIA')
             DO L=2,LA
-C             TMP1=-999.
-C             TMP2=-999.
-C             IF(HBED(L).GT.0.)TMP1=TOXB(L,1)/HBED(L)
-C             IF(HBED(L).GT.0.)TMP2=TOXB(L,2)/HBED(L)
-C             WRITE(2,2222)IL(L),JL(L),HBED(L),TOXB(L,1),TOXB(L,2),TMP1,TMP2
+!             TMP1=-999.
+!             TMP2=-999.
+!             IF(HBED(L).GT.0.)TMP1=TOXB(L,1)/HBED(L)
+!             IF(HBED(L).GT.0.)TMP2=TOXB(L,2)/HBED(L)
+!             WRITE(2,2222)IL(L),JL(L),HBED(L),TOXB(L,1),TOXB(L,2),TMP1,TMP2
               TMP1=TOXB(L,1,1)/(HBED(L,1)+1.E-12)
-              WRITE(2,2222)IL(L),JL(L),TOXPFTB(L,1,1),TOXB(L,1,1),
-     &              TMP1,TOX(L,1,1)
+              WRITE(2,2222)IL(L),JL(L),TOXPFTB(L,1,1),TOXB(L,1,1),TMP1,TOX(L,1,1)
             ENDDO
             CLOSE(2)
 	    ENDIF
-C
+!
         ENDIF
       ENDIF
-C
+!
  2222 FORMAT(2I5,7E13.4)
-C
-C**********************************************************************C
-C
-C **  INITIALIZE FRACTION OF PARTICULATE ORGANIC CARBON IN BED
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZE FRACTION OF PARTICULATE ORGANIC CARBON IN BED
+!
       IVAL=0
 	DO NT=1,NTOX
         IF(ISTOC(NT).GE.2)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1.AND.ISTPOCB.EQ.4)THEN
 	  CALL SETFPOCB(0)
 	ENDIF
-C
-C**********************************************************************C
-C
-C **  CALCULATE COHESIVE AND NONCOHESIVE VOID RATIOS
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE COHESIVE AND NONCOHESIVE VOID RATIOS
+!
       DO K=1,KB
       DO L=2,LA
 	  IF(K.LE.KBT(L))THEN
@@ -1465,23 +1439,21 @@ C
           FVOLSND=FVOLSSD*FVOLSND
 	    VDRBEDSND(L,K)=SNDVDRD
           VDRBEDSED(L,K)=0.0
-          IF(FVOLSED.GT.0.0)
-     &    VDRBEDSED(L,K)=((FVOLSED+FVOLSND)*VDRBED(L,K)-FVOLSND*SNDVDRD)
-     &                   /FVOLSED
+          IF(FVOLSED.GT.0.0)VDRBEDSED(L,K)=((FVOLSED+FVOLSND)*VDRBED(L,K)-FVOLSND*SNDVDRD)/FVOLSED
         ELSE
 	    VDRBEDSND(L,K)=0.0
 	    VDRBEDSED(L,K)=0.0
 	  ENDIF
       ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  ADD ACTIVE ARMORING LAYER IF NO PRESENT IN INITIAL OR RESTART
-C     CONDITIONS
-C
+!
+!**********************************************************************C
+!
+! **  ADD ACTIVE ARMORING LAYER IF NO PRESENT IN INITIAL OR RESTART
+!     CONDITIONS
+!
       IF(ISNDAL.EQ.2.AND.IALSTUP.GT.0)THEN
-C
+!
       DO L=2,LA
 	  KTOPTP=KBT(L)
 	  KTOPP1=KBT(L)+1
@@ -1502,7 +1474,7 @@ C
         STDOCB(L,KTOPP1)=STDOCB(L,KTOPTP)
         STPOCB(L,KTOPP1)=STPOCB(L,KTOPTP)
 	ENDDO
-C
+!
       DO NS=1,NSED
       DO L=2,LA
 	  KTOPTP=KBT(L)
@@ -1514,7 +1486,7 @@ C
         STFPOCB(L,KTOPP1,NS)=STFPOCB(L,KTOPTP,NS)
       ENDDO
 	ENDDO
-C
+!
       DO NS=1,NSND
 	NX=NSED+NS
       DO L=2,LA
@@ -1527,7 +1499,7 @@ C
         STFPOCB(L,KTOPP1,NX)=STFPOCB(L,KTOPTP,NX)
 	ENDDO
 	ENDDO
-C
+!
       DO NT=1,NTOX
       DO L=2,LA
 	  KTOPTP=KBT(L)
@@ -1539,7 +1511,7 @@ C
         TOXPFTB(L,KTOPP1,NT)=TOXPFTB(L,KTOPTP,NT)
       ENDDO
 	ENDDO
-C
+!
       DO NT=1,NTOX
 	DO NS=1,NSED+NSND+2
       DO L=2,LA
@@ -1549,27 +1521,27 @@ C
       ENDDO
 	ENDDO
 	ENDDO
-C
+!
       DO L=2,LA
 	  KBT(L)=KBT(L)+1
       ENDDO
 
       ENDIF
-C
-C
-C**********************************************************************C
-C
-C **  ADJUST POROSITY AND VOID RATIO FOR IBMECH.EQ.99
-C
+!
+!
+!**********************************************************************C
+!
+! **  ADJUST POROSITY AND VOID RATIO FOR IBMECH.EQ.99
+!
       IF(IBMECH.EQ.99)THEN
-C
+!
 	  DO K=1,KB
         DO L=2,LA
 	    FRACCOH(L,K)=0.0
           FRACNON(L,K)=0.0
         ENDDO
         ENDDO
-C
+!
         DO NS=1,NSED
 	  DO K=1,KB
         DO L=2,LA
@@ -1581,7 +1553,7 @@ C
         ENDDO
         ENDDO
 
-C
+!
         DO K=1,KB
           DO L=2,LA
             IF(K.LE.KBT(L))THEN
@@ -1592,28 +1564,28 @@ C
             ENDIF
           ENDDO
         ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C     WRITE(6,*)'COMPLETED BED INITIALIZATION'
-C
-C**  WRITE DIAGNOSTIC FILES FOR BED INITIALIZATION
-C
-COLD      OPEN(1,FILE='BEDINIT.DIA')
-COLD      CLOSE(1,STATUS='DELETE')
-COLD      OPEN(1,FILE='BEDINIT.DIA')
-COLD      WRITE(1,102)
-COLD      DO L=2,LA
-COLDC       WRITE(1,101)IL(L),JL(L),SEDB(L,1,1),SNDB(L,1,1),HBED(L,1),
-COLD        WRITE(1,101)IL(L),JL(L),SEDBT(L,1),SNDBT(L,1),HBED(L,1),
-COLD     &             PORBED(L,1),VDRBED(L,1),BDENBED(L,1),TAURS(L,1)
-COLD      ENDDO
-COLD      CLOSE(1)
-C
+!
+!**********************************************************************C
+!
+!     WRITE(6,*)'COMPLETED BED INITIALIZATION'
+!
+!**  WRITE DIAGNOSTIC FILES FOR BED INITIALIZATION
+!
+!OLD      OPEN(1,FILE='BEDINIT.DIA')
+!OLD      CLOSE(1,STATUS='DELETE')
+!OLD      OPEN(1,FILE='BEDINIT.DIA')
+!OLD      WRITE(1,102)
+!OLD      DO L=2,LA
+!OLDC       WRITE(1,101)IL(L),JL(L),SEDB(L,1,1),SNDB(L,1,1),HBED(L,1),
+!OLD        WRITE(1,101)IL(L),JL(L),SEDBT(L,1),SNDBT(L,1),HBED(L,1),
+!OLD     &             PORBED(L,1),VDRBED(L,1),BDENBED(L,1),TAURS(L,1)
+!OLD      ENDDO
+!OLD      CLOSE(1)
+!
  1000 CONTINUE
-C
+!
       OPEN(1,FILE='BEDINIT.SED')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.SED')
@@ -1627,7 +1599,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.SAN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.SAN')
@@ -1641,7 +1613,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.VDR')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.VDR')
@@ -1651,21 +1623,19 @@ C
       ENDDO
       CLOSE(1)
 
-C
+!
       DO K=1,KB
         DO L=2,LA
           IF(K.LE.KBT(L))THEN
               VDRBED2(L,K)=VDRBED(L,K)
-              SDENAVG(L,K)=(BDENBED(L,K)-1000.0*PORBED(L,K))
-     &                    /(1.0-PORBED(L,K))
+              SDENAVG(L,K)=(BDENBED(L,K)-1000.0*PORBED(L,K))/(1.0-PORBED(L,K))
           ELSE
               VDRBED2(L,K)=VDRBED(L,KBT(L))
-              SDENAVG(L,K)=(BDENBED(L,KBT(L))-1000.0*PORBED(L,KBT(L)))
-     &                    /(1.0-PORBED(L,KBT(L)))
+              SDENAVG(L,K)=(BDENBED(L,KBT(L))-1000.0*PORBED(L,KBT(L)))/(1.0-PORBED(L,KBT(L)))
           ENDIF
         ENDDO
       ENDDO
-C
+!
       OPEN(1,FILE='BEDINIT.POR')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.POR')
@@ -1674,7 +1644,7 @@ C
         WRITE(1,101)IL(L),JL(L),(PORBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.ZHB')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.ZHB')
@@ -1683,7 +1653,7 @@ C
         WRITE(1,101)IL(L),JL(L),ZELBEDA(L),HBEDA(L),(HBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.BDN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.BDN')
@@ -1692,7 +1662,7 @@ C
         WRITE(1,101)IL(L),JL(L),(BDENBED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.ELV')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.ELV')
@@ -1702,7 +1672,7 @@ C
         WRITE(1,101)IL(L),JL(L),ZELBEDA(L),HBEDA(L),BELV(L),HP(L),SURF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.TOX')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.TOX')
@@ -1713,7 +1683,7 @@ C
       ENDDO
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINIT.VRS')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINIT.VRS')
@@ -1722,7 +1692,7 @@ C
         WRITE(1,192) (VDRBEDSED(L,K),K=1,KB)
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='BEDINITC.VVF')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='BEDINITC.VVF')
@@ -1732,16 +1702,14 @@ C
       DO L=2,LA
 	  K=KBT(L)
 	  IF(HMP(L).GT.0.05)THEN
-          WRITE(1,191)IL(L),JL(L),VFRBED(L,K,1),PORBED(L,K),VDRBED(L,K),
-     &        VDRBEDSED(L,K)
+          WRITE(1,191)IL(L),JL(L),VFRBED(L,K,1),PORBED(L,K),VDRBED(L,K),VDRBEDSED(L,K)
 	  ELSE
-          WRITE(2,191)IL(L),JL(L),VFRBED(L,K,1),PORBED(L,K),VDRBED(L,K),
-     &        VDRBEDSED(L,K)
+          WRITE(2,191)IL(L),JL(L),VFRBED(L,K,1),PORBED(L,K),VDRBED(L,K),VDRBEDSED(L,K)
 	  ENDIF
       ENDDO
       CLOSE(1)
       CLOSE(2)
-C
+!
       OPEN(1,FILE='WATINIT.SED')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='WATINIT.SED')
@@ -1755,7 +1723,7 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
+!
       OPEN(1,FILE='WATRINIT.SAN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='WATRINIT.SAN')
@@ -1769,8 +1737,8 @@ C
         ENDIF
       ENDDO
       CLOSE(1)
-C
-C
+!
+!
   100 FORMAT(1X)
   222 FORMAT(3I6,5E13.4)
   191 FORMAT(2I5,18F10.3)
@@ -1783,13 +1751,12 @@ C
   114 FORMAT('   IL   JL    PORBED(K=1,KB)')
   115 FORMAT('   IL   JL    ZBEDB        HBEDT        HBED(K=1,KB)')
   116 FORMAT('   IL   JL    BDENBED(K=1,KB)')
-  117 FORMAT('   IL   JL    ZBEDB        HBEDT        BELV',
-     &       '        HWCOL        SELV')
+  117 FORMAT('   IL   JL    ZBEDB        HBEDT        BELV','        HWCOL        SELV')
   118 FORMAT('   IL   JL    TOXB(K=1,KB,NT)  NT = ',I5)
   128 FORMAT('   IL   JL    SEDW(K=1,KC)')
   129 FORMAT('   IL   JL    SNDW(K=1,KC)')
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

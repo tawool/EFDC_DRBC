@@ -1,38 +1,38 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE AINIT
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 03/05/2002        john hamrick       03/05/2002       john hamrick
-C  added transport bypass mask, imaskdry for dry cells
-C 03/19/2002        john hamrick       03/19/2002       john hamrick
-C  added transport bypass mask, lmaskdry for dry cells
-C  modified definition of chanlen in initialization rather than
-C  in subs caltbxy and calpuv2c and calpuv9c
-c
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 03/05/2002        john hamrick       03/05/2002       john hamrick
+!  added transport bypass mask, imaskdry for dry cells
+! 03/19/2002        john hamrick       03/19/2002       john hamrick
+!  added transport bypass mask, lmaskdry for dry cells
+!  modified definition of chanlen in initialization rather than
+!  in subs caltbxy and calpuv2c and calpuv9c
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
-C **  INITIALIZE ARRAYS
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZE ARRAYS
+!
+!----------------------------------------------------------------------C
+!
       ZBR(1)=ZBRADJ
       ZBRE(1)=ZBRADJ
       HMP(1)=HMIN
@@ -69,30 +69,30 @@ C
       DXYP(LC)=DX*DY
       MVEGL(LC)=1
       BELV(LC)=BELV(LA)
-C
+!
       IF(ISGWIE.EQ.0) DAGWZ=0.
       DO L=2,LA
       I=IL(L)
       J=JL(L)
-C     HMP(L)=.25*(H(I,J)+H(I+1,J)+H(I,J+1)+H(I+1,J+1))
-C     HMU(L)= .5*(H(I,J)+H(I,J+1))
-C     HMU(L)=0.5*(H(I-1,J)+H(I,J))
-C     HMV(L)= .5*(H(I,J)+H(I+1,J))
-C     HMV(L)=0.5*(H(I,J-1)+H(I,J))
+!     HMP(L)=.25*(H(I,J)+H(I+1,J)+H(I,J+1)+H(I+1,J+1))
+!     HMU(L)= .5*(H(I,J)+H(I,J+1))
+!     HMU(L)=0.5*(H(I-1,J)+H(I,J))
+!     HMV(L)= .5*(H(I,J)+H(I+1,J))
+!     HMV(L)=0.5*(H(I,J-1)+H(I,J))
       BELAGW(L)=BELV(L)-DAGWZ
       ZBRE(L)=ZBR(L)
-C     DLON(L)=-77.0+(0.25*FLOAT(I)-1.125)/60.
+!     DLON(L)=-77.0+(0.25*FLOAT(I)-1.125)/60.
       DLON(L)=CDLON1+(CDLON2*FLOAT(I)+CDLON3)/60.
-C     DLAT(L)=36.0+(0.2*FLOAT(J)+48.9)/60.
+!     DLAT(L)=36.0+(0.2*FLOAT(J)+48.9)/60.
       DLAT(L)=CDLAT1+(CDLAT2*FLOAT(J)+CDLAT3)/60.
       CUE(L)=1.
       CVE(L)=0.
       CUN(L)=0.
       CVN(L)=1.
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO L=2,LA
       LS=LSC(L)
       DXU(L)=0.5*(DXP(L)+DXP(L-1))
@@ -100,19 +100,19 @@ C
       DXV(L)=0.5*(DXP(L)+DXP(LS))
       DYV(L)=0.5*(DYP(L)+DYP(LS))
       ENDDO
-C
+!
       DO L=2,LA
       LS=LSC(L)
-C      HMU(L)=0.5*(HMP(L)+HMP(L-1))
-C      HMV(L)=0.5*(HMP(L)+HMP(LS))
+!      HMU(L)=0.5*(HMP(L)+HMP(L-1))
+!      HMV(L)=0.5*(HMP(L)+HMP(LS))
        HMU(L)=0.5*(DXP(L)*DYP(L)*HMP(L)+DXP(L-1)*DYP(L-1)*HMP(L-1))
      &           /(DXU(L)*DYU(L))
        HMV(L)=0.5*(DXP(L)*DYP(L)*HMP(L)+DXP(LS )*DYP(LS)*HMP(LS ))
      &           /(DXV(L)*DYV(L))
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO L=1,LC
       AMCP(L)=0.
       AMSP(L)=0.
@@ -221,14 +221,14 @@ C
 	QGW(L)=0.0
       QDWASTE(L)=0.0
       VDWASTE(L)=0.0
-c
+!
       QSBDTOPBEBKB(L)=0.
       QSBDTOPBECHB(L)=0.
       QSBDTOPBECHW(L)=0.
       QWBDTOPBEBKB(L)=0.
       QWBDTOPBECHB(L)=0.
       QWBDTOPBECHW(L)=0.
-c
+!
       IMASKDRY(L)=0
       LMASKDRY(L)=.TRUE.
 	GVCSCLP(L)=1.0
@@ -241,15 +241,15 @@ c
 	KGVCU(L)=1
 	KGVCV(L)=1
 	KGVCW(L)=1
-c
+!
       WCOREST(L)=1.
 	WCORWST(L)=1.
 	WCORNTH(L)=1.
 	WCORSTH(L)=1.
 	HDFUF(L)=1.
-c
+!
       ENDDO
-C
+!
       DO NS=1,NSED
       DO L=1,LC
         SEDFBEBKB(L,NS)=0.
@@ -257,7 +257,7 @@ C
         SEDFBECHW(L,NS)=0.
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSND
       DO L=1,LC
         SNDFBEBKB(L,NS)=0.
@@ -265,7 +265,7 @@ C
         SNDFBECHW(L,NS)=0.
       ENDDO
       ENDDO
-C
+!
       DO NT=1,NTOX
       DO L=1,LC
         TOXFBEBKB(L,NT)=0.
@@ -273,7 +273,7 @@ C
         TOXFBECHW(L,NT)=0.
       ENDDO
       ENDDO
-C
+!
       DO NT=1,NTOX
       DO K=1,KB
       DO L=1,LC
@@ -282,7 +282,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSED
        DO K=1,KB
        DO L=1,LC
@@ -301,21 +301,21 @@ C
        ENDDO
       ENDDO
 
-C
+!
       DO NS=1,NSED
         DO L=1,LC
           SEDFDTAP(L,NS)=0.0
           SEDFDTAN(L,NS)=0.0
         ENDDO
       ENDDO
-C
+!
       DO NS=1,NSND
         DO L=1,LC
           SNDFDTAP(L,NS)=0.0
           SNDFDTAN(L,NS)=0.0
         ENDDO
       ENDDO
-C
+!
       DO L=1,LC
       CSR(L)=0.
       CWR(L)=0.
@@ -338,7 +338,7 @@ C
       ISCDRY(L)=0
       NATDRY(L)=0
       ENDDO
-C
+!
       IF(IS1DCHAN.EQ.1)THEN
       DO L=1,LC
       FADYP(L)=1.
@@ -371,46 +371,46 @@ C
       SRFYU1(L)=0.
       ENDDO
       ENDIF
-C
+!
       DO L=1,NLRPD
       NLRPDL(L)=1
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KS
       DO L=1,LC
-C
+!
       UUU(L,K)=0.
       VVV(L,K)=0.
-C     AMCW(L,K)=0.
-C     AMSW(L,K)=0.
+!     AMCW(L,K)=0.
+!     AMSW(L,K)=0.
       AV(L,K)=AVO
       AVVI(L,K)=1./AVO
       AVUI(L,K)=1./AVO
       AB(L,K)=ABO
       ABLPF(L,K)=0.
       ABEFF(L,K)=0.
-C     AMCAB(L,K)=0.
-C     AMSAB(L,K)=0.
-C     AMC2AB(L,K)=0.
-C     AMS2AB(L,K)=0.
+!     AMCAB(L,K)=0.
+!     AMSAB(L,K)=0.
+!     AMC2AB(L,K)=0.
+!     AMS2AB(L,K)=0.
       QQL(L,K)=QQLMIN
       QQL1(L,K)=QQLMIN
       QQL2(L,K)=QQLMIN
       DML(L,K)=DMLMIN
       WIRT(L,K)=0.
       WTLPF(L,K)=0.
-C
+!
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
 
       DO L=1,LC
-C
+!
       AH(L,K)=AHO
       AHU(L,K)=AHO
       AHULPF(L,K)=AHO
@@ -483,8 +483,8 @@ C
       VTLPF(L,K)=0.
       UUU(L,K)=0.
       VVV(L,K)=0.
-C     UDBDXI(L,K)=0.   REPLACED BY TEMPORARY VARIABLE UUU
-C     VDBDYI(L,K)=0.   REPLACED BY TEMPORARY VARIABLE VVV
+!     UDBDXI(L,K)=0.   REPLACED BY TEMPORARY VARIABLE UUU
+!     VDBDYI(L,K)=0.   REPLACED BY TEMPORARY VARIABLE VVV
       SAL(L,K)=0.
       SAL1(L,K)=0.
       SFL(L,K)=0.
@@ -519,10 +519,10 @@ C     VDBDYI(L,K)=0.   REPLACED BY TEMPORARY VARIABLE VVV
 	LGVCP(L,K)=.TRUE.
 	LGVCU(L,K)=.TRUE.
 	LGVCV(L,K)=.TRUE.
-C
+!
       ENDDO
       ENDDO
-C
+!
       NTMPC=MAX(NSED,1)
       DO NS=1,NTMPC
       DO K=1,KC
@@ -533,18 +533,17 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
        NS=1
 	 DO K=1,KC
 	 DO L=2,LA
-c	 FLOCDIA(L,K)=0.001
+!	 FLOCDIA(L,K)=0.001
        FLOCDIA(L,K)=0.0004  !  initialized in cm equivalent to 4 um
        WSETFLOC(L,K)=80.E-6
-       SEDFLOCDIA(L,K)=172.*SED(L,K,NS)/
-     &                        (FLOCDIA(L,K)*WSETFLOC(L,K))
+       SEDFLOCDIA(L,K)=172.*SED(L,K,NS)/(FLOCDIA(L,K)*WSETFLOC(L,K))
 	 ENDDO
 	 ENDDO
-C
+!
       NTMPN=MAX(NSND,1)
       DO NX=1,NTMPN
       NS=NX+NTMPC
@@ -556,7 +555,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NT=1,NTOX
       DO K=1,KC
       DO L=1,LC
@@ -566,12 +565,12 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=0,KC
       DO L=1,LC
-C
+!
       W(L,K)=0.
       W1(L,K)=0.
       W2(L,K)=0.
@@ -591,13 +590,13 @@ C
       BBT2(L,K)=0.
 	SWB3D(L,K)=SWB(L)
       SWB3DO(L,K)=SWB(L)
-C     WDBDZI(L,K)=0.  REPLACED BY TEMPORARY VARIABLE WWW
-C
+!     WDBDZI(L,K)=0.  REPLACED BY TEMPORARY VARIABLE WWW
+!
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KB
       DO L=1,LC
        VOLBW2(L,K)=0.
@@ -605,18 +604,18 @@ C
        PARTMIXZ(L,K)=0.
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(MDCHH.GE.1)THEN
-C
+!
         DO NMD=1,MDCHH
           LHOST=LMDCHH(NMD)
           LCHNU=LMDCHU(NMD)
           LCHNV=LMDCHV(NMD)
-C         SET HOST DRYING DEPTH
+!         SET HOST DRYING DEPTH
           IF(PMDCH(NMD).LT.0.0) PMDCH(NMD)=HWET
-C         X-DIRECTION CHANNEL
+!         X-DIRECTION CHANNEL
           IF(MDCHTYP(NMD).EQ.1)THEN
             IF(CHANLEN(NMD).LT.0.0)THEN
               CHANLEN(NMD)=0.25*DYP(LHOST)
@@ -624,7 +623,7 @@ C         X-DIRECTION CHANNEL
 	        CHANLEN(NMD)=CHANLEN(NMD)-0.5*DYP(LCHNU)
 	      ENDIF
           ENDIF
-C         Y-DIRECTION CHANNEL
+!         Y-DIRECTION CHANNEL
           IF(MDCHTYP(NMD).EQ.2)THEN
             IF(CHANLEN(NMD).LT.0.0)THEN
 		    CHANLEN(NMD)=0.25*DXP(LHOST)
@@ -633,18 +632,18 @@ C         Y-DIRECTION CHANNEL
           ENDIF
           ENDIF
         ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** INITIALIZE ORGANIC CARBON VARIABLES OF SEDIMENT-TOXICS
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** INITIALIZE ORGANIC CARBON VARIABLES OF SEDIMENT-TOXICS
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).GT.0)IVAL=1
 	ENDDO
-C
+!
 	IF(IVAL.EQ.0)THEN
 	  DO K=1,KB
 	    DO L=1,LC
@@ -673,9 +672,9 @@ C
 	    ENDDO
 	  ENDDO
 	ENDIF
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTDOCB.EQ.0)THEN
         DO K=1,KB
           DO L=1,LC
@@ -683,7 +682,7 @@ C
           ENDDO
         ENDDO
 	ENDIF
-C
+!
       IF(ISTPOCB.EQ.0)THEN
         DO K=1,KB
           DO L=1,LC
@@ -691,7 +690,7 @@ C
           ENDDO
         ENDDO
 	ENDIF
-C
+!
       IF(ISTPOCB.EQ.2)THEN
 	  DO NS=1,NSED+NSND
           DO K=1,KB
@@ -701,7 +700,7 @@ C
           ENDDO
         ENDDO
 	ENDIF
-C
+!
       IF(ISTDOCW.EQ.0)THEN
         DO K=1,KC
           DO L=1,LC
@@ -709,7 +708,7 @@ C
           ENDDO
         ENDDO
 	ENDIF
-C
+!
       IF(ISTPOCW.EQ.0)THEN
         DO K=1,KC
           DO L=1,LC
@@ -717,7 +716,7 @@ C
           ENDDO
         ENDDO
 	ENDIF
-C
+!
       IF(ISTPOCW.EQ.2)THEN
 	  DO NS=1,NSED+NSND
           DO K=1,KC
@@ -727,15 +726,15 @@ C
           ENDDO
         ENDDO
 	ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C INITIALIZATION OF FOODCHAIN VARIABLES FOR HOUSATONIC
-C
-cjah FORTRAN 90 only
-C
+!
+!**********************************************************************C
+!
+! INITIALIZATION OF FOODCHAIN VARIABLES FOR HOUSATONIC
+!
+!jah FORTRAN 90 only
+!
       ATOXPFWX=0.
       ATOXPFWY=0.
       ATOXPFBW=0.
@@ -769,73 +768,73 @@ C
       ASEDFWY=0.
       ASEDFBLX=0.
       ASEDFBLY=0.
-C
-cjah      DO NT=1,NTOX
-cjah        DO NS=1,NSED+NSND+2
-cjah          DO L=1,LC
-cjah            ATOXPFWX(L,NS,NT)=0.0
-cjah            ATOXPFWY(L,NS,NT)=0.0
-cjah            ATOXPFBW(L,NS,NT)=0.0
-cjah            ATOXPFBWP(L,NS,NT)=0.0
-cjah            ATOXPFBWN(L,NS,NT)=0.0
-cjah          ENDDO
-cjah        ENDDO
-cjah      ENDDO
-cjah
-C
-C
-cjah      DO NT=1,NTOX
-cjah        DO NS=1,NSND
-cjah          DO L=1,LC
-cjah            ATOXPFBLX(L,NS,NT)=0.0
-cjah            ATOXPFBLY(L,NS,NT)=0.0
-cjah          ENDDO
-cjah        ENDDO
-cjah      ENDDO
-C
-cjah      DO NT=1,NTOX
-cjah        DO L=1,LC
-cjah          ATOXFDFWX(L,NT)=0.0
-cjah          ATOXFDFWY(L,NT)=0.0
-cjah          ATOXFDFBW(L,NT)=0.0
-cjah          ATOXFDFBWP(L,NT)=0.0
-cjah          ATOXFDFBWN(L,NT)=0.0
-cjah          ATOXCDFWX(L,NT)=0.0
-cjah            ATOXCDFWY(L,NT)=0.0
-cjah          ATOXCDFBW(L,NT)=0.0
-cjah          ATOXCDFBWP(L,NT)=0.0
-cjah          ATOXCDFBWN(L,NT)=0.0
-cjah          ATOXFBEBKB(L,NT)=0.0
-cjah            ATOXFBECHB(L,NT)=0.0
-cjah          ATOXFBECHW(L,NT)=0.0
-cjah          ATOXVOL(L,NT)=0.0
-cjah            ATOXSOUR(L,NT)=0.0
-cjah            ATOXSINK(L,NT)=0.0
-cjah          ATOXCDFBWAD(L,NT)=0.0
-cjah          ATOXCDFBWADP(L,NT)=0.0
-cjah          ATOXCDFBWADN(L,NT)=0.0
-cjah          ATOXCDFBWAD(L,NT)=0.0
-cjah          ATOXCDFBWADP(L,NT)=0.0
-cjah          ATOXCDFBWADN(L,NT)=0.0
-cjah        ENDDO
-cjah      ENDDO
-cjahC
-cjah        DO NS=1,NSED+NSND
-cjah          DO L=1,LC
-cjah           ASEDFWX(L,NS)=0.0
-cjah             ASEDFWY(L,NS)=0.0
-cjah          ENDDO
-cjah        ENDDO
-C
-cjah        DO NS=1,NSND
-cjah          DO L=1,LC
-cjah           ASEDFBLX(L,NS)=0.0
-cjah             ASEDFBLY(L,NS)=0.0
-cjah          ENDDO
-cjah        ENDDO
-C
-C
-C**********************************************************************C
-C
+!
+!jah      DO NT=1,NTOX
+!jah        DO NS=1,NSED+NSND+2
+!jah          DO L=1,LC
+!jah            ATOXPFWX(L,NS,NT)=0.0
+!jah            ATOXPFWY(L,NS,NT)=0.0
+!jah            ATOXPFBW(L,NS,NT)=0.0
+!jah            ATOXPFBWP(L,NS,NT)=0.0
+!jah            ATOXPFBWN(L,NS,NT)=0.0
+!jah          ENDDO
+!jah        ENDDO
+!jah      ENDDO
+!jah
+!
+!
+!jah      DO NT=1,NTOX
+!jah        DO NS=1,NSND
+!jah          DO L=1,LC
+!jah            ATOXPFBLX(L,NS,NT)=0.0
+!jah            ATOXPFBLY(L,NS,NT)=0.0
+!jah          ENDDO
+!jah        ENDDO
+!jah      ENDDO
+!
+!jah      DO NT=1,NTOX
+!jah        DO L=1,LC
+!jah          ATOXFDFWX(L,NT)=0.0
+!jah          ATOXFDFWY(L,NT)=0.0
+!jah          ATOXFDFBW(L,NT)=0.0
+!jah          ATOXFDFBWP(L,NT)=0.0
+!jah          ATOXFDFBWN(L,NT)=0.0
+!jah          ATOXCDFWX(L,NT)=0.0
+!jah            ATOXCDFWY(L,NT)=0.0
+!jah          ATOXCDFBW(L,NT)=0.0
+!jah          ATOXCDFBWP(L,NT)=0.0
+!jah          ATOXCDFBWN(L,NT)=0.0
+!jah          ATOXFBEBKB(L,NT)=0.0
+!jah            ATOXFBECHB(L,NT)=0.0
+!jah          ATOXFBECHW(L,NT)=0.0
+!jah          ATOXVOL(L,NT)=0.0
+!jah            ATOXSOUR(L,NT)=0.0
+!jah            ATOXSINK(L,NT)=0.0
+!jah          ATOXCDFBWAD(L,NT)=0.0
+!jah          ATOXCDFBWADP(L,NT)=0.0
+!jah          ATOXCDFBWADN(L,NT)=0.0
+!jah          ATOXCDFBWAD(L,NT)=0.0
+!jah          ATOXCDFBWADP(L,NT)=0.0
+!jah          ATOXCDFBWADN(L,NT)=0.0
+!jah        ENDDO
+!jah      ENDDO
+!jahC
+!jah        DO NS=1,NSED+NSND
+!jah          DO L=1,LC
+!jah           ASEDFWX(L,NS)=0.0
+!jah             ASEDFWY(L,NS)=0.0
+!jah          ENDDO
+!jah        ENDDO
+!
+!jah        DO NS=1,NSND
+!jah          DO L=1,LC
+!jah           ASEDFBLX(L,NS)=0.0
+!jah             ASEDFBLY(L,NS)=0.0
+!jah          ENDDO
+!jah        ENDDO
+!
+!
+!**********************************************************************C
+!
       RETURN
       END

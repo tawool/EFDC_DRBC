@@ -1,56 +1,56 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE ACON(ITVAL)
 
-C**********************************************************************C
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!**********************************************************************C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       PARAMETER (NJELM=2,NATDM=1)
-C
-C**********************************************************************C
-C
-C      DIMENSION ZAD(KCM,NATDM),  TAD(KCM,NATDM), UAGD(KCM,NATDM),
-C     &         VAGD(KCM,NATDM), WAGD(KCM,NATDM),SALAD(KCM,NATDM),
-C     &        TEMAD(KCM,NATDM),DYEAD(KCM,NATDM),SFLAD(KCM,NATDM),
-C     &        TOXAD(KCM,NTXM,NATDM),
-C     &        SEDAD(KCM,NSCM,NATDM),SNDAD(KCM,NSNM,NATDM)
-C
-C      DIMENSION TOXA(NTXM),SEDA(NSCM),SNDA(NSNM)
-C
-C      COMMON/ADATA/ ZAD,  TAD, UAGD,VAGD, WAGD,SALAD,
-C     &        TEMAD,DYEAD,SFLAD,TOXAD,SEDAD,SNDAD
-C
-C      COMMON/AVAL/ NAZD,NATD,ZVAL,TVAL,UAG, VAG, WAG,SALA,
-C     &            TEMA,DYEA,SFLA,TOXA,SEDA,SNDA
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+!      DIMENSION ZAD(KCM,NATDM),  TAD(KCM,NATDM), UAGD(KCM,NATDM),
+!     &         VAGD(KCM,NATDM), WAGD(KCM,NATDM),SALAD(KCM,NATDM),
+!     &        TEMAD(KCM,NATDM),DYEAD(KCM,NATDM),SFLAD(KCM,NATDM),
+!     &        TOXAD(KCM,NTXM,NATDM),
+!     &        SEDAD(KCM,NSCM,NATDM),SNDAD(KCM,NSNM,NATDM)
+!
+!      DIMENSION TOXA(NTXM),SEDA(NSCM),SNDA(NSNM)
+!
+!      COMMON/ADATA/ ZAD,  TAD, UAGD,VAGD, WAGD,SALAD,
+!     &        TEMAD,DYEAD,SFLAD,TOXAD,SEDAD,SNDAD
+!
+!      COMMON/AVAL/ NAZD,NATD,ZVAL,TVAL,UAG, VAG, WAG,SALA,
+!     &            TEMA,DYEA,SFLA,TOXA,SEDA,SNDA
+!
+!**********************************************************************C
+!
       IF(ZVAL.LT.ZAD(1,ITVAL))THEN
         UAG=UAGD(1,ITVAL)
         VAG=VAGD(1,ITVAL)
         WAG=WAGD(1,ITVAL)
         SALA=SALAD(1,ITVAL)
         TEMA=TEMAD(1,ITVAL)
-CJHFIX-REMOVE        DYEA=SALAD(1,ITVAL)
-CJHFIX-ADD THE FOLLOWING 1 LINE(S)
+!JHFIX-REMOVE        DYEA=SALAD(1,ITVAL)
+!JHFIX-ADD THE FOLLOWING 1 LINE(S)
         DYEA=DYEAD(1,ITVAL)
         SFLA=SFLAD(1,ITVAL)
         DO NT=1,NTOX
@@ -64,7 +64,7 @@ CJHFIX-ADD THE FOLLOWING 1 LINE(S)
         ENDDO
         RETURN
       ENDIF
-C
+!
       IF(ZVAL.GE.ZAD(NAZD,ITVAL))THEN
         UAG=UAGD(NAZD,ITVAL)
         VAG=VAGD(NAZD,ITVAL)
@@ -84,7 +84,7 @@ C
         ENDDO
         RETURN
       ENDIF
-C
+!
       NZ=1
  1000 CONTINUE
       NZP=NZ+1
@@ -113,8 +113,8 @@ C
         NZ=NZ+1
         GOTO 1000
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

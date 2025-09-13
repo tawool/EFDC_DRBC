@@ -1,44 +1,44 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE CALBAL5
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINES CALBAL CALCULATE GLOBAL VOLUME, MASS, MOMENTUM, 
-C **  AND ENERGY BALANCES
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINES CALBAL CALCULATE GLOBAL VOLUME, MASS, MOMENTUM, 
+! **  AND ENERGY BALANCES
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
-C **  CHECK FOR END OF BALANCE PERIOD
-C
+!
+!**********************************************************************C
+!
+! **  CHECK FOR END OF BALANCE PERIOD
+!
       IF(NBAL.EQ.NTSMMT)THEN
-CJH      WRITE(6,6666)N,NBAL
-CJH 6666 FORMAT(' ACTIVE CALL TO CALBAL5, N,NBUD = ',2I5)
-C
-C**********************************************************************C
-C
-C **  CALCULATE ENDING VOLUME, SALT MASS, DYE MASS, MOMENTUM, KINETIC 
-C **  ENERGY AND POTENTIAL ENERGY, AND ASSOCIATED FLUXES
-C
-C----------------------------------------------------------------------C
-C
+!JH      WRITE(6,6666)N,NBAL
+!JH 6666 FORMAT(' ACTIVE CALL TO CALBAL5, N,NBUD = ',2I5)
+!
+!**********************************************************************C
+!
+! **  CALCULATE ENDING VOLUME, SALT MASS, DYE MASS, MOMENTUM, KINETIC 
+! **  ENERGY AND POTENTIAL ENERGY, AND ASSOCIATED FLUXES
+!
+!----------------------------------------------------------------------C
+!
       VOLEND=0.
       SALEND=0.
       DYEEND=0.
@@ -48,38 +48,32 @@ C
       VVEEND=0.
       PPEEND=0.
       BBEEND=0.
-C
+!
       DO L=2,LA
       LN=LNC(L)
       VOLEND=VOLEND+SPB(L)*DXYP(L)*HP(L)
-      UMOEND=UMOEND+SPB(L)*0.5*DXYP(L)*HP(L)*(DYIU(L)*HUI(L)*UHDYE(L)
-     &                                 +DYIU(L+1)*HUI(L+1)*UHDYE(L+1))
-      VMOEND=VMOEND+SPB(L)*0.5*DXYP(L)*HP(L)*(DXIV(L)*HVI(L)*VHDXE(L)
-     &                                 +DXIV(LN)*HVI(LN)*VHDXE(LN))
-      PPEEND=PPEEND+SPB(L)*0.5*DXYP(L)
-     &             *(GI*P(L)*P(L)-G*BELV(L)*BELV(L))
+      UMOEND=UMOEND+SPB(L)*0.5*DXYP(L)*HP(L)*(DYIU(L)*HUI(L)*UHDYE(L)+DYIU(L+1)*HUI(L+1)*UHDYE(L+1))
+      VMOEND=VMOEND+SPB(L)*0.5*DXYP(L)*HP(L)*(DXIV(L)*HVI(L)*VHDXE(L)+DXIV(LN)*HVI(LN)*VHDXE(LN))
+      PPEEND=PPEEND+SPB(L)*0.5*DXYP(L)*(GI*P(L)*P(L)-G*BELV(L)*BELV(L))
       ENDDO
-C
+!
       AMOEND=SQRT(UMOEND*UMOEND+VMOEND*VMOEND)
-C
+!
       DO K=1,KC
       DO L=2,LA
       LN=LNC(L)
       SALEND=SALEND+SCB(L)*DXYP(L)*HP(L)*SAL(L,K)*DZC(K)
       DYEEND=DYEEND+SCB(L)*DXYP(L)*HP(L)*DYE(L,K)*DZC(K)
-C     UUEEND=UUEEND+SPB(L)*0.25*(DXYU(L)*HU(L)*U(L,K)*U(L,K)
-C    &      +DXYU(L+1)*HU(L+1)*U(L+1,K)*U(L+1,K))*DZC(K)
-C     VVEEND=VVEEND+SPB(L)*0.25*(DXYV(L)*HV(L)*V(L,K)*V(L,K)
-C    &      +DXYV(LN)*HV(LN)*V(LN,K)*V(LN,K))*DZC(K)
-      UUEEND=UUEEND+SPB(L)*0.125*DXYP(L)*HP(L)*DZC(K)
-     &      *( (U(L,K)+U(L+1,K))*(U(L,K)+U(L+1,K)) )
-      VVEEND=VVEEND+SPB(L)*0.125*DXYP(L)*HP(L)*DZC(K)
-     &      *( (V(L,K)+V(LN,K))*(V(L,K)+V(LN,K)) )
-      BBEEND=BBEEND+SPB(L)*GP*DXYP(L)*HP(L)*DZC(K)*( BELV(L) 
-     &      +0.5*HP(L)*(Z(K)+Z(K-1)) )*B(L,K)
+!     UUEEND=UUEEND+SPB(L)*0.25*(DXYU(L)*HU(L)*U(L,K)*U(L,K)
+!    &      +DXYU(L+1)*HU(L+1)*U(L+1,K)*U(L+1,K))*DZC(K)
+!     VVEEND=VVEEND+SPB(L)*0.25*(DXYV(L)*HV(L)*V(L,K)*V(L,K)
+!    &      +DXYV(LN)*HV(LN)*V(LN,K)*V(LN,K))*DZC(K)
+      UUEEND=UUEEND+SPB(L)*0.125*DXYP(L)*HP(L)*DZC(K)*( (U(L,K)+U(L+1,K))*(U(L,K)+U(L+1,K)) )
+      VVEEND=VVEEND+SPB(L)*0.125*DXYP(L)*HP(L)*DZC(K)*( (V(L,K)+V(LN,K))*(V(L,K)+V(LN,K)) )
+      BBEEND=BBEEND+SPB(L)*GP*DXYP(L)*HP(L)*DZC(K)*( BELV(L)+0.5*HP(L)*(Z(K)+Z(K-1)) )*B(L,K)
       ENDDO
       ENDDO
-C
+!
       UUEOUT=DT*UUEOUT
       VVEOUT=DT*VVEOUT
       PPEOUT=DT*PPEOUT
@@ -89,46 +83,46 @@ C
       DYEOUT=DT*DYEOUT
       UMOOUT=DT*UMOOUT
       VMOOUT=DT*VMOOUT
-C
+!
       ENEBEG=UUEBEG+VVEBEG+PPEBEG+BBEBEG
       ENEEND=UUEEND+VVEEND+PPEEND+BBEEND
       ENEOUT=UUEOUT+VVEOUT+PPEOUT+BBEOUT
-C
+!
       VOLBMO=VOLBEG-VOLOUT
       SALBMO=SALBEG-SALOUT
       DYEBMO=DYEBEG-DYEOUT
       UMOBMO=UMOBEG-DYEOUT
       VMOBMO=VMOBEG-DYEOUT
       ENEBMO=ENEBEG-ENEOUT
-C
+!
       VOLERR=VOLEND-VOLBMO
       SALERR=SALEND-SALBMO
       DYEERR=DYEEND-DYEBMO
       UMOERR=UMOEND-UMOBMO
       VMOERR=VMOEND-VMOBMO
       ENEERR=ENEEND-ENEBMO
-C
+!
       RVERDE=-9999.
       RSERDE=-9999.
       RDERDE=-9999.
       RUERDE=-9999.
       RVERDE=-9999.
       REERDE=-9999.
-C
+!
       RVERDO=-9999.
       RSERDO=-9999.
       RDERDO=-9999.
       RUERDO=-9999.
       RVERDO=-9999.
       REERDO=-9999.
-C
+!
       IF(VOLEND.NE.0.) RVERDE=VOLERR/VOLEND
       IF(SALEND.NE.0.) RSERDE=SALERR/SALEND
       IF(DYEEND.NE.0.) RDERDE=DYEERR/DYEEND
       IF(UMOEND.NE.0.) RUMERDE=UMOERR/UMOEND
       IF(VMOEND.NE.0.) RVMERDE=VMOERR/VMOEND
       IF(ENEEND.NE.0.) REERDE=ENEERR/ENEEND
-C
+!
       IF(VOLOUT.NE.0.) RVERDO=VOLERR/VOLOUT
       IF(SALOUT.NE.0.) RSERDO=SALERR/SALOUT
       IF(DYEOUT.NE.0.) RDERDO=DYEERR/DYEOUT
@@ -136,12 +130,12 @@ C
       IF(VMOOUT.NE.0.) RVMERDO=VMOERR/VMOOUT
       IF(ENEOUT.NE.0.) REERDO=ENEERR/ENEOUT
 
-C**********************************************************************C
-C
-C **  OUTPUT BALANCE RESULTS TO FILE BAL.OUT
-C
-C----------------------------------------------------------------------C
-C
+!**********************************************************************C
+!
+! **  OUTPUT BALANCE RESULTS TO FILE BAL.OUT
+!
+!----------------------------------------------------------------------C
+!
       IF(JSBAL.EQ.1)THEN
         OPEN(89,FILE='BAL.OUT',STATUS='UNKNOWN')
         CLOSE(89,STATUS='DELETE')
@@ -150,7 +144,7 @@ C
        ELSE
         OPEN(89,FILE='BAL.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
-C
+!
       WRITE(89,890)NTSMMT,N
       WRITE(89,891)
       WRITE(89,892)VOLBEG,SALBEG,DYEBEG,ENEBEG,UMOBEG,VMOBEG,AMOBEG
@@ -198,11 +192,10 @@ C
       WRITE(89,916)BBEEND
       WRITE(89,900)
       WRITE(89,899)
-C
+!
       CLOSE(89)
-C
-  890 FORMAT (' VOLUME, MASS, AND ENERGY BALANCE OVER',I5,' TIME STEPS'
-     &,' ENDING AT TIME STEP',I5,//)
+!
+  890 FORMAT (' VOLUME, MASS, AND ENERGY BALANCE OVER',I5,' TIME STEPS',' ENDING AT TIME STEP',I5,//)
   891 FORMAT (' INITIAL VOLUME    INITIAL SALT    INITIAL DYE     '
      &,'INITIAL ENER    INITIAL UMO     INITIAL VMO     '
      &,'INITIAL AMO',/)
@@ -238,18 +231,18 @@ C
   914 FORMAT(' BBEOUT =  ',E14.6)
   915 FORMAT(' BBEBMO =  ',E14.6)
   916 FORMAT(' BBEEND =  ',E14.6)
-C
-C**********************************************************************C
-C
-C     RESET COUNTER
-C
+!
+!**********************************************************************C
+!
+!     RESET COUNTER
+!
       NBAL=0
-C
+!
       ENDIF 
-C
+!
       NBAL=NBAL+1
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

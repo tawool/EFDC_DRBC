@@ -1,52 +1,52 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE BUDGET5
-C
-C **  ADDED BY DON KINGERY, CH2M-HILL ON 15 OCTOBER 1996
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINES BUDGETN CALCULATE SEDIMENT BUDGET (TOTAL SEDIMENTS)
-C
-C**********************************************************************C
-C
+!
+! **  ADDED BY DON KINGERY, CH2M-HILL ON 15 OCTOBER 1996
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINES BUDGETN CALCULATE SEDIMENT BUDGET (TOTAL SEDIMENTS)
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
-C **  CHECK FOR END OF BALANCE PERIOD
-C
+!
+!**********************************************************************C
+!
+! **  CHECK FOR END OF BALANCE PERIOD
+!
       IF(NBUD.EQ.NTSMMT)THEN
-C     WRITE(6,6666)N,NBUD
+!     WRITE(6,6666)N,NBUD
  6666 FORMAT(' ACTIVE CALL TO BUDGET5, N,NBUD = ',2I5)
-C
-C**********************************************************************C
-C
-C **  CALCULATE ENDING SUSPENDED AND BOTTOM SEDIMENT IN THE MODEL DOMAIN
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE ENDING SUSPENDED AND BOTTOM SEDIMENT IN THE MODEL DOMAIN
+!
+!----------------------------------------------------------------------C
+!
       SDFLUX=0.
       SSEDEND=0.
       BSEDEND=0.
       VOLMEND=0.
       SMASSEND=0.
-C
+!
       IF(N.EQ.NTSMMT)THEN
        DO L=2,LA
         VOLMEND=VOLMEND+SPB(L)*DXYP(L)*H1P(L)
@@ -56,7 +56,7 @@ C
         VOLMEND=VOLMEND+SPB(L)*DXYP(L)*HP(L)
        ENDDO
       ENDIF
-C
+!
       IF(N.EQ.NTSMMT)THEN
        DO K=1,KC
        DO L=2,LA
@@ -70,20 +70,20 @@ C
        ENDDO
        ENDDO
       ENDIF
-C
-C  INITIALIZE BOTTOM AND SUSPENDED SEDIMENT MASS  ---  DLK 9/26
-C
+!
+!  INITIALIZE BOTTOM AND SUSPENDED SEDIMENT MASS  ---  DLK 9/26
+!
       DO L=2,LA
        SDFLUX=SDFLUX+SCB(L)*VOLBW3(L,KB)
       ENDDO
-C
+!
       DO K=1,KB
       DO L=2,LA
        SEDBT(L,K)=0.
        SNDBT(L,K)=0.
       ENDDO
       ENDDO
-C
+!
 
       IF(N.EQ.NTSMMT)THEN
        DO NS=1,NSED
@@ -116,13 +116,13 @@ C
         ENDDO
        ENDDO
       ENDIF
-C
+!
       DO K=1,KB
       DO L=2,LA
        BSEDEND=BSEDEND+SCB(L)*DXYP(L)*(SEDBT(L,K)+SNDBT(L,K))
       ENDDO
       ENDDO
-C
+!
       IF(N.EQ.NTSMMT)THEN
         DO NS=1,NSED
          DO K=1,KC
@@ -154,7 +154,7 @@ C
          ENDDO
         ENDDO
       ENDIF
-C
+!
       SEDEND=SSEDEND+BSEDEND
       SEDOUT=DT*SEDOUT
       SEDIN=DT*SEDIN
@@ -163,71 +163,69 @@ C
       SMASSIN=DT*SMASSIN
       SMASSOUT=DT*SMASSOUT
       SDFLUX=DT*SDFLUX
-C
+!
       SEDBMO=SEDBEG+SEDIN-SEDOUT
       VOLMBMO=VOLMBEG+VOLMIN-VOLMOUT
       SMASSBMO=SMASSBEG+SMASSIN-SMASSOUT
-C
+!
       SEDERR=SEDEND-SEDBMO
       VOLMERR=VOLMEND-VOLMBMO
       SMASSERR=SMASSEND-SMASSBMO
-C
+!
       RSDERDE=-9999.
-C
+!
       RSDERDO=-9999.
-C
+!
       IF(SEDEND.NE.0.) RSDERDE=SEDERR/SEDEND
-C
+!
       IF(SEDOUT.NE.0.) RSDERDO=SEDERR/(SEDIN+SEDOUT)
-C
-C**********************************************************************C
-C
-C **  OUTPUT BALANCE RESULTS TO FILE BUDGET.OUT
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  OUTPUT BALANCE RESULTS TO FILE BUDGET.OUT
+!
+!----------------------------------------------------------------------C
+!
       IF(JSSBAL.EQ.1)THEN
         OPEN(89,FILE='BUDGET.OUT',STATUS='UNKNOWN')
         OPEN(93,FILE='BUDGET2.OUT',STATUS='UNKNOWN')
         OPEN(94,FILE='BUDGET3.OUT',STATUS='UNKNOWN')
-C        OPEN(95,FILE='BUDGETH.OUT',STATUS='UNKNOWN')
-C        OPEN(96,FILE='BUDGETF.OUT',STATUS='UNKNOWN')
+!        OPEN(95,FILE='BUDGETH.OUT',STATUS='UNKNOWN')
+!        OPEN(96,FILE='BUDGETF.OUT',STATUS='UNKNOWN')
         CLOSE(89,STATUS='DELETE')
         CLOSE(93,STATUS='DELETE')
         CLOSE(94,STATUS='DELETE')
-C        CLOSE(95,STATUS='DELETE')
-C        CLOSE(96,STATUS='DELETE')
+!        CLOSE(95,STATUS='DELETE')
+!        CLOSE(96,STATUS='DELETE')
         OPEN(89,FILE='BUDGET.OUT',STATUS='UNKNOWN')
         WRITE(89,888)NTSMMT,TBEGIN
         OPEN(93,FILE='BUDGET2.OUT',STATUS='UNKNOWN')
         WRITE(93,893)NTSMMT,TBEGIN
         OPEN(94,FILE='BUDGET3.OUT',STATUS='UNKNOWN')
         WRITE(94,894)NTSMMT,TBEGIN
-C        OPEN(95,FILE='BUDGETH.OUT',STATUS='UNKNOWN')
-C        OPEN(96,FILE='BUDGETF.OUT',STATUS='UNKNOWN')
+!        OPEN(95,FILE='BUDGETH.OUT',STATUS='UNKNOWN')
+!        OPEN(96,FILE='BUDGETF.OUT',STATUS='UNKNOWN')
         JSSBAL=0
        ELSE
         OPEN(89,FILE='BUDGET.OUT',POSITION='APPEND',STATUS='UNKNOWN')
         OPEN(93,FILE='BUDGET2.OUT',POSITION='APPEND',STATUS='UNKNOWN')
         OPEN(94,FILE='BUDGET3.OUT',POSITION='APPEND',STATUS='UNKNOWN')
-C        OPEN(95,FILE='BUDGETH.OUT',POSITION='APPEND',STATUS='UNKNOWN')
-C        OPEN(96,FILE='BUDGETF.OUT',POSITION='APPEND',STATUS='UNKNOWN')
+!        OPEN(95,FILE='BUDGETH.OUT',POSITION='APPEND',STATUS='UNKNOWN')
+!        OPEN(96,FILE='BUDGETF.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       ENDIF
-C
-      WRITE(89,892)N,BSEDBEG,SSEDBEG,SEDIN,SEDOUT,SEDBMO,BSEDEND,
-     &   SSEDEND,SEDERR,RSDERDE,RSDERDO
-C
+!
+      WRITE(89,892)N,BSEDBEG,SSEDBEG,SEDIN,SEDOUT,SEDBMO,BSEDEND,SSEDEND,SEDERR,RSDERDE,RSDERDO
+!
       WRITE(93,895)N,VOLMBEG,VOLMIN,VOLMOUT,VOLMBMO,VOLMEND,VOLMERR
-C
-      WRITE(94,895)N,SMASSBEG,SMASSIN,SMASSOUT,SMASSBMO,SMASSEND,
-     &   SMASSERR
-C
+!
+      WRITE(94,895)N,SMASSBEG,SMASSIN,SMASSOUT,SMASSBMO,SMASSEND,SMASSERR
+!
 
       SSEDBMO=SSEDBEG+SEDIN-SEDOUT+SDFLUX
       BSEDBMO=BSEDBEG-SDFLUX
       SSEDERR=SSEDEND-SSEDBMO
       BSEDERR=BSEDEND-BSEDBMO
-C
+!
       SSEDOUT=SEDOUT-SEDIN-SDFLUX
       BSEDOUT=SDFLUX
       SSEDBMO=SSEDBEG-SSEDOUT
@@ -236,32 +234,32 @@ C
       BSEDERR=BSEDEND-BSEDBMO
       IF(SSEDEND.NE.0.)SSEDERE=SSEDERR/SSEDEND
       IF(BSEDEND.NE.0.)BSEDERE=BSEDERR/BSEDEND
-C
-C      WRITE(95,9510)N
-C      WRITE(95,9511)SEDIN,SEDOUT,SDFLUX
-C      WRITE(95,9512)SSEDBEG,BSEDBEG
-C      WRITE(95,9513)SSEDOUT,BSEDOUT
-C      WRITE(95,9514)SSEDBMO,BSEDBMO
-C      WRITE(95,9515)SSEDEND,BSEDEND
-C      WRITE(95,9516)SSEDERR,BSEDERR
-C      WRITE(95,9517)SSEDERE,BSEDERE
-C
-C      WRITE(96,9600)N
+!
+!      WRITE(95,9510)N
+!      WRITE(95,9511)SEDIN,SEDOUT,SDFLUX
+!      WRITE(95,9512)SSEDBEG,BSEDBEG
+!      WRITE(95,9513)SSEDOUT,BSEDOUT
+!      WRITE(95,9514)SSEDBMO,BSEDBMO
+!      WRITE(95,9515)SSEDEND,BSEDEND
+!      WRITE(95,9516)SSEDERR,BSEDERR
+!      WRITE(95,9517)SSEDERE,BSEDERE
+!
+!      WRITE(96,9600)N
       DO L=2,LA
        VOLBW3(L,KB)=DT*VOLBW3(L,KB)
        SEDBTMP1=DXYP(L)*SEDB1(L,KBT(L),1)
        SEDBTMP=DXYP(L)*SEDB(L,KB,1)
        SFLXTMP=DT*DXYP(L)*SEDF(L,0,1)
-C       WRITE(96,9601)IL(L),JL(L),VOLBW3(L,KB),SEDBTMP1,SFLXTMP,
-C     &               SEDBTMP
+!       WRITE(96,9601)IL(L),JL(L),VOLBW3(L,KB),SEDBTMP1,SFLXTMP,
+!     &               SEDBTMP
       ENDDO
-C
+!
       CLOSE(89)
       CLOSE(93)
       CLOSE(94)
-C      CLOSE(95)
-C      CLOSE(96)
-C
+!      CLOSE(95)
+!      CLOSE(96)
+!
  9510 FORMAT(//' SUS AND BED SED BUDGET ENDING AT N =',I7/)
  9511 FORMAT(' SEDIN,SEDOUT,SDFLUX = ',3E15.7/)
  9512 FORMAT(' SSEDBEG,BSEDBEG = ',2E15.7/)
@@ -272,7 +270,7 @@ C
  9517 FORMAT(' SSEDERE,BSEDERE = ',2E15.7/)
  9600 FORMAT(/'C ACCUMULATED SED FLUX AT N = ',I5)
  9601 FORMAT(2I5,5E15.7)
-C 
+! 
   888 FORMAT (6X,' SEDIMENT BUDGET CALCULATIONS'//
      & 6X,'SEDIMENT BUDGET OVER ',I5,' TIME STEPS'/
      & 6X,'STARTING ON JULIAN DAY ',F6.2/
@@ -293,7 +291,7 @@ C
      & 1X,'    BSEDEND          SSEDEND          SEDERR        RSDERDE', 
      & 1X,'         RSDERDO'/)
   892 FORMAT (1X,I9,10(2X,E14.6))
-C
+!
   893 FORMAT (6X,' MASS BALANCE CALCULATIONS'//
      & 6X,'MASS BALANCE OVER ',I5,' TIME STEPS'/
      & 6X,'STARTING ON JULIAN DAY ',F6.2/
@@ -307,7 +305,7 @@ C
      & 6X,'VOLMERR = VOLMEND-VOLMBMO'//
      & 1X,'       N         VOLMBEG        VOLMIN         VOLMOUT',
      & 1X,'        VOLMBMO        VOLMEND          VOLMERR'/)
-C
+!
   894 FORMAT (6X,' SALT BALANCE CALCULATIONS'//
      & 6X,'SALT BALANCE OVER ',I5,' TIME STEPS'/
      & 6X,'STARTING ON JULIAN DAY ',F6.2/
@@ -322,18 +320,18 @@ C
      & 1X,'       N        SMASSBEG       SMASSIN        SMASSOUT',
      & 1X,'       SMASSBMO       SMASSEND         SMASSERR'/)
   895 FORMAT (1X,I9,6(2X,E14.6))
-C
-C**********************************************************************C
-C
-C     RESET COUNTER
-C
+!
+!**********************************************************************C
+!
+!     RESET COUNTER
+!
       NBUD=0
-C
+!
       ENDIF 
-C
+!
       NBUD=NBUD+1
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

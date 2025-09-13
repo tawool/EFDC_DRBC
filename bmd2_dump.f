@@ -1,27 +1,27 @@
        SUBROUTINE BMD2_DUMP
-C
-C **  CREATED BY HUGO N RODRIGUEZ ON july 2, 2019
-C
-C **  SUBROUTINE BMD_DUMP2 WRITES FULL FIELD OF MODEL VARIABLES
-C **  AT SPECIFIED TIME INTERVALS IN A BMD2 FILE FORMAT
-C
-C**********************************************************************C
-C
+!
+! **  CREATED BY HUGO N RODRIGUEZ ON july 2, 2019
+!
+! **  SUBROUTINE BMD_DUMP2 WRITES FULL FIELD OF MODEL VARIABLES
+! **  AT SPECIFIED TIME INTERVALS IN A BMD2 FILE FORMAT
+!
+!**********************************************************************C
+!
       INCLUDE 'efdc.par'
       INCLUDE 'efdc.cmn'
       INCLUDE 'ALLSET.INT'
-C
-C**********************************************************************C
+!
+!**********************************************************************C
 	REAL*8 BMD_TIME
 	REAL*4 xx
       REAL*4, ALLOCATABLE :: DATA_OUT(:,:)
       
-C
+!
       BMD_WRITE=BMD_WRITE+1
       IF(BMD_WRITE.GT.NumBMD2Writes) RETURN
 
       BMD_TIME=(DT*FLOAT(N)+TCON*TBEGIN)/86400.
-C
+!
       ALLOCATE(DATA_OUT(NUMSEG,NUMVAR))
       
       ISEG=0
@@ -104,8 +104,8 @@ C
               xx=sedt(l,k)+sndt(l,k)
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-c
-c             velocities U and V at EAST AND SOUTH FACE
+!
+!             velocities U and V at EAST AND SOUTH FACE
             IF(IGRIDV.EQ.0) then                  !for sigma grid
               RUVTMP=50.
               IF(SPB(L).EQ.0) RUVTMP=100.
@@ -113,7 +113,7 @@ c             velocities U and V at EAST AND SOUTH FACE
  	        ubmd= (u(l,k)+u(l+1,k))*RUVTMP    !VELOCITY U AT CENTER TO CALCULATE EAST AND NORTH VELOCITIES AT CENTER
 	        vbmd= (v(l,k)+v(LNBMD,k))*RUVTMP   !VELOCITY v AT CENTER TO CALCULATE EAST AND NORTH VELOCITIES AT CENTER
             ELSE
-c                    velocities U and V at cell center for GVC grid
+!                    velocities U and V at cell center for GVC grid
               IF (LGVCU(L,K)) THEN
                 IF (LGVCU(L+1,K)) THEN
                   ubmd= (u(l,k)+u(l+1,k))/2.*100.
@@ -143,7 +143,7 @@ c                    velocities U and V at cell center for GVC grid
                 END IF
               END IF
             END IF
-C
+!
             IF (jjf(11).eq.1) THEN
               IVAR=IVAR+1
               xx=U(L,K)*100.0
@@ -156,7 +156,7 @@ C
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
 
-c             velocities East and North at cell center
+!             velocities East and North at cell center
             IF (jjf(13).eq.1) THEN
               IVAR=IVAR+1
               xx=CUE(L)*ubmd+CVE(L)*vbmd
@@ -174,8 +174,8 @@ c             velocities East and North at cell center
               xx=(ubmd*ubmd+vbmd*vbmd)**0.5
               DATA_OUT(ISEG,IVAR)=xx     !SPEED AT CELL CENTER
             ENDIF
-C
-c             Flow U (bewtween nodes I,J and I,J+1) and Flow V (bewtween nodes I,J and I+1,J)
+!
+!             Flow U (bewtween nodes I,J and I,J+1) and Flow V (bewtween nodes I,J and I+1,J)
 
             IF (jjf(16).eq.1) THEN
               IVAR=IVAR+1
@@ -186,7 +186,7 @@ c             Flow U (bewtween nodes I,J and I,J+1) and Flow V (bewtween nodes I
               END IF
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-C
+!
             IF (jjf(17).eq.1) THEN
               IVAR=IVAR+1
 		    IF(IGRIDV.EQ.0) THEN
@@ -197,7 +197,7 @@ C
               END IF
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-C	        
+!	        
             IF (jjf(18).eq.1) THEN
               IVAR=IVAR+1
               DATA_OUT(ISEG,IVAR)=CFLUUU(L,K)
@@ -212,7 +212,7 @@ C
               IVAR=IVAR+1
               DATA_OUT(ISEG,IVAR)=CFLCAC(L,K)
             ENDIF
-C
+!
             IF (jjf(21).eq.1) THEN                       !volume of the cell at the layer level
               IVAR=IVAR+1
 		    IF(IGRIDV.EQ.0) THEN
@@ -222,28 +222,28 @@ C
               END IF
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-c
+!
             IF (jjf(22).eq.1) THEN
               IVAR=IVAR+1
               xx=w(l,k)*100.
     	        IF(K.EQ.KC) xx=-999.0
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-c
+!
             IF (jjf(23).eq.1) THEN
               IVAR=IVAR+1
               xx=dxyp(l)*w(l,k)
     	        IF(K.EQ.KC) xx=-999.0
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-C
+!
             IF (jjf(24).eq.1) THEN
               IVAR=IVAR+1
               xx=cflwww(L,k)
     	        IF(K.EQ.KC) xx=-999.0
               DATA_OUT(ISEG,IVAR)=xx
             ENDIF
-C
+!
             IF (jjf(25).eq.1) THEN
               IVAR=IVAR+1
  		    IF(IGRIDV.EQ.0) THEN

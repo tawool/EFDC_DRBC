@@ -84,11 +84,8 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,1)
        DO K=1,KC
-       SALOUT=SALOUT
-     &           -DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,1)
-     &           -DELT*MIN(QSS(K,NS),0.)*SAL1(L,K)
-     &           -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,1)
-     &           -DELT*MIN(QSERT(K,NQSTMP),0.)*SAL1(L,K)
+       SALOUT=SALOUT-DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,1)-DELT*MIN(QSS(K,NS),0.)*SAL1(L,K)-DELT*MAX(QSERT(K,NQSTMP),0.) &
+              *CSERT(K,NCSTMP,1)-DELT*MIN(QSERT(K,NQSTMP),0.)*SAL1(L,K)
        ENDDO
       ENDDO
 !
@@ -156,16 +153,10 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,3)
        DO K=1,KC
-       DYEOUT=DYEOUT
-     &           -DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,3)
-     &           -DELT*MIN(QSS(K,NS),0.)*DYE(L,K)
-     &           -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,3)
-     &           -DELT*MIN(QSERT(K,NQSTMP),0.)*DYE1(L,K)
-       DYEOUT2T=DYEOUT2T
-     &           -DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,3)
-     &           -DELT*MIN(QSS(K,NS),0.)*DYE(L,K)
-     &           -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,3)
-     &           -DELT*MIN(QSERT(K,NQSTMP),0.)*DYE1(L,K)
+       DYEOUT=DYEOUT-DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,3)-DELT*MIN(QSS(K,NS),0.)*DYE(L,K)-DELT  &
+              *MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,3)-DELT*MIN(QSERT(K,NQSTMP),0.)*DYE1(L,K)
+       DYEOUT2T=DYEOUT2T-DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,3)-DELT*MIN(QSS(K,NS),0.)*DYE(L,K) &
+                -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,3)-DELT*MIN(QSERT(K,NQSTMP),0.)*DYE1(L,K)
        ENDDO
       ENDDO
 !
@@ -244,11 +235,8 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,M)
        DO K=1,KC
-       TOXOUT2T(NT)=TOXOUT2T(NT)
-     &           -DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,M)
-     &           -DELT*MIN(QSS(K,NS),0.)*TOX1(L,K,NT)
-     &           -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)
-     &           -DELT*MIN(QSERT(K,NQSTMP),0.)*TOX1(L,K,NT)
+       TOXOUT2T(NT)=TOXOUT2T(NT)-DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,M)-DELT*MIN(QSS(K,NS),0.)*TOX1(L,K,NT) &
+                    -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)-DELT*MIN(QSERT(K,NQSTMP),0.)*TOX1(L,K,NT)
        ENDDO
       ENDDO
 !
@@ -308,11 +296,8 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,M)
        DO K=1,KC
-       SEDOUT2T(NSX)=SEDOUT2T(NSX)
-     &           -DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,M)
-     &           -DELT*MIN(QSS(K,NS),0.)*SED1(L,K,NSX)
-     &           -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)
-     &           -DELT*MIN(QSERT(K,NQSTMP),0.)*SED1(L,K,NSX)
+       SEDOUT2T(NSX)=SEDOUT2T(NSX)-DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,M)-DELT*MIN(QSS(K,NS),0.)*SED1(L,K,NSX)  &
+                    -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)-DELT*MIN(QSERT(K,NQSTMP),0.)*SED1(L,K,NSX)
        ENDDO
       ENDDO
 !
@@ -372,11 +357,8 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,M)
        DO K=1,KC
-       SNDOUT2T(NSX)=SNDOUT2T(NSX)
-     &           -DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,M)
-     &           -DELT*MIN(QSS(K,NS),0.)*SND1(L,K,NSX)
-     &           -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)
-     &           -DELT*MIN(QSERT(K,NQSTMP),0.)*SND1(L,K,NSX)
+       SNDOUT2T(NSX)=SNDOUT2T(NSX)-DELT*MAX(QSS(K,NS),0.)*CQS(K,NS,M)-DELT*MIN(QSS(K,NS),0.)*SND1(L,K,NSX) &
+                     -DELT*MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)-DELT*MIN(QSERT(K,NQSTMP),0.)*SND1(L,K,NSX)
        ENDDO
       ENDDO
 !

@@ -888,11 +888,12 @@
 !
       DO K=1,KC
 !     DZC(K)=DZ
-      DZIC(K)=1./DZC(K)
+         DZIC(K)=1./DZC(K)
       ENDDO
 !
       DZIG(0)=0.
-      DZIG(KC)=0.
+      !DZIG(KC)=0.
+      DZIG=0.
       DO K=1,KS
       DZG(K)=0.5*(DZC(K)+DZC(K+1))
       DZIG(K)=1./DZG(K)

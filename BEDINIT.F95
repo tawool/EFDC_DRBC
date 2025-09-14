@@ -1082,7 +1082,7 @@
 !
 ! **  SET SEDIMENT VOLUME FRACTIONS
 !
-c        DO K=1,KB
+        DO K=1,KB
           DO L=2,LA
             BEDLINIT(L,K)=0.
             BEDDINIT(L,K)=0.

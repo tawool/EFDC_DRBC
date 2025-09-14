@@ -271,54 +271,54 @@
  9600 FORMAT(/'C ACCUMULATED SED FLUX AT N = ',I5)
  9601 FORMAT(2I5,5E15.7)
 ! 
-  888 FORMAT (6X,' SEDIMENT BUDGET CALCULATIONS'//
-     & 6X,'SEDIMENT BUDGET OVER ',I5,' TIME STEPS'/
-     & 6X,'STARTING ON JULIAN DAY ',F6.2/
-     & 6X,'N       = LAST TIME STEP IN PERIOD'/
-     & 6X,'BSEDBEG  = TOTAL BED SEDIMENT IN MODEL DOMAIN AT BEGINNING',
-     &    ' OF TIME PERIOD'/
-     & 6X,'SSEDBEG  = TOTAL SUSPENDED SEDIMENT IN MODEL DOMAIN AT',
-     &    ' BEGINNING OF TIME PERIOD'/
-     & 6X,'SEDIN   = SEDIMENT ADDED TO MODEL FROM OUTFALL'/
-     & 6X,'SEDOUT  = SEDIMENT REMOVED ACROSS MODEL BOUNDARIES'/
-     & 6X,'SEDBMO  = SEDBEG+SEDIN-SEDOUT'/
-     & 6X,'SEDEND  = SEDIMENT REMAINING IN MODEL DOMAIN'/
-     & 6X,'SEDERR  = SEDEND-SEDBMO'/
-     & 6X,'RSDERDE = ERROR AS A FRACTION OF SEDIMENT IN MODEL DOMAIN'/
-     & 6X,'RSDERDO = ERROR AS A FRACTION OF SEDIMENT ADDED/REMOVED'//
-     & 1X,'       N         BSEDBEG         SSEDBEG        SEDIN',
-     & 1X,'          SEDOUT          SEDBMO     ',
-     & 1X,'    BSEDEND          SSEDEND          SEDERR        RSDERDE', 
-     & 1X,'         RSDERDO'/)
+  888 FORMAT (6X,' SEDIMENT BUDGET CALCULATIONS'//                                                &
+      6X,'SEDIMENT BUDGET OVER ',I5,' TIME STEPS'/                                                &
+      6X,'STARTING ON JULIAN DAY ',F6.2/                                                          &
+      6X,'N       = LAST TIME STEP IN PERIOD'/                                                    &
+      6X,'BSEDBEG  = TOTAL BED SEDIMENT IN MODEL DOMAIN AT BEGINNING',                            &
+         ' OF TIME PERIOD'/                                                                       &
+      6X,'SSEDBEG  = TOTAL SUSPENDED SEDIMENT IN MODEL DOMAIN AT',                                &
+         ' BEGINNING OF TIME PERIOD'/                                                             &
+      6X,'SEDIN   = SEDIMENT ADDED TO MODEL FROM OUTFALL'/                                        &
+      6X,'SEDOUT  = SEDIMENT REMOVED ACROSS MODEL BOUNDARIES'/                                    &
+      6X,'SEDBMO  = SEDBEG+SEDIN-SEDOUT'/                                                         &
+      6X,'SEDEND  = SEDIMENT REMAINING IN MODEL DOMAIN'/                                          &
+      6X,'SEDERR  = SEDEND-SEDBMO'/                                                               &
+      6X,'RSDERDE = ERROR AS A FRACTION OF SEDIMENT IN MODEL DOMAIN'/                             &
+      6X,'RSDERDO = ERROR AS A FRACTION OF SEDIMENT ADDED/REMOVED'//                              &
+      1X,'       N         BSEDBEG         SSEDBEG        SEDIN',                                 &
+      1X,'          SEDOUT          SEDBMO     ',                                                 &
+      1X,'    BSEDEND          SSEDEND          SEDERR        RSDERDE',                           &
+      1X,'         RSDERDO'/)
   892 FORMAT (1X,I9,10(2X,E14.6))
 !
-  893 FORMAT (6X,' MASS BALANCE CALCULATIONS'//
-     & 6X,'MASS BALANCE OVER ',I5,' TIME STEPS'/
-     & 6X,'STARTING ON JULIAN DAY ',F6.2/
-     & 6X,'N       = LAST TIME STEP IN PERIOD'/
-     & 6X,'VOLMBEG = TOTAL WATER VOLUME IN MODEL DOMAIN AT BEGINNING',
-     &    ' OF TIME PERIOD'/
-     & 6X,'VOLMIN  = WATER VOLUME ADDED TO MODEL FROM INFLOWS'/
-     & 6X,'VOLMOUT = WATER VOLUME REMOVED ACROSS MODEL BOUNDARIES'/
-     & 6X,'VOLMBMO = VOLMBEG-(VOLMIN+VOLMOUT)'/
-     & 6X,'VOLMEND = WATER VOLUME REMAINING IN MODEL DOMAIN'/
-     & 6X,'VOLMERR = VOLMEND-VOLMBMO'//
-     & 1X,'       N         VOLMBEG        VOLMIN         VOLMOUT',
-     & 1X,'        VOLMBMO        VOLMEND          VOLMERR'/)
+  893 FORMAT (6X,' MASS BALANCE CALCULATIONS'//                                                   &
+      6X,'MASS BALANCE OVER ',I5,' TIME STEPS'/                                                   &
+      6X,'STARTING ON JULIAN DAY ',F6.2/                                                          &
+      6X,'N       = LAST TIME STEP IN PERIOD'/                                                    &
+      6X,'VOLMBEG = TOTAL WATER VOLUME IN MODEL DOMAIN AT BEGINNING',                             &
+         ' OF TIME PERIOD'/                                                                       &
+      6X,'VOLMIN  = WATER VOLUME ADDED TO MODEL FROM INFLOWS'/                                    &
+      6X,'VOLMOUT = WATER VOLUME REMOVED ACROSS MODEL BOUNDARIES'/                                &
+      6X,'VOLMBMO = VOLMBEG-(VOLMIN+VOLMOUT)'/                                                    &
+      6X,'VOLMEND = WATER VOLUME REMAINING IN MODEL DOMAIN'/                                      &
+      6X,'VOLMERR = VOLMEND-VOLMBMO'//                                                            &
+      1X,'       N         VOLMBEG        VOLMIN         VOLMOUT',                                &
+      1X,'        VOLMBMO        VOLMEND          VOLMERR'/)
 !
-  894 FORMAT (6X,' SALT BALANCE CALCULATIONS'//
-     & 6X,'SALT BALANCE OVER ',I5,' TIME STEPS'/
-     & 6X,'STARTING ON JULIAN DAY ',F6.2/
-     & 6X,'N        = LAST TIME STEP IN PERIOD'/
-     & 6X,'SMASSBEG = TOTAL WATER VOLUME IN MODEL DOMAIN AT BEGINNING',
-     &    ' OF TIME PERIOD'/
-     & 6X,'SMASSIN  = WATER VOLUME ADDED TO MODEL FROM INFLOWS'/
-     & 6X,'SMASSOUT = WATER VOLUME REMOVED ACROSS MODEL BOUNDARIES'/
-     & 6X,'SMASSBMO = VOLMBEG-(VOLMIN+VOLMOUT)'/
-     & 6X,'SMASSEND = WATER VOLUME REMAINING IN MODEL DOMAIN'/
-     & 6X,'SMASSERR = VOLMEND-VOLMBMO'//
-     & 1X,'       N        SMASSBEG       SMASSIN        SMASSOUT',
-     & 1X,'       SMASSBMO       SMASSEND         SMASSERR'/)
+  894 FORMAT (6X,' SALT BALANCE CALCULATIONS'//                                                   &
+      6X,'SALT BALANCE OVER ',I5,' TIME STEPS'/                                                   &
+      6X,'STARTING ON JULIAN DAY ',F6.2/                                                          &
+      6X,'N        = LAST TIME STEP IN PERIOD'/                                                   &
+      6X,'SMASSBEG = TOTAL WATER VOLUME IN MODEL DOMAIN AT BEGINNING',                            &
+         ' OF TIME PERIOD'/                                                                       &
+      6X,'SMASSIN  = WATER VOLUME ADDED TO MODEL FROM INFLOWS'/                                   &
+      6X,'SMASSOUT = WATER VOLUME REMOVED ACROSS MODEL BOUNDARIES'/                               &
+      6X,'SMASSBMO = VOLMBEG-(VOLMIN+VOLMOUT)'/                                                   &
+      6X,'SMASSEND = WATER VOLUME REMAINING IN MODEL DOMAIN'/                                     &
+      6X,'SMASSERR = VOLMEND-VOLMBMO'//                                                           &
+      1X,'       N        SMASSBEG       SMASSIN        SMASSOUT',                                &
+      1X,'       SMASSBMO       SMASSEND         SMASSERR'/)
   895 FORMAT (1X,I9,6(2X,E14.6))
 !
 !**********************************************************************C

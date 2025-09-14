@@ -59,11 +59,8 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,1)
        DO K=1,KC
-       SMASSIN=SMASSIN
-     &           +MAX(QSS(K,NS),0.)*CQS(K,NS,1)
-     &           +MIN(QSS(K,NS),0.)*SAL1(L,K) 
-     &           +MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,1)
-     &           +MIN(QSERT(K,NQSTMP),0.)*SAL1(L,K)
+       SMASSIN=SMASSIN+MAX(QSS(K,NS),0.)*CQS(K,NS,1)+MIN(QSS(K,NS),0.)*SAL1(L,K) &
+               +MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,1)+MIN(QSERT(K,NQSTMP),0.)*SAL1(L,K)
        ENDDO
       ENDDO
 !
@@ -138,11 +135,8 @@
       NQSTMP=NQSERQ(NS)
       NCSTMP=NCSERQ(NS,M)
        DO K=1,KC
-       SEDIN=SEDIN
-     &           +MAX(QSS(K,NS),0.)*CQS(K,NS,M)
-     &           +MIN(QSS(K,NS),0.)*SED1(L,K,NN) 
-     &           +MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)
-     &           +MIN(QSERT(K,NQSTMP),0.)*SED1(L,K,NN)
+       SEDIN=SEDIN+MAX(QSS(K,NS),0.)*CQS(K,NS,M)+MIN(QSS(K,NS),0.)*SED1(L,K,NN)+  &
+             MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)+MIN(QSERT(K,NQSTMP),0.)*SED1(L,K,NN)
        IF(NN.EQ.1) VOLMAST=VOLMAST+QSERT(K,NQSTMP)+QSS(K,NS)
        ENDDO
       ENDDO
@@ -204,11 +198,8 @@
        NQSTMP=NQSERQ(NS)
        NCSTMP=NCSERQ(NS,M)
         DO K=1,KC
-        SEDIN=SEDIN
-     &           +MAX(QSS(K,NS),0.)*CQS(K,NS,M)
-     &           +MIN(QSS(K,NS),0.)*SND1(L,K,NN) 
-     &           +MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)
-     &           +MIN(QSERT(K,NQSTMP),0.)*SND1(L,K,NN)
+        SEDIN=SEDIN+MAX(QSS(K,NS),0.)*CQS(K,NS,M)+MIN(QSS(K,NS),0.)*SND1(L,K,NN) &
+              +MAX(QSERT(K,NQSTMP),0.)*CSERT(K,NCSTMP,M)+MIN(QSERT(K,NQSTMP),0.)*SND1(L,K,NN)
         ENDDO
        ENDDO
 !

@@ -1,45 +1,44 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE CALEXP9 (ISTL)
-C
-C **  SUBROUTINE CALEXP CALCULATES EXPLICIT MOMENTUM EQUATION TERMS
-C **  THIS EXPERIMENTAL VERSION IMPLEMENTS COSMIC ADVECTION
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+! **  SUBROUTINE CALEXP CALCULATES EXPLICIT MOMENTUM EQUATION TERMS
+! **  THIS EXPERIMENTAL VERSION IMPLEMENTS COSMIC ADVECTION
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-      DIMENSION UCTR(LCM,KCM),VCTR(LCM,KCM),WCTR(LCM,KCM),
-     &          UCOR(LCM,KCM),VCOR(LCM,KCM),WCOR(LCM,KCM)
-      DIMENSION UABU(LCM,0:KCM),VABU(LCM,0:KCM),WABU(LCM,0:KCM),
-     &          UABV(LCM,0:KCM),VABV(LCM,0:KCM),WABV(LCM,0:KCM)
-C
-C**********************************************************************C
-C
+!
+      DIMENSION UCTR(LCM,KCM),VCTR(LCM,KCM),WCTR(LCM,KCM),UCOR(LCM,KCM),VCOR(LCM,KCM),WCOR(LCM,KCM)
+      DIMENSION UABU(LCM,0:KCM),VABU(LCM,0:KCM),WABU(LCM,0:KCM),UABV(LCM,0:KCM),                  &
+                VABV(LCM,0:KCM),WABV(LCM,0:KCM)
+!
+!**********************************************************************C
+!
        DELT=DT2
        DELTD2=DT
       IF(ISTL.EQ.2)THEN
        DELT=DT
        DELTD2=0.5*DT
       ENDIF
-C
+!
       DELTI=1./DELT
-C
+!
       IF(N.EQ.1)THEN
        OPEN(1,FILE='CFLMOM.OUT')
        CLOSE(1,STATUS='DELETE')
@@ -47,27 +46,27 @@ C
       ELSE
        OPEN(1,FILE='CFLMOM.OUT',POSITION='APPEND')
       ENDIF
-C
-C**********************************************************************C
-C
-C **  INITIALIZE EXTERNAL CORIOLIS-CURVATURE AND ADVECTIVE FLUX TERMS
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZE EXTERNAL CORIOLIS-CURVATURE AND ADVECTIVE FLUX TERMS
+!
+!----------------------------------------------------------------------C
+!
       FCAXE(1)=0.
       FCAYE(1)=0.
       FCAX1E(1)=0.
       FCAY1E(1)=0.
       FXE(1)=0.
       FYE(1)=0.
-C
+!
       FCAXE(LC)=0.
       FCAYE(LC)=0.
       FCAX1E(LC)=0.
       FCAY1E(LC)=0.
       FXE(LC)=0.
       FYE(LC)=0.
-C
+!
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -80,25 +79,25 @@ C
         FYE(L)=0.
        ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  SELECT ADVECTIVE FLUX FORM
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  SELECT ADVECTIVE FLUX FORM
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTL.EQ.3) GOTO 300
-C
-C**********************************************************************C
-C
-C **  TWO TIME LEVEL STEP
-C **  CALCULATE ADVECTIVE FLUXES BY UPWIND DIFFERENCE WITH ADVECTION
-C **  AVERAGED BETWEEN (N) AND (N+1) AND ADVECTED FIELD AT N 
-C
+!
+!**********************************************************************C
+!
+! **  TWO TIME LEVEL STEP
+! **  CALCULATE ADVECTIVE FLUXES BY UPWIND DIFFERENCE WITH ADVECTION
+! **  AVERAGED BETWEEN (N) AND (N+1) AND ADVECTED FIELD AT N 
+!
   200 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
        DO L=2,LA
         UHDY2(L,K)=0.5*(UHDY1(L,K)+UHDY(L,K))
@@ -106,9 +105,9 @@ C
         W2(L,K)=0.5*(W1(L,K)+W(L,K))
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
        DO L=1,LC
         UCTR(L,K)=0.
@@ -123,7 +122,7 @@ C
         FVHV(L,K)=0.
        ENDDO
       ENDDO
-C
+!
       DO K=0,KC
        DO L=1,LC
         UABU(L,K)=0.
@@ -136,28 +135,23 @@ C
         FWV(L,K)=0.
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       TMP=0.25*DELT
-C
+!
       DO K=1,KC
        DO L=2,LA
         LN=LNC(L)
         LS=LSC(L)
-        UCTR(L,K)=TMP*(U(L,K)+U1(L,K))/DXU(L)
-     &           +TMP*(U(L+1,K)+U1(L+1,K))/DXU(L+1)
-        VCTR(L,K)=TMP*(V(L,K)+V1(L,K))/DYV(L)
-     &           +TMP*(V(LN,K)+V1(LN,K))/DYV(LN)
-        WCTR(L,K)=TMP*(W(L,K)+W(L,K-1))/(HP(L)*DZC(K))
-     &           +TMP*(W1(L,K)+W1(L,K-1))/(H1P(L)*DZC(K))
-        UCOR(L,K)=TMP*(U(L,K)+U1(L,K))/DXU(L)
-     &           +TMP*(U(LS,K)+U1(LS,K))/DXU(LS)
-        VCOR(L,K)=TMP*(V(L,K)+V1(L,K))/DYV(L)
-     &           +TMP*(V(L-1,K)+V1(L-1,K))/DYV(L-1)
+        UCTR(L,K)=TMP*(U(L,K)+U1(L,K))/DXU(L)+TMP*(U(L+1,K)+U1(L+1,K))/DXU(L+1)
+        VCTR(L,K)=TMP*(V(L,K)+V1(L,K))/DYV(L)+TMP*(V(LN,K)+V1(LN,K))/DYV(LN)
+        WCTR(L,K)=TMP*(W(L,K)+W(L,K-1))/(HP(L)*DZC(K))+TMP*(W1(L,K)+W1(L,K-1))/(H1P(L)*DZC(K))
+        UCOR(L,K)=TMP*(U(L,K)+U1(L,K))/DXU(L)+TMP*(U(LS,K)+U1(LS,K))/DXU(LS)
+        VCOR(L,K)=TMP*(V(L,K)+V1(L,K))/DYV(L)+TMP*(V(L-1,K)+V1(L-1,K))/DYV(L-1)
        ENDDO
       ENDDO
-C
+!
       DO K=1,KC
        DO L=2,LA
         LS=LSC(L)
@@ -165,25 +159,19 @@ C
         WCOR(L,K)=0.25*(WCTR(L,K)+WCTR(LS,K)+WCTR(LSW,K)+WCTR(L-1,K))
        ENDDO
       ENDDO
-C
+!
       DO K=1,KC-1
        DO L=1,LC
         LS=LSC(L)
-        UABU(L,K)=TMP*(U(L,K)+U1(L,K))/DXU(L)
-     &           +TMP*(U(L,K+1)+U1(L,K+1))/DXU(L)
-        VABV(L,K)=TMP*(V(L,K)+V1(L,K))/DYV(L)
-     &           +TMP*(V(L,K+1)+V1(L,K+1))/DYV(L)
-        WABU(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))
-     &           +TMP*W1(L,K)/(H1P(L)*DZC(K))
-     &           +TMP*W(L-1,K)/(HP(L-1)*DZC(K))
-     &           +TMP*W1(L-1,K)/(H1P(L-1)*DZC(K))
-        WABV(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))
-     &           +TMP*W1(L,K)/(H1P(L)*DZC(K))
-     &           +TMP*W(LS,K)/(HP(LS)*DZC(K))
-     &           +TMP*W1(LS,K)/(H1P(LS)*DZC(K))
+        UABU(L,K)=TMP*(U(L,K)+U1(L,K))/DXU(L)+TMP*(U(L,K+1)+U1(L,K+1))/DXU(L)
+        VABV(L,K)=TMP*(V(L,K)+V1(L,K))/DYV(L)+TMP*(V(L,K+1)+V1(L,K+1))/DYV(L)
+        WABU(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))+TMP*W1(L,K)/(H1P(L)*DZC(K))+TMP*W(L-1,K)/(HP(L-1)     &
+                  *DZC(K))+TMP*W1(L-1,K)/(H1P(L-1)*DZC(K))
+        WABV(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))+TMP*W1(L,K)/(H1P(L)*DZC(K))+TMP*W(LS,K)/(HP(LS)       &
+                  *DZC(K))+TMP*W1(LS,K)/(H1P(LS)*DZC(K))
        ENDDO
       ENDDO
-C
+!
       DO K=1,KC-1
        DO L=1,LC
         LN=LNC(L)
@@ -194,9 +182,9 @@ C
         VABU(L,K)=0.25*(VABV(L,K)+VABV(L-1,K)+VABV(LN,K)+VABV(LNW,K))
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       DO L=2,LA
       IF(ABS(UCTR(L,K)).GT.1.) WRITE(1,801)N,IL(L),JL(L),K,UCTR(L,K)
@@ -213,7 +201,7 @@ C
       IF(ABS(WABV(L,K)).GT.1.) WRITE(1,812)N,IL(L),JL(L),K,WABV(L,K)
       ENDDO
       ENDDO
-C
+!
   801 FORMAT('CRN: N,I,J,K,UCTR = ',I10,3I5,F10.2)
   802 FORMAT('CRN: N,I,J,K,VCTR = ',I10,3I5,F10.2)
   803 FORMAT('CRN: N,I,J,K,WCTR = ',I10,3I5,F10.2)
@@ -226,11 +214,11 @@ C
   810 FORMAT('CRN: N,I,J,K,UABV = ',I10,3I5,F10.2)
   811 FORMAT('CRN: N,I,J,K,VABV = ',I10,3I5,F10.2)
   812 FORMAT('CRN: N,I,J,K,WABV = ',I10,3I5,F10.2)
-C
-C----------------------------------------------------------------------C
-C
-C ** FUHU
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FUHU
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -239,14 +227,13 @@ C
         LV=LU
         IF(VCTR(L,K).LT.0.) LV=LNC(LU)
         LVS=LSC(LV)
-        UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
+        UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
         FUHU(L,K)=0.5*(UHDY2(L,K)+UHDY2(L+1,K))*UFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LU=L
@@ -256,18 +243,15 @@ C
         LVS=LSC(LV)
         IF(WCTR(L,K).LT.0.)THEN
           KW=K+1
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
-     &       -0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))-0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
           DZDYU=U1(LV,K+1)-U1(LVS,K+1)-U1(LV,K)+U1(LVS,K)
           UFACE=UFACE+VCTR(L,K)*WCTR(L,K)*DZDYU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
         ENDIF
         FUHU(L,K)=0.5*(UHDY2(L,K)+UHDY2(L+1,K))*UFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -278,9 +262,7 @@ C
         LVS=LSC(LV)
         KW=K
         IF(WCTR(L,K).LT.0.) KW=K+1 
-        UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
-     &       -0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
+        UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))-0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDYU=U1(LV,K)-U1(LVS,K)-U1(LV,K-1)+U1(LVS,K-1)
          ELSE
@@ -291,7 +273,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LU=L
@@ -301,24 +283,21 @@ C
         LVS=LSC(LV)
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
-     &       -0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))-0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
           DZDYU=U1(LV,K)-U1(LVS,K)-U1(LV,K-1)+U1(LVS,K-1)
           UFACE=UFACE+VCTR(L,K)*WCTR(L,K)*DZDYU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
         ENDIF
         FUHU(L,K)=0.5*(UHDY2(L,K)+UHDY2(L+1,K))*UFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FVHU
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FVHU
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -327,14 +306,13 @@ C
         LU=LV
         IF(UCOR(L,K).LT.0.) LU=LV+1
         LW=LU-1
-        UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
+        UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
         FVHU(L,K)=0.5*(VHDX2(L,K)+VHDX2(L-1,K))*UFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LV=LSC(L)
@@ -344,18 +322,15 @@ C
         LW=LU-1
         IF(WCOR(L,K).LT.0.)THEN
           KW=K+1
-          UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
-     &       -0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
+          UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))-0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
           DZDXU=U1(LU,K+1)-U1(LW,K+1)-U1(LU,K)+U1(LW,K)
           UFACE=UFACE+UCOR(L,K)*WCOR(L,K)*DZDXU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
+          UFACE=U1(LU,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
         ENDIF
         FVHU(L,K)=0.5*(VHDX2(L,K)+VHDX2(L-1,K))*UFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -366,9 +341,7 @@ C
         LW=LU-1
         KW=K
         IF(WCOR(L,K).LT.0.) KW=K+1 
-        UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
-     &       -0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
+        UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))-0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDXU=U1(LU,K)-U1(LW,K)-U1(LU,K-1)+U1(LW,K-1)
          ELSE
@@ -379,7 +352,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LV=LSC(L)
@@ -389,26 +362,23 @@ C
         LW=LU-1
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
-     &       -0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
+          UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))-0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
           DZDXU=U1(LU,K)-U1(LW,K)-U1(LU,K-1)+U1(LW,K-1)
           UFACE=UFACE+UCOR(L,K)*WCOR(L,K)*DZDXU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
+          UFACE=U1(LU,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
         ENDIF
         FVHU(L,K)=0.5*(VHDX2(L,K)+VHDX2(L-1,K))*UFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FWU
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FWU
+!
       IF(KC.GE.2)THEN
-C
+!
       DO K=1,KS
        DO L=2,LA
         KW=K
@@ -419,9 +389,7 @@ C
         LV=L
         IF(VABU(L,K).LT.0.) LV=LNC(L)
         LVS=LSC(LV)
-        UFACE=U1(L,KW)
-     &       -0.5*UABU(L,K)*(U1(LU,KW)-U1(LW,KW))
-     &       -0.5*VABU(L,K)*(U1(LV,KW)-U1(LVS,KW))
+        UFACE=U1(L,KW)-0.5*UABU(L,K)*(U1(LU,KW)-U1(LW,KW))-0.5*VABU(L,K)*(U1(LV,KW)-U1(LVS,KW))
         IF(VABU(L,K).GT.0.)THEN
           DXDYU=U1(LU,KW)-U1(LW,KW)-U1(LSC(LU),KW)+U1(LSC(LW),KW)
          ELSE
@@ -431,13 +399,13 @@ C
         FWU(L,K)=0.5*(DXYP(L)*W2(L,K)+DXYP(L-1)*W2(L-1,K))*UFACE
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FUHV
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FUHV
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -446,14 +414,13 @@ C
         LV=LU
         IF(VCOR(L,K).LT.0.) LV=LNC(LU)
         LVS=LSC(LV)
-        VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
+        VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
         FUHV(L,K)=0.5*(UHDY2(L,K)+UHDY2(LSC(L),K))*VFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LU=L-1
@@ -463,18 +430,15 @@ C
         LVS=LSC(LV)
         IF(WCOR(L,K).LT.0.)THEN
           KW=K+1
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
-     &       -0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))-0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
           DZDYV=V1(LV,K+1)-V1(LVS,K+1)-V1(LV,K)+V1(LVS,K)
           VFACE=VFACE+VCOR(L,K)*WCOR(L,K)*DZDYV/3.
          ELSE
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
         ENDIF
         FUHV(L,K)=0.5*(UHDY2(L,K)+UHDY2(LSC(L),K))*VFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -485,9 +449,7 @@ C
         LVS=LSC(LV)
         KW=K
         IF(WCOR(L,K).LT.0.) KW=K+1 
-        VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
-     &       -0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
+        VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))-0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDYV=V1(LV,K)-V1(LVS,K)-V1(LV,K-1)+V1(LVS,K-1)
          ELSE
@@ -498,7 +460,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LU=L-1
@@ -508,24 +470,21 @@ C
         LVS=LSC(LV)
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
-     &       -0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))-0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
           DZDYV=V1(LV,K)-V1(LVS,K)-V1(LV,K-1)+V1(LVS,K-1)
           VFACE=UFACE+VCOR(L,K)*WCOR(L,K)*DZDYV/3.
          ELSE
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
         ENDIF
         FUHV(L,K)=0.5*(UHDY2(L,K)+UHDY2(LSC(L),K))*VFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FVHV
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FVHV
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -534,14 +493,13 @@ C
         LU=LV
         IF(UCTR(L,K).LT.0.) LU=LV+1
         LW=LU-1
-        VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
+        VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
         FVHV(L,K)=0.5*(VHDX2(L,K)+VHDX2(LNC(L),K))*VFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LV=L
@@ -551,18 +509,15 @@ C
         LW=LU-1
         IF(WCTR(L,K).LT.0.)THEN
           KW=K+1
-          VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
-     &       -0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
+          VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))-0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
           DZDXV=V1(LU,K+1)-V1(LW,K+1)-V1(LU,K)+V1(LW,K)
           VFACE=VFACE+UCTR(L,K)*WCTR(L,K)*DZDXV/3.
          ELSE
-          VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
+          VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
         ENDIF
         FVHV(L,K)=0.5*(VHDX2(L,K)+VHDX2(LNC(L),K))*VFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -573,9 +528,7 @@ C
         LW=LU-1
         KW=K
         IF(WCTR(L,K).LT.0.) KW=K+1 
-        VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
-     &       -0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
+        VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))-0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDXV=V1(LU,K)-V1(LW,K)-V1(LU,K-1)+V1(LW,K-1)
          ELSE
@@ -586,7 +539,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LV=L
@@ -596,26 +549,23 @@ C
         LW=LU-1
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
-     &       -0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
+          VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))-0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
           DZDXV=V1(LU,K)-V1(LW,K)-V1(LU,K-1)+V1(LW,K-1)
           VFACE=VFACE+UCTR(L,K)*WCTR(L,K)*DZDXV/3.
          ELSE
-          VFACE=V1(LV,K)
-     &       -0.5*WCTR(L,K)*(V1(LU,K)-V1(LW,K))
+          VFACE=V1(LV,K)-0.5*WCTR(L,K)*(V1(LU,K)-V1(LW,K))
         ENDIF
         FVHV(L,K)=0.5*(VHDX2(L,K)+VHDX2(LNC(L),K))*VFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FWV
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FWV
+!
       IF(KC.GE.2)THEN
-C
+!
       DO K=1,KS
        DO L=2,LA
         LS=LSC(L)
@@ -627,9 +577,7 @@ C
         LV=L
         IF(VABV(L,K).LT.0.) LV=LNC(L)
         LVS=LSC(LV)
-        VFACE=V1(L,KW)
-     &       -0.5*UABV(L,K)*(V1(LU,KW)-V1(LW,KW))
-     &       -0.5*VABV(L,K)*(V1(LV,KW)-V1(LVS,KW))
+        VFACE=V1(L,KW)-0.5*UABV(L,K)*(V1(LU,KW)-V1(LW,KW))-0.5*VABV(L,K)*(V1(LV,KW)-V1(LVS,KW))
         IF(VABV(L,K).GT.0.)THEN
           DXDYV=V1(LU,KW)-V1(LW,KW)-V1(LSC(LU),KW)+V1(LSC(LW),KW)
          ELSE
@@ -639,22 +587,22 @@ C
         FWV(L,K)=0.5*(DXYP(L)*W2(L,K)+DXYP(LS)*W2(LS,K))*VFACE
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       GOTO 500
-C
-C**********************************************************************C
-C
-C **  THREE TIME LEVEL (LEAP-FROG) STEP
-C **  WITH TRANSPORT AT (N) AND TRANSPORTED FIELD AT (N-1)
-C
+!
+!**********************************************************************C
+!
+! **  THREE TIME LEVEL (LEAP-FROG) STEP
+! **  WITH TRANSPORT AT (N) AND TRANSPORTED FIELD AT (N-1)
+!
   300 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
        DO L=1,LC
         UCTR(L,K)=0.
@@ -669,7 +617,7 @@ C
         FVHV(L,K)=0.
        ENDDO
       ENDDO
-C
+!
       DO K=0,KC
        DO L=1,LC
         UABU(L,K)=0.
@@ -682,11 +630,11 @@ C
         FWV(L,K)=0.
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       TMP=0.5*DELT
-C
+!
       DO K=1,KC
        DO L=2,LA
         LN=LNC(L)
@@ -698,7 +646,7 @@ C
         VCOR(L,K)=TMP*V(L,K)/DYV(L)+TMP*V(L-1,K)/DYV(L-1)
        ENDDO
       ENDDO
-C
+!
       DO K=1,KC
        DO L=2,LA
         LS=LSC(L)
@@ -706,19 +654,17 @@ C
         WCOR(L,K)=0.25*(WCTR(L,K)+WCTR(LS,K)+WCTR(LSW,K)+WCTR(L-1,K))
        ENDDO
       ENDDO
-C
+!
       DO K=1,KC-1
        DO L=1,LC
         LS=LSC(L)
         UABU(L,K)=TMP*(U(L,K)+U(L,K+1))/DXU(L)
         VABV(L,K)=TMP*(V(L,K)+V(L,K+1))/DYV(L)
-        WABU(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))
-     &           +TMP*W(L-1,K)/(HP(L-1)*DZC(K))
-        WABV(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))
-     &           +TMP*W(LS,K)/(HP(LS)*DZC(K))
+        WABU(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))+TMP*W(L-1,K)/(HP(L-1)*DZC(K))
+        WABV(L,K)=TMP*W(L,K)/(HP(L)*DZC(K))+TMP*W(LS,K)/(HP(LS)*DZC(K))
        ENDDO
       ENDDO
-C
+!
       DO K=1,KC-1
        DO L=1,LC
         LN=LNC(L)
@@ -729,8 +675,8 @@ C
         VABU(L,K)=0.25*(VABV(L,K)+VABV(L-1,K)+VABV(LN,K)+VABV(LNW,K))
        ENDDO
       ENDDO
-C----------------------------------------------------------------------C
-C
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       DO L=2,LA
       IF(ABS(UCTR(L,K)).GT.1.) WRITE(1,801)N,IL(L),JL(L),K,UCTR(L,K)
@@ -747,11 +693,11 @@ C
       IF(ABS(WABV(L,K)).GT.1.) WRITE(1,812)N,IL(L),JL(L),K,WABV(L,K)
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C ** FUHU
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FUHU
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -760,14 +706,13 @@ C
         LV=LU
         IF(VCTR(L,K).LT.0.) LV=LNC(LU)
         LVS=LSC(LV)
-        UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
+        UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
         FUHU(L,K)=0.5*(UHDY(L,K)+UHDY(L+1,K))*UFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LU=L
@@ -777,18 +722,15 @@ C
         LVS=LSC(LV)
         IF(WCTR(L,K).LT.0.)THEN
           KW=K+1
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
-     &       -0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))-0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
           DZDYU=U1(LV,K+1)-U1(LVS,K+1)-U1(LV,K)+U1(LVS,K)
           UFACE=UFACE+VCTR(L,K)*WCTR(L,K)*DZDYU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
         ENDIF
         FUHU(L,K)=0.5*(UHDY(L,K)+UHDY(L+1,K))*UFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -799,9 +741,7 @@ C
         LVS=LSC(LV)
         KW=K
         IF(WCTR(L,K).LT.0.) KW=K+1 
-        UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
-     &       -0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
+        UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))-0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDYU=U1(LV,K)-U1(LVS,K)-U1(LV,K-1)+U1(LVS,K-1)
          ELSE
@@ -812,7 +752,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LU=L
@@ -822,24 +762,21 @@ C
         LVS=LSC(LV)
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
-     &       -0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))-0.5*WCTR(L,K)*(U1(LU,KW)-U1(LU,KW-1))
           DZDYU=U1(LV,K)-U1(LVS,K)-U1(LV,K-1)+U1(LVS,K-1)
           UFACE=UFACE+VCTR(L,K)*WCTR(L,K)*DZDYU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
+          UFACE=U1(LU,K)-0.5*VCTR(L,K)*(U1(LV,K)-U1(LVS,K))
         ENDIF
         FUHU(L,K)=0.5*(UHDY(L,K)+UHDY(L+1,K))*UFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FVHU
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FVHU
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -848,14 +785,13 @@ C
         LU=LV
         IF(UCOR(L,K).LT.0.) LU=LV+1
         LW=LU-1
-        UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
+        UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
         FVHU(L,K)=0.5*(VHDX(L,K)+VHDX(L-1,K))*UFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LV=LSC(L)
@@ -865,18 +801,15 @@ C
         LW=LU-1
         IF(WCOR(L,K).LT.0.)THEN
           KW=K+1
-          UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
-     &       -0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
+          UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))-0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1)) 
           DZDXU=U1(LU,K+1)-U1(LW,K+1)-U1(LU,K)+U1(LW,K)
           UFACE=UFACE+UCOR(L,K)*WCOR(L,K)*DZDXU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
+          UFACE=U1(LU,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
         ENDIF
         FVHU(L,K)=0.5*(VHDX(L,K)+VHDX(L-1,K))*UFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -887,9 +820,7 @@ C
         LW=LU-1
         KW=K
         IF(WCOR(L,K).LT.0.) KW=K+1 
-        UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
-     &       -0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
+        UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))-0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDXU=U1(LU,K)-U1(LW,K)-U1(LU,K-1)+U1(LW,K-1)
          ELSE
@@ -900,7 +831,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LV=LSC(L)
@@ -910,26 +841,23 @@ C
         LW=LU-1
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          UFACE=U1(LV,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
-     &       -0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
+          UFACE=U1(LV,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))-0.5*WCOR(L,K)*(U1(LV,KW)-U1(LV,KW-1))
           DZDXU=U1(LU,K)-U1(LW,K)-U1(LU,K-1)+U1(LW,K-1)
           UFACE=UFACE+UCOR(L,K)*WCOR(L,K)*DZDXU/3.
          ELSE
-          UFACE=U1(LU,K)
-     &       -0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
+          UFACE=U1(LU,K)-0.5*UCOR(L,K)*(U1(LU,K)-U1(LW,K))
         ENDIF
         FVHU(L,K)=0.5*(VHDX(L,K)+VHDX(L-1,K))*UFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FWU
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FWU
+!
       IF(KC.GE.2)THEN
-C
+!
       DO K=1,KS
        DO L=2,LA
         KW=K
@@ -940,9 +868,7 @@ C
         LV=L
         IF(VABU(L,K).LT.0.) LV=LNC(L)
         LVS=LSC(LV)
-        UFACE=U1(L,KW)
-     &       -0.5*UABU(L,K)*(U1(LU,KW)-U1(LW,KW))
-     &       -0.5*VABU(L,K)*(U1(LV,KW)-U1(LVS,KW))
+        UFACE=U1(L,KW)-0.5*UABU(L,K)*(U1(LU,KW)-U1(LW,KW))-0.5*VABU(L,K)*(U1(LV,KW)-U1(LVS,KW))
         IF(VABU(L,K).GT.0.)THEN
           DXDYU=U1(LU,KW)-U1(LW,KW)-U1(LSC(LU),KW)+U1(LSC(LW),KW)
          ELSE
@@ -952,13 +878,13 @@ C
         FWU(L,K)=0.5*(DXYP(L)*W(L,K)+DXYP(L-1)*W(L-1,K))*UFACE
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FUHV
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FUHV
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -967,14 +893,13 @@ C
         LV=LU
         IF(VCOR(L,K).LT.0.) LV=LNC(LU)
         LVS=LSC(LV)
-        VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
+        VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
         FUHV(L,K)=0.5*(UHDY(L,K)+UHDY(LSC(L),K))*VFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LU=L-1
@@ -984,18 +909,15 @@ C
         LVS=LSC(LV)
         IF(WCOR(L,K).LT.0.)THEN
           KW=K+1
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
-     &       -0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))-0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
           DZDYV=V1(LV,K+1)-V1(LVS,K+1)-V1(LV,K)+V1(LVS,K)
           VFACE=VFACE+VCOR(L,K)*WCOR(L,K)*DZDYV/3.
          ELSE
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
         ENDIF
         FUHV(L,K)=0.5*(UHDY(L,K)+UHDY(LSC(L),K))*VFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -1006,9 +928,7 @@ C
         LVS=LSC(LV)
         KW=K
         IF(WCOR(L,K).LT.0.) KW=K+1 
-        VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
-     &       -0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
+        VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))-0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDYV=V1(LV,K)-V1(LVS,K)-V1(LV,K-1)+V1(LVS,K-1)
          ELSE
@@ -1019,7 +939,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LU=L-1
@@ -1029,24 +949,21 @@ C
         LVS=LSC(LV)
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
-     &       -0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))-0.5*WCOR(L,K)*(V1(LU,KW)-V1(LU,KW-1))
           DZDYV=V1(LV,K)-V1(LVS,K)-V1(LV,K-1)+V1(LVS,K-1)
           VFACE=UFACE+VCOR(L,K)*WCOR(L,K)*DZDYV/3.
          ELSE
-          VFACE=V1(LU,K)
-     &       -0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
+          VFACE=V1(LU,K)-0.5*VCOR(L,K)*(V1(LV,K)-V1(LVS,K))
         ENDIF
         FUHV(L,K)=0.5*(UHDY(L,K)+UHDY(LSC(L),K))*VFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FVHV
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FVHV
+!
       IF(KC.EQ.1)THEN
        K=1
        DO L=2,LA
@@ -1055,14 +972,13 @@ C
         LU=LV
         IF(UCTR(L,K).LT.0.) LU=LV+1
         LW=LU-1
-        VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
+        VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
         FVHV(L,K)=0.5*(VHDX(L,K)+VHDX(LNC(L),K))*VFACE
        ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2)THEN
-C
+!
        K=1 
        DO L=2,LA
         LV=L
@@ -1072,18 +988,15 @@ C
         LW=LU-1
         IF(WCTR(L,K).LT.0.)THEN
           KW=K+1
-          VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
-     &       -0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
+          VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))-0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
           DZDXV=V1(LU,K+1)-V1(LW,K+1)-V1(LU,K)+U1(LW,K)
           VFACE=VFACE+UCTR(L,K)*WCTR(L,K)*DZDXV/3.
          ELSE
-          VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
+          VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
         ENDIF
         FVHV(L,K)=0.5*(VHDX(L,K)+VHDX(LNC(L),K))*VFACE
        ENDDO
-C
+!
       IF(KC.GT.2)THEN
       DO K=2,KC-1
        DO L=2,LA
@@ -1094,9 +1007,7 @@ C
         LW=LU-1
         KW=K
         IF(WCTR(L,K).LT.0.) KW=K+1 
-        VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
-     &       -0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
+        VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))-0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
         IF(WCTR(L,K).GT.0.)THEN
           DZDXV=V1(LU,K)-V1(LW,K)-V1(LU,K-1)+V1(LW,K-1)
          ELSE
@@ -1107,7 +1018,7 @@ C
        ENDDO
       ENDDO
       ENDIF
-C
+!
        K=KC
        DO L=2,LA
         LV=L
@@ -1117,26 +1028,23 @@ C
         LW=LU-1
         IF(WCTR(L,K).GT.0.)THEN
           KW=K
-          VFACE=V1(LV,K)
-     &       -0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))
-     &       -0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
+          VFACE=V1(LV,K)-0.5*UCTR(L,K)*(V1(LU,K)-V1(LW,K))-0.5*WCTR(L,K)*(V1(LV,KW)-V1(LV,KW-1))
           DZDXV=V1(LU,K)-V1(LW,K)-V1(LU,K-1)+V1(LW,K-1)
           VFACE=VFACE+UCTR(L,K)*WCTR(L,K)*DZDXV/3.
          ELSE
-          VFACE=V1(LV,K)
-     &       -0.5*WCTR(L,K)*(V1(LU,K)-V1(LW,K))
+          VFACE=V1(LV,K)-0.5*WCTR(L,K)*(V1(LU,K)-V1(LW,K))
         ENDIF
         FVHV(L,K)=0.5*(VHDX(L,K)+VHDX(LNC(L),K))*VFACE
        ENDDO
-C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** FWV
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** FWV
+!
       IF(KC.GE.2)THEN
-C
+!
       DO K=1,KS
        DO L=2,LA
         LS=LSC(L)
@@ -1148,9 +1056,7 @@ C
         LV=L
         IF(VABV(L,K).LT.0.) LV=LNC(L)
         LVS=LSC(LV)
-        VFACE=V1(L,KW)
-     &       -0.5*UABV(L,K)*(V1(LU,KW)-V1(LW,KW))
-     &       -0.5*VABV(L,K)*(V1(LV,KW)-V1(LVS,KW))
+        VFACE=V1(L,KW)-0.5*UABV(L,K)*(V1(LU,KW)-V1(LW,KW))-0.5*VABV(L,K)*(V1(LV,KW)-V1(LVS,KW))
         IF(VABV(L,K).GT.0.)THEN
           DXDYV=V1(LU,KW)-V1(LW,KW)-V1(LSC(LU),KW)+V1(LSC(LW),KW)
          ELSE
@@ -1160,71 +1066,69 @@ C
         FWV(L,K)=0.5*(DXYP(L)*W(L,K)+DXYP(LS)*W(LS,K))*VFACE
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
   500 CONTINUE
-C
+!
       DO K=1,KC
        DO L=1,LA
        FUHU(L,K)=STCUV(L)*FUHU(L,K)
        FVHV(L,K)=STCUV(L)*FVHV(L,K)
        ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  CALCULATE CORIOLIS AND CURVATURE ACCELERATION COEFFICIENTS
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE CORIOLIS AND CURVATURE ACCELERATION COEFFICIENTS
+!
+!----------------------------------------------------------------------C
+!
       IF(ISDCCA.EQ.0)THEN
-C
+!
       DO K=1,KC
        DO L=2,LA
        LN=LNC(L)          
-       CAC(L,K)=( FCORC(L)*DXYP(L)
-     &        +0.5*SNLT*(V(LN,K)+V(L,K))*(DYU(L+1)-DYU(L))
-     &        -0.5*SNLT*(U(L+1,K)+U(L,K))*(DXV(LN)-DXV(L)) )*HP(L)
+       CAC(L,K)=(FCORC(L)*DXYP(L)+0.5*SNLT*(V(LN,K)+V(L,K))*(DYU(L+1)-DYU(L))-0.5*SNLT*(U(L+1,K)  &
+                 +U(L,K))*(DXV(LN)-DXV(L)) )*HP(L)
        ENDDO
       ENDDO
-C
+!
       ELSE
-C
+!
       CFMAX=CF
-C
+!
       DO K=1,KC
        DO L=2,LA
        LN=LNC(L)          
-       CAC(L,K)=( FCORC(L)*DXYP(L)
-     &        +0.5*SNLT*(V(LN,K)+V(L,K))*(DYU(L+1)-DYU(L))
-     &        -0.5*SNLT*(U(L+1,K)+U(L,K))*(DXV(LN)-DXV(L)) )*HP(L)
+       CAC(L,K)=(FCORC(L)*DXYP(L)+0.5*SNLT*(V(LN,K)+V(L,K))*(DYU(L+1)-DYU(L))-0.5*SNLT*(U(L+1,K)  &
+                +U(L,K))*(DXV(LN)-DXV(L)) )*HP(L)
        CFEFF=ABS(CAC(L,K))*DXYIP(L)*HPI(L)
        CFMAX=MAX(CFMAX,CFEFF)
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  CALCULATE CORIOLIS-CURVATURE AND ADVECTIVE ACCELERATIONS 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE CORIOLIS-CURVATURE AND ADVECTIVE ACCELERATIONS 
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
        DO L=1,LC
         FCAX1(L,K)=0.
         FCAY1(L,K)=0.     
        ENDDO
       ENDDO
-C
+!
       IF(ISTL.EQ.3)THEN
-C      IF(IRVEC.EQ.10.OR.IRVEC.EQ.11)THEN
+!      IF(IRVEC.EQ.10.OR.IRVEC.EQ.11)THEN
       IF(IRVEC.EQ.14)THEN
-C
+!
       DO L=1,LC
        TVAR3E(L)=0.
        TVAR3N(L)=0.
@@ -1233,7 +1137,7 @@ C
        TVAR1S(L,1)=0.
        TVAR2S(L,1)=0.
       ENDDO
-C
+!
       DO K=1,KC
       DZTMP=DZC(K) 
       DO L=2,LA
@@ -1243,23 +1147,22 @@ C
        TVAR3S(L)=TVAR3S(L)+DZTMP*V1(L,K)
       ENDDO
       ENDDO
-C
-C       CAC(L,K)=( FCORC(L)*DXYP(L)
-C     &        +0.5*SNLT*(V(LN,K)+V(L,K))*(DYU(L+1)-DYU(L))
-C     &        -0.5*SNLT*(U(L+1,K)+U(L,K))*(DXV(LN)-DXV(L)) )*HP(L)
-C
-C       TVAR1S=CAC @ N
-C       TVAR2S=CAC @ N-1
-C
-C       TVAR3E=U @ N
-C       TVAR3N=V @ N
-C       TVAR3W=U @ N-1
-C       TVAR3S=V @ N-1
-C
+!
+!       CAC(L,K)=( FCORC(L)*DXYP(L)
+!     &        +0.5*SNLT*(V(LN,K)+V(L,K))*(DYU(L+1)-DYU(L))
+!     &        -0.5*SNLT*(U(L+1,K)+U(L,K))*(DXV(LN)-DXV(L)) )*HP(L)
+!
+!       TVAR1S=CAC @ N
+!       TVAR2S=CAC @ N-1
+!
+!       TVAR3E=U @ N
+!       TVAR3N=V @ N
+!       TVAR3W=U @ N-1
+!       TVAR3S=V @ N-1
+!
       DO L=2,LA
        LN=LNC(L)          
-       TVAR1S(L,1)=( FCORC(L)*DXYP(L)
-     &      +0.5*SNLT*(TVAR3N(LN)+TVAR3N(L))*(DYU(L+1)-DYU(L))
+       TVAR1S(L,1)=(FCORC(L)*DXYP(L)+0.5*SNLT*(TVAR3N(LN)+TVAR3N(L))*(DYU(L+1)-DYU(L))
      &      -0.5*SNLT*(TVAR3E(L+1)+TVAR3E(L))*(DXV(LN)-DXV(L)) )*HP(L)
        TVAR2S(L,1)=( FCORC(L)*DXYP(L)
      &      +0.5*SNLT*(TVAR3S(LN)+TVAR3S(L))*(DYU(L+1)-DYU(L))

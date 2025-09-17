@@ -1,41 +1,41 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE CALCONC (ISTL,IS2TL)
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C 05/01/2002        John Hamrick       05/01/2002       John Hamrick
-C  modified calls to calbal and budget subroutines
-C  added calls to bal2t2, bal2t3
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE CALCULATES THE CONCENTRATION OF DISSOLVED AND 
-C **  SUSPENDED CONSTITUTENTS, INCLUDING SALINITY, TEMPERATURE, DYE AND
-C **  AND SUSPENDED SEDIMENT AT TIME LEVEL (N+1). THE VALUE OF ISTL 
-C **  INDICATES THE NUMBER OF TIME LEVELS IN THE STEP
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+! 05/01/2002        John Hamrick       05/01/2002       John Hamrick
+!  modified calls to calbal and budget subroutines
+!  added calls to bal2t2, bal2t3
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE CALCULATES THE CONCENTRATION OF DISSOLVED AND 
+! **  SUSPENDED CONSTITUTENTS, INCLUDING SALINITY, TEMPERATURE, DYE AND
+! **  AND SUSPENDED SEDIMENT AT TIME LEVEL (N+1). THE VALUE OF ISTL 
+! **  INDICATES THE NUMBER OF TIME LEVELS IN THE STEP
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
       DIMENSION EEB(LCM),CCLBTMP(LCM)
       DIMENSION TOXASM(NTXM),SEDASM(NSCM),SNDASM(NSNM)
-C
-CDHP  DIMENSION CUBTMP(LCM),CMBTMP(LCM),CLBTMP(LCM),EB(LCM),VTMP(LCM),
-CDHP &          ABHPI(LCM,KSM)
-C
-C**********************************************************************C
-C
+!
+!DHP  DIMENSION CUBTMP(LCM),CMBTMP(LCM),CLBTMP(LCM),EB(LCM),VTMP(LCM),
+!DHP &          ABHPI(LCM,KSM)
+!
+!**********************************************************************C
+!
       DELT=DT2
       S3TL=1.0
       S2TL=0.0
@@ -49,14 +49,14 @@ C
         S2TL=1.0
       ENDIF
       DELTD2=DELT
-C     DELTD2=0.5*DELT
-C
+!     DELTD2=0.5*DELT
+!
       IF(IS2TIM.GE.1) THEN
         IF(ISBAL.GE.1)THEN
           CALL BAL2T3A
         ENDIF
       ENDIF
-C
+!
       DO K=1,KC
       DO L=2,LA
         LUPU(L,K)=L
@@ -64,72 +64,72 @@ C
         KUPW(L,K)=K
       ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  VERTICAL DIFFUSION EXPLICIT HALF STEP CALCULATION
-C
-C----------------------------------------------------------------------C
-C
-C      IF(KC.EQ.1) GOTO 500
-C
-C      TTMP=SECNDS(0.0)
-C
-C      K=1
-C      RCDZKK=-DELTD2*CDZKK(1)
-C      DO L=2,LA
-C      CCUBTMP=RCDZKK*HPI(L)*AB(L,K)
-C      CCMBTMP=1.-CCUBTMP
-C      UUU(L,K)=CCMBTMP*SAL1(L,K)+CCUBTMP*(SAL1(L,K+1)
-C      VVV(L,K)=CCMBTMP*TEM1(L,K)+CCUBTMP*(TEM1(L,K+1)
-C      DU(L,K) =CCMBTMP*DYE1(L,K)+CCUBTMP*(DYE1(L,K+1)
-C      DV(L,K) =CCMBTMP*SED1(L,K)+CCUBTMP*(SED1(L,K+1)
-C      ENDDO
-C
-C      DO K=2,KS
-C      RCDZKMK=-DELTD2*CDZKMK(K)
-C      RCDZKK=-DELTD2*CDZKK(K)
-C      DO L=2,LA
-C      CCLBTMP=RCDZKMK*HPI(L)*AB(L,K-1)
-C      CCUBTMP=RCDZKK*HPI(L)*AB(L,K)
-C      CCMBTMP=1.-CCUBTMP-CCLBTMP
-C      UUU(L,K)=CCMBTMP*SAL1(L,K)+CCUBTMP*SAL1(L,K+1)
-C     &                          +CCLBTMP*SAL1(L,K-1)
-C      VVV(L,K)=CCMBTMP*TEM1(L,K)+CCUBTMP*TEM1(L,K+1)
-C     &                          +CCLBTMP*TEM1(L,K-1)
-C      DU(L,K) =CCMBTMP*DYE1(L,K)+CCUBTMP*DYE1(L,K+1)
-C     &                          +CCLBTMP*DYE1(L,K-1)
-C      DV(L,K) =CCMBTMP*SED1(L,K)+CCUBTMP*SED1(L,K+1)
-C     &                          +CCLBTMP*SED1(L,K-1)
-C      ENDDO
-C      ENDDO
-C
-C      K=KC
-C      RCDZKMK=-DELTD2*CDZKMK(K)
-C      DO L=2,LA
-C      CCLBTMP=RCDZKMK*HPI(L)*AB(L,K-1)
-C      CCMBTMP=1.-CCLBTMP
-C      UUU(L,K)=CCMBTMP*SAL1(L,K)+CCLBTMP*SAL1(L,K-1)
-C      VVV(L,K)=CCMBTMP*TEM1(L,K)+CCLBTMP*TEM1(L,K-1)
-C      DU(L,K)=CCMBTMP*DYE1(L,K)+CCLBTMP*DYE1(L,K-1)
-C      DV(L,K)=CCMBTMP*SED1(L,K)+CCLBTMP*SED1(L,K-1)
-C      ENDDO
-C
-C      TVDIF=TVDIF+SECNDS(TTMP)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  VERTICAL DIFFUSION EXPLICIT HALF STEP CALCULATION
+!
+!----------------------------------------------------------------------C
+!
+!      IF(KC.EQ.1) GOTO 500
+!
+!      TTMP=SECNDS(0.0)
+!
+!      K=1
+!      RCDZKK=-DELTD2*CDZKK(1)
+!      DO L=2,LA
+!      CCUBTMP=RCDZKK*HPI(L)*AB(L,K)
+!      CCMBTMP=1.-CCUBTMP
+!      UUU(L,K)=CCMBTMP*SAL1(L,K)+CCUBTMP*(SAL1(L,K+1)
+!      VVV(L,K)=CCMBTMP*TEM1(L,K)+CCUBTMP*(TEM1(L,K+1)
+!      DU(L,K) =CCMBTMP*DYE1(L,K)+CCUBTMP*(DYE1(L,K+1)
+!      DV(L,K) =CCMBTMP*SED1(L,K)+CCUBTMP*(SED1(L,K+1)
+!      ENDDO
+!
+!      DO K=2,KS
+!      RCDZKMK=-DELTD2*CDZKMK(K)
+!      RCDZKK=-DELTD2*CDZKK(K)
+!      DO L=2,LA
+!      CCLBTMP=RCDZKMK*HPI(L)*AB(L,K-1)
+!      CCUBTMP=RCDZKK*HPI(L)*AB(L,K)
+!      CCMBTMP=1.-CCUBTMP-CCLBTMP
+!      UUU(L,K)=CCMBTMP*SAL1(L,K)+CCUBTMP*SAL1(L,K+1)
+!     &                          +CCLBTMP*SAL1(L,K-1)
+!      VVV(L,K)=CCMBTMP*TEM1(L,K)+CCUBTMP*TEM1(L,K+1)
+!     &                          +CCLBTMP*TEM1(L,K-1)
+!      DU(L,K) =CCMBTMP*DYE1(L,K)+CCUBTMP*DYE1(L,K+1)
+!     &                          +CCLBTMP*DYE1(L,K-1)
+!      DV(L,K) =CCMBTMP*SED1(L,K)+CCUBTMP*SED1(L,K+1)
+!     &                          +CCLBTMP*SED1(L,K-1)
+!      ENDDO
+!      ENDDO
+!
+!      K=KC
+!      RCDZKMK=-DELTD2*CDZKMK(K)
+!      DO L=2,LA
+!      CCLBTMP=RCDZKMK*HPI(L)*AB(L,K-1)
+!      CCMBTMP=1.-CCLBTMP
+!      UUU(L,K)=CCMBTMP*SAL1(L,K)+CCLBTMP*SAL1(L,K-1)
+!      VVV(L,K)=CCMBTMP*TEM1(L,K)+CCLBTMP*TEM1(L,K-1)
+!      DU(L,K)=CCMBTMP*DYE1(L,K)+CCLBTMP*DYE1(L,K-1)
+!      DV(L,K)=CCMBTMP*SED1(L,K)+CCLBTMP*SED1(L,K-1)
+!      ENDDO
+!
+!      TVDIF=TVDIF+SECNDS(TTMP)
+!
+!**********************************************************************C
+!
   500 CONTINUE
-C
-C**********************************************************************C
-C
-C **  3D ADVECTI0N TRANSPORT CALCULATION-COSMIC INITIALIZATION 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  3D ADVECTI0N TRANSPORT CALCULATION-COSMIC INITIALIZATION 
+!
+!----------------------------------------------------------------------C
+!
       IF(IS1DCHAN.EQ.0)THEN
       IF(ISCOSMIC.EQ.1)THEN
-C
+!
       DO K=1,KC
        RCOSMICX(1 ,K)=0.
        RCOSMICX(LC,K)=0.
@@ -150,14 +150,14 @@ C
        COSMICZN(1 ,K)=0.
        COSMICZN(LC,K)=0.
       ENDDO
-C
+!
       DO L=1,LC
        COSMICZP(L,0)=0.
        COSMICZP(L,KC)=0.
        COSMICZN(L,0)=0.
        COSMICZN(L,KC)=0.
       ENDDO 
-C
+!
       DO K=1,KC
       DO L=2,LA
        RCOSMICX(L,K)=-1.
@@ -171,14 +171,14 @@ C
        IF(TMP.LT.0.) RCOSMICZ(L,K)=0.
       ENDDO 
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
        COSMICXP(L,K)=DELT*DXIU(L)*U2(L,K)
        COSMICYP(L,K)=DELT*DYIV(L)*V2(L,K)
       ENDDO 
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
        COSMICXN(L,K)=MIN(COSMICXP(L,K),0.)
@@ -187,7 +187,7 @@ C
        COSMICYP(L,K)=MAX(COSMICYP(L,K),0.)
       ENDDO 
       ENDDO
-C
+!
       IF(KC.GE.2.AND.ISTL.EQ.3)THEN
         DO K=1,KS
         DO L=2,LA
@@ -201,7 +201,7 @@ C
         ENDDO 
         ENDDO
       ENDIF
-C
+!
       IF(KC.GE.2.AND.ISTL.EQ.2)THEN
         DO K=1,KS
         DO L=2,LA
@@ -215,21 +215,21 @@ C
         ENDDO 
         ENDDO
       ENDIF
-C
+!
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  3D ADVECTI0N TRANSPORT CALCULATION 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  3D ADVECTI0N TRANSPORT CALCULATION 
+!
+!----------------------------------------------------------------------C
+!
       IF(IS1DCHAN.EQ.0)THEN
-c      IF(ISCOSMIC.EQ.0)THEN
-C 
-C **  PRESPECIFY THE UPWIND CELLS FOR 3D ADVECTION
-C
+!      IF(ISCOSMIC.EQ.0)THEN
+! 
+! **  PRESPECIFY THE UPWIND CELLS FOR 3D ADVECTION
+!
       DO K=1,KC
       DO L=2,LA
         IF(LMASKDRY(L))THEN
@@ -246,7 +246,7 @@ C
         END IF
       ENDDO
       ENDDO
-C
+!
       IF(KC.GT.1)THEN
       DO K=1,KS
       DO L=2,LA
@@ -260,23 +260,20 @@ C
       ENDDO
       ENDDO
       ENDIF
-C
+!
       IF(ISCRAY.EQ.0)THEN
         TTMP=SECNDS(0.0)
        ELSE
         T1TMP=SECOND( )
         CALL TIMEF(WT1TMP)
       ENDIF
-C
-C                  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
-C 
-      IF(ISTRAN(1).EQ.1.AND.ISCDCA(1).LT.4)
-     &  CALL CALTRAN (ISTL,IS2TL,1,1,SAL,SAL1)
-      IF(ISTRAN(2).EQ.1.AND.ISCDCA(2).LT.4)
-     &  CALL CALTRAN (ISTL,IS2TL,2,2,TEM,TEM1)
-      IF(ISTRAN(3).EQ.1.AND.ISCDCA(3).LT.4)
-     &  CALL CALTRAN (ISTL,IS2TL,3,3,DYE,DYE1)
-C     IF(ISTRAN(3).EQ.1) CALL CALTRAN (ISTL,IS2TL,4,4,SFL,SFL1)
+!
+!                  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
+! 
+      IF(ISTRAN(1).EQ.1.AND.ISCDCA(1).LT.4)CALL CALTRAN (ISTL,IS2TL,1,1,SAL,SAL1)
+      IF(ISTRAN(2).EQ.1.AND.ISCDCA(2).LT.4)CALL CALTRAN (ISTL,IS2TL,2,2,TEM,TEM1)
+      IF(ISTRAN(3).EQ.1.AND.ISCDCA(3).LT.4)CALL CALTRAN (ISTL,IS2TL,3,3,DYE,DYE1)
+!     IF(ISTRAN(3).EQ.1) CALL CALTRAN (ISTL,IS2TL,4,4,SFL,SFL1)
       IF(ISTRAN(5).EQ.1.AND.ISCDCA(5).LT.4)THEN
         DO NT=1,NTOX
          M=MSVTOX(NT)
@@ -286,9 +283,9 @@ C     IF(ISTRAN(3).EQ.1) CALL CALTRAN (ISTL,IS2TL,4,4,SFL,SFL1)
           TVAR2S(L,K)=TOX(L,K,NT)
          ENDDO
          ENDDO
-C
-C  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
-C 
+!
+!  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
+! 
          CALL CALTRAN (ISTL,IS2TL,5,M,TVAR2S,TVAR1S)
          DO K=1,KC
          DO L=1,LC
@@ -296,47 +293,37 @@ C
           TOX(L,K,NT)=TVAR2S(L,K)
          ENDDO
          ENDDO
-C
+!
         IF(NT.EQ.1.AND.ISTOXALL.EQ.1)THEN
           DO K=1,KC
           DO L=2,LA
             TMPFLX=DELT*DZC(K)*UHDY2(L,K)*TOX1(LUPU(L,K),K,1)
             TMPFLY=DELT*DZC(K)*VHDX2(L,K)*TOX1(LUPV(L,K),K,1)
             DO NS=1,NSED+NSND+2
-              ATOXPFWX(L,NS,1)=ATOXPFWX(L,NS,1)
-     &                        +TMPFLX*TOXPFW(LUPU(L,K),K,NS,1)
-                ATOXPFWY(L,NS,1)=ATOXPFWY(L,NS,1)
-     &                        +TMPFLY*TOXPFW(LUPV(L,K),K,NS,1)
+              ATOXPFWX(L,NS,1)=ATOXPFWX(L,NS,1)+TMPFLX*TOXPFW(LUPU(L,K),K,NS,1)
+              ATOXPFWY(L,NS,1)=ATOXPFWY(L,NS,1)+TMPFLY*TOXPFW(LUPV(L,K),K,NS,1)
             ENDDO
             DO NS=1,NSED
-              ASEDFWX(L,NS)=ASEDFWX(L,NS)
-     &                     +DELT*DZC(K)*UHDY2(L,K)*SED1(LUPU(L,K),K,NS)
-                ASEDFWY(L,NS)=ASEDFWY(L,NS)
-     &                     +DELT*DZC(K)*VHDX2(L,K)*SED1(LUPV(L,K),K,NS)
+              ASEDFWX(L,NS)=ASEDFWX(L,NS)+DELT*DZC(K)*UHDY2(L,K)*SED1(LUPU(L,K),K,NS)
+              ASEDFWY(L,NS)=ASEDFWY(L,NS)+DELT*DZC(K)*VHDX2(L,K)*SED1(LUPV(L,K),K,NS)
             ENDDO
             DO NX=1,NSND
               NS=NX+NSED
-              ASEDFWX(L,NS)=ASEDFWX(L,NS)
-     &                     +DELT*DZC(K)*UHDY2(L,K)*SND1(LUPU(L,K),K,NX)
-                ASEDFWY(L,NS)=ASEDFWY(L,NS)
-     &                     +DELT*DZC(K)*VHDX2(L,K)*SND1(LUPV(L,K),K,NX)
+              ASEDFWX(L,NS)=ASEDFWX(L,NS)+DELT*DZC(K)*UHDY2(L,K)*SND1(LUPU(L,K),K,NX)
+              ASEDFWY(L,NS)=ASEDFWY(L,NS)+DELT*DZC(K)*VHDX2(L,K)*SND1(LUPV(L,K),K,NX)
               ASEDFBLX(L,NX)=ASEDFBLX(L,NX)+DELT*QSBDLDX(L,NX)
                 ASEDFBLY(L,NX)=ASEDFBLY(L,NX)+DELT*QSBDLDY(L,NX)
             ENDDO
-            ATOXFDFWX(L,1)=ATOXFDFWX(L,1)
-     &                        +TMPFLX*TOXFDFW(LUPU(L,K),K,1)
-              ATOXFDFWY(L,1)=ATOXFDFWY(L,1)
-     &                        +TMPFLY*TOXFDFW(LUPV(L,K),K,1)
-            ATOXCDFWX(L,1)=ATOXCDFWX(L,1)
-     &                        +TMPFLX*TOXCDFW(LUPU(L,K),K,1)
-              ATOXCDFWY(L,1)=ATOXCDFWY(L,1)
-     &                        +TMPFLY*TOXCDFW(LUPV(L,K),K,1)
+            ATOXFDFWX(L,1)=ATOXFDFWX(L,1)+TMPFLX*TOXFDFW(LUPU(L,K),K,1)
+            ATOXFDFWY(L,1)=ATOXFDFWY(L,1)+TMPFLY*TOXFDFW(LUPV(L,K),K,1)
+            ATOXCDFWX(L,1)=ATOXCDFWX(L,1)+TMPFLX*TOXCDFW(LUPU(L,K),K,1)
+            ATOXCDFWY(L,1)=ATOXCDFWY(L,1)+TMPFLY*TOXCDFW(LUPV(L,K),K,1)
             ATOXSOUR(L,1)=ATOXSOUR(L,1)+DELT*MAX(FQC(L,K),0.0)
-              ATOXSINK(L,1)=ATOXSINK(L,1)+DELT*MIN(FQC(L,K),0.0)
+            ATOXSINK(L,1)=ATOXSINK(L,1)+DELT*MIN(FQC(L,K),0.0)
           ENDDO
           ENDDO
         ENDIF
-C
+!
         ENDDO
       ENDIF
       IF(ISTRAN(6).EQ.1.AND.ISCDCA(6).LT.4)THEN
@@ -348,9 +335,9 @@ C
           TVAR2S(L,K)=SED(L,K,NS)
          ENDDO
          ENDDO
-C
-C  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
-C 
+!
+!  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
+! 
          CALL CALTRAN (ISTL,IS2TL,6,M,TVAR2S,TVAR1S)
          DO K=1,KC
          DO L=1,LC
@@ -369,9 +356,9 @@ C
           TVAR2S(L,K)=SND(L,K,NS)
          ENDDO
          ENDDO
-C
-C  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
-C 
+!
+!  SUBROUTINE CALTRAN (ISTL,IS2TL,MVAR,M,CON,CON1)
+! 
          CALL CALTRAN (ISTL,IS2TL,7,M,TVAR2S,TVAR1S)
          DO K=1,KC
          DO L=1,LC
@@ -381,9 +368,9 @@ C
          ENDDO
         ENDDO
       ENDIF
-C
-C  ADVECTION OF FLOC DIAMETER
-C
+!
+!  ADVECTION OF FLOC DIAMETER
+!
       IF(ISEDVW.EQ.99)THEN
       IF(ISTRAN(6).EQ.1.AND.ISCDCA(6).LT.4)THEN
          M=MSVSED(1)
@@ -402,21 +389,21 @@ C
          ENDDO
       ENDIF
       ENDIF
-C
-C     IF(ISTRAN(1).EQ.1) CALL CALTRAN (ISTL,1,SAL,UUU)
-C     IF(ISTRAN(2).EQ.1) CALL CALTRAN (ISTL,2,TEM,VVV)
-C     IF(ISTRAN(3).EQ.1) CALL CALTRAN (ISTL,3,DYE,DU)
-C     IF(ISTRAN(4).EQ.1) CALL CALTRAN (ISTL,4,SED,DV)
-C
-C     IF(ISTRAN(1).EQ.2) CALL CALTRANI (ISTL,1,SAL,SAL1)
-C     IF(ISTRAN(2).EQ.2) CALL CALTRANI (ISTL,2,TEM,TEM1)
-C     IF(ISTRAN(3).EQ.2) CALL CALTRANI (ISTL,3,DYE,DYE1)
-C     IF(ISTRAN(4).EQ.2) CALL CALTRANI (ISTL,4,SED,SED1)
-C     IF(ISTRAN(1).EQ.2) CALL CALTRANI (ISTL,1,SAL,UUU)
-C     IF(ISTRAN(2).EQ.2) CALL CALTRANI (ISTL,2,TEM,VVV)
-C     IF(ISTRAN(3).EQ.2) CALL CALTRANI (ISTL,3,DYE,DU)
-C     IF(ISTRAN(4).EQ.2) CALL CALTRANI (ISTL,4,SED,DV)
-C
+!
+!     IF(ISTRAN(1).EQ.1) CALL CALTRAN (ISTL,1,SAL,UUU)
+!     IF(ISTRAN(2).EQ.1) CALL CALTRAN (ISTL,2,TEM,VVV)
+!     IF(ISTRAN(3).EQ.1) CALL CALTRAN (ISTL,3,DYE,DU)
+!     IF(ISTRAN(4).EQ.1) CALL CALTRAN (ISTL,4,SED,DV)
+!
+!     IF(ISTRAN(1).EQ.2) CALL CALTRANI (ISTL,1,SAL,SAL1)
+!     IF(ISTRAN(2).EQ.2) CALL CALTRANI (ISTL,2,TEM,TEM1)
+!     IF(ISTRAN(3).EQ.2) CALL CALTRANI (ISTL,3,DYE,DYE1)
+!     IF(ISTRAN(4).EQ.2) CALL CALTRANI (ISTL,4,SED,SED1)
+!     IF(ISTRAN(1).EQ.2) CALL CALTRANI (ISTL,1,SAL,UUU)
+!     IF(ISTRAN(2).EQ.2) CALL CALTRANI (ISTL,2,TEM,VVV)
+!     IF(ISTRAN(3).EQ.2) CALL CALTRANI (ISTL,3,DYE,DU)
+!     IF(ISTRAN(4).EQ.2) CALL CALTRANI (ISTL,4,SED,DV)
+!
       IF(ISCRAY.EQ.0)THEN
         TSADV=TSADV+SECNDS(TTMP)
        ELSE
@@ -425,43 +412,37 @@ C
         TSADV=TSADV+T2TMP-T1TMP
         WTSADV=WTSADV+(WT2TMP-WT1TMP)*0.001
       ENDIF
-C
-c      ENDIF
+!
+!      ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  3D COSMIC ADVECTI0N TRANSPORT CALCULATION 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  3D COSMIC ADVECTI0N TRANSPORT CALCULATION 
+!
+!----------------------------------------------------------------------C
+!
       IF(IS1DCHAN.EQ.0)THEN
       IF(ISCOSMIC.EQ.1)THEN
-C
-C
+!
+!
       IF(ISCRAY.EQ.0)THEN
         TTMP=SECNDS(0.0)
        ELSE
         T1TMP=SECOND( )
         CALL TIMEF(WT1TMP)
       ENDIF
-C 
-      IF(ISTRAN(1).EQ.1.AND.ISCDCA(1).EQ.4)
-     &  CALL COSTRANW (ISTL,IS2TL,1,1,SAL,SAL1)
-      IF(ISTRAN(2).EQ.1.AND.ISCDCA(2).EQ.4)
-     &  CALL COSTRANW (ISTL,IS2TL,2,2,TEM,TEM1)
-      IF(ISTRAN(3).EQ.1.AND.ISCDCA(3).EQ.4)
-     &  CALL COSTRANW (ISTL,IS2TL,3,3,DYE,DYE1)
-c
-      IF(ISTRAN(1).EQ.1.AND.ISCDCA(1).EQ.5)
-     &  CALL COSTRAN (ISTL,IS2TL,1,1,SAL,SAL1)
-      IF(ISTRAN(2).EQ.1.AND.ISCDCA(2).EQ.5)
-     &  CALL COSTRAN (ISTL,IS2TL,2,2,TEM,TEM1)
-      IF(ISTRAN(3).EQ.1.AND.ISCDCA(3).EQ.5)
-     &  CALL COSTRAN (ISTL,IS2TL,3,3,DYE,DYE1)
-c
-C     IF(ISTRAN(3).EQ.1) CALL COSTRAN (ISTL,IS2TL,4,4,SFL,SFL1)
-C
+! 
+      IF(ISTRAN(1).EQ.1.AND.ISCDCA(1).EQ.4)CALL COSTRANW (ISTL,IS2TL,1,1,SAL,SAL1)
+      IF(ISTRAN(2).EQ.1.AND.ISCDCA(2).EQ.4)CALL COSTRANW (ISTL,IS2TL,2,2,TEM,TEM1)
+      IF(ISTRAN(3).EQ.1.AND.ISCDCA(3).EQ.4)CALL COSTRANW (ISTL,IS2TL,3,3,DYE,DYE1)
+!
+      IF(ISTRAN(1).EQ.1.AND.ISCDCA(1).EQ.5)CALL COSTRAN (ISTL,IS2TL,1,1,SAL,SAL1)
+      IF(ISTRAN(2).EQ.1.AND.ISCDCA(2).EQ.5)CALL COSTRAN (ISTL,IS2TL,2,2,TEM,TEM1)
+      IF(ISTRAN(3).EQ.1.AND.ISCDCA(3).EQ.5)CALL COSTRAN (ISTL,IS2TL,3,3,DYE,DYE1)
+!
+!     IF(ISTRAN(3).EQ.1) CALL COSTRAN (ISTL,IS2TL,4,4,SFL,SFL1)
+!
       IF(ISTRAN(5).EQ.1.AND.ISCDCA(5).EQ.4)THEN
         DO NT=1,NTOX
          M=MSVTOX(NT)
@@ -498,7 +479,7 @@ C
          ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(6).EQ.1.AND.ISCDCA(6).EQ.4)THEN
         DO NS=1,NSED
          M=MSVSED(NS)
@@ -535,7 +516,7 @@ C
          ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISTRAN(7).EQ.1.AND.ISCDCA(7).EQ.4)THEN
         DO NS=1,NSND
          M=MSVSND(NS)
@@ -572,7 +553,7 @@ C
          ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISCRAY.EQ.0)THEN
         TSADV=TSADV+SECNDS(TTMP)
        ELSE
@@ -581,18 +562,18 @@ C
         TSADV=TSADV+T2TMP-T1TMP
         WTSADV=WTSADV+(WT2TMP-WT1TMP)*0.001
       ENDIF
-C
+!
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  1D ADVECTI0N TRANSPORT CALCULATION 
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  1D ADVECTI0N TRANSPORT CALCULATION 
+!
+!----------------------------------------------------------------------C
+!
       IF(IS1DCHAN.GE.1)THEN
-C
+!
        IF(ISTL.EQ.3)THEN
          DO L=2,LA
           IF(LCT(L).EQ.6) AREAOLD(L)=FADYP2(L)
@@ -600,7 +581,7 @@ C
           IF(LCT(L).EQ.6) AREANEW(L)=FADYP(L)
           IF(LCT(L).EQ.7) AREANEW(L)=FADXP(L)
          ENDDO
-C       ELSE
+!       ELSE
          DO L=2,LA
           IF(LCT(L).EQ.6) AREAOLD(L)=FADYP1(L)
           IF(LCT(L).EQ.7) AREAOLD(L)=FADXP1(L)
@@ -608,18 +589,18 @@ C       ELSE
           IF(LCT(L).EQ.7) AREANEW(L)=FADXP(L)
          ENDDO
        ENDIF
-C
+!
       IF(ISCRAY.EQ.0)THEN
         TTMP=SECNDS(0.0)
        ELSE
         T1TMP=SECOND( )
         CALL TIMEF(WT1TMP)
       ENDIF
-C 
+! 
       IF(ISTRAN(1).EQ.1) CALL CALTRAN1D (ISTL,1,1,SAL,SAL1)
       IF(ISTRAN(2).EQ.1) CALL CALTRAN1D (ISTL,2,2,TEM,TEM1)
       IF(ISTRAN(3).EQ.1) CALL CALTRAN1D (ISTL,3,3,DYE,DYE1)
-C     IF(ISTRAN(4).EQ.1) CALL CALTRAN1D (ISTL,4,4,SFL,SFL1)
+!     IF(ISTRAN(4).EQ.1) CALL CALTRAN1D (ISTL,4,4,SFL,SFL1)
       IF(ISTRAN(5).EQ.1)THEN
         DO NT=1,NTOX
          M=MSVTOX(NT)
@@ -674,7 +655,7 @@ C     IF(ISTRAN(4).EQ.1) CALL CALTRAN1D (ISTL,4,4,SFL,SFL1)
          ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(ISCRAY.EQ.0)THEN
         TSADV=TSADV+SECNDS(TTMP)
        ELSE
@@ -683,23 +664,23 @@ C
         TSADV=TSADV+T2TMP-T1TMP
         WTSADV=WTSADV+(WT2TMP-WT1TMP)*0.001
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SURFACE AND INTERNAL HEAT SOURCE-SINK CALCULATION
-C
+!
+!**********************************************************************C
+!
+! **  SURFACE AND INTERNAL HEAT SOURCE-SINK CALCULATION
+!
       IF(ISTRAN(2).GE.1) CALL CALHEAT(ISTL)
-C
-C**********************************************************************C
-C
-C **  FULL IMPLICIT DYE AND TOXIC CONTAMINANT DECAY CALCULATION
-C
+!
+!**********************************************************************C
+!
+! **  FULL IMPLICIT DYE AND TOXIC CONTAMINANT DECAY CALCULATION
+!
       IF(ISTRAN(3).GE.1)THEN
-C
+!
       CDYETMP=1./(1.+DELT*RKDYE)
-C     CDYETMP=(1.-DELTD2*RKDYE)/(1.+DELTD2*RKDYE)
+!     CDYETMP=(1.-DELTD2*RKDYE)/(1.+DELTD2*RKDYE)
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -709,56 +690,56 @@ C     CDYETMP=(1.-DELTD2*RKDYE)/(1.+DELTD2*RKDYE)
         ENDDO
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C
-C      IF(ISTRAN(5).GE.1)THEN
-C      DO NT=1,NTOX
-C      CDYETMP=1./(1.+DELT*RKTOXW(NT))
-C     CDYETMP=(1.-DELTD2*RKTOXW(NT))/(1.+DELTD2*RKTOXW(NT))
-C      DO ND=1,NDM
-C       LF=2+(ND-1)*LDM
-C       LL=LF+LDM-1
-C       DO K=1,KC
-C        DO L=LF,LL
-C         TOX(L,K,NT)=CDYETMP*TOX(L,K,NT)
-C        ENDDO
-C       ENDDO
-C      ENDDO
-C      ENDDO
-C      ENDIF
-C
-C**********************************************************************C
-C
-C **  BOTTOM AND INTERNAL SEDIMENT AND TOXIC CONTAMINAT
-C **  SOURCE-SINK CALCULATION
-C
-CJH5/13/77      IF(ISTRAN(6).GE.1) CALL CALSED(ISTL,1.0)
-C
-CJH5/13/77           IF(ISTRAN(7).GE.1)THEN
-CJH5/13/77           NTSWVD=ISWVSD
-CJH5/13/77            IF(ISTOPT(7).LE.1) CALL CALSED3(ISTL,1.0)
-CJH5/13/77            IF(ISTOPT(7).EQ.2.AND.N.GE.NTSWVD)  CALL CALSED3(ISTL,1.0)
-CJH5/13/77           ENDIF
-C
-CJH5/13/77           IF(ISTRAN(5).GE.1) CALL CALTOX(ISTL,1.0)
-C
-C
+!
+!
+!      IF(ISTRAN(5).GE.1)THEN
+!      DO NT=1,NTOX
+!      CDYETMP=1./(1.+DELT*RKTOXW(NT))
+!     CDYETMP=(1.-DELTD2*RKTOXW(NT))/(1.+DELTD2*RKTOXW(NT))
+!      DO ND=1,NDM
+!       LF=2+(ND-1)*LDM
+!       LL=LF+LDM-1
+!       DO K=1,KC
+!        DO L=LF,LL
+!         TOX(L,K,NT)=CDYETMP*TOX(L,K,NT)
+!        ENDDO
+!       ENDDO
+!      ENDDO
+!      ENDDO
+!      ENDIF
+!
+!**********************************************************************C
+!
+! **  BOTTOM AND INTERNAL SEDIMENT AND TOXIC CONTAMINAT
+! **  SOURCE-SINK CALCULATION
+!
+!JH5/13/77      IF(ISTRAN(6).GE.1) CALL CALSED(ISTL,1.0)
+!
+!JH5/13/77           IF(ISTRAN(7).GE.1)THEN
+!JH5/13/77           NTSWVD=ISWVSD
+!JH5/13/77            IF(ISTOPT(7).LE.1) CALL CALSED3(ISTL,1.0)
+!JH5/13/77            IF(ISTOPT(7).EQ.2.AND.N.GE.NTSWVD)  CALL CALSED3(ISTL,1.0)
+!JH5/13/77           ENDIF
+!
+!JH5/13/77           IF(ISTRAN(5).GE.1) CALL CALTOX(ISTL,1.0)
+!
+!
       IF(ISCRAY.EQ.0)THEN
         TTMP=SECNDS(0.0)
        ELSE
         T1TMP=SECOND( )
         CALL TIMEF(WT1TMP)
       ENDIF
-C
-C **  SEDIMENT AND TOXICS SETTLING,DEPOSITION,RESUSPENSION,ETC 
-C **  FOR TWO TIME LEVEL SIMULATION
-C 
+!
+! **  SEDIMENT AND TOXICS SETTLING,DEPOSITION,RESUSPENSION,ETC 
+! **  FOR TWO TIME LEVEL SIMULATION
+! 
       IF(IS2TIM.GE.1)THEN
-C
-CX       NTMP=MOD(N,2)
-CX       IF(NTMP.EQ.0)THEN
+!
+!X       NTMP=MOD(N,2)
+!X       IF(NTMP.EQ.0)THEN
          IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1) THEN
            ISEDDTC=ISEDDTC+1
            IF(ISEDDTC.EQ.1)THEN
@@ -767,27 +748,27 @@ CX       IF(NTMP.EQ.0)THEN
              DTSED=DTSED+DELT
            ENDIF
            IBALSTDT=0
-c           WRITE(8,888)N,ISEDDTC,ISEDDT,DTSED,DELT
+!           WRITE(8,888)N,ISEDDTC,ISEDDT,DTSED,DELT
            IF(ISEDDTC.EQ.ISEDDT)THEN
 	       IF(ISHOUSATONIC.EQ.0)THEN
                CALL SSEDTOX(ISTL,IS2TL,1.0)
              ELSE
                CALL SSEDTOXHOUS(ISTL,IS2TL,1.0)
              ENDIF
-c             WRITE(8,889)N,ISEDDTC,ISEDDT,DTSED
+!             WRITE(8,889)N,ISEDDTC,ISEDDT,DTSED
              IBALSTDT=1
              ISEDDTC=0
            ENDIF
          ENDIF
-CX       ENDIF
-C
+!X       ENDIF
+!
       ENDIF
-C
-C **  SEDIMENT AND TOXICS SETTLING,DEPOSITION,RESUSPENSION,ETC 
-C **  FOR THREE TIME LEVEL SIMULATION
-C 
+!
+! **  SEDIMENT AND TOXICS SETTLING,DEPOSITION,RESUSPENSION,ETC 
+! **  FOR THREE TIME LEVEL SIMULATION
+! 
       IF(IS2TIM.EQ.0)THEN
-C
+!
          IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1) THEN
            NTSTBCM1=NTSTBC-1
 	     IF(NCTBC.EQ.NTSTBCM1) THEN 
@@ -801,9 +782,9 @@ C
              IBALSTDT=1
            ENDIF
          ENDIF
-C
+!
       ENDIF
-C
+!
       IF(ISCRAY.EQ.0)THEN
         TSSED=TSSED+SECNDS(TTMP)
        ELSE
@@ -812,18 +793,18 @@ C
         TSSED=TSSED+T2TMP-T1TMP
         WTSSED=WTSSED+(WT2TMP-WT1TMP)*0.001
       ENDIF
-C
+!
   888 FORMAT('N,IC,I,DTS,DT = ',3I5,2F12.8)
   889 FORMAT('N,IC,I,DTS = ',3I5,F12.8,12X,'SSEDTOX CALLED')
-C
-C**********************************************************************C
-C
-C **  OPTIONAL MASS BALANCE CALCULATION
-C
-C----------------------------------------------------------------------C
-C
-C     IF(NCTBC.NE.NTSTBC.AND.ISBAL.GE.1)THEN
-C
+!
+!**********************************************************************C
+!
+! **  OPTIONAL MASS BALANCE CALCULATION
+!
+!----------------------------------------------------------------------C
+!
+!     IF(NCTBC.NE.NTSTBC.AND.ISBAL.GE.1)THEN
+!
       IF(IS2TIM.EQ.0) THEN
       IF(ISTL.NE.2.AND.ISBAL.GE.1)THEN
          CALL CALBAL2
@@ -838,45 +819,45 @@ C
          ENDIF
       ENDIF
       ENDIF
-C
-C **  CALLS TO TWO-TIME LEVEL BALANCES
-C
+!
+! **  CALLS TO TWO-TIME LEVEL BALANCES
+!
       IF(IS2TIM.GE.1) THEN
         IF(ISBAL.GE.1)THEN
           CALL BAL2T2
-C          CALL BAL2T3(IBALSTDT)
+!          CALL BAL2T3(IBALSTDT)
           CALL BAL2T3B(IBALSTDT)
         ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SEDIMENT BUDGET CALCULATION    (DLK 10/15)
-C
-C----------------------------------------------------------------------C
-C
-C      IF(NCTBC.NE.NTSTBC)THEN
+!
+!**********************************************************************C
+!
+! **  SEDIMENT BUDGET CALCULATION    (DLK 10/15)
+!
+!----------------------------------------------------------------------C
+!
+!      IF(NCTBC.NE.NTSTBC)THEN
       IF(IS2TIM.EQ.0) THEN
       IF(ISTL.NE.2.AND.ISSBAL.GE.1)THEN
          CALL BUDGET2
          CALL BUDGET3
-C         NTMP=MOD(N,2)
-C         IF(NTMP.EQ.0)THEN
-C           CALL BUDGEV2
-C           CALL BUDGEV3
-C          ELSE
-C           CALL BUDGOD2
-C           CALL BUDGOD3
-C         ENDIF
+!         NTMP=MOD(N,2)
+!         IF(NTMP.EQ.0)THEN
+!           CALL BUDGEV2
+!           CALL BUDGEV3
+!          ELSE
+!           CALL BUDGOD2
+!           CALL BUDGOD3
+!         ENDIF
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  VERTICAL DIFFUSION IMPLICIT HALF STEP CALCULATION
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  VERTICAL DIFFUSION IMPLICIT HALF STEP CALCULATION
+!
+!----------------------------------------------------------------------C
+!
       IF(KC.EQ.1) GOTO 1500
 C
       IF(ISCRAY.EQ.0)THEN
@@ -885,7 +866,7 @@ C
         T1TMP=SECOND( )
         CALL TIMEF(WT1TMP)
       ENDIF
-C
+!
       RCDZKK=-DELTD2*CDZKK(1)
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
@@ -938,7 +919,7 @@ C
         ENDDO
        ENDIF
       ENDDO
-C
+!
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -983,8 +964,7 @@ C
         ENDIF
         IF(ISTRAN(6).GE.1.AND.ISEDVW.EQ.99)THEN
            DO L=LF,LL
-            SEDFLOCDIA(L,K)=(SEDFLOCDIA(L,K)
-     &                      -CCLBTMP(L)*SEDFLOCDIA(L,K-1))*EEB(L)
+            SEDFLOCDIA(L,K)=(SEDFLOCDIA(L,K)-CCLBTMP(L)*SEDFLOCDIA(L,K-1))*EEB(L)
            ENDDO
         ENDIF
         IF(ISTRAN(7).GE.1)THEN
@@ -996,7 +976,7 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       K=KC
       RCDZKMK=-DELTD2*CDZKMK(K)
       DO ND=1,NDM
@@ -1038,8 +1018,7 @@ C
        ENDIF
        IF(ISTRAN(6).GE.1.AND.ISEDVW.EQ.99)THEN
           DO L=LF,LL
-           SEDFLOCDIA(L,K)=(SEDFLOCDIA(L,K)
-     &                     -CCLBTMP(L)*SEDFLOCDIA(L,K-1))*EEB(L)
+           SEDFLOCDIA(L,K)=(SEDFLOCDIA(L,K)-CCLBTMP(L)*SEDFLOCDIA(L,K-1))*EEB(L)
           ENDDO
        ENDIF
        IF(ISTRAN(7).GE.1)THEN
@@ -1050,7 +1029,7 @@ C
          ENDDO
        ENDIF
       ENDDO
-C
+!
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -1098,21 +1077,21 @@ C
         ENDIF
        ENDDO
       ENDDO
-C
+!
       DO K=1,KB
       DO L=1,LC
        SEDBT(L,K)=0.
        SNDBT(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
        DO L=1,LC
         SEDT(L,K)=0.
         SNDT(L,K)=0.
        ENDDO
       ENDDO
-C
+!
       DO K=1,KB
       DO NS=1,NSED
        DO L=1,LC
@@ -1120,7 +1099,7 @@ C
        ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSND
       DO K=1,KB
        DO L=1,LC
@@ -1128,7 +1107,7 @@ C
        ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSED
        DO K=1,KC
         DO L=1,LC
@@ -1136,7 +1115,7 @@ C
         ENDDO
        ENDDO
       ENDDO
-C
+!
       DO NS=1,NSND
        DO K=1,KC
         DO L=1,LC
@@ -1144,25 +1123,25 @@ C
         ENDDO
        ENDDO
       ENDDO
-C
-CJH5/13/97      DO NT=1,NTOX
-CJH5/13/97       DO K=1,KC
-CJH5/13/97        DO L=1,LC
-CJH5/13/97         TOXPFT(L,K,NT)=0.
-CJH5/13/97        ENDDO
-CJH5/13/97       ENDDO
-CJH5/13/97      ENDDO
-C
-CJH5/13/97      DO NT=1,NTOX
-CJH5/13/97       DO NS=1,NSED+NSND
-CJH5/13/97        DO K=1,KC
-CJH5/13/97         DO L=1,LC
-CJH5/13/97          TOXPFT(L,K,NT)=TOXPFT(L,K,NT)+TOXPF(L,K,NS,NT)
-CJH5/13/97         ENDDO
-CJH5/13/97        ENDDO
-CJH5/13/97       ENDDO
-CJH5/13/97      ENDDO
-C
+!
+!JH5/13/97      DO NT=1,NTOX
+!JH5/13/97       DO K=1,KC
+!JH5/13/97        DO L=1,LC
+!JH5/13/97         TOXPFT(L,K,NT)=0.
+!JH5/13/97        ENDDO
+!JH5/13/97       ENDDO
+!JH5/13/97      ENDDO
+!
+!JH5/13/97      DO NT=1,NTOX
+!JH5/13/97       DO NS=1,NSED+NSND
+!JH5/13/97        DO K=1,KC
+!JH5/13/97         DO L=1,LC
+!JH5/13/97          TOXPFT(L,K,NT)=TOXPFT(L,K,NT)+TOXPF(L,K,NS,NT)
+!JH5/13/97         ENDDO
+!JH5/13/97        ENDDO
+!JH5/13/97       ENDDO
+!JH5/13/97      ENDDO
+!
       IF(ISCRAY.EQ.0)THEN
         TVDIF=TVDIF+SECNDS(TTMP)
        ELSE
@@ -1171,17 +1150,17 @@ C
         TVDIF=TVDIF+T2TMP-T1TMP
         WTVDIF=WTVDIF+(WT2TMP-WT1TMP)*0.001
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  1500 CONTINUE
-C
-C**********************************************************************C
-C
-C **  DATA ASSIMILATION
-C
+!
+!**********************************************************************C
+!
+! **  DATA ASSIMILATION
+!
       IF(NLCDA.GT.0)THEN
-C
+!
         SALASM=0.0
         TEMASM=0.0
         DYEASM=0.0
@@ -1195,9 +1174,9 @@ C
         DO NS=1,NSND
          SNDASM(NS)=0.0
         ENDDO
-C
+!
         IWASM=0
-C
+!
         IF(N.EQ.1)THEN
           OPEN(1,FILE='CDATASM.DIA')
           CLOSE(1,STATUS='DELETE')
@@ -1211,17 +1190,17 @@ C
             ENDDO
           ENDDO
         ENDIF
-C
+!
         NDAYA=MOD(N,NTSPTC)
         NDAYA=1+(N-NDAYA)/NTSPTC
-C        WRITE(6,1212)N,NDAYA
-C
+!        WRITE(6,1212)N,NDAYA
+!
         IF(N.EQ.NTSPTC)THEN
           OPEN(1,FILE='CDATASM.DIA',POSITION='APPEND')
           IWASM=1
           WRITE(1,1212)N,NDAYA
         ENDIF
-C
+!
         IF(ISCDA(1).GT.0)THEN
         DO K=1,KC
         DO NLC=1,NLCDA
@@ -1233,23 +1212,21 @@ C
         IF(IDIRCDA(NLC).EQ.2.AND.VHDX2(L,K).LT.0.0)IDIRASM=0
         IF(IDIRCDA(NLC).EQ.-2.AND.VHDX2(L,K).GE.0.0)IDIRASM=0
         NSID=NCSERA(NLC,1)
-        IF(IWASM.EQ.1) WRITE(1,1111)N,NLC,ICDA(NLC),JCDA(NLC),NSID,
-     &                 CSERT(K,NSID,1),SAL(L,K)
+        IF(IWASM.EQ.1) WRITE(1,1111)N,NLC,ICDA(NLC),JCDA(NLC),NSID,CSERT(K,NSID,1),SAL(L,K)
         IF(ITPCDA(NLC).EQ.0)THEN
           IF(NSID.GT.0)THEN
           IF(CSERT(K,NSID,1).GT.0.0.AND.IDIRASM.EQ.1)THEN
-            FSALASM(NDAYA,NLC)=FSALASM(NDAYA,NLC)+TSCDA*DZC(K)*
-     &                  DXYP(L)*HP(L)*(CSERT(K,NSID,1)-SAL(L,K))
-c            FVOLASM(NDAYA,NLC)=FVOLASM(NDAYA,NLC)+DZC(K)*DXYP(L)*
-c     &                  HP(L)*(( SAL(L,K)/CSERT(K,NS,1) )-1.0)
-            FVOLASM(NDAYA,NLC)=FVOLASM(NDAYA,NLC)+TSCDA*DZC(K)*
-     &              DXYP(L)*HP(L)*(1.0-( CSERT(K,NSID,1)/SAL(L,K) ))
+            FSALASM(NDAYA,NLC)=FSALASM(NDAYA,NLC)+TSCDA*DZC(K)*DXYP(L)*HP(L)*(CSERT(K,NSID,1)     &
+                               -SAL(L,K))
+!            FVOLASM(NDAYA,NLC)=FVOLASM(NDAYA,NLC)+DZC(K)*DXYP(L)*
+!     &                  HP(L)*(( SAL(L,K)/CSERT(K,NS,1) )-1.0)
+            FVOLASM(NDAYA,NLC)=FVOLASM(NDAYA,NLC)+TSCDA*DZC(K)*DXYP(L)*HP(L)*(1.0-(CSERT(K,NSID,1) &
+                               /SAL(L,K) ))
             SAL(L,K)=TSCDA*CSERT(K,NSID,1)+(1.-TSCDA)*SAL(L,K)
           ENDIF
           ENDIF
         ENDIF
-        IF(IWASM.EQ.1) WRITE(1,1111)N,NLC,ICDA(NLC),JCDA(NLC),NSID,
-     &                 CSERT(K,NSID,1),SAL(L,K)
+        IF(IWASM.EQ.1) WRITE(1,1111)N,NLC,ICDA(NLC),JCDA(NLC),NSID,CSERT(K,NSID,1),SAL(L,K)
         IF(ITPCDA(NLC).EQ.1)THEN
           LDATA=LIJ(ICCDA(NLC),JCCDA(NLC))
           SAL(L,K)=TSCDA*SAL(LDATA,K)+(1.-TSCDA)*SAL(L,K)
@@ -1258,7 +1235,7 @@ c     &                  HP(L)*(( SAL(L,K)/CSERT(K,NS,1) )-1.0)
         ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISCDA(2).GT.0)THEN
         DO K=1,KC
         DO NLC=1,NLCDA
@@ -1270,19 +1247,17 @@ C
         IF(IDIRCDA(NLC).EQ.2.AND.VHDX2(L,K).LT.0.0)IDIRASM=0
         IF(IDIRCDA(NLC).EQ.-2.AND.VHDX2(L,K).GE.0.0)IDIRASM=0
         NSID=NCSERA(NLC,2)
-        IF(IWASM.EQ.1) WRITE(1,1112)N,NLC,ICDA(NLC),JCDA(NLC),NSID,
-     &                 CSERT(K,NSID,2),TEM(L,K)
+        IF(IWASM.EQ.1) WRITE(1,1112)N,NLC,ICDA(NLC),JCDA(NLC),NSID,CSERT(K,NSID,2),TEM(L,K)
         IF(ITPCDA(NLC).EQ.0)THEN
           IF(NSID.GT.0)THEN
           IF(CSERT(K,NSID,2).GT.0.0.AND.IDIRASM.EQ.1)THEN
-            FTEMASM(NDAYA,NLC)=FTEMASM(NDAYA,NLC)+TSCDA*DZC(K)*
-     &                  DXYP(L)*HP(L)*(CSERT(K,NSID,2)-TEM(L,K))
+            FTEMASM(NDAYA,NLC)=FTEMASM(NDAYA,NLC)+TSCDA*DZC(K)*DXYP(L)*HP(L)*(CSERT(K,NSID,2)      &
+                               -TEM(L,K))
             TEM(L,K)=TSCDA*CSERT(K,NSID,2)+(1.-TSCDA)*TEM(L,K)
           ENDIF
           ENDIF
         ENDIF
-        IF(IWASM.EQ.1) WRITE(1,1112)N,NLC,ICDA(NLC),JCDA(NLC),NSID,
-     &                 CSERT(K,NSID,2),TEM(L,K)
+        IF(IWASM.EQ.1) WRITE(1,1112)N,NLC,ICDA(NLC),JCDA(NLC),NSID,CSERT(K,NSID,2),TEM(L,K)
         IF(ITPCDA(NLC).EQ.1)THEN
           LDATA=LIJ(ICCDA(NLC),JCCDA(NLC))
           TEM(L,K)=TSCDA*TEM(LDATA,K)+(1.-TSCDA)*TEM(L,K)
@@ -1291,7 +1266,7 @@ C
         ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISCDA(3).GT.0)THEN
         DO K=1,KC
         DO NLC=1,NLCDA
@@ -1318,7 +1293,7 @@ C
         ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISCDA(4).GT.0)THEN
         DO K=1,KC
         DO NLC=1,NLCDA
@@ -1345,7 +1320,7 @@ C
         ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISCDA(5).GT.0)THEN
         DO NT=1,NTOX
         M=MSVTOX(NT)
@@ -1370,13 +1345,12 @@ C
           LDATA=LIJ(ICCDA(NLC),JCCDA(NLC))
           TOX(L,K,NT)=TSCDA*TOX(LDATA,K,NT)+(1.-TSCDA)*TOX(L,K,NT)
         ENDIF
-        TOXASM(NT)=TOXASM(NT)
-     &            +HP(L)*DXYP(L)*(TOX(L,K,NT)-CONASMOLD)*DZC(K)
+        TOXASM(NT)=TOXASM(NT)+HP(L)*DXYP(L)*(TOX(L,K,NT)-CONASMOLD)*DZC(K)
         ENDDO
         ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(ISCDA(6).GT.0)THEN
         DO NS=1,NSED
         M=MSVSED(NS)
@@ -1401,15 +1375,14 @@ C
           LDATA=LIJ(ICCDA(NLC),JCCDA(NLC))
           SED(L,K,NS)=TSCDA*SED(LDATA,K,NS)+(1.-TSCDA)*SED(L,K,NS)
         ENDIF
-        SEDASM(NS)=SEDASM(NS)
-     &            +HP(L)*DXYP(L)*(SED(L,K,NS)-CONASMOLD)*DZC(K)
+        SEDASM(NS)=SEDASM(NS)+HP(L)*DXYP(L)*(SED(L,K,NS)-CONASMOLD)*DZC(K)
         ENDDO
         ENDDO
         ENDDO
         ENDIF
-C
+!
  6222 FORMAT(' TC,SNEW,SASSM,SOLD='4F10.2)
-C
+!
         IF(ISCDA(7).GT.0)THEN
         DO NX=1,NSND
         M=MSVSND(NX)
@@ -1434,17 +1407,16 @@ C
           LDATA=LIJ(ICCDA(NLC),JCCDA(NLC))
           SND(L,K,NX)=TSCDA*SND(LDATA,K,NX)+(1.-TSCDA)*SND(L,K,NX)
         ENDIF
-        SNDASM(NX)=SNDASM(NX)
-     &            +HP(L)*DXYP(L)*(SND(L,K,NX)-CONASMOLD)*DZC(K)
+        SNDASM(NX)=SNDASM(NX)+HP(L)*DXYP(L)*(SND(L,K,NX)-CONASMOLD)*DZC(K)
         ENDDO
         ENDDO
         ENDDO
         ENDIF
-C
+!
         IF(IWASM.EQ.1)THEN
           CLOSE(1)
         ENDIF
-C
+!
       IF(IS2TIM.GE.1) THEN
         IF(ISBAL.GE.1)THEN
           SALOUT=SALOUT-SALASM
@@ -1460,39 +1432,39 @@ C
           ENDDO
         ENDIF
       ENDIF
-C
+!
       ENDIF
-C
+!
  1111 FORMAT(' SAL '5I5,2F10.3)      
  1112 FORMAT(' TEM '5I5,2F10.3)
  1212 FORMAT(' N,NDAYA = ',2I12)      
-C
-C**********************************************************************C
-C
-C **  SURFACE AND INTERNAL HEAT SOURCE-SINK CALCULATION
-C
-C     IF(ISTRAN(2).GE.1) CALL CALHEAT(ISTL)
-C
-C**********************************************************************C
-C
-C **  DYE DECAY CALCULATION
-C
-C     CDYETMP=1./(1.+DELTD2*RKDYE)
-C     CDYETMP=(1.-DELTD2*RKDYE)/(1.+DELTD2*RKDYE)
-C     DO K=1,KC
-C     DO L=2,LA
-C     DYE(L,K)=CDYETMP*DYE(L,K)
-C     ENDDO
-C     ENDDO
-C
-C**********************************************************************C
-C
-C **  BOTTOM AND INTERNAL SEDIMENT SOURCE-SINK CALCULATION
-C
-C     IF(ISTRAN(4).GE.1) CALL CALSED(ISTL,1.0)
-C     IF(ISTRAN(4).EQ.5) CALL CALSED3(ISTL,1.0,SED)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  SURFACE AND INTERNAL HEAT SOURCE-SINK CALCULATION
+!
+!     IF(ISTRAN(2).GE.1) CALL CALHEAT(ISTL)
+!
+!**********************************************************************C
+!
+! **  DYE DECAY CALCULATION
+!
+!     CDYETMP=1./(1.+DELTD2*RKDYE)
+!     CDYETMP=(1.-DELTD2*RKDYE)/(1.+DELTD2*RKDYE)
+!     DO K=1,KC
+!     DO L=2,LA
+!     DYE(L,K)=CDYETMP*DYE(L,K)
+!     ENDDO
+!     ENDDO
+!
+!**********************************************************************C
+!
+! **  BOTTOM AND INTERNAL SEDIMENT SOURCE-SINK CALCULATION
+!
+!     IF(ISTRAN(4).GE.1) CALL CALSED(ISTL,1.0)
+!     IF(ISTRAN(4).EQ.5) CALL CALSED3(ISTL,1.0,SED)
+!
+!**********************************************************************C
+!
       RETURN
       END

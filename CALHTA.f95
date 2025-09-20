@@ -1,37 +1,37 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE CALHTA
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE CALHTA PERFORMS A HARMONIC ANALYSIS FOR THE M2 TIDE
-C **  OVER TWO TIDAL CYCLES
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE CALHTA PERFORMS A HARMONIC ANALYSIS FOR THE M2 TIDE
+! **  OVER TWO TIDAL CYCLES
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       CHARACTER*80 TITLE1,TITLE2,TITLE3,TITLE4,TITLE11,TITLE12
-C
-C**********************************************************************C
-C
-C **  INITIALIZE ON FIRST ENTRY FOR CURRENT ANALYSIS INTERVAL
-C
+!
+!**********************************************************************C
+!
+! **  INITIALIZE ON FIRST ENTRY FOR CURRENT ANALYSIS INTERVAL
+!
       IF(NHAR.GT.1) GOTO 1000
-C
+!
       DO L=2,LA
       AMCP(L)=0.
       AMSP(L)=0.
@@ -40,7 +40,7 @@ C
       AMCVE(L)=0.
       AMSVE(L)=0.
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
       AMCU(L,K)=0.
@@ -49,18 +49,18 @@ C
       AMSV(L,K)=0.
       ENDDO
       ENDDO
-C
-C     DO K=1,KS
-C     DO L=2,LA
-C     AMCW(L,K)=0.
-C     AMSW(L,K)=0.
-C     AMCAB(L,K)=0.
-C     AMSAB(L,K)=0.
-C     AMC2AB(L,K)=0.
-C     AMS2AB(L,K)=0.
-C     ENDDO
-C     ENDDO
-C
+!
+!     DO K=1,KS
+!     DO L=2,LA
+!     AMCW(L,K)=0.
+!     AMSW(L,K)=0.
+!     AMCAB(L,K)=0.
+!     AMSAB(L,K)=0.
+!     AMC2AB(L,K)=0.
+!     AMS2AB(L,K)=0.
+!     ENDDO
+!     ENDDO
+!
       OPEN(1,FILE='SURFAMP.OUT',STATUS='UNKNOWN')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='SURFAMP.OUT',STATUS='UNKNOWN')
@@ -85,11 +85,11 @@ C
       CLOSE(12,STATUS='DELETE')
       OPEN(12,FILE='TIDELKB.OUT',STATUS='UNKNOWN')
       TITLE12='BOTTOM TIDAL ELLIPSES'
-C
+!
       LINES=LA-1
       LEVELS=1
       DBS=0.
-C
+!
       WRITE (1,99) TITLE1
       WRITE (1,101)LINES,LEVELS
       WRITE (1,250)DBS
@@ -107,11 +107,11 @@ C
       WRITE (12,101)LINES,LEVELS
       WRITE (12,250)DBS
       CLOSE(12)
-C
+!
       LEVELS=2
       DBS1=0.
       DBS2=99.
-C
+!
       WRITE (3,99) TITLE3
       WRITE (3,101)LINES,LEVELS
       WRITE (3,250)DBS1,DBS2
@@ -120,13 +120,13 @@ C
       WRITE (4,101)LINES,LEVELS
       WRITE (4,250)DBS1,DBS2
       CLOSE(4)
-C
-C**********************************************************************C
-C
-C **  ACCUMULATE HARMONIC ANALYSIS
-C
+!
+!**********************************************************************C
+!
+! **  ACCUMULATE HARMONIC ANALYSIS
+!
  1000 CONTINUE
-C
+!
       DO L=2,LA
       LN=LNC(L)
       AMCP(L)=P(L)*WC(NHAR)+AMCP(L)
@@ -140,7 +140,7 @@ C
       AMCVE(L)=VTMP*WC(NHAR)+AMCVE(L)
       AMSVE(L)=VTMP*WS(NHAR)+AMSVE(L)
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
       LN=LNC(L)
@@ -154,28 +154,28 @@ C
       AMSV(L,K)=VTMP*WS(NHAR)+AMSV(L,K)
       ENDDO
       ENDDO
-C
-C     DO K=1,KS
-C     DO L=2,LA
-C     AMCW(L,K)=W(L,K)*WC(NHAR)+AMCW(L,K)
-C     AMSW(L,K)=W(L,K)*WS(NHAR)+AMSW(L,K)
-C     AMCAB(L,K)=AB(L,K)*WC(NHAR)+AMCAB(L,K)
-C     AMSAB(L,K)=AB(L,K)*WS(NHAR)+AMSAB(L,K)
-C     AMC2AB(L,K)=AB(L,K)*WC2(NHAR)+AMC2AB(L,K)
-C     AMS2AB(L,K)=AB(L,K)*WS2(NHAR)+AMS2AB(L,K)
-C     ENDDO
-C     ENDDO
-C
-C**********************************************************************C
-C
-C **  CHECK FOR END OF ANALYSIS INTERVAL
-C
+!
+!     DO K=1,KS
+!     DO L=2,LA
+!     AMCW(L,K)=W(L,K)*WC(NHAR)+AMCW(L,K)
+!     AMSW(L,K)=W(L,K)*WS(NHAR)+AMSW(L,K)
+!     AMCAB(L,K)=AB(L,K)*WC(NHAR)+AMCAB(L,K)
+!     AMSAB(L,K)=AB(L,K)*WS(NHAR)+AMSAB(L,K)
+!     AMC2AB(L,K)=AB(L,K)*WC2(NHAR)+AMC2AB(L,K)
+!     AMS2AB(L,K)=AB(L,K)*WS2(NHAR)+AMS2AB(L,K)
+!     ENDDO
+!     ENDDO
+!
+!**********************************************************************C
+!
+! **  CHECK FOR END OF ANALYSIS INTERVAL
+!
       IF(NHAR.LT.NTSPTC2) GOTO 2000
-C
-C**********************************************************************C
-C
-C **  COMPLETE HARMONIC ANALYSIS
-C
+!
+!**********************************************************************C
+!
+! **  COMPLETE HARMONIC ANALYSIS
+!
       DO L=2,LA
       AMC=AS*AMCP(L)-ACS*AMSP(L)
       AMS=-ACS*AMCP(L)+AC*AMSP(L)
@@ -190,7 +190,7 @@ C
       AMCVE(L)=AMC
       AMSVE(L)=AMS
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
       AMC=AS*AMCU(L,K)-ACS*AMSU(L,K)
@@ -203,31 +203,31 @@ C
       AMSV(L,K)=AMS
       ENDDO
       ENDDO
-C
-C     DO K=1,KS
-C     DO L=2,LA
-C     AMC=AS*AMCW(L,K)-ACS*AMSW(L,K)
-C     AMS=-ACS*AMCW(L,K)+AC*AMSW(L,K)
-C     AMCW(L,K)=AMC
-C     AMSW(L,K)=AMS
-C     AMC=AS*AMCAB(L,K)-ACS*AMSAB(L,K)
-C     AMS=-ACS*AMCAB(L,K)+AC*AMSAB(L,K)
-C     AMCAB(L,K)=AMC
-C     AMSAB(L,K)=AMS
-C     AMC=AS2*AMC2AB(L,K)-ACS2*AMS2AB(L,K)
-C     AMS=-ACS2*AMC2AB(L,K)+AC2*AMS2AB(L,K)
-C     AMC2AB(L,K)=AMC
-C     AMS2AB(L,K)=AMS
-C     ENDDO
-C     ENDDO
-C
+!
+!     DO K=1,KS
+!     DO L=2,LA
+!     AMC=AS*AMCW(L,K)-ACS*AMSW(L,K)
+!     AMS=-ACS*AMCW(L,K)+AC*AMSW(L,K)
+!     AMCW(L,K)=AMC
+!     AMSW(L,K)=AMS
+!     AMC=AS*AMCAB(L,K)-ACS*AMSAB(L,K)
+!     AMS=-ACS*AMCAB(L,K)+AC*AMSAB(L,K)
+!     AMCAB(L,K)=AMC
+!     AMSAB(L,K)=AMS
+!     AMC=AS2*AMC2AB(L,K)-ACS2*AMS2AB(L,K)
+!     AMS=-ACS2*AMC2AB(L,K)+AC2*AMS2AB(L,K)
+!     AMC2AB(L,K)=AMC
+!     AMS2AB(L,K)=AMS
+!     ENDDO
+!     ENDDO
+!
       NHAR=0
-C
+!
       OPEN(1,FILE='SURFAMP.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       WRITE (1,100)N
       OPEN(2,FILE='SURFPHA.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       WRITE (2,100)N
-C
+!
       DO L=2,LA
       SSURFAMP=GI*SQRT(AMCP(L)*AMCP(L)+AMSP(L)*AMSP(L))
        IF(AMCP(L).EQ.0.0.AND.AMSP(L).EQ.0.0)THEN
@@ -241,10 +241,10 @@ C
       WRITE(1,200)IL(L),JL(L),DLON(L),DLAT(L),SSURFAMP,SSURFPSC
       WRITE(2,200)IL(L),JL(L),DLON(L),DLAT(L),SSURFPHS,SSURFPSC
       ENDDO
-C
+!
       CLOSE(1)
       CLOSE(2)
-C
+!
       OPEN(3,FILE='MAJAXIS.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       WRITE (3,100)N
       OPEN(4,FILE='MAJAPHA.OUT',POSITION='APPEND',STATUS='UNKNOWN')
@@ -253,7 +253,7 @@ C
       WRITE (11,100)N
       OPEN(12,FILE='TIDELKB.OUT',POSITION='APPEND',STATUS='UNKNOWN')
       WRITE (12,100)N
-C
+!
       DO L=2,LA
       TERM1=AMCU(L,KC)+AMSV(L,KC)
       TERM2=AMCV(L,KC)-AMSU(L,KC)
@@ -261,8 +261,8 @@ C
       TERM4=AMCV(L,KC)+AMSU(L,KC)
       RPLUS=0.5*SQRT(TERM1*TERM1+TERM2*TERM2)
       RMINS=0.5*SQRT(TERM3*TERM3+TERM4*TERM4)
-C     APLUS=ATAN2(TERM2,TERM1)
-C     AMINS=ATAN2(TERM4,TERM3)
+!     APLUS=ATAN2(TERM2,TERM1)
+!     AMINS=ATAN2(TERM4,TERM3)
       IF(TERM1.EQ.0.0.AND.TERM2.EQ.0.0)THEN
         APLUS=999999.
        ELSE
@@ -290,8 +290,8 @@ C     AMINS=ATAN2(TERM4,TERM3)
       TERM4=AMCV(L,1)+AMSU(L,1)
       RPLUS=0.5*SQRT(TERM1*TERM1+TERM2*TERM2)
       RMINS=0.5*SQRT(TERM3*TERM3+TERM4*TERM4)
-C     APLUS=ATAN2(TERM2,TERM1)
-C     AMINS=ATAN2(TERM4,TERM3)
+!     APLUS=ATAN2(TERM2,TERM1)
+!     AMINS=ATAN2(TERM4,TERM3)
       IF(TERM1.EQ.0.0.AND.TERM2.EQ.0.0)THEN
         APLUS=999999.
        ELSE
@@ -312,30 +312,29 @@ C     AMINS=ATAN2(TERM4,TERM3)
         RMAJVKB=-RMAJVKB
       ENDIF
       PHASEKB=(0.25/PI)*TIDALP*(AMINS-APLUS)/3600.
-      WRITE(3,200)IL(L),JL(L),DLON(L),DLAT(L),RMAJUKC,RMAJVKC,
-     &              RMAJUKB,RMAJVKB
+      WRITE(3,200)IL(L),JL(L),DLON(L),DLAT(L),RMAJUKC,RMAJVKC,RMAJUKB,RMAJVKB
       WRITE(4,200)IL(L),JL(L),DLON(L),DLAT(L),PHASEKC,PHASEKB
       WRITE(12,200)IL(L),JL(L),DLON(L),DLAT(L),AACCWX,RRMAJ,RRMIN
       ENDDO
-C
+!
       CLOSE(3)
       CLOSE(4)
       CLOSE(11)
       CLOSE(12)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  2000 CONTINUE
-C
+!
       NHAR=NHAR+1
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
    99 FORMAT(A80)
   100 FORMAT(I10)
   101 FORMAT(2I10)
   200 FORMAT(2I5,1X,6E13.5)
   250 FORMAT(12E12.4)
-C
+!
       RETURN
       END

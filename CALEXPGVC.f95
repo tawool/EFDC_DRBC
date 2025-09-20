@@ -902,236 +902,191 @@
       DO K=1,KS
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*GVCSCLU(L)*(HU(L)*GVCSCLU(L)*(SUB3D(L,K+1)*(B(L,K+1)-B(L-1,K+1))*DZC(K+1)
-     &                   +SUB3D(L,K  )*(B(L,K  )-B(L-1,K  ))*DZC(K  ) )
-     &           -(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*
-     &            (BELV(L)-BELV(L-1)+HP(L)-HP(L-1)-(1.-Z(K))
-     &           *(GVCSCLP(L)*HP(L)-GVCSCLP(L-1)*HP(L-1))) )
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*GVCSCLV(L)
-     &           *( HV(L)*GVCSCLV(L)*( 
-     &                    SVB3D(L,K+1)*(B(L,K+1)-B(LS,K+1))*DZC(K+1)
-     &                   +SVB3D(L,K  )*(B(L,K  )-B(LS,K  ))*DZC(K  ) )
-     &           -(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*
-     &            (BELV(L)-BELV(LS)+HP(L)-HP(LS)-(1.-Z(K))
-     &           *(GVCSCLP(L)*HP(L)-GVCSCLP(LS)*HP(LS))) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*GVCSCLU(L)*(HU(L)*GVCSCLU(L)*(SUB3D(L,K+1)    &
+                *(B(L,K+1)-B(L-1,K+1))*DZC(K+1)+SUB3D(L,K)*(B(L,K)-B(L-1,K))*DZC(K))-(B(L,K+1)    &
+                -B(L,K)+B(L-1,K+1)-B(L-1,K))*(BELV(L)-BELV(L-1)+HP(L)-HP(L-1)-(1.-Z(K))*          &
+                (GVCSCLP(L)*HP(L)-GVCSCLP(L-1)*HP(L-1))) )
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*GVCSCLV(L)*(HV(L)*GVCSCLV(L)*(SVB3D(L,K+1)    &
+                *(B(L,K+1)-B(LS,K+1))*DZC(K+1)+SVB3D(L,K)*(B(L,K)-B(LS,K))*DZC(K))-(B(L,K+1)      &
+                -B(L,K)+B(LS,K+1)-B(LS,K))*(BELV(L)-BELV(LS)+HP(L)-HP(LS)-(1.-Z(K))*(GVCSCLP(L)   &
+                *HP(L)-GVCSCLP(LS)*HP(LS))) )
       ENDDO
       ENDDO
-C
+!
 	ENDIF
-C
-C     JACOBIAN 2 LAYERS
-C
+!
+!     JACOBIAN 2 LAYERS
+!
       IF(IINTPG.EQ.1.AND.KC.LE.2)THEN
-C
+!
       DO K=1,KS
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*
-     &            ( HU(L)*( (B(L,K+1)-B(L-1,K+1))*DZC(K+1)
-     &                     +(B(L,K)-B(L-1,K))*DZC(K) )
-     &           -(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*
-     &            (BELV(L)-BELV(L-1)+Z(K)*(HP(L)-HP(L-1))) )
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*
-     &            ( HV(L)*( (B(L,K+1)-B(LS,K+1))*DZC(K+1)
-     &                     +(B(L,K)-B(LS,K))*DZC(K) )
-     &           -(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*
-     &            (BELV(L)-BELV(LS)+Z(K)*(HP(L)-HP(LS))) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*(HU(L)*((B(L,K+1)-B(L-1,K+1))*DZC(K+1)        &
+                +(B(L,K)-B(L-1,K))*DZC(K))-(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*(BELV(L)         &
+                -BELV(L-1)+Z(K)*(HP(L)-HP(L-1))))
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*(HV(L)*((B(L,K+1)-B(LS,K+1))*DZC(K+1)+(B(L,K) &
+                -B(LS,K))*DZC(K))-(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*(BELV(L)-BELV(LS)+Z(K)      &
+                *(HP(L)-HP(LS))) )
       ENDDO
       ENDDO
-C
+!
 	ENDIF
-C
-C     JACOBIAN 
-C
+!
+!     JACOBIAN 
+!
       IF(IINTPG.EQ.1.AND.KC.GT.2)THEN
-C
+!
       K=1
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*
-     &            ( HU(L)*( 0.25*(B(L,K+2)-B(L-1,K+2))*DZC(K+2)
-     &                     +0.75*(B(L,K+1)-B(L-1,K+1))*DZC(K+1)
-     &                     +     (B(L,K  )-B(L-1,K  ))*DZC(K  ) )
-     &           -0.25*(B(L,K+2)-B(L,K+1)+B(L-1,K+2)-B(L-1,K+1))*
-     &            (BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1)))
-     &           -0.50*(B(L,K+2)-B(L,K+1)+B(L-1,K+2)-B(L-1,K+1))*
-     &            (BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1))) )
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*
-     &            ( HV(L)*( 0.25*(B(L,K+2)-B(LS ,K+2))*DZC(K+2)
-     &                     +0.75*(B(L,K+1)-B(LS ,K+1))*DZC(K+1) 
-     &                     +     (B(L,K  )-B(LS ,K  ))*DZC(K  ) )
-     &           -0.25*(B(L,K+2)-B(L,K+1)+B(LS ,K+2)-B(LS ,K+1))*
-     &            (BELV(L)-BELV(LS)+Z(K+1)*(HP(L)-HP(LS)))
-     &           -0.50*(B(L,K+1)-B(L,K  )+B(LS ,K+1)-B(LS ,K  ))*
-     &            (BELV(L)-BELV(LS)+Z(K  )*(HP(L)-HP(LS))) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*(HU(L)*(0.25*(B(L,K+2)-B(L-1,K+2))*DZC(K+2)   &
+                +0.75*(B(L,K+1)-B(L-1,K+1))*DZC(K+1)+(B(L,K)-B(L-1,K))*DZC(K))-0.25*(B(L,K+2)     &
+                -B(L,K+1)+B(L-1,K+2)-B(L-1,K+1))*(BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1)))       &
+                -0.50*(B(L,K+2)-B(L,K+1)+B(L-1,K+2)-B(L-1,K+1))*(BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)  &
+                -HP(L-1))) )
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*(HV(L)*(0.25*(B(L,K+2)-B(LS,K+2))*DZC(K+2)    &
+                +0.75*(B(L,K+1)-B(LS,K+1))*DZC(K+1)+(B(L,K)-B(LS,K))*DZC(K))-0.25*(B(L,K+2)       &
+                -B(L,K+1)+B(LS,K+2)-B(LS,K+1))*(BELV(L)-BELV(LS)+Z(K+1)*(HP(L)-HP(LS)))-0.50      &
+                *(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*(BELV(L)-BELV(LS)+Z(K)*(HP(L)-HP(LS))))
       ENDDO
-C
+!
       K=KS
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*
-     &            ( HU(L)*(      (B(L,K+1)-B(L-1,K+1))*DZC(K+1)
-     &                     +0.75*(B(L,K  )-B(L-1,K  ))*DZC(K  )
-     &                     +0.25*(B(L,K-1)-B(L-1,K-1))*DZC(K-1) )
-     &            -0.50*(B(L,K+1)-B(L,K+1)+B(L-1,K+1)-B(L-1,K+1))*
-     &            (BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1)))
-     &            -0.25*(B(L,K  )-B(L,K-1)+B(L-1,K  )-B(L-1,K-1))*
-     &            (BELV(L)-BELV(L-1)+Z(K-1)*(HP(L)-HP(L-1))) ) 
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*
-     &            ( HV(L)*(      (B(L,K+1)-B(LS ,K+1))*DZC(K+1)
-     &                     +0.75*(B(L,K  )-B(LS ,K  ))*DZC(K  ) 
-     &                     +0.25*(B(L,K-1)-B(LS ,K-1))*DZC(K-1) )
-     &            -0.50*(B(L,K+1)-B(L,K  )+B(LS ,K+1)-B(LS ,K  ))*
-     &            (BELV(L)-BELV(LS )+Z(K  )*(HP(L)-HP(LS)))
-     &            -0.25*(B(L,K  )-B(L,K-1)+B(LS ,K  )-B(LS ,K-1))*
-     &            (BELV(L)-BELV(LS )+Z(K-1)*(HP(L)-HP(LS))) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*(HU(L)*((B(L,K+1)-B(L-1,K+1))*DZC(K+1)+0.75   &
+                *(B(L,K)-B(L-1,K))*DZC(K)+0.25*(B(L,K-1)-B(L-1,K-1))*DZC(K-1))-0.50*(B(L,K+1)     &
+                -B(L,K+1)+B(L-1,K+1)-B(L-1,K+1))*(BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1)))       &
+                -0.25*(B(L,K)-B(L,K-1)+B(L-1,K)-B(L-1,K-1))*(BELV(L)-BELV(L-1)+Z(K-1)*(HP(L)      &
+                -HP(L-1)))) 
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*(HV(L)*((B(L,K+1)-B(LS,K+1))*DZC(K+1)+0.75    &
+                *(B(L,K)-B(LS,K))*DZC(K)+0.25*(B(L,K-1)-B(LS,K-1))*DZC(K-1))-0.50*(B(L,K+1)-B(L,K)&
+                +B(LS ,K+1)-B(LS,K))*(BELV(L)-BELV(LS )+Z(K)*(HP(L)-HP(LS)))-0.25*(B(L,K)-B(L,K-1)&
+                +B(LS,K)-B(LS,K-1))*(BELV(L)-BELV(LS)+Z(K-1)*(HP(L)-HP(LS))))
       ENDDO
 C
       IF(KC.GT.3)THEN
       DO K=2,KS-1
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*
-     &            ( HU(L)*( 0.25*(B(L,K+2)-B(L-1,K+2))*DZC(K+2)
-     &                     +0.75*(B(L,K+1)-B(L-1,K+1))*DZC(K+1)
-     &                     +0.75*(B(L,K  )-B(L-1,K  ))*DZC(K  )
-     &                     +0.25*(B(L,K-1)-B(L-1,K-1))*DZC(K-1) )
-     &           -0.25*(B(L,K+2)-B(L,K+1)+B(L-1,K+2)-B(L-1,K+1))*
-     &            (BELV(L)-BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1)))
-     &           -0.50*(B(L,K+1)-B(L,K  )+B(L-1,K+1)-B(L-1,K  ))*
-     &            (BELV(L)-BELV(L-1)+Z(K  )*(HP(L)-HP(L-1)))
-     &           -0.25*(B(L,K  )-B(L,K-1)+B(L-1,K  )-B(L-1,K-1))*
-     &            (BELV(L)-BELV(L-1)+Z(K-1)*(HP(L)-HP(L-1))) )
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*
-     &            ( HV(L)*( 0.25*(B(L,K+2)-B(LS ,K+2))*DZC(K+2)
-     &                     +0.75*(B(L,K+1)-B(LS ,K+1))*DZC(K+1) 
-     &                     +0.75*(B(L,K  )-B(LS ,K  ))*DZC(K  ) 
-     &                     +0.25*(B(L,K-1)-B(LS ,K-1))*DZC(K-1) )
-     &           -0.25*(B(L,K+2)-B(L,K+1)+B(LS ,K+2)-B(LS ,K+1))*
-     &            (BELV(L)-BELV(LS)+Z(K+1)*(HP(L)-HP(LS)))
-     &           -0.50*(B(L,K+1)-B(L,K  )+B(LS ,K+1)-B(LS ,K  ))*
-     &            (BELV(L)-BELV(LS)+Z(K  )*(HP(L)-HP(LS)))
-     &           -0.25*(B(L,K  )-B(L,K-1)+B(LS ,K  )-B(LS ,K-1))*
-     &            (BELV(L)-BELV(LS )+Z(K-1)*(HP(L)-HP(LS ))) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*(HU(L)*(0.25*(B(L,K+2)-B(L-1,K+2))*DZC(K+2)   &
+                +0.75*(B(L,K+1)-B(L-1,K+1))*DZC(K+1)+0.75*(B(L,K)-B(L-1,K))*DZC(K)+0.25*(B(L,K-1) &
+                -B(L-1,K-1))*DZC(K-1))-0.25*(B(L,K+2)-B(L,K+1)+B(L-1,K+2)-B(L-1,K+1))*(BELV(L)    &
+                -BELV(L-1)+Z(K+1)*(HP(L)-HP(L-1)))-0.50*(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*    &
+                (BELV(L)-BELV(L-1)+Z(K)*(HP(L)-HP(L-1)))-0.25*(B(L,K)-B(L,K-1)+B(L-1,K)           &
+                -B(L-1,K-1))*(BELV(L)-BELV(L-1)+Z(K-1)*(HP(L)-HP(L-1))))
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*(HV(L)*(0.25*(B(L,K+2)-B(LS,K+2))*DZC(K+2)    &
+                +0.75*(B(L,K+1)-B(LS,K+1))*DZC(K+1)+0.75*(B(L,K)-B(LS,K))*DZC(K)+0.25*(B(L,K-1)   &
+                -B(LS,K-1))*DZC(K-1))-0.25*(B(L,K+2)-B(L,K+1)+B(LS,K+2)-B(LS,K+1))*(BELV(L)       &
+                -BELV(LS)+Z(K+1)*(HP(L)-HP(LS)))-0.50*(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*        &
+                (BELV(L)-BELV(LS)+Z(K)*(HP(L)-HP(LS)))-0.25*(B(L,K)-B(L,K-1)+B(LS,K)-B(LS,K-1))*  &
+                (BELV(L)-BELV(LS)+Z(K-1)*(HP(L)-HP(LS))))
       ENDDO
       ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C     FINITE VOLUME
-C
+!
+!     FINITE VOLUME
+!
       IF(IINTPG.EQ.2)THEN
-C
+!
       DO K=1,KS
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)
-     &         +RNEW*SBX(L)*GP*HU(L)*
-     &            ( ( HP(L)*B(L,K+1)-HP(L-1)*B(L-1,K+1) )*DZC(K+1)
-     &             +( HP(L)*B(L,K  )-HP(L-1)*B(L-1,K  ) )*DZC(K  ) )
-     &         -RNEW*SBX(L)*GP*(BELV(L)-BELV(L-1))*
-     &          ( HP(L)*B(L,K+1)-HP(L)*B(L,K)
-     &           +HP(L-1)*B(L-1,K+1)-HP(L-1)*B(L-1,K) )
-     &         -RNEW*SBX(L)*GP*(HP(L)-HP(L-1))*
-     &          ( HP(L)*ZZ(K+1)*B(L,K+1)-HP(L)*ZZ(K)*B(L,K)
-     &           +HP(L-1)*ZZ(K+1)*B(L-1,K+1)-HP(L-1)*ZZ(K)*B(L-1,K) )
-      FBBY(L,K)=ROLD*FBBY(L,K)
-     &         +RNEW*SBY(L)*GP*HV(L)*
-     &            ( ( HP(L)*B(L,K+1)-HP(LS )*B(LS ,K+1) )*DZC(K+1)
-     &             +( HP(L)*B(L,K  )-HP(LS )*B(LS ,K  ) )*DZC(K  ) )
-     &         -RNEW*SBY(L)*GP*(BELV(L)-BELV(LS ))*
-     &          ( HP(L)*B(L,K+1)-HP(L)*B(L,K)
-     &           +HP(LS)*B(LS ,K+1)-HP(LS)*B(LS ,K) )
-     &         -RNEW*SBY(L)*GP*(HP(L)-HP(LS ))*
-     &          ( HP(L)*ZZ(K+1)*B(L,K+1)-HP(L)*ZZ(K)*B(L,K) 
-     &           +HP(LS)*ZZ(K+1)*B(LS ,K+1)-HP(LS)*ZZ(K)*B(LS ,K) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*((HP(L)*B(L,K+1)-HP(L-1)*B(L-1,K+1))*DZC(K+1) &
+                +(HP(L)*B(L,K)-HP(L-1)*B(L-1,K))*DZC(K))-RNEW*SBX(L)*GP*(BELV(L)-BELV(L-1))*      &
+                (HP(L)*B(L,K+1)-HP(L)*B(L,K)+HP(L-1)*B(L-1,K+1)-HP(L-1)*B(L-1,K))-RNEW*SBX(L)*GP* &
+                (HP(L)-HP(L-1))*(HP(L)*ZZ(K+1)*B(L,K+1)-HP(L)*ZZ(K)*B(L,K)+HP(L-1)*ZZ(K+1)        &
+                *B(L-1,K+1)-HP(L-1)*ZZ(K)*B(L-1,K))
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*( ( HP(L)*B(L,K+1)-HP(LS )*B(LS ,K+1) )       &
+                *DZC(K+1)+(HP(L)*B(L,K)-HP(LS)*B(LS,K) )*DZC(K))-RNEW*SBY(L)*GP*(BELV(L)          &
+                -BELV(LS))*(HP(L)*B(L,K+1)-HP(L)*B(L,K)+HP(LS)*B(LS,K+1)-HP(LS)*B(LS,K))-RNEW     &
+                *SBY(L)*GP*(HP(L)-HP(LS))*(HP(L)*ZZ(K+1)*B(L,K+1)-HP(L)*ZZ(K)*B(L,K)+HP(LS)       &
+                *ZZ(K+1)*B(LS,K+1)-HP(LS)*ZZ(K)*B(LS,K))
       ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C     IF(N.EQ.1)THEN
-C       OPEN(1,FILE='BUOY.DIA',STATUS='UNKNOWN')
-C       DO L=2,LA
-C        DO K=1,KS
-C        TMP3D(K)=SUBO(L)*FBBX(L,K)
-C        ENDDO
-C       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
-C        DO K=1,KS
-C        TMP3D(K)=SVBO(L)*FBBY(L,K)
-C        ENDDO
-C       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
-C       ENDDO
-C       CLOSE(1)
-C     ENDIF
-C
-C 1111 FORMAT(2I5,2X,8E12.4)       
-C
-C
-C MODIFIED FOR GVC - JMH 08/04/04   COMMENTED OUT JMH 02/07/06
-C
-C      DO K=1,KS
-C       DO L=1,LA
-C       FBBX(L,K)=SUB3D(L,K)*FBBX(L,K)
-C       FBBY(L,K)=SVB3D(L,K)*FBBY(L,K)
-C       ENDDO
-C      ENDDO
-C
-C**********************************************************************C
-C
-C **  CALCULATE EXPLICIT INTERNAL U AND V SHEAR EQUATION TERMS
-C
-C----------------------------------------------------------------------C
-C
-C MODIFIED FOR GVC - JMH 08/04/04
-C
-C      CDZF(K)=DZC(K)*DZC(K+1)/(DZC(K)+DZC(K+1))
-C
+!
+!     IF(N.EQ.1)THEN
+!       OPEN(1,FILE='BUOY.DIA',STATUS='UNKNOWN')
+!       DO L=2,LA
+!        DO K=1,KS
+!        TMP3D(K)=SUBO(L)*FBBX(L,K)
+!        ENDDO
+!       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
+!        DO K=1,KS
+!        TMP3D(K)=SVBO(L)*FBBY(L,K)
+!        ENDDO
+!       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
+!       ENDDO
+!       CLOSE(1)
+!     ENDIF
+!
+! 1111 FORMAT(2I5,2X,8E12.4)       
+!
+!
+! MODIFIED FOR GVC - JMH 08/04/04   COMMENTED OUT JMH 02/07/06
+!
+!      DO K=1,KS
+!       DO L=1,LA
+!       FBBX(L,K)=SUB3D(L,K)*FBBX(L,K)
+!       FBBY(L,K)=SVB3D(L,K)*FBBY(L,K)
+!       ENDDO
+!      ENDDO
+!
+!**********************************************************************C
+!
+! **  CALCULATE EXPLICIT INTERNAL U AND V SHEAR EQUATION TERMS
+!
+!----------------------------------------------------------------------C
+!
+! MODIFIED FOR GVC - JMH 08/04/04
+!
+!      CDZF(K)=DZC(K)*DZC(K+1)/(DZC(K)+DZC(K+1))
+!
       DO K=1,KS
        RCDZF=CDZF(K)
        DO L=2,LA
-        DU(L,K)=RCDZF*( GVCSCLU(L)*H1U(L)*(U1(L,K+1)-U1(L,K))*DELTI
-     &           +DXYIU(L)*(FCAX(L,K+1)-FCAX(L,K)+FBBX(L,K)
-     &           +SNLT*(FX(L,K)-FX(L,K+1))) )
-        DV(L,K)=RCDZF*( GVCSCLV(L)*H1V(L)*(V1(L,K+1)-V1(L,K))*DELTI
-     &           +DXYIV(L)*(FCAY(L,K)-FCAY(L,K+1)+FBBY(L,K)
-     &           +SNLT*(FY(L,K)-FY(L,K+1))) )
+        DU(L,K)=RCDZF*(GVCSCLU(L)*H1U(L)*(U1(L,K+1)-U1(L,K))*DELTI+DXYIU(L)*(FCAX(L,K+1)          &
+        -FCAX(L,K)+FBBX(L,K)+SNLT*(FX(L,K)-FX(L,K+1))))
+        DV(L,K)=RCDZF*(GVCSCLV(L)*H1V(L)*(V1(L,K+1)-V1(L,K))*DELTI+DXYIV(L)*(FCAY(L,K)-FCAY(L,K+1)&
+        +FBBY(L,K)+SNLT*(FY(L,K)-FY(L,K+1))))
        ENDDO
       ENDDO
-C
+!
       DO K=1,KS
        DO L=2,LA
-C        DU(L,K)=SUB3D(L,K)*DU(L,K)
-C        DV(L,K)=SVB3D(L,K)*DV(L,K)
+!        DU(L,K)=SUB3D(L,K)*DU(L,K)
+!        DV(L,K)=SVB3D(L,K)*DV(L,K)
         DU(L,K)=SUB(L)*DU(L,K)
         DV(L,K)=SVB(L)*DV(L,K)
        ENDDO
       ENDDO
-C
+!
       IF(ISTL.EQ.2)THEN
-C
-C **  CHECK THE PURPOSE OF THIS LOOP WHICH ADD SURFACE STRESS TO 
-C **  TO KS INTERFACE DU AND DV EQUATIONS FOR TWO TIME LEVEL 
-C **  CORRECTION STEP - JMH 08/04/04
-C 
+!
+! **  CHECK THE PURPOSE OF THIS LOOP WHICH ADD SURFACE STRESS TO 
+! **  TO KS INTERFACE DU AND DV EQUATIONS FOR TWO TIME LEVEL 
+! **  CORRECTION STEP - JMH 08/04/04
+! 
       DO L=2,LA
         DU(L,KS)=DU(L,KS)-CDZU(KS)*TSX(L)
         DV(L,KS)=DV(L,KS)-CDZU(KS)*TSY(L)
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(N.LE.4)THEN
         CLOSE(1)
       ENDIF
-C
+!
  1112 FORMAT('N,NW,NS,I,J,K,NF,H,Q,QU,FUU,FVV=',/,2X,7I5,5E12.4)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END
-

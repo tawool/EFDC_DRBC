@@ -1,36 +1,36 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE DEPSMTH
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(WSMH.GT.0.) GOTO 1000
-C
-C **  SMOOTH BOTTOM ELEVATION
-C
+!
+! **  SMOOTH BOTTOM ELEVATION
+!
       WSMH=-WSMH
-C
+!
       DO NSM=1,NSHMAX
-C
+!
       DO L=2,LA
        IF(LCT(L).GT.0.AND.LCT(L).LT.9)THEN
         I=IL(L)
@@ -42,7 +42,7 @@ C
         HTMP(L)=(1.-WSMH)*BELV(L)+0.5*WSMH*(HTN+HTS)
        ENDIF
       ENDDO
-C
+!
       DO L=2,LA
        IF(LCT(L).GT.0.AND.LCT(L).LT.9)THEN
         I=IL(L)
@@ -54,13 +54,13 @@ C
         BELV(L)=(1.-WSMH)*HTMP(L)+0.5*WSMH*(HTE+HTW)
        ENDIF
       ENDDO
-C
+!
       ENDDO
-C
-C **  SMOOTH DEPTH
-C
+!
+! **  SMOOTH DEPTH
+!
       DO NSM=1,NSHMAX
-C
+!
       DO L=2,LA
        IF(LCT(L).GT.0.AND.LCT(L).LT.9)THEN
         I=IL(L)
@@ -72,7 +72,7 @@ C
         HTMP(L)=(1.-WSMH)*HMP(L)+0.5*WSMH*(HTN+HTS)
        ENDIF
       ENDDO
-C
+!
       DO L=2,LA
        IF(LCT(L).GT.0.AND.LCT(L).LT.9)THEN
         I=IL(L)
@@ -84,23 +84,23 @@ C
         HMP(L)=(1.-WSMH)*HTMP(L)+0.5*WSMH*(HTE+HTW)
        ENDIF
       ENDDO
-C
+!
       ENDDO
-C
+!
       GOTO 2000
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  1000 CONTINUE
-C
-C **  SMOOTH BOTTOM ELEVATION
-C
+!
+! **  SMOOTH BOTTOM ELEVATION
+!
       DO L=2,LA
        HTMP(L)=BELV(L)
       ENDDO
-C
+!
       DO NSM=1,NSHMAX
-C
+!
       DO L=2,LA
        IF(LCT(L).GT.0.AND.LCT(L).LT.9)THEN
         I=IL(L)
@@ -116,21 +116,21 @@ C
         BELV(L)=(1.-WSMH)*HTMP(L)+0.25*WSMH*(HTN+HTS+HTE+HTW)
        ENDIF
       ENDDO
-C
+!
       DO L=2,LA
        HTMP(L)=BELV(L)
       ENDDO
-C
+!
       ENDDO
-C
-C **  SMOOTH DEPTH
-C
+!
+! **  SMOOTH DEPTH
+!
       DO L=2,LA
        HTMP(L)=HMP(L)
       ENDDO
-C
+!
       DO NSM=1,NSHMAX
-C
+!
       DO L=2,LA
        IF(LCT(L).GT.0.AND.LCT(L).LT.9)THEN
         I=IL(L)
@@ -146,27 +146,26 @@ C
         HMP(L)=(1.-WSMH)*HTMP(L)+0.25*WSMH*(HTN+HTS+HTE+HTW)
        ENDIF
       ENDDO
-C
+!
       DO L=2,LA
        HTMP(L)=HMP(L)
       ENDDO
-C
+!
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
  2000 CONTINUE
-C
+!
        OPEN(1,FILE='NEWDXDY.INP',STATUS='UNKNOWN')
        CLOSE(1,STATUS='DELETE')
        OPEN(1,FILE='NEWDXDY.INP',STATUS='UNKNOWN')
        DO L=2,LA
-        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HMP(L),BELV(L),
-     &              ZBR(L)
+        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HMP(L),BELV(L),ZBR(L)
        ENDDO
        CLOSE(1)
-C
+!
   339 FORMAT(1X,I5,2X,I5,2X,E12.4,2X,E12.4,2X,E12.4,2X,E12.4,2X,E12.4)
-C
+!
       RETURN
       END

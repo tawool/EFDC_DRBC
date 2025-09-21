@@ -1,35 +1,33 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE EEXPOUT(JSEXPLORER)
-C
-C**********************************************************************C
-C
-C      SUBROUTINE BEDTOP
-C
-C **  SUBROUTINE BEDTOP OUTPUTS THE SEDIMENT AND TOXIC VARIABLES
-C **  FOR THE TOP LAYER OF THE SEDIMENT BED
-C
+!
+!**********************************************************************C
+!
+!      SUBROUTINE BEDTOP
+!
+! **  SUBROUTINE BEDTOP OUTPUTS THE SEDIMENT AND TOXIC VARIABLES
+! **  FOR THE TOP LAYER OF THE SEDIMENT BED
+!
       INCLUDE'EFDC.PAR'
       INCLUDE'EFDC.CMN'
-C
+!
       INTEGER*4 IVER
-C
-C**********************************************************************C
-C
-C **  INITIAL CALL
-C
+!
+!**********************************************************************C
+!
+! **  INITIAL CALL
+!
       IF(JSEXPLORER.EQ.1)THEN
         ! *** SETUP SEDIMENT AND WATER COLUMN FILES
 
         ! *** SEDIMENT TOP LAYER AND WATER COLUMN
-        OPEN(95,FILE='BED_TOP.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',
-     .       FORM='BINARY')
+        OPEN(95,FILE='BED_TOP.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',FORM='BINARY')
         CLOSE(95,STATUS='DELETE')
-        OPEN(95,FILE='BED_TOP.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',
-     .       FORM='BINARY')
+        OPEN(95,FILE='BED_TOP.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',FORM='BINARY')
         IVER=103
         WRITE(95)IVER
         WRITE(95)ISTRAN(1),ISTRAN(2),ISTRAN(3),ISTRAN(4)
@@ -44,24 +42,20 @@ C
         IF(ISBEXP.GE.1)THEN
           IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
 
-C**********************************************************************C
-C *** HQI BEGIN BLOCK
-C     HQI 08/25/03, SO and RM
-C     Change to output model computed critical shear stress based on
-C     option selected for IWRSP
-            OPEN(1001,FILE='TAU_CRIT_COH.OUT',FORM='BINARY',
-     &                ACCESS='SEQUENTIAL')
+!**********************************************************************C
+! *** HQI BEGIN BLOCK
+!     HQI 08/25/03, SO and RM
+!     Change to output model computed critical shear stress based on
+!     option selected for IWRSP
+            OPEN(1001,FILE='TAU_CRIT_COH.OUT',FORM='BINARY',ACCESS='SEQUENTIAL')
             CLOSE(1001,STATUS='DELETE')
-            OPEN(1001,FILE='TAU_CRIT_COH.OUT',FORM='BINARY',
-     &                ACCESS='SEQUENTIAL')
-C *** HQI END BLOCK
-C**********************************************************************C
+            OPEN(1001,FILE='TAU_CRIT_COH.OUT',FORM='BINARY',ACCESS='SEQUENTIAL')
+! *** HQI END BLOCK
+!**********************************************************************C
 
-            OPEN(96,FILE='BED_LAY.OUT',STATUS='UNKNOWN',
-     .           ACCESS='SEQUENTIAL',FORM='BINARY')
+            OPEN(96,FILE='BED_LAY.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',FORM='BINARY')
               CLOSE(96,STATUS='DELETE')
-            OPEN(96,FILE='BED_LAY.OUT',STATUS='UNKNOWN',
-     .      ACCESS='SEQUENTIAL',FORM='BINARY')
+            OPEN(96,FILE='BED_LAY.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',FORM='BINARY')
             WRITE(96)IVER
             WRITE(96)ISTRAN(1),ISTRAN(2),ISTRAN(3),ISTRAN(4)
             WRITE(96)ISTRAN(5),ISTRAN(6),ISTRAN(7)
@@ -73,11 +67,11 @@ C**********************************************************************C
           ENDIF
         ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SUBSEQUENT CALLS
-C
+!
+!**********************************************************************C
+!
+! **  SUBSEQUENT CALLS
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=DT*FLOAT(N)+TCON*TBEGIN
       ELSE
@@ -89,7 +83,7 @@ C
       TIME=TIME/86400.
 
       IF(ISSPH(8).GE.1)THEN
-C
+!
       WRITE(95)TIME,LA-1
 
       DO L=2,LA
@@ -134,9 +128,9 @@ C
 
       ENDDO
       ENDIF
-C
-C *** NOW OUTPUT ALL THE BEDINFO TO A SINGLE FILE
-C
+!
+! *** NOW OUTPUT ALL THE BEDINFO TO A SINGLE FILE
+!
       IF(ISBEXP.GE.1)THEN
         IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1.AND.KB.GT.1)THEN
 
@@ -148,7 +142,7 @@ C
           ENDDO
 
           DO L=2,LA
-C102            WRITE(96)KBT(L)
+!102            WRITE(96)KBT(L)
             DO K=1,KBT(L)
               WRITE(96)HBED(L,K),BDENBED(L,K),PORBED(L,K)
               IF(ISTRAN(6).GE.1)THEN
@@ -171,35 +165,35 @@ C102            WRITE(96)KBT(L)
           ENDDO
         ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-c moved to bedplth.for      IF(JSBPHA.EQ.1)THEN
-c moved to bedplth.for        OPEN(1,FILE='BEDARD.OUT')
-c moved to bedplth.for        CLOSE(1,STATUS='DELETE')
-c moved to bedplth.for        OPEN(1,FILE='BEDARD.OUT')
-c moved to bedplth.for        WRITE(1,131)
-c moved to bedplth.for        CLOSE(1)
-c moved to bedplth.for       JSBPHA=0
-c moved to bedplth.for      ENDIF
-C
-c moved to bedplth.for      IF(ISBARD.GE.1)THEN
-c moved to bedplth.for        OPEN(1,FILE='BEDARD.OUT',POSITION='APPEND')
-c moved to bedplth.for        WRITE(1,122)TIME
-c moved to bedplth.for        DO L=2,LA
-c moved to bedplth.for          WRITE(1,101)IL(L),JL(L),
-c moved to bedplth.for     &               (SEDFDTAP(L,NS),SEDFDTAN(L,NS),NS=1,NSED),
-c moved to bedplth.for     &               (SNDFDTAP(L,NS),SNDFDTAN(L,NS),NS=1,NSND)
-c moved to bedplth.for        ENDDO
-c moved to bedplth.for        CLOSE(1)
-c moved to bedplth.for      ENDIF
-C
-c moved to bedplth.for  101 FORMAT(2I5,18E13.5)
-c moved to bedplth.for  131 FORMAT(' IL JL (SEDFDTAP SEDFDTAN)(1,NSED)',
-c moved to bedplth.for     &             ' (SNDFDTAP SNDFDTAN)(1,NSND)')
-c moved to bedplth.for  122 FORMAT(F12.5,' TIME OF OUTPUT')
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! moved to bedplth.for      IF(JSBPHA.EQ.1)THEN
+! moved to bedplth.for        OPEN(1,FILE='BEDARD.OUT')
+! moved to bedplth.for        CLOSE(1,STATUS='DELETE')
+! moved to bedplth.for        OPEN(1,FILE='BEDARD.OUT')
+! moved to bedplth.for        WRITE(1,131)
+! moved to bedplth.for        CLOSE(1)
+! moved to bedplth.for       JSBPHA=0
+! moved to bedplth.for      ENDIF
+!
+! moved to bedplth.for      IF(ISBARD.GE.1)THEN
+! moved to bedplth.for        OPEN(1,FILE='BEDARD.OUT',POSITION='APPEND')
+! moved to bedplth.for        WRITE(1,122)TIME
+! moved to bedplth.for        DO L=2,LA
+! moved to bedplth.for          WRITE(1,101)IL(L),JL(L),
+! moved to bedplth.for     &               (SEDFDTAP(L,NS),SEDFDTAN(L,NS),NS=1,NSED),
+! moved to bedplth.for     &               (SNDFDTAP(L,NS),SNDFDTAN(L,NS),NS=1,NSND)
+! moved to bedplth.for        ENDDO
+! moved to bedplth.for        CLOSE(1)
+! moved to bedplth.for      ENDIF
+!
+! moved to bedplth.for  101 FORMAT(2I5,18E13.5)
+! moved to bedplth.for  131 FORMAT(' IL JL (SEDFDTAP SEDFDTAN)(1,NSED)',
+! moved to bedplth.for     &             ' (SNDFDTAP SNDFDTAN)(1,NSND)')
+! moved to bedplth.for  122 FORMAT(F12.5,' TIME OF OUTPUT')
+!
+!**********************************************************************C
+!
       RETURN
       END

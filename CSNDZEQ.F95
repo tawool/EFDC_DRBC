@@ -1,0 +1,73 @@
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
+      REAL FUNCTION CSNDZEQ(SNDDIA,GPDIASED,TAUR,TAUB,SNDDMX,DEP,IOPT,SSG,WS)
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+      INCLUDE 'EFDC.PAR'
+!
+! **  CALCULATES NEAR BED REFERENCE CONCENTRATION REFERENCE HEIGHT
+!
+!     SNDDIA = SAND GRAIN DIAMETER
+!     SSG    = SAND GRAIN SPECIFIC GRAVITY
+!     WS     = SAND GRAIN SETTLING VELOCITY
+!     TAUR   = WATER DENSITY NORMALIZED CRITICAL SHIELDS STRESS
+!     TAUB   = WATER DENSITY NORMALIZED BED STRESS
+!     SSG    = SAND SPECIFIC GRAVITY
+!     SIGPHI = PHI SIZE STANDARD DEVIATION
+!     SNDDMX = D90 SEDIMENT DIAMETER OR MAX SEDIMENT DIAMETER
+!
+! **  IOPT=1  BASED ON
+! **
+! **  GARCIA, M., AND G. PARKER, 1991: ENTRAINMENT OF BED SEDIMENT
+! **  INTO SUSPENSION, J. HYDRAULIC ENGINEERING, 117, 414-435.
+!
+      IF(IOPT.EQ.1)THEN
+        CSNDZEQ=0.05
+      ENDIF
+!
+! **  IOPT=2  BASED ON
+! **
+! **  SMITH, J. D., AND S. R. MCLEAN, 1977: SPATIALLY AVERAGED FLOW
+! **  OVER A WAVY SURFACE, J. GEOPHYSICAL RESEARCH, 82, 1735-1746.
+!
+      IF(IOPT.EQ.2)THEN
+        TMPVAL=26.3*SNDDMX*(TAUB-TAUR)/GPDIASED
+        TMPVAL=TMPVAL*SNDDIA/SNDDMX
+        TMPVAL=TMPVAL/DEP
+        CSNDZEQ=MAX(TMPVAL,0.01)
+      ENDIF
+!
+! **  IOPT=3  BASED ON
+! **
+! **  VAN RIJN, L. C., 1984: SEDIMENT TRANSPORT, PART II: SUSPENDED
+! **  LOAD TRANSPORT, J. HYDRAULIC ENGINEERING, 110, 1623-1641.
+!
+      IF(IOPT.EQ.3)THEN
+        REY=1.E4*SNDDIA*( (9.8*(SSG-1.))**0.333 )
+        IF(REY.LE.10.) TAURS=(4.*WS/REY)**2
+        IF(REY.GT.10.) TAURS=0.016*WS*WS
+        VAL=(TAUB/TAURS)-1.
+!        VAL=(TAUB/TAUR)-1.
+        VAL=MAX(VAL,0.)
+        VAL1=1.-EXP(-0.5*VAL)
+        VAL1=0.11*VAL1*(25.-VAL)
+        ZEQ1=0.5*VAL1*(DEP**0.7)*(SNDDMX**0.3)
+        ZEQ1=ZEQ1/DEP
+        CSNDZEQ=MAX(ZEQ1,0.01)
+      ENDIF
+!
+      RETURN
+      END

@@ -34,16 +34,14 @@
 !
       OPEN(1,FILE=NCOFN,STATUS='UNKNOWN',POSITION='APPEND')
 !
-      DATA WQVN/
-     * 'BC   ','BD   ','BG   ','RPOC ','LPOC ','DOC  ','RPOP ','LPOP ',
-     * 'DOP  ','PO4T ','RPON ','LPON ','DON  ','NH4  ','NO3  ','SU   ',
-     * 'SA   ','COD  ','O2   ','TAM  ','FCB  ','MALG '/
+      DATA WQVN/'BC   ','BD   ','BG   ','RPOC ','LPOC ','DOC  ','RPOP ','LPOP ',                  &
+                'DOP  ','PO4T ','RPON ','LPON ','DON  ','NH4  ','NO3  ','SU   ',                  &
+                'SA   ','COD  ','O2   ','TAM  ','FCB  ','MALG '/
 !
       DO L=2,LA
         DO K=1,KC
           DO NW=1,NWQV
-            IF(WQV(L,K,NW).LT.0.0) WRITE(1,90) WQVN(NW),
-     *        ITNWQ,L,IL(L),JL(L),K,WQV(L,K,NW)
+            IF(WQV(L,K,NW).LT.0.0) WRITE(1,90) WQVN(NW),ITNWQ,L,IL(L),JL(L),K,WQV(L,K,NW)
           ENDDO
         ENDDO
       ENDDO

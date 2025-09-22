@@ -105,10 +105,8 @@
       LS=LSC(L)
 !      HMU(L)=0.5*(HMP(L)+HMP(L-1))
 !      HMV(L)=0.5*(HMP(L)+HMP(LS))
-       HMU(L)=0.5*(DXP(L)*DYP(L)*HMP(L)+DXP(L-1)*DYP(L-1)*HMP(L-1))
-     &           /(DXU(L)*DYU(L))
-       HMV(L)=0.5*(DXP(L)*DYP(L)*HMP(L)+DXP(LS )*DYP(LS)*HMP(LS ))
-     &           /(DXV(L)*DYV(L))
+       HMU(L)=0.5*(DXP(L)*DYP(L)*HMP(L)+DXP(L-1)*DYP(L-1)*HMP(L-1))/(DXU(L)*DYU(L))
+       HMV(L)=0.5*(DXP(L)*DYP(L)*HMP(L)+DXP(LS )*DYP(LS)*HMP(LS ))/(DXV(L)*DYV(L))
       ENDDO
 !
 !----------------------------------------------------------------------C

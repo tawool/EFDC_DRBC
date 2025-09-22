@@ -235,14 +235,14 @@
       WRITE(1,1969)(CWQHDR(NW),NW=1,NWQVOUT)
       WRITE(99,1970)NWQVOUT,(CWQHDR(NW),NW=1,NWQVOUT)
 !
- 1969 FORMAT('C   I    J    K    TIME',7X,A3,8X,A3,8X,A3,
-     &  8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,
-     &  8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,
-     &  8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3)
- 1970 FORMAT(I5,7X,A3,8X,A3,8X,A3,
-     &  8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,
-     &  8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,
-     &  8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3)
+ 1969 FORMAT('C   I    J    K    TIME',7X,A3,8X,A3,8X,A3,                                         &
+       8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,                                                       &
+       8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,                                                       &
+       8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3)
+ 1970 FORMAT(I5,7X,A3,8X,A3,8X,A3,                                                                &
+        8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,                                                      &
+        8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,                                                      &
+        8X,A3,8X,A3,8X,A3,8X,A3,8X,A3,8X,A3)
 !
 ! 1969 FORMAT('C   I    J    K    TIME       CHL        TPC',
 !     &       '        DOC        TPP        DOP        P4T',

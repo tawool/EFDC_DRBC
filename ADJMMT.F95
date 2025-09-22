@@ -360,7 +360,8 @@
       RNTCMMT=FLOAT(NTSMMT)/FLOAT(NTSPTC)
       DO L=2,LA
       LN=LNC(L)
-      DIVERTE(L)=SPB(L)*( ((HLPF(L)-H1P(L))/(RNTCMMT*TIDALP))*DXYP(L)-QSUMELPF(L)+UHDY2E(L+1)-UHDY2E(L)+VHDX2E(LN)-VHDX2E(L) )
+      DIVERTE(L)=SPB(L)*( ((HLPF(L)-H1P(L))/(RNTCMMT*TIDALP))*DXYP(L)-QSUMELPF(L)+UHDY2E(L+1)     &
+                 -UHDY2E(L)+VHDX2E(LN)-VHDX2E(L) )
       ENDDO
 !
       DIVERTEG=0.
@@ -402,10 +403,8 @@
 !    &          -DZIC(K)*(VPY(L,K)-VPY(L,K-1))
 !     VVPT(L,K)=DZIC(K)*(VPX(L,K)-VPX(L,K-1))
 !    &          -(HMC(L+1)*VPZ(L+1,K)-HMC(L)*VPZ(L,K))/DXV(L)
-      UVPT(L,K)=(VPZ(LN,K)-VPZ(L,K))/DYU(L)
-     &          -DZIC(K)*(VPY(L,K)-VPY(L,K-1))
-      VVPT(L,K)=DZIC(K)*(VPX(L,K)-VPX(L,K-1))
-     &          -(VPZ(L+1,K)-VPZ(L,K))/DXV(L)
+      UVPT(L,K)=(VPZ(LN,K)-VPZ(L,K))/DYU(L)-DZIC(K)*(VPY(L,K)-VPY(L,K-1))
+      VVPT(L,K)=DZIC(K)*(VPX(L,K)-VPX(L,K-1))-(VPZ(L+1,K)-VPZ(L,K))/DXV(L)
       ENDDO
       ENDDO
 !

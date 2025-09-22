@@ -82,7 +82,8 @@
       IF(ISO.GT.0) GOTO 1081
       ENDDO
 !
-      READ(1,*,IOSTAT=ISO)NWVDAT,WVPRD,CVTWHA,ISWCBL,ISWRSR,ISWRSI,NWUPDT,NTSWV,WVDISV,WVDISH,WVLSH,WVLSX,ISWVSD,ISDZBR 
+      READ(1,*,IOSTAT=ISO)NWVDAT,WVPRD,CVTWHA,ISWCBL,ISWRSR,ISWRSI,NWUPDT,NTSWV,WVDISV,WVDISH,    &
+           WVLSH,WVLSX,ISWVSD,ISDZBR 
       IF(ISO.GT.0) GOTO 1082
       WVFRQ=2.*PI/WVPRD
       NWCUNT=NWUPDT-1
@@ -124,14 +125,10 @@
       DO L=2,LA
       LN=LNC(L)
       LE=L+1
-      UWVMAG(L)=0.5*SQRT(UWVRE(L ,KC)*UWVRE(L ,KC)
-     &                  +UWVIM(L ,KC)*UWVIM(L ,KC))
-     &         +0.5*SQRT(UWVRE(LE,KC)*UWVRE(LE,KC)
-     &                  +UWVIM(LE,KC)*UWVIM(LE,KC))+1.E-12
-      VWVMAG(L)=0.5*SQRT(VWVRE(L ,KC)*VWVRE(L ,KC)
-     &                  +VWVIM(L ,KC)*VWVIM(L ,KC))
-     &         +0.5*SQRT(VWVRE(LN,KC)*VWVRE(LN,KC)
-     &                  +VWVIM(LN,KC)*VWVIM(LN,KC))
+      UWVMAG(L)=0.5*SQRT(UWVRE(L ,KC)*UWVRE(L ,KC)+UWVIM(L ,KC)*UWVIM(L ,KC))+0.5                 &
+                *SQRT(UWVRE(LE,KC)*UWVRE(LE,KC)+UWVIM(LE,KC)*UWVIM(LE,KC))+1.E-12 
+      VWVMAG(L)=0.5*SQRT(VWVRE(L ,KC)*VWVRE(L ,KC)+VWVIM(L ,KC)*VWVIM(L ,KC))+0.5                 &
+                *SQRT(VWVRE(LN,KC)*VWVRE(LN,KC)+VWVIM(LN,KC)*VWVIM(LN,KC))
       WACCWE(L)=ATAN2(VWVMAG(L),UWVMAG(L))
       WVWHA(L)=SQRT(2.*WVENEP(L)/G)
       ENDDO
@@ -408,23 +405,17 @@ C
       LN=LNC(L)
       LNW=LNWC(L)
       LSE=LSEC(L)
-      FXWAVE(L,K)=DZITMP*SUB(L)*SPB(L)
-     &           *( RSWRSI*(DYU(L)*(WVPP(L,K)-WVPP(L-1,K))
-     &                     +DYU(L)*WVPU(L,K)*(HMPW(L)-HMPW(L-1)))
-     &           +RSWRSR*(DYP(L)*WVHUU(L,K)-DYP(L-1)*WVHUU(L-1,K)
-     &           +0.5*(DXV(LN )+DXV(LNW))*WVHUV(LN,K)
-     &           -0.5*(DXV(L  )+DXV(L-1))*WVHUV(L ,K)) )
+      FXWAVE(L,K)=DZITMP*SUB(L)*SPB(L)*(RSWRSI*(DYU(L)*(WVPP(L,K)-WVPP(L-1,K))+DYU(L)*WVPU(L,K)   &
+                  *(HMPW(L)-HMPW(L-1)))+RSWRSR*(DYP(L)*WVHUU(L,K)-DYP(L-1)*WVHUU(L-1,K)+0.5       &
+                  *(DXV(LN )+DXV(LNW))*WVHUV(LN,K)-0.5*(DXV(L  )+DXV(L-1))*WVHUV(L ,K)) )
 !    &           -0.5*(DXV(L  )+DXV(L-1))*WVHUV(L ,K)
 !    &           -0.5*(DYU(L  )-DYU(L-1))*WVHVV(L-1,K)
 !    &           -0.5*(DYU(L+1)-DYU(L  ))*WVHVV(L  ,K)
 !    &           +0.5*(DXV(LNW)-DXV(L-1))*WVHUVP(L-1,K)
 !    &           +0.5*(DXV(LN )-DXV(L  ))*WVHUVP(L  ,K) )
-      FYWAVE(L,K)=DZITMP*SVB(L)*SPB(L)
-     &           *( RSWRSI*(DXV(L)*(WVPP(L,K)-WVPP(LS ,K))
-     &                     +DXV(L)*WVPV(L,K)*(HMPW(L)-HMPW(LS )))
-     &           +RSWRSR*(DXP(L)*WVHVV(L,K)-DXP(LS )*WVHVV(LS ,K)
-     &           +0.5*(DYU(L+1)+DYU(LSE))*WVHUV(L+1,K)
-     &           -0.5*(DYU(L  )+DYU(LS ))*WVHUV(L  ,K)) )
+      FYWAVE(L,K)=DZITMP*SVB(L)*SPB(L)*( RSWRSI*(DXV(L)*(WVPP(L,K)-WVPP(LS ,K))+DXV(L)*WVPV(L,K)   &
+                  *(HMPW(L)-HMPW(LS )))+RSWRSR*(DXP(L)*WVHVV(L,K)-DXP(LS )*WVHVV(LS ,K)+0.5        &
+                  *(DYU(L+1)+DYU(LSE))*WVHUV(L+1,K)-0.5*(DYU(L  )+DYU(LS ))*WVHUV(L  ,K)) )
 !    &           -0.5*(DXV(L  )+DXV(LS ))*WVHUV(L  ,K)
 !    &           +0.5*(DYU(LSE)-DYU(LS ))*WVHUVP(LS ,K)
 !    &           +0.5*(DYU(L+1)-DYU(L  ))*WVHUVP(L  ,K)

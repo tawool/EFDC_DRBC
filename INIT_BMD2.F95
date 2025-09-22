@@ -95,9 +95,8 @@
        READ(94,*)IK
       
       if(ik.ne.IKMAX) then
-        write(*,*)'Error in file bmdoutput.ctl. Number of BMD2
-     $  output variables:',ik,' different than maximum for this
-     $  compilation: ', ikmax, 'Program will stop'
+        write(*,*)'Error in file bmdoutput.ctl. Number of BMD2 output variables:',ik,             &
+        ' different than maximum for this compilation: ', ikmax, 'Program will stop'
         WRITE(*,*)'The variables in this compilation are:'
         write(*,*)'           K   VARIABLE'
         DO K=1,IKMAX
@@ -237,15 +236,13 @@
       DO I=1,IKMAX
         IF(JJF(I).EQ.1) THEN
           IVAR=IVAR+1
-          CALL BMD2SETVARIABLEMETADATA(HANDLEBMD2,IVAR,
-     &     "NAME"//char(0),D(I),IERROR)
+          CALL BMD2SETVARIABLEMETADATA(HANDLEBMD2,IVAR,"NAME"//char(0),D(I),IERROR)
           IF(iError .gt. 0)Then
             Call bmd2getlasterror(80,errMessage)
             Write(*,*)errMessage
             Stop
           End IF
-          CALL BMD2SETVARIABLEMETADATA(HANDLEBMD2,IVAR,
-     &     "UNITS"//char(0),UNI(I),IERROR)
+          CALL BMD2SETVARIABLEMETADATA(HANDLEBMD2,IVAR,"UNITS"//char(0),UNI(I),IERROR)
           IF(iError .gt. 0)Then
             Call bmd2getlasterror(80,errMessage)
             Write(*,*)errMessage
@@ -265,8 +262,7 @@
 40          FORMAT('I=',I4.4,',J=',I4.4,',K=',I3.3)
                           
             SEGNAME=TRIM(SEGNAME)//CHAR(0)
-            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG, 
-     &       "NAME"//char(0),SEGNAME,IERROR)
+            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,"NAME"//char(0),SEGNAME,IERROR)
           IF(iError .gt. 0)Then
             Call bmd2getlasterror(80,errMessage)
             Write(*,*)errMessage
@@ -281,22 +277,19 @@
             WRITE(KTEXT,50)K
             KTEXT=TRIM(KTEXT)//CHAR(0)
 50          FORMAT(I9)
-            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,
-     &       "I"//CHAR(0),ITEXT,IERROR)
+            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,"I"//CHAR(0),ITEXT,IERROR)
           IF(iError .gt. 0)Then
             Call bmd2getlasterror(80,errMessage)
             Write(*,*)errMessage
             Stop
           End IF
-            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,
-     &       "J"//CHAR(0),JTEXT,IERROR)
+            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,"J"//CHAR(0),JTEXT,IERROR)
           IF(iError .gt. 0)Then
             Call bmd2getlasterror(80,errMessage)
             Write(*,*)errMessage
             Stop
           End IF
-            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,
-     &       "K"//CHAR(0),KTEXT,IERROR)
+            CALL BMD2SETSEGMENTMETADATA(HANDLEBMD2,ISEG,"K"//CHAR(0),KTEXT,IERROR)
           IF(iError .gt. 0)Then
             Call bmd2getlasterror(80,errMessage)
             Write(*,*)errMessage

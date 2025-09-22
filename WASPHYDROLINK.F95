@@ -14,12 +14,11 @@
       INCLUDE 'ALLset.INT'
 
       parameter(nf=44000,nsg=20000)
-C
+!
       DIMENSION LAUX(ICM,JCM,KCM)
       INTEGER LU,LD,IU,ID,JU,JD,NAUX
-      INTEGER istartyear,istartmonth,istartday,istarthour,istartminute
-     *,istartsecond,Ihl_debug,Ihl_mode,inumsegconsts,j,
-     *FLAGWASPBC(NQSERM,KCM)
+      INTEGER istartyear,istartmonth,istartday,istarthour,istartminute,istartsecond,              &
+              Ihl_debug,Ihl_mode,inumsegconsts,j,FLAGWASPBC(NQSERM,KCM)
       CHARACTER*6  sn(lcm),sn1
       CHARACTER*20 HYDFIL
       CHARACTER*23 segname
@@ -201,26 +200,26 @@ C
           write(6,6000) ierror, errstring
           stop
         end if
-        j=1461*(iyear+4800+int((imon-14)/12))/4+367*(imon-2-12*
-     &    int((imon-14)/12))/12-(3*((iyear+4800+int((imon-14)/12)
-     &    +100)/100))/4+iday-32075+tbegin+idays
-	istartyear=100*(int(4*(j+68569)/146097)-49)+int(4000*
-     &   (int(j+68569-(146097*int(4*int(j+68569)/146097)+3)/4)+1)/
-     &   1461001)+int(int(80*int(int(j+68569-(146097*int(4*int(j+68569)
-     &   /146097)+3)/4)-1461*int(4000*(int(j+68569-(146097*
-     &   int(4*int(j+68569)/146097)+3)/4)+1)/1461001)/4+31)/2447)/11)
-	istartmonth=int(80*int(int(j+68569-(146097*int(4*int(j+68569)/
-     &   146097)+3)/4)-1461*int(4000*(int(j+68569-(146097*int(4*int(j+
-     &   68569)/146097)+3)/4)+1)/1461001)/4+31)/2447)+2-12*int(int(80*
-     &   int(int(j+68569-(146097*int(4*int(j+68569)/146097)+3)/4)
-     &   -1461*int(4000*(int(j+68569-(146097*int(4*int(j+68569)
-     &   /146097)+3)/4)+1)/1461001)/4+31)/2447)/11)
-	istartday=int(int(j+68569-(146097*int(4*int(j+68569)/146097)
-     &   +3)/4)-1461*int(4000*(int(j+68569-(146097*int(4*int(j+68569)
-     &   /146097)+3)/4)+1)/1461001)/4+31)-2447*int(80*int(
-     &   int(j+68569-(146097*int(4*int(j+68569)/146097)+3)/4)
-     &   -1461*int(4000*(int(j+68569-(146097*int(4*int(j+68569)/
-     &   146097)+3)/4)+1)/1461001)/4+31)/2447)/80
+        j=1461*(iyear+4800+int((imon-14)/12))/4+367*(imon-2-12*                                   &
+         int((imon-14)/12))/12-(3*((iyear+4800+int((imon-14)/12)                                  &
+         +100)/100))/4+iday-32075+tbegin+idays
+	istartyear=100*(int(4*(j+68569)/146097)-49)+int(4000*                                           &
+        (int(j+68569-(146097*int(4*int(j+68569)/146097)+3)/4)+1)/                                 &
+        1461001)+int(int(80*int(int(j+68569-(146097*int(4*int(j+68569)                            &
+        /146097)+3)/4)-1461*int(4000*(int(j+68569-(146097*                                        &
+        int(4*int(j+68569)/146097)+3)/4)+1)/1461001)/4+31)/2447)/11)
+	istartmonth=int(80*int(int(j+68569-(146097*int(4*int(j+68569)/                                  &
+        146097)+3)/4)-1461*int(4000*(int(j+68569-(146097*int(4*int(j+                             &
+        68569)/146097)+3)/4)+1)/1461001)/4+31)/2447)+2-12*int(int(80*                             &
+        int(int(j+68569-(146097*int(4*int(j+68569)/146097)+3)/4)                                  &
+        -1461*int(4000*(int(j+68569-(146097*int(4*int(j+68569)                                    &
+        /146097)+3)/4)+1)/1461001)/4+31)/2447)/11)
+	istartday=int(int(j+68569-(146097*int(4*int(j+68569)/146097)                                    &
+        +3)/4)-1461*int(4000*(int(j+68569-(146097*int(4*int(j+68569)                              &
+        /146097)+3)/4)+1)/1461001)/4+31)-2447*int(80*int(                                         &
+        int(j+68569-(146097*int(4*int(j+68569)/146097)+3)/4)                                      &
+        -1461*int(4000*(int(j+68569-(146097*int(4*int(j+68569)/                                   &
+        146097)+3)/4)+1)/1461001)/4+31)/2447)/80
 	istarthour=0
 	istartminute=0
 	istartsecond=0
@@ -244,7 +243,8 @@ C
                 ENDIF
               ENDIF
 
-        call hlsetseedmoment(Ihl_handle,istartmonth,istartday,istartyear,istarthour,istartminute,istartsecond,ierror)
+        call hlsetseedmoment(Ihl_handle,istartmonth,istartday,istartyear,istarthour,              &
+                             istartminute,istartsecond,ierror)
         if(ierror .gt. 0)then
           call hlgetlasterror(errstring)
           write(6,6000) ierror, errstring
@@ -262,7 +262,8 @@ C
         write(6,500)NJUN,NSG
         STOP
         END IF
-500     FORMAT('THE NUMBER OF WASP SEGMENTS IN YOUR APPLICATION',I6,1x,'IS GREATER THAN THE ARRAY DIMENSION:',I7)
+500     FORMAT('THE NUMBER OF WASP SEGMENTS IN YOUR APPLICATION',I6,1x,                           &
+               'IS GREATER THAN THE ARRAY DIMENSION:',I7)
         call hlsetnumsegments(Ihl_handle,njun,ierror)
         if(ierror .gt. 0)then
           call hlgetlasterror(errstring)
@@ -400,7 +401,8 @@ C
         write(6,600)NCHN,NF
         STOP
         END IF
-600     FORMAT('THE NUMBER OF WASP FLOWS IN YOUR APPLICATION',I6,1X,'IS GREATER THAN THE ARRAY DIMENSION:',I7)
+600     FORMAT('THE NUMBER OF WASP FLOWS IN YOUR APPLICATION',I6,1X,                              &
+               'IS GREATER THAN THE ARRAY DIMENSION:',I7)
         call hlsetnumflowpaths(Ihl_handle, NCHN, ierror)
         if(ierror .gt. 0)then
           call hlgetlasterror(errstring)

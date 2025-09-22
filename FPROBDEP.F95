@@ -1,35 +1,34 @@
-
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       FUNCTION FPROBDEP(TAUD,TAUB)
-C
-C**********************************************************************C
-C
-C **  FPROBDEP CALCULATES PROBABILITY OF DEPOSITION USING PROBABILITY
-C **  INTEGRAL
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C      IMPLICIT REAL*8 (A-H,O-Z)
-C
+!
+!**********************************************************************C
+!
+! **  FPROBDEP CALCULATES PROBABILITY OF DEPOSITION USING PROBABILITY
+! **  INTEGRAL
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+!      IMPLICIT REAL*8 (A-H,O-Z)
+!
       INCLUDE 'EFDC.PAR'
-C
-C **  EVALUATION ASSUMES TAUB.GT.TAUD
-C
+!
+! **  EVALUATION ASSUMES TAUB.GT.TAUD
+!
       YVAL=2.04*LOG(0.25*((TAUB/TAUD)-1.)*EXP(1.27*TAUD))
 	INEG=0
 	IF(YVAL.LT.0.0)THEN
@@ -43,11 +42,11 @@ C
       TMPVAL=1.0-FUNY*POLYX
       IF(INEG.EQ.1)TMPVAL=1.0-TMPVAL
 	FPROBDEP=1.0-TMPVAL
-C
-C **  NOTES
-C     0.3989=1/SQRT(2*PI)
-C
-C**********************************************************************C
-C
+!
+! **  NOTES
+!     0.3989=1/SQRT(2*PI)
+!
+!**********************************************************************C
+!
       RETURN
       END

@@ -1,37 +1,37 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE INITBIN3
-C
-C**********************************************************************C
-C
-C M.R. MORTON    29 APR 1999
-C
-C **  LAST MODIFIED BY JOHN HAMRICK AND MIKE MORTON ON 8 AUGUST 2001
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C
-C**********************************************************************C
-C
-C INITIALIZES BINARY FILE FOR EFDC OUTPUT.  PLACES CONTROL
-C PARAMETERS FOR POST-PROCESSOR IN HEADER SECTION OF BINARY
-C FILE WQDOCOMP.BIN FOR D.O. COMPONENT ANALYSIS.
-C
-C**********************************************************************C
-C
-C
+!
+!**********************************************************************C
+!
+! M.R. MORTON    29 APR 1999
+!
+! **  LAST MODIFIED BY JOHN HAMRICK AND MIKE MORTON ON 8 AUGUST 2001
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!
+!**********************************************************************C
+!
+! INITIALIZES BINARY FILE FOR EFDC OUTPUT.  PLACES CONTROL
+! PARAMETERS FOR POST-PROCESSOR IN HEADER SECTION OF BINARY
+! FILE WQDOCOMP.BIN FOR D.O. COMPONENT ANALYSIS.
+!
+!**********************************************************************C
+!
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
 
@@ -43,23 +43,23 @@ C
       CHARACTER*20 WQNAME(MXPARM)
       CHARACTER*10 WQUNITS(MXPARM)
       CHARACTER*3  WQCODE(MXPARM)
-C
-C**********************************************************************C
-C
-C THE FOLLOWING PARAMETERS ARE SPECIFIED IN EFDC.INP AND WQ3DWC.INP:
-C KC       = NUMBER OF VERTICAL LAYERS
-C IWQTSDT  = NUMBER OF TIME STEPS PER DATA DUMP
-C DT       = TIME STEP OF EFDC MODEL IN SECONDS
-C LA       = NUMBER OF ACTIVE CELLS + 1 IN MODEL
-C TBEGAN   = BEGINNING TIME OF RUN IN DAYS
-C
-C THE PARAMETER NPARM MUST BE CHANGED IF THE OUTPUT DATA
-C IS CHANGED IN SUBROUTINE WWQTSBIN:
-C NPARM   = NUMBER OF PARAMETERS WRITTEN TO BINARY FILE
-C
-C NREC3   = NUMBER OF RECORDS WRITTEN TO BINARY FILE (ONE RECORD
-C           IS A COMPLETE DATA DUMP FOR TIME INTERVAL IWQDIUDT)
-C
+!
+!**********************************************************************C
+!
+! THE FOLLOWING PARAMETERS ARE SPECIFIED IN EFDC.INP AND WQ3DWC.INP:
+! KC       = NUMBER OF VERTICAL LAYERS
+! IWQTSDT  = NUMBER OF TIME STEPS PER DATA DUMP
+! DT       = TIME STEP OF EFDC MODEL IN SECONDS
+! LA       = NUMBER OF ACTIVE CELLS + 1 IN MODEL
+! TBEGAN   = BEGINNING TIME OF RUN IN DAYS
+!
+! THE PARAMETER NPARM MUST BE CHANGED IF THE OUTPUT DATA
+! IS CHANGED IN SUBROUTINE WWQTSBIN:
+! NPARM   = NUMBER OF PARAMETERS WRITTEN TO BINARY FILE
+!
+! NREC3   = NUMBER OF RECORDS WRITTEN TO BINARY FILE (ONE RECORD
+!           IS A COMPLETE DATA DUMP FOR TIME INTERVAL IWQDIUDT)
+!
       NPARM = 33
       NCELLS = LA-1
       NREC3 = 0
@@ -68,16 +68,16 @@ C
       IF(NPARM .GE. 8)THEN
         MAXRECL3 = NPARM*4
       ENDIF
-C
-C THE FOLLOWING WATER QUALITY NAMES, UNITS, AND 3-CHARACTER CODES
-C SHOULD BE MODIFIED TO MATCH THE PARAMETERS WRITTEN TO THE BINARY
-C FILE IN SUBROUTINE WWQTSBIN.  THE CHARACTER STRINGS MUST BE
-C EXACTLY THE LENGTH SPECIFIED BELOW IN ORDER FOR THE POST-PROCESSOR
-C TO WORK CORRECTLY.
-C
-C BE SURE WQNAME STRINGS ARE EXACTLY 20-CHARACTERS LONG:
-C------------------'         1         2'
-C------------------'12345678901234567890'
+!
+! THE FOLLOWING WATER QUALITY NAMES, UNITS, AND 3-CHARACTER CODES
+! SHOULD BE MODIFIED TO MATCH THE PARAMETERS WRITTEN TO THE BINARY
+! FILE IN SUBROUTINE WWQTSBIN.  THE CHARACTER STRINGS MUST BE
+! EXACTLY THE LENGTH SPECIFIED BELOW IN ORDER FOR THE POST-PROCESSOR
+! TO WORK CORRECTLY.
+!
+! BE SURE WQNAME STRINGS ARE EXACTLY 20-CHARACTERS LONG:
+!------------------'         1         2'
+!------------------'12345678901234567890'
       WQNAME( 1) = 'NITROGEN_LIMIT_CYA  '
       WQNAME( 2) = 'NITROGEN_LIMIT_DIA  '
       WQNAME( 3) = 'NITROGEN_LIMIT_GRN  '
@@ -111,10 +111,10 @@ C------------------'12345678901234567890'
       WQNAME(31) = 'DO_TRANSPORT        '
       WQNAME(32) = 'DO_ALL_COMPONENTS   '
       WQNAME(33) = 'LAYER_THICKNESS     '
-C
-C BE SURE WQUNITS STRINGS ARE EXACTLY 10-CHARACTERS LONG:
-C-------------------'         1'
-C-------------------'1234567890'
+!
+! BE SURE WQUNITS STRINGS ARE EXACTLY 10-CHARACTERS LONG:
+!-------------------'         1'
+!-------------------'1234567890'
       WQUNITS( 1) = 'UNITLESS  '
       WQUNITS( 2) = 'UNITLESS  '
       WQUNITS( 3) = 'UNITLESS  '
@@ -148,10 +148,10 @@ C-------------------'1234567890'
       WQUNITS(31) = 'MG/L/DAY  '
       WQUNITS(32) = 'MG/L/DAY  '
       WQUNITS(33) = 'METERS    '
-C
-C BE SURE WQCODE STRINGS ARE EXACTLY 3-CHARACTERS LONG:
-C
-C------------------'123'
+!
+! BE SURE WQCODE STRINGS ARE EXACTLY 3-CHARACTERS LONG:
+!
+!------------------'123'
       WQCODE( 1) = 'NLC'
       WQCODE( 2) = 'NLD'
       WQCODE( 3) = 'NLG'
@@ -185,11 +185,11 @@ C------------------'123'
       WQCODE(31) = 'DTR'
       WQCODE(32) = 'DAL'
       WQCODE(33) = 'DZZ'
-C
-C---------------------------------------------------------
-C
-C IF WQDOCOMP.BIN ALREADY EXISTS, OPEN FOR APPENDING HERE.
-C
+!
+!---------------------------------------------------------
+!
+! IF WQDOCOMP.BIN ALREADY EXISTS, OPEN FOR APPENDING HERE.
+!
       IF(ISCOMP .EQ. 2)THEN
         IO = 1
 5       IO = IO+1
@@ -201,22 +201,21 @@ C
         IF(IS2OPEN) GOTO 5
         INQUIRE(FILE='WQDOCOMP.BIN', EXIST=FEXIST)
         IF(FEXIST)THEN
-          OPEN(UNIT=IO, FILE='WQDOCOMP.BIN', ACCESS='DIRECT',
-     +     FORM='UNFORMATTED', STATUS='UNKNOWN', RECL=MAXRECL3)
+          OPEN(UNIT=IO, FILE='WQDOCOMP.BIN', ACCESS='DIRECT',FORM='UNFORMATTED', STATUS='UNKNOWN',&
+               RECL=MAXRECL3)
           WRITE(0,*) 'OLD FILE WQDOCOMP.BIN FOUND...OPENING FOR APPEND'
-          READ(IO, REC=1) NREC3, TBEGAN, TEND, DT, IWQTSDT, NPARM,
-     +      NCELLS, KC
+          READ(IO, REC=1) NREC3, TBEGAN, TEND, DT, IWQTSDT, NPARM,NCELLS, KC
           NR5 = 1 + NPARM*3 + NCELLS*4 + (NCELLS*KC+1)*NREC3 + 1
           CLOSE(IO)
         ELSE
           ISCOMP=1
         ENDIF
       ENDIF
-C
-C-------------------------------------------------------------------
-C
-C IF WQDOCOMP.BIN ALREADY EXISTS, DELETE IT HERE.
-C
+!
+!-------------------------------------------------------------------
+!
+! IF WQDOCOMP.BIN ALREADY EXISTS, DELETE IT HERE.
+!
       IF(ISCOMP .EQ. 1)THEN
         TBEGAN = TBEGIN
         IO = 1
@@ -234,12 +233,12 @@ C
           WRITE(0,*) 'OLD FILE WQDOCOMP.BIN DELETED...'
         ENDIF
 
-        OPEN(UNIT=IO, FILE='WQDOCOMP.BIN', ACCESS='DIRECT',
-     +     FORM='UNFORMATTED', STATUS='UNKNOWN', RECL=MAXRECL3)
-C--------------------------------------------------------------------
-C WRITE CONTROL PARAMETERS FOR POST-PROCESSOR TO HEADER
-C SECTION OF THE WQDOCOMP.BIN BINARY FILE:
-C
+        OPEN(UNIT=IO, FILE='WQDOCOMP.BIN', ACCESS='DIRECT',FORM='UNFORMATTED', STATUS='UNKNOWN',  &
+             RECL=MAXRECL3)
+!--------------------------------------------------------------------
+! WRITE CONTROL PARAMETERS FOR POST-PROCESSOR TO HEADER
+! SECTION OF THE WQDOCOMP.BIN BINARY FILE:
+!
         WRITE(IO) NREC3, TBEGAN, TEND, DT, IWQTSDT, NPARM, NCELLS, KC
         DO I=1,NPARM
           WRITE(IO) WQNAME(I)
@@ -250,19 +249,19 @@ C
         DO I=1,NPARM
           WRITE(IO) WQCODE(I)
         ENDDO
-C
-C WRITE CELL I,J MAPPING REFERENCE TO HEADER SECTION OF BINARY FILE:
-C
+!
+! WRITE CELL I,J MAPPING REFERENCE TO HEADER SECTION OF BINARY FILE:
+!
         DO L=2,LA
           WRITE(IO) IL(L)
         ENDDO
         DO L=2,LA
           WRITE(IO) JL(L)
         ENDDO
-C
-C **  READ IN XLON AND YLAT OR UTME AND UTMN OF CELL CENTERS OF
-C **  CURVILINEAR PORTION OF THE GRID FROM FILE LXLY.INP:
-C
+!
+! **  READ IN XLON AND YLAT OR UTME AND UTMN OF CELL CENTERS OF
+! **  CURVILINEAR PORTION OF THE GRID FROM FILE LXLY.INP:
+!
         IO1 = 0
 20      IO1 = IO1+1
         IF(IO1 .GT. 99)THEN
@@ -272,12 +271,12 @@ C
         INQUIRE(UNIT=IO1, OPENED=IS1OPEN)
         IF(IS1OPEN) GOTO 20
         OPEN(IO1,FILE='LXLY.INP',STATUS='UNKNOWN')
-C
+!
         DO NS=1,4
           READ(IO1,1111)
         ENDDO
  1111   FORMAT(80X)
-C
+!
         DO LL=1,LVC
           READ(IO1,*) I,J,XUTME,YUTMN
           L=LIJ(I,J)
@@ -285,10 +284,10 @@ C
           YLAT(L)=YUTMN
         ENDDO
         CLOSE(IO1)
-C
-C WRITE XLON AND YLAT OF CELL CENTERS TO HEADER SECTION OF
-C BINARY OUTPUT FILE:
-C
+!
+! WRITE XLON AND YLAT OF CELL CENTERS TO HEADER SECTION OF
+! BINARY OUTPUT FILE:
+!
         DO L=2,LA
           WRITE(IO) XLON(L)
         ENDDO

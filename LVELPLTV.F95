@@ -1,53 +1,53 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE LVELPLTV
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C **  SUBROUTINE VELPLTV WRITES A FILE FOR VERTICAL PLANE CONTOURING
-C **  OF VELOCITY NORMAL TO AN ARBITARY SEQUENCE OF (I,J) POINTS AND
-C **  AND VERTICAL PLANE TANGENTIAL-VERTICAL VELOCITY VECTORS
-C
-C**********************************************************************C
-C
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+! **  SUBROUTINE VELPLTV WRITES A FILE FOR VERTICAL PLANE CONTOURING
+! **  OF VELOCITY NORMAL TO AN ARBITARY SEQUENCE OF (I,J) POINTS AND
+! **  AND VERTICAL PLANE TANGENTIAL-VERTICAL VELOCITY VECTORS
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       REAL RVELN (KCM,100)
       REAL RVELT (KCM,100)
       REAL RW (KCM,100),HLRAVG(LCM)
-C
+!
       CHARACTER*80 TITLE10,TITLE20
       CHARACTER*80 TITLE40,TITLE50
       CHARACTER*80 TITLE70,TITLE80
-C
-C**********************************************************************C
-C
-C **  WRITE HEADINGS
-C
+!
+!**********************************************************************C
+!
+! **  WRITE HEADINGS
+!
       TITLE10='NORMAL LAG MEAN VEL CONTOURS'
       TITLE20='NORMAL AVG LAG MEAN VEL CONTOURS'
       TITLE40='TANGENTIAL LAG MEAN VEL CONTOURS'
       TITLE50='TANGENTIAL AVG LAG MEAN VEL CONTOURS'
       TITLE70='TANGENTIAL LAG MEAN VEL VECTORS'
       TITLE80='TANGENTIAL AVG LAG MEAN VEL VECTORS'
-C
+!
       LEVELS=KC
-C
+!
       IF(ISECVPV.GE.1)THEN
         OPEN(11,FILE='LMVCNV1.OUT',STATUS='UNKNOWN')
         OPEN(21,FILE='ALVCNV1.OUT',STATUS='UNKNOWN')
@@ -228,7 +228,7 @@ C
         OPEN(79,FILE='LMVVCV9.OUT',STATUS='UNKNOWN')
         OPEN(89,FILE='ALVVCV9.OUT',STATUS='UNKNOWN')
       ENDIF
-C
+!
       DO IS=1,ISECVPV
       LUN1=10+IS
       LUN2=20+IS
@@ -256,11 +256,11 @@ C
       WRITE (LUN7,250)(ZZ(K),K=1,KC)
       WRITE (LUN8,250)(ZZ(K),K=1,KC)
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO M=1,MLRPDRT
-C
+!
       DO IS=1,ISECVPV
       LUN1=10+IS
       LUN4=40+IS
@@ -275,10 +275,8 @@ C
        J=JVPV(NN,IS)
        L=LIJ(I,J)
         DO K=1,KC
-        RVELN(K,NN)=100.*(XLRPD(NLRPDL(L),K,M)*COSC
-     &            +YLRPD(NLRPDL(L),K,M)*SINC)
-        RVELT(K,NN)=-100.*XLRPD(NLRPDL(L),K,M)*SINC
-     &            +100.*YLRPD(NLRPDL(L),K,M)*COSC
+        RVELN(K,NN)=100.*(XLRPD(NLRPDL(L),K,M)*COSC+YLRPD(NLRPDL(L),K,M)*SINC)
+        RVELT(K,NN)=-100.*XLRPD(NLRPDL(L),K,M)*SINC+100.*YLRPD(NLRPDL(L),K,M)*COSC
         RW(K,NN)=100.*ZLRPD(NLRPDL(L),K,M)
         ENDDO
        ENDDO
@@ -288,10 +286,10 @@ C
        L=LIJ(I,J)
        ZETA=HLPF(L)-HMP(L)
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
-C      WRITE(LUN4,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
-C      WRITE(LUN7,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN4,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN7,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN1,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN4,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN7,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
@@ -301,9 +299,9 @@ C      WRITE(LUN7,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN7,250)(RW(K,NN),K=1,KC)
        ENDDO
       ENDDO
-C
+!
       ENDDO
-C
+!
       DO IS=1,ISECVPV
       LUN1=10+IS
       LUN4=40+IS
@@ -312,9 +310,9 @@ C
       CLOSE(LUN4)
       CLOSE(LUN7)
       ENDDO
-C
-C----------------------------------------------------------------------C
-C     
+!
+!----------------------------------------------------------------------C
+!     
       DO NLR=1,NLRPD
       HLRAVG(NLR)=0.
       ENDDO
@@ -326,9 +324,9 @@ C
       DO NLR=1,NLRPD
       HLRAVG(NLR)=HLRAVG(NLR)/FLOAT(MLRPDRT)
       ENDDO
-C     
+!     
       M=MLRAVG
-C
+!
       DO IS=1,ISECVPV
       LUN2=20+IS
       LUN5=50+IS
@@ -343,10 +341,8 @@ C
        J=JVPV(NN,IS)
        L=LIJ(I,J)
         DO K=1,KC
-        RVELN(K,NN)=100.*(XLRPD(NLRPDL(L),K,M)*COSC
-     &            +YLRPD(NLRPDL(L),K,M)*SINC)
-        RVELT(K,NN)=-100.*XLRPD(NLRPDL(L),K,M)*SINC
-     &            +100.*YLRPD(NLRPDL(L),K,M)*COSC
+        RVELN(K,NN)=100.*(XLRPD(NLRPDL(L),K,M)*COSC+YLRPD(NLRPDL(L),K,M)*SINC)
+        RVELT(K,NN)=-100.*XLRPD(NLRPDL(L),K,M)*SINC+100.*YLRPD(NLRPDL(L),K,M)*COSC
         RW(K,NN)=100.*ZLRPD(NLRPDL(L),K,M)
         ENDDO
        ENDDO
@@ -356,10 +352,10 @@ C
        L=LIJ(I,J)
        ZETA=HLPF(L)-HMP(L)
        HBTMP=HMP(L)
-C      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
-C      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
-C      WRITE(LUN5,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
-C      WRITE(LUN8,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      HBTMP=SHPLTV*HMP(L)+SBPLTV*BELV(L)
+!      WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN5,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
+!      WRITE(LUN8,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
        WRITE(LUN2,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN5,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
        WRITE(LUN8,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HBTMP
@@ -372,18 +368,18 @@ C      WRITE(LUN8,200)IL(L),JL(L),DLON(L),DLAT(L),ZETA,HMP(L)
       CLOSE(LUN5)
       CLOSE(LUN8)
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
    99 FORMAT(A40,2X,A20)
   100 FORMAT(I10)
   101 FORMAT(2I10)
   200 FORMAT(2I5,1X,6E14.6)
   250 FORMAT(12E12.4)
-CMRM  200 FORMAT(2I5,1X,1P,6E13.5) 
-CMRM  250 FORMAT(1P,12E11.3)
-C
-C**********************************************************************C
-C
+!MRM  200 FORMAT(2I5,1X,1P,6E13.5) 
+!MRM  250 FORMAT(1P,12E11.3)
+!
+!**********************************************************************C
+!
       RETURN
       END

@@ -1,7 +1,7 @@
-C
-C       LAGRANGIAN INTERPOLATING POLYNOMIAL
-C       FROM STEVEN CHAPRA AND TIM WOOL, 12/8/2020
-C
+!
+!       LAGRANGIAN INTERPOLATING POLYNOMIAL
+!       FROM STEVEN CHAPRA AND TIM WOOL, 12/8/2020
+!
     	REAL FUNCTION alagrange(x, y, order)
     	! input:
     	!   x = vector of independent variables (depth)

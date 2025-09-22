@@ -1,52 +1,52 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE HYDOUT
-C
-C **  ADDED BY DON KINGERY, CH2M-HILL, CH2M-HILL ON 25 MARCH 1997
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE HYDOUT WRITES TIME SERIES FILES FOR BOTTOM VELOCITY
-C **  OVER THE MODEL DOMAIN FOR INPUT TO THE SEDIMENT BED MODEL
-C
-C**********************************************************************C
-C
+!
+! **  ADDED BY DON KINGERY, CH2M-HILL, CH2M-HILL ON 25 MARCH 1997
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+!
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE HYDOUT WRITES TIME SERIES FILES FOR BOTTOM VELOCITY
+! **  OVER THE MODEL DOMAIN FOR INPUT TO THE SEDIMENT BED MODEL
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
-C**********************************************************************C
-C
-C
+!
+!**********************************************************************C
+!
+!
       CHARACTER*80 TITLE1,TITLE2,TITLE3,TITLE4
       CHARACTER*14 TUNITS
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(JSHYDOUT.NE.1) GOTO 300
-C
-C----------------------------------------------------------------------C
-C
-C  WRITE HEADING
-C
+!
+!----------------------------------------------------------------------C
+!
+!  WRITE HEADING
+!
       TITLE1='BOTTOM VELOCITY OUTPUT FOR SEDIMENT BED MODEL'
       TITLE2='   DLAT          DLONG'
       TITLE3='        UVEL     VVEL     SPD     DIR '
       TITLE4='       (CM/S)   (CM/S)   (CM/S)  (DEG)'
-C
+!
       OPEN(11,FILE='SEDBED.HYD',STATUS='UNKNOWN')
       CLOSE(11,STATUS='DELETE')
       OPEN(11,FILE='SEDBED.HYD',STATUS='UNKNOWN')
@@ -60,9 +60,9 @@ C
       JSHYDOUT=0
 
   300 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISDYNSTP.EQ.0)THEN
         TIME=(DT*FLOAT(N)+TCON*TBEGIN)/TCTMSR
       ELSE
@@ -79,7 +79,7 @@ C
        ELSE
         TUNITS=' UNKNOWN UNITS'
       ENDIF
-C
+!
       OPEN(11, FILE='SEDBED.HYD',POSITION='APPEND',STATUS='UNKNOWN')
       WRITE(11,200)TIME,TUNITS
   200 FORMAT(1X, 'TIME:',F12.3,A14)

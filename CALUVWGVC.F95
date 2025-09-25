@@ -337,7 +337,7 @@
         AAU(L)=AAU(L)/BBU(L)
         AAV(L)=AAV(L)/BBV(L)
        ENDDO
-C
+
       DO K=1,KS
        RDZG=DZG(K)
        DO L=2,LA

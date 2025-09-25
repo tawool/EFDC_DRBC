@@ -199,7 +199,7 @@
       CLOSE(1)
 !
       GOTO 100
-C
+
  1081 WRITE(6,1091)
       STOP
  1082 WRITE(6,1092)

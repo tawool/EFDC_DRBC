@@ -433,10 +433,13 @@
        DO K=1,KS
         DO L=2,LA
          LN=LNC(L)
-         W(L,K)=SWB(L)*( W(L,K-1)-W2(L,K)+W2(L,K-1)-DZC(K)*(TVAR1E(L,K)-UHDY(L,K)-TVAR3E(L)       &
-                +UHDYE(L)+TVAR1W(L,K)-UHDY2(L,K)-TVAR3W(L)+UHDY2E(L)+TVAR1N(L,K)-VHDX(L,K)        &
-                -TVAR3N(L)+VHDXE(L)+TVAR1S(L,K)-VHDX2(L,K)-TVAR3S(L)+VHDX2E(L))*DXYIP(L)+2.       &
-                *SWB(L)*( QSUM(L,K)-DZC(K)*QSUME(L) )*DXYIP(L)
+               
+         W(L,K)=SWB(L)*( W(L,K-1)-W2(L,K)+W2(L,K-1)                                               &
+            -DZC(K)*(TVAR1E(L,K)-UHDY(L,K)-TVAR3E(L)+UHDYE(L)                                     &
+            +TVAR1W(L,K)-UHDY2(L,K)-TVAR3W(L)+UHDY2E(L)                                          &
+            +TVAR1N(L,K)-VHDX(L,K)-TVAR3N(L)+VHDXE(L)                                            &
+            +TVAR1S(L,K)-VHDX2(L,K)-TVAR3S(L)+VHDX2E(L) )*DXYIP(L) )                             &
+            +2.*SWB(L)*( QSUM(L,K)-DZC(K)*QSUME(L) )*DXYIP(L)
         ENDDO
        ENDDO
 !

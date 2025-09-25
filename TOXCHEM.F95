@@ -232,8 +232,7 @@
 !        NOTE: 0.905 = (VON KARMON CONSTANT)**0.333
 !
             USTAR_VOL = SQRT (CDRAG)*SWIND
-            XKL = USTAR_VOL*SQRT (DENA/DENW)*
-     1            (.905/XLAM2)*(1./SCW)**.666 + 1.0E-9
+            XKL = USTAR_VOL*SQRT (DENA/DENW)*(.905/XLAM2)*(1./SCW)**.666 + 1.0E-9
             XKG = USTAR_VOL*(.905/XLAM2)*((1./SCA)**.666) + 1.0E-9
             XKGH = XKG*KAW
             KL_LAKE_O = (1./(1./XKL + 1./XKGH))*KLT**STP20*86400.

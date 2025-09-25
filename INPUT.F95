@@ -1,78 +1,78 @@
-C
-C**********************************************************************C
-C**********************************************************************C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!**********************************************************************C
+!**********************************************************************C
+!
       SUBROUTINE INPUT(TITLE)
-C
-C**********************************************************************C
-C
-C **  SUBROUTINE INPUT READS ALL INPUT DATA EXCEPT DATA IN LXLY.INP,
-C **  MASK.INP AND RESTART.INP
-C
-C **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
-C
-C **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
-C
-C----------------------------------------------------------------------C
-C
-C CHANGE RECORD
-C DATE MODIFIED     BY                 DATE APPROVED    BY
-C 11/07/2001        john hamrick       11/07/2001       john hamrick
-C  added body force switch isbodyf (c14) and read of input file
-c  fbody.inp containing the body force fbodyfx and fbodyfy
-C 11/09/2001        john hamrick       11/09/2001       john hamrick
-C  modified bed mechanics coefficient set on (C38)
-C  modified bedload functional relationship to more general form (C42A)
-C  added bedload outflow/recirculation boundary condtion switch (C42A)
-C   and bed load boundary condition file SEDBLBC.INP
-C 11/15/2001        john hamrick       11/15/2001       john hamrick
-C  added switch IBMECHK on C38 to control form of function FHYDCN
-C 11/19/2001        John Hamrick       11/19/2001       John Hamrick
-C  replaced LSBDLDBC with LSBLBCU and LSBLBCD and modified format of
-C  SEDBLBC.INP
-C 11/29/2001        John Hamrick       11/29/2001       John Hamrick
-C  fixed the specification of LSBLBCD for no recirculation case
-C 12/03/2001        John Hamrick       12/03/2001       John Hamrick
-C  initialized NSBDLDBC
-C 01/11/2002        John Hamrick       01/11/2002       John Hamrick
-C  added ick2cor,ck2uum,ck2vvm,ck2uvm,ck2uuc,ck2vvc,ck2uvc,ck2fcx,
-C  ck2fcy,zbrwall,belv1
-C 01/31/2002        John Hamrick       01/31/2002       John Hamrick
-C  modified toxic-organic carbon sorption options on C44 and added
-C  additional input for poc fractions on c45b and c45c
-C 02/11/2002        John Hamrick       02/11/2002       John Hamrick
-C  moved subgrid scale channel mapping to follow read of modchan.inp
-C 03/05/2002        John Hamrick       03/05/2002       John Hamrick
-C  modified isdry option to include transport bypass
-C 05/22/2002        John Hamrick       05/22/2002       John Hamrick
-C  added sed-tox debug flag ISDTXBUG
-C
-C 7/2023  HUGO RODRIGUEZ    INITIALIZE ARRAYS FOR LOAD TIME SERIES (here since ainit.f is after this call       
-C 7/2023  HUGO RODRIGUEZ    ADDED READ OF TIME SERIES OF LOADS      
-C----------------------------------------------------------------------C
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  SUBROUTINE INPUT READS ALL INPUT DATA EXCEPT DATA IN LXLY.INP,
+! **  MASK.INP AND RESTART.INP
+!
+! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
+!
+! **  LAST MODIFIED BY JOHN HAMRICK ON 1 NOVEMBER 2001
+!
+!----------------------------------------------------------------------C
+!
+! CHANGE RECORD
+! DATE MODIFIED     BY                 DATE APPROVED    BY
+! 11/07/2001        john hamrick       11/07/2001       john hamrick
+!  added body force switch isbodyf (c14) and read of input file
+!  fbody.inp containing the body force fbodyfx and fbodyfy
+! 11/09/2001        john hamrick       11/09/2001       john hamrick
+!  modified bed mechanics coefficient set on (C38)
+!  modified bedload functional relationship to more general form (C42A)
+!  added bedload outflow/recirculation boundary condtion switch (C42A)
+!   and bed load boundary condition file SEDBLBC.INP
+! 11/15/2001        john hamrick       11/15/2001       john hamrick
+!  added switch IBMECHK on C38 to control form of function FHYDCN
+! 11/19/2001        John Hamrick       11/19/2001       John Hamrick
+!  replaced LSBDLDBC with LSBLBCU and LSBLBCD and modified format of
+!  SEDBLBC.INP
+! 11/29/2001        John Hamrick       11/29/2001       John Hamrick
+!  fixed the specification of LSBLBCD for no recirculation case
+! 12/03/2001        John Hamrick       12/03/2001       John Hamrick
+!  initialized NSBDLDBC
+! 01/11/2002        John Hamrick       01/11/2002       John Hamrick
+!  added ick2cor,ck2uum,ck2vvm,ck2uvm,ck2uuc,ck2vvc,ck2uvc,ck2fcx,
+!  ck2fcy,zbrwall,belv1
+! 01/31/2002        John Hamrick       01/31/2002       John Hamrick
+!  modified toxic-organic carbon sorption options on C44 and added
+!  additional input for poc fractions on c45b and c45c
+! 02/11/2002        John Hamrick       02/11/2002       John Hamrick
+!  moved subgrid scale channel mapping to follow read of modchan.inp
+! 03/05/2002        John Hamrick       03/05/2002       John Hamrick
+!  modified isdry option to include transport bypass
+! 05/22/2002        John Hamrick       05/22/2002       John Hamrick
+!  added sed-tox debug flag ISDTXBUG
+!
+! 7/2023  HUGO RODRIGUEZ    INITIALIZE ARRAYS FOR LOAD TIME SERIES (here since ainit.f is after this call       
+! 7/2023  HUGO RODRIGUEZ    ADDED READ OF TIME SERIES OF LOADS      
+!----------------------------------------------------------------------C
+!
+!**********************************************************************C
+!
       INCLUDE 'EFDC.PAR'
       INCLUDE 'EFDC.CMN'
-C
+!
       DIMENSION RMULADS(NSTVM),ADDADS(NSTVM)
       DIMENSION QSERSM(NDQSER,KCM)
       character*132 message_out
-C
-C     DIMENSION CQSE(5),WKQ(KCM)
-C
-C**********************************************************************C
-C
+!
+!     DIMENSION CQSE(5),WKQ(KCM)
+!
+!**********************************************************************C
+!
       CHARACTER*80 TEXT,TITLE
       CHARACTER*10 CDUM
 	CHARACTER*1 CHARSPACE,CHARSKP1,CHARSKP2
       INTEGER LOADTSFLAG
       REAL    SERLTMP
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       CHARSKP1='C'
 	CHARSKP2='c'
       G=9.81
@@ -80,14 +80,14 @@ C
       PI2=2.*PI
     1 FORMAT (120X)
     2 FORMAT (A80)
-C
-C**********************************************************************C
-C
-C----------------------------------------------------------------------C
-C
-C **  START LOAD TIME SERIES INITIALIZATION    HNR_GHD 7/2023
-C       located here since AINIT.F is after this subroutine
-C
+!
+!**********************************************************************C
+!
+!----------------------------------------------------------------------C
+!
+! **  START LOAD TIME SERIES INITIALIZATION    HNR_GHD 7/2023
+!       located here since AINIT.F is after this subroutine
+!
       DO NC=1,4
         NLSER(NC)=0
         NLIJ(NC)=0
@@ -119,19 +119,19 @@ C
           DELTEMP(NL,K)=0.0
         END DO
       END DO
-C
-C **  END LOAD TIME SERIES INITIALIZATION    HNR_GHD 7/2023
-C----------------------------------------------------------------------C
-C**********************************************************************C
-C
-C **  READ MAIN INPUT FILE EFDC.INP
-C
+!
+! **  END LOAD TIME SERIES INITIALIZATION    HNR_GHD 7/2023
+!----------------------------------------------------------------------C
+!**********************************************************************C
+!
+! **  READ MAIN INPUT FILE EFDC.INP
+!
       OPEN(1,FILE='EFDC.INP',STATUS='UNKNOWN')
-C
-C**********************************************************************C
-C
-C1**  READ TITLE CARD
-C
+!
+!**********************************************************************C
+!
+!C1**  READ TITLE CARD
+!
       NCARD=1
       DO NSKIP=1,18
       READ(1,1)
@@ -139,9 +139,9 @@ C
       READ(1,2) TITLE
       WRITE(7,1002)NCARD
       WRITE(7,2) TITLE
-C
-C1A**  READ MODE OPTIONS
-C
+!
+!C1A**  READ MODE OPTIONS
+!
       NCARD=1
       DO NSKIP=1,18
       READ(1,1)
@@ -151,60 +151,55 @@ C
       WRITE(7,*) IGRIDH,INESTH,IGRIDV,ITIMSOL,ISHOUSATONIC  !IS2TLPG
       IF(ISO.GT.0) GOTO 100
 	IS2TIM=ITIMSOL
-C ** TEST, ACTIVATE AND MOVE LOCATIONS FOR IS2TLPG
+! ** TEST, ACTIVATE AND MOVE LOCATIONS FOR IS2TLPG
       IS2TLPG=0
-C
-C2**  READ RESTART AND DIAGNOSTIC SWITCHES
-C
+!
+!C2**  READ RESTART AND DIAGNOSTIC SWITCHES
+!
       NCARD=2
       DO NSKIP=1,25
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) ISRESTI,ISRESTO,ISRESTR,ISPAR,ISLOG,ISDIVEX,
-     &          ISNEGH,ISMMC,ISBAL,IDUM,ISHOW
+      READ(1,*,IOSTAT=ISO) ISRESTI,ISRESTO,ISRESTR,ISPAR,ISLOG,ISDIVEX,ISNEGH,ISMMC,ISBAL,IDUM,   &
+                           ISHOW
       WRITE(7,1002)NCARD
-      WRITE(7,*) ISRESTI,ISRESTO,ISRESTR,ISPAR,ISLOG,ISDIVEX,
-     &          ISNEGH,ISMMC,ISBAL,IDUM,ISHOW
+      WRITE(7,*) ISRESTI,ISRESTO,ISRESTR,ISPAR,ISLOG,ISDIVEX,ISNEGH,ISMMC,ISBAL,IDUM,ISHOW
       IF(ISO.GT.0) GOTO 100
-C
-C3**  READ RELAXATION PARAMETERS
-C
+!
+!C3**  READ RELAXATION PARAMETERS
+!
       NCARD=3
       DO NSKIP=1,24
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) RP,RSQM,ITERM,IRVEC,RPADJ,
-     &                 RSQMADJ,ITRMADJ,ITERHPM,IDRYCK,ISDSOLV,FILT3TL
+      READ(1,*,IOSTAT=ISO) RP,RSQM,ITERM,IRVEC,RPADJ,RSQMADJ,ITRMADJ,ITERHPM,IDRYCK,ISDSOLV,      &
+                           FILT3TL
       WRITE(7,1002)NCARD
-      WRITE(7,*) RP,RSQM,ITERM,IRVEC,RPADJ,
-     &                 RSQMADJ,ITRMADJ,ITERHPM,IDRYCK,ISDSOLV,FILT3TL
+      WRITE(7,*) RP,RSQM,ITERM,IRVEC,RPADJ,RSQMADJ,ITRMADJ,ITERHPM,IDRYCK,ISDSOLV,FILT3TL
       IF(ISO.GT.0) GOTO 100
-C
-C4**  READ LONGTERM MASS TRANSPORT INTEGRATION ONLY SWITCHES
-C
+!
+!C4**  READ LONGTERM MASS TRANSPORT INTEGRATION ONLY SWITCHES
+!
       NCARD=4
       DO NSKIP=1,20
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) ISLTMT,ISSSMMT,ISLTMTS,ISIA,RPIA,RSQMIA,
-     &                     ITRMIA,ISAVEC
+      READ(1,*,IOSTAT=ISO) ISLTMT,ISSSMMT,ISLTMTS,ISIA,RPIA,RSQMIA,ITRMIA,ISAVEC
       WRITE(7,1002)NCARD
-      WRITE(7,*) ISLTMT,ISSSMMT,ISLTMTS,ISIA,RPIA,RSQMIA,
-     &                     ITRMIA,ISAVEC
+      WRITE(7,*) ISLTMT,ISSSMMT,ISLTMTS,ISIA,RPIA,RSQMIA,ITRMIA,ISAVEC
       IF(ISO.GT.0) GOTO 100
-C
-C5**  READ MOMENTUM ADVECTION AND DIFFUSION SWITCHES AND MISC
-C     SWITCHES
-C
+!
+!C5**  READ MOMENTUM ADVECTION AND DIFFUSION SWITCHES AND MISC
+!     SWITCHES
+!
       NCARD=5
       DO NSKIP=1,32
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) ISCDMA,ISHDMF,ISDISP,ISWASP,ISDRY,
-     *            ISQQ,ISRLID,ISVEG,ISVEGL,ISITB,ISEVER,IINTPG
+      READ(1,*,IOSTAT=ISO) ISCDMA,ISHDMF,ISDISP,ISWASP,ISDRY,ISQQ,ISRLID,ISVEG,ISVEGL,ISITB,      &
+                           ISEVER,IINTPG
       WRITE(7,1002)NCARD
-      WRITE(7,*) ISCDMA,ISHDMF,ISDISP,ISWASP,ISDRY,
-     *            ISQQ,ISRLID,ISVEG,ISVEGL,ISITB,ISEVER,IINTPG
+      WRITE(7,*) ISCDMA,ISHDMF,ISDISP,ISWASP,ISDRY,ISQQ,ISRLID,ISVEG,ISVEGL,ISITB,ISEVER,IINTPG
       IF(ISO.GT.0) GOTO 100
       IDRYTBP=0
       IF(ISDRY.LT.0)THEN
@@ -213,59 +208,56 @@ C
       ENDIF
       IF(ISWASP.EQ.99)ISICM=1
       IF(ISRLID.EQ.1) ISDRY=-1
-C      IF(ISDRY.GE.1) IRVEC=2
+!      IF(ISDRY.GE.1) IRVEC=2
       IF(ISWASP.EQ.10)ISRCA=1
       JSWAVE=0
       IS1DCHAN=0
       IF(ISCDMA.EQ.10) IS1DCHAN=1
-C
+!
       ISCOSMIC=0
       NCARD=6
       DO NSKIP=1,22
       READ(1,1)
       ENDDO
       DO N=0,8
-      READ(1,*,IOSTAT=ISO) ISTRAN(N),ISTOPT(N),ISCDCA(N),ISADAC(N),
-     &          ISFCT(N),ISPLIT(N),ISADAH(N),ISADAV(N),ISCI(N),ISCO(N)
+      READ(1,*,IOSTAT=ISO) ISTRAN(N),ISTOPT(N),ISCDCA(N),ISADAC(N),ISFCT(N),ISPLIT(N),ISADAH(N),  &
+                           ISADAV(N),ISCI(N),ISCO(N)
       IF(ISCDCA(N).GE.4) ISCOSMIC=1
       WRITE(7,1002)NCARD
-      WRITE(7,*) ISTRAN(N),ISTOPT(N),ISCDCA(N),ISADAC(N),
-     &          ISFCT(N),ISPLIT(N),ISADAH(N),ISADAV(N),ISCI(N),ISCO(N)
+      WRITE(7,*) ISTRAN(N),ISTOPT(N),ISCDCA(N),ISADAC(N),ISFCT(N),ISPLIT(N),ISADAH(N),ISADAV(N),  &
+                 ISCI(N),ISCO(N)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C7**  READ TIME-RELATED INTEGER PARAMETERS
-C
+!
+!C7**  READ TIME-RELATED INTEGER PARAMETERS
+!
       NCARD=7
       DO NSKIP=1,19
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) NTC,NTSPTC,NLTC,NTTC,NTCPP,NTSTBC,NTCNB,
-     &          NTCVB,NTSMMT,NFLTMT,NDRYSTP,iyear,imon,iday            !hnr
+      READ(1,*,IOSTAT=ISO) NTC,NTSPTC,NLTC,NTTC,NTCPP,NTSTBC,NTCNB,NTCVB,NTSMMT,NFLTMT,NDRYSTP,   &
+                           iyear,imon,iday            !hnr
       WRITE(7,1002)NCARD
-      WRITE(7,*) NTC,NTSPTC,NLTC,NTTC,NTCPP,NTSTBC,NTCNB,
-     &          NTCVB,NTSMMT,NFLTMT,NDRYSTP,iyear,imon,iday              !hnr
+      WRITE(7,*) NTC,NTSPTC,NLTC,NTTC,NTCPP,NTSTBC,NTCNB,NTCVB,NTSMMT,NFLTMT,NDRYSTP,iyear,imon,  &
+                 iday              !hnr
       IF(ISO.GT.0) GOTO 100
       if(ntsptc.gt.ntsm) then                                          !hnr
         write(*,109)ntsptc,ntsm                                        !hnr
-109     FORMAT('The number of time steps per reference time period'         !hnr
-     $'in your application',I8,'  is larger than the maximum allowed of'    !hnr
-     $,I8,'  for this compilation')                                         !hnr
+109     FORMAT('The number of time steps per reference time period in your application',I8,       &
+               '  is larger than the maximum allowed of ',I8,'  for this compilation')                                         !hnr
         write(*,*)'The program will stop card 7'                                   !hnr
         stop                                                                !hnr
       end if                                                                !hnr
-C
-C8**  READ TIME-RELATED REAL PARAMETERS
-C
+!
+!C8**  READ TIME-RELATED REAL PARAMETERS
+!
       NCARD=8
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) TCON,TBEGIN,TIDALP,CF,ISCORV,ISDCCA,
-     &                     ISCFL,ISCFLM,DTSSFAC,DTSSDHDT
+      READ(1,*,IOSTAT=ISO) TCON,TBEGIN,TIDALP,CF,ISCORV,ISDCCA,ISCFL,ISCFLM,DTSSFAC,DTSSDHDT
       WRITE(7,1002)NCARD
-      WRITE(7,*) TCON,TBEGIN,TIDALP,CF,ISCORV,ISDCCA,
-     &                     ISCFL,ISCFLM,DTSSFAC,DTSSDHDT
+      WRITE(7,*) TCON,TBEGIN,TIDALP,CF,ISCORV,ISDCCA,ISCFL,ISCFLM,DTSSFAC,DTSSDHDT
       IF(ISO.GT.0) GOTO 100
       IF(DTSSFAC.GT.0.0)THEN
         ISDYNSTP=1
@@ -274,54 +266,49 @@ C
         ISDYNSTP=0
       ENDIF
       IF(IS2TIM.EQ.0)ISDYNSTP=0
-C
-C9**  READ HORIZONTAL SPACE RELATED AND SMOOTHING PARAMETERS
-C
+!
+!C9**  READ HORIZONTAL SPACE RELATED AND SMOOTHING PARAMETERS
+!
       NCARD=9
       DO NSKIP=1,27
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) IC,JC,LC,LVC,ISCLO,NDM,LDM,ISMASK,
-     &                ISPGNS,NSHMAX,NSBMAX,WSMH,WSMB
+      READ(1,*,IOSTAT=ISO) IC,JC,LC,LVC,ISCLO,NDM,LDM,ISMASK,ISPGNS,NSHMAX,NSBMAX,WSMH,WSMB
       WRITE(7,1002)NCARD
-      WRITE(7,*) IC,JC,LC,LVC,ISCLO,NDM,LDM,ISMASK,
-     &                ISPGNS,NSHMAX,NSBMAX,WSMH,WSMB
+      WRITE(7,*) IC,JC,LC,LVC,ISCLO,NDM,LDM,ISMASK,ISPGNS,NSHMAX,NSBMAX,WSMH,WSMB
       IF(ISO.GT.0) GOTO 100
       IS2LMC=0
       IF(KC.LT.0) THEN
          KC=-KC
          IS2LMC=1
       ENDIF
-C
+!
       NWETCELLSNEW=LVC
 	NWETCELLSOLD=LVC
       if(ic.gt.icm) then                                               !hnr
         write(*,110)ic,icm                                             !hnr
-110     FORMAT('The number of Columns (I index) in your application'   !hnr
-     $  ,I5,'  is larger than the maximum allowed of',I5,'  for this ' !hnr
-     $   'compilation')                                                !hnr
+110     FORMAT('The number of Columns (I index) in your application ',I5,                         &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                                !hnr
         write(*,*)'The program will stop card 9_1'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
       if(jc.gt.jcm) then                                               !hnr
         write(*,120)jc,jcm                                             !hnr
-120     FORMAT('The number of Rows (J index) in your application',I5,  !hnr
-     $  '  is larger than the maximum allowed of',I5,'  for this '     !hnr
-     &   'compilation')                                                !hnr
+120     FORMAT('The number of Rows (J index) in your application',I5,                             &
+               ' is larger than the maximum allowed of',I5,'  for this compilation')                                                !hnr
         write(*,*)'The program will stop card 9_2'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
       if(lc.gt.lcm) then                                               !hnr
         write(*,130)lvc,lcm-2                                          !hnr
-130     FORMAT('The number of water cells in your application',I6,     !hnr
-     $  '  is larger than the maximum allowed of',I6,                  !hnr
-     $  '  for this compilation')                                      !hnr
+130     FORMAT('The number of water cells in your application',I6,                                &
+               '  is larger than the maximum allowed of',I6,'  for this compilation')                                      !hnr
         write(*,*)'The program will stop card 9_3'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
-C
-C9A**  READ VERTICAL SPACE RELATED  PARAMETERS
-C
+!
+!C9A**  READ VERTICAL SPACE RELATED  PARAMETERS
+!
       NCARD=901
       DO NSKIP=1,14
       READ(1,1)
@@ -332,16 +319,15 @@ C
       IF(ISO.GT.0) GOTO 100
       if(kc.gt.kcm) then                                               !hnr
         write(*,140)kc,kcm                                             !hnr
-140     FORMAT('The number of layers in your application',I3,          !hnr
-     $  '  is larger than the maximum allowed of',I3,                  !hnr
-     $  '  for this compilation')                                      !hnr
+140     FORMAT('The number of layers in your application',I3,                                     &
+               '  is larger than the maximum allowed of',I3,'  for this compilation')                                      !hnr
         write(*,*)'The program will stop card 9A'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
 
-C
-C **  DOMAIN DECOMPOSITION CHECKS FOR HORIZONTAL LOOPS
-C
+!
+! **  DOMAIN DECOMPOSITION CHECKS FOR HORIZONTAL LOOPS
+!
       LCM2T=LC-2
       IF(NDM.EQ.1) LDM=LCM2T
       IF(NDM.GE.2) NCHECK=NDM*LDM
@@ -351,16 +337,16 @@ C
           STOP
         ENDIF
       ENDIF
-C
+!
  6774 FORMAT(' INCONSISTENT DOMAIN DECOMPOSITION NDM,LDW ON CARD 9')
-C
-C **  ENDDOMAIN DECOMPOSITION CHECKS FOR HORIZONTAL LOOPS
-C
-C      IF(KC.GE.2.AND.ISVEG.EQ.0) ISITB=0
-C     IF(KC.GE.2) ISITB=0
-C
-C10*  READ LAYER THICKNESS IN VERTICAL
-C
+!
+! **  ENDDOMAIN DECOMPOSITION CHECKS FOR HORIZONTAL LOOPS
+!
+!      IF(KC.GE.2.AND.ISVEG.EQ.0) ISITB=0
+!     IF(KC.GE.2) ISITB=0
+!
+!10*  READ LAYER THICKNESS IN VERTICAL
+!
       NCARD=10
       DO NSKIP=1,9
       READ(1,1)
@@ -371,41 +357,38 @@ C
         WRITE(7,*)KDUM,DZC(K)
         IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C11*  READ GRID, ROUGHNESS, MASKING AND DEPTH PARAMETERS
-C
+!
+!11*  READ GRID, ROUGHNESS, MASKING AND DEPTH PARAMETERS
+!
       NCARD=11
       DO NSKIP=1,18
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) DX,DY,DXYCVT,IMDXDY,ZBRADJ,ZBRCVRT,HMIN,
-     &                  HADJ,HCVRT,HDRY,HWET,BELADJ,BELCVRT
+      READ(1,*,IOSTAT=ISO) DX,DY,DXYCVT,IMDXDY,ZBRADJ,ZBRCVRT,HMIN,HADJ,HCVRT,HDRY,HWET,BELADJ,   &
+                           BELCVRT
       WRITE(7,1002)NCARD
-      WRITE(7,*) DX,DY,DXYCVT,IMDXDY,ZBRADJ,ZBRCVRT,HMIN,
-     &                  HADJ,HCVRT,HDRY,HWET,BELADJ,BELCVRT
+      WRITE(7,*) DX,DY,DXYCVT,IMDXDY,ZBRADJ,ZBRCVRT,HMIN,HADJ,HCVRT,HDRY,HWET,BELADJ,BELCVRT
       IF(ISO.GT.0) GOTO 100
-C     READ(1,*,IOSTAT=ISO) DX,DY,DXYCVT,ZBRADJ,ZBRCVRT,HMIN,HADJ,HCVRT,
-C    &                  HDRY,HWET,BELADJ,BELCVRT,RMWET
-C
-C11A* READ TWO-LAYER MOMENTUM FLUX AND CURVATURE ACCELERATION
-C     CORRECTION FACTORS
-C
+!     READ(1,*,IOSTAT=ISO) DX,DY,DXYCVT,ZBRADJ,ZBRCVRT,HMIN,HADJ,HCVRT,
+!    &                  HDRY,HWET,BELADJ,BELCVRT,RMWET
+!
+!C11A* READ TWO-LAYER MOMENTUM FLUX AND CURVATURE ACCELERATION
+!     CORRECTION FACTORS
+!
       NCARD=11
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) ICK2COR,CK2UUM,CK2VVM,CK2UVM,CK2UUC,
-     &                  CK2VVC,CK2UVC,CK2FCX,CK2FCY
+      READ(1,*,IOSTAT=ISO) ICK2COR,CK2UUM,CK2VVM,CK2UVM,CK2UUC,CK2VVC,CK2UVC,CK2FCX,CK2FCY
       WRITE(7,1002)NCARD
-      WRITE(7,*) ICK2COR,CK2UUM,CK2VVM,CK2UVM,CK2UUC,
-     &                  CK2VVC,CK2UVC,CK2FCX,CK2FCY
+      WRITE(7,*) ICK2COR,CK2UUM,CK2VVM,CK2UVM,CK2UUC,CK2VVC,CK2UVC,CK2FCX,CK2FCY
       IF(ISO.GT.0) GOTO 100
       IF(ICK2COR.GE.1) THEN
         IS2LMC=ICK2COR
       END IF
-C
-C11B* READ CORNER CELL BOTTOM STRESS CORRECTION OPTIONS
-C
+!
+!C11B* READ CORNER CELL BOTTOM STRESS CORRECTION OPTIONS
+!
       NCARD=11
       DO NSKIP=1,10
       READ(1,1)
@@ -414,90 +397,78 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) ISCORTBC,ISCORTBCD,FSCORTBC
       IF(ISO.GT.0) GOTO 100
-C
-C12*  READ TURBULENT DIFFUSION PARAMETERS
-C
+!
+!C12*  READ TURBULENT DIFFUSION PARAMETERS
+!
       NCARD=12
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) AHO,AHD,AVO,ABO,AVMN,ABMN,VISMUD,AVCON,
-     &  ZBRWALL
+      READ(1,*,IOSTAT=ISO) AHO,AHD,AVO,ABO,AVMN,ABMN,VISMUD,AVCON,ZBRWALL
         WRITE(7,1002)NCARD
         WRITE(7,*) AHO,AHD,AVO,ABO,AVMN,ABMN,VISMUD,AVCON,ZBRWALL
       IF(ISO.GT.0) GOTO 100
-C
-C12A*  READ TURBULENCE CLOSURE OPTIONS
-C
+!
+!C12A*  READ TURBULENCE CLOSURE OPTIONS
+!
       NCARD=121
       DO NSKIP=1,25
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO)ISTOPT(0),ISSQL,ISAVBMN,ISFAVB,ISINWV,
-     &        ISLLIM,IFPROX,ISVTURB,VTURBEFF
+      READ(1,*,IOSTAT=ISO)ISTOPT(0),ISSQL,ISAVBMN,ISFAVB,ISINWV,ISLLIM,IFPROX,ISVTURB,VTURBEFF
         WRITE(7,1002)NCARD
-        WRITE(7,*)ISTOPT(0),ISSQL,ISAVBMN,ISFAVB,ISINWV,
-     &        IFPROX,ISVTURB,VTURBEFF
+        WRITE(7,*)ISTOPT(0),ISSQL,ISAVBMN,ISFAVB,ISINWV,IFPROX,ISVTURB,VTURBEFF
       IF(ISO.GT.0) GOTO 100
-C
-C13*  READ TURBULENCE CLOSURE PARAMETERS
-C
+!
+!C13*  READ TURBULENCE CLOSURE PARAMETERS
+!
       NCARD=13
       DO NSKIP=1,17
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) VKC,CTURB,CTURB2B,CTE1,CTE2,CTE3,CTE4,
-     &                      CTE5,RIQMAX,QQMIN,QQLMIN,DMLMIN
+      READ(1,*,IOSTAT=ISO) VKC,CTURB,CTURB2B,CTE1,CTE2,CTE3,CTE4,CTE5,RIQMAX,QQMIN,QQLMIN,DMLMIN
       WRITE(7,1002)NCARD
-      WRITE(7,*) VKC,CTURB,CTURB2B,CTE1,CTE2,CTE3,CTE4,
-     &                      CTE5,RIQMAX,QQMIN,QQLMIN,DMLMIN
+      WRITE(7,*) VKC,CTURB,CTURB2B,CTE1,CTE2,CTE3,CTE4,CTE5,RIQMAX,QQMIN,QQLMIN,DMLMIN
       IF(ISO.GT.0) GOTO 100
-C
-C14*  READ TIDAL & ATMOSPHERIC FORCING, GROUND WATER
-C     AND SUBGRID CHANNEL PARAMETERS
-C
+!
+!C14*  READ TIDAL & ATMOSPHERIC FORCING, GROUND WATER
+!     AND SUBGRID CHANNEL PARAMETERS
+!
       NCARD=14
       DO NSKIP=1,18
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) MTIDE,NWSER,NASER,ISGWIT,ISCHAN,ISWAVE,
-     &     ITIDASM,ISPERC,ISBODYF,ISPNHYDS
+      READ(1,*,IOSTAT=ISO) MTIDE,NWSER,NASER,ISGWIT,ISCHAN,ISWAVE,ITIDASM,ISPERC,ISBODYF,ISPNHYDS
       WRITE(7,1002)NCARD
-      WRITE(7,*) MTIDE,NWSER,NASER,ISGWIT,ISCHAN,ISWAVE,ITIDASM,
-     &     ISPERC,ISBODYF,ISPNHYDS
+      WRITE(7,*) MTIDE,NWSER,NASER,ISGWIT,ISCHAN,ISWAVE,ITIDASM,ISPERC,ISBODYF,ISPNHYDS
       ISWCBL=0
       ISWVSD=0
-C      IF(ISWAVE.GT.0) ISWCBL=1
+!      IF(ISWAVE.GT.0) ISWCBL=1
       IF(ISO.GT.0) GOTO 100
       if(mtide.gt.npform) then                                         !hnr
         write(*,150)mtide,npform                                       !hnr
-150     FORMAT('The number of periodic forcing functions (MTIDE) '     !hnr
-     $  'in your application',I6,                                      !hnr
-     $  '  is larger than the maximum allowed of',I6,                  !hnr
-     $  '  for this compilation')                                      !hnr
+150     FORMAT('The number of periodic forcing functions (MTIDE) in your application',I6,        &                                      !hnr
+               '  is larger than the maximum allowed of',I6,'  for this compilation')                                      !hnr
         write(*,*)'The program will stop card14_1'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
       if(nwser.gt.nwserm) then                                         !hnr
         write(*,160)nwser,nwserm                                       !hnr
-160     FORMAT('The number of Wind Time Series in your application'    !hnr
-     $  ,I3,'  is larger than the maximum allowed of',I3,              !hnr
-     $  '  for this compilation')                                      !hnr
+160     FORMAT('The number of Wind Time Series in your application',I3,                           &
+               '  is larger than the maximum allowed of',I3,' for this compilation')                                      !hnr
         write(*,*)'The program will stop card 14_2'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
       if(naser.gt.naserm) then                                         !hnr
         write(*,170)ic,icm                                             !hnr
-170     FORMAT('The number of Atmospheric Condition Time Series '      !hnr
-     $  'in your application',I3,                                      !hnr
-     $  '  is larger than the maximum allowed of',I3,                  !hnr
-     $  '  for this compilation')                                      !hnr
+170     FORMAT('The number of Atmospheric Condition Time Series in your application',I3,         &                                      !hnr
+               '  is larger than the maximum allowed of',I3,'  for this compilation')                                      !hnr
         write(*,*)'The program will stop card 14_3'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
-C
-C15*  READ PERIODIC FORCING (TIDAL) CONSTITUENT SYMBOLS AND PERIODS
-C
+!
+!C15*  READ PERIODIC FORCING (TIDAL) CONSTITUENT SYMBOLS AND PERIODS
+!
       NCARD=15
       DO NSKIP=1,7
       READ(1,1)
@@ -508,73 +479,62 @@ C
       WRITE(7,*) SYMBOL(M),TCP(M)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C16*  READ SURFACE ELEVATION OR PRESSURE BOUNDARY CONDITION PARAMETERS
-C
+!
+!C16*  READ SURFACE ELEVATION OR PRESSURE BOUNDARY CONDITION PARAMETERS
+!
       NCARD=16
       DO NSKIP=1,17
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) NPBS,NPBW,NPBE,NPBN,NPFOR,NPFORT,
-     &                     NPSER,PDGINIT
+      READ(1,*,IOSTAT=ISO) NPBS,NPBW,NPBE,NPBN,NPFOR,NPFORT,NPSER,PDGINIT
       WRITE(7,1002)NCARD
       WRITE(7,*) NPBS,NPBW,NPBE,NPBN,NPFOR,NPFORT,NPSER,PDGINIT
       IF(ISO.GT.0) GOTO 100
       if(npbs.gt.npbsm) then                                           !hnr
         write(*,180)npbs,npbsm                                         !hnr
-180     FORMAT('The number of WSE BC South Boundary '                  !hnr
-     $  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     &  '  for this compilation')                                      !hnr
+180     FORMAT('The number of WSE BC South Boundary in your application',I5,                      &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      !hnr
         write(*,*)'The program will stop card 16_1'                              !hnr
         stop                                                           !hnr
       end if                                                           !hnr
       if(npbw.gt.npbwm) then                                           !hnr
         write(*,190)npbw,npbwm                                         !hnr
-190     FORMAT('The number of WSE BC West Boundary '                   !hnr
-     $  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     $  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 16_2'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(npbn.gt.npbnm) then                                           !hnr
-        write(*,200)npbn,npbnm                                         !hnr
-200     FORMAT('The number of WSE BC North Boundary'                   !hnr
-     $  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 16_3'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(npbe.gt.npbem) then                                           !hnr
-        write(*,210)npbe,npbem                                         !hnr
-210     FORMAT('The number of WSE BC East Boundary '                   !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     &   '  for this compilation')                                     !hnr
-        write(*,*)'The program will stop card 16_4'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(npser.gt.npserm) then                                         !hnr
-        write(*,220)npser,npserm                                       !hnr
-220     FORMAT('The number of PSER Time Series'                        !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     $  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 16_5'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-C
-C17*  READ PERIODIC FORCING (TIDAL) SURFACE ELEVATION OR
-C     PRESSURE BOUNDARY CONDITION FORCINGS
-C
+190     FORMAT('The number of WSE BC West Boundary in your application',I5,                       &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')
+        write(*,*)'The program will stop card 16_2'
+        stop                                                           
+      end if                                                           
+      if(npbn.gt.npbnm) then                                           
+        write(*,200)npbn,npbnm                                         
+200     FORMAT('The number of WSE BC North Boundary in your application',I5,                      &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 16_3'                    
+        stop                                                           
+      end if                                                           
+      if(npbe.gt.npbem) then                                           
+        write(*,210)npbe,npbem                                         
+210     FORMAT('The number of WSE BC East Boundary in your application',I5,                       &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                     
+        write(*,*)'The program will stop card 16_4'                    
+        stop                                                           
+      end if                                                           
+      if(npser.gt.npserm) then                                         
+        write(*,220)npser,npserm                                       
+220     FORMAT('The number of PSER Time Series in your application',I5,                           &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 16_5'                    
+        stop                                                           
+      end if                                                           
+!
+!C17*  READ PERIODIC FORCING (TIDAL) SURFACE ELEVATION OR
+!     PRESSURE BOUNDARY CONDITION FORCINGS
+!
       IF(NPFORT.GE.1)THEN
 	  OPEN(2,FILE='TIDALBC.OUT')
 	  CLOSE(2,STATUS='DELETE')
 	  OPEN(2,FILE='TIDALBC.OUT')
       ENDIF
-C
+!
       NCARD=17
       DO NSKIP=1,15
       READ(1,1)
@@ -592,11 +552,9 @@ C
         RAD=PI2*PFPH(NP,M)/TCP(M)
         CPFAM0(NP,M)=PFAM(NP,M)*COS(RAD)
         SPFAM0(NP,M)=PFAM(NP,M)*SIN(RAD)
-	  WRITE(2,2068)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),
-     &                         CPFAM0(NP,M),SPFAM0(NP,M)
+	  WRITE(2,2068)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),CPFAM0(NP,M),SPFAM0(NP,M)
         WRITE(7,1002)NCARD
-        WRITE(7,*)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),
-     &                      CPFAM0(NP,M),SPFAM0(NP,M)
+        WRITE(7,*)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),CPFAM0(NP,M),SPFAM0(NP,M)
         IF(ISO.GT.0) GOTO 100
       ENDIF
 	IF(NPFORT.GE.1)THEN
@@ -604,11 +562,9 @@ C
         RAD=PI2*PFPH(NP,M)/TCP(M)
         CPFAM1(NP,M)=PFAM(NP,M)*COS(RAD)-CPFAM0(NP,M)
         SPFAM1(NP,M)=PFAM(NP,M)*SIN(RAD)-SPFAM0(NP,M)
-	  WRITE(2,2068)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),
-     &                         CPFAM1(NP,M),SPFAM1(NP,M)
+	  WRITE(2,2068)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),CPFAM1(NP,M),SPFAM1(NP,M)
         WRITE(7,1002)NCARD
-        WRITE(7,*)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),
-     &                         CPFAM1(NP,M),SPFAM1(NP,M)
+        WRITE(7,*)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),CPFAM1(NP,M),SPFAM1(NP,M)
         CPFAM2(NP,M)=0.0
         SPFAM2(NP,M)=0.0
       ENDIF
@@ -622,15 +578,14 @@ C
           CPFAM2(NP,M)=0.
           SPFAM2(NP,M)=0.
         ENDIF
-	  WRITE(2,2068)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),
-     &                         CPFAM2(NP,M),SPFAM2(NP,M)
+	  WRITE(2,2068)NDUM,CDUM,PFAM(NP,M),PFPH(NP,M),CPFAM2(NP,M),SPFAM2(NP,M)
       ENDIF
       ENDDO
       ENDDO
-c
-C18*  READ PERIODIC FORCING (TIDAL) ELEVATION BOUNDARY CONDTIONS
-C     ON SOUTH OPEN BOUNDARIES
-C
+!
+!C18*  READ PERIODIC FORCING (TIDAL) ELEVATION BOUNDARY CONDTIONS
+!     ON SOUTH OPEN BOUNDARIES
+!
       NCARD=18
       DO NSKIP=1,13
       READ(1,1)
@@ -651,23 +606,20 @@ C
       ENDIF
 	IF(NPFORT.EQ.1)THEN
         DO L=1,NPBS
-          READ(1,*,IOSTAT=ISO) IPBS(L),JPBS(L),ISPBS(L),NPFORS,
-     &                         NPSERS(L),NPSERS1(L),TPCOORDS(L)
+          READ(1,*,IOSTAT=ISO) IPBS(L),JPBS(L),ISPBS(L),NPFORS,NPSERS(L),NPSERS1(L),TPCOORDS(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBS(L),JPBS(L),ISPBS(L),NPFORS,NPSERS(L),
-     &               NPSERS1(L),TPCOORDS(L)
+          WRITE(7,*) IPBS(L),JPBS(L),ISPBS(L),NPFORS,NPSERS(L),NPSERS1(L),TPCOORDS(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
-            PCBS(L,M)=CPFAM0(NPFORS,M)+TPCOORDS(L)*CPFAM1(NPFORS,M)
-     &               +TPCOORDS(L)*TPCOORDS(L)*CPFAM2(NPFORS,M)
-            PSBS(L,M)=SPFAM0(NPFORS,M)+TPCOORDS(L)*SPFAM1(NPFORS,M)
-     &               +TPCOORDS(L)*TPCOORDS(L)*SPFAM2(NPFORS,M)
+            PCBS(L,M)=CPFAM0(NPFORS,M)+TPCOORDS(L)*CPFAM1(NPFORS,M)+TPCOORDS(L)*TPCOORDS(L)       &
+                      *CPFAM2(NPFORS,M)
+            PSBS(L,M)=SPFAM0(NPFORS,M)+TPCOORDS(L)*SPFAM1(NPFORS,M)+TPCOORDS(L)*TPCOORDS(L)       &
+                      *SPFAM2(NPFORS,M)
             TMPAMP=SQRT(PCBS(L,M)*PCBS(L,M)+PSBS(L,M)*PSBS(L,M))
 		  TMPPHS=ATAN2(PSBS(L,M),PCBS(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDS(L),TMPAMP,TMPPHS,PCBS(L,M),PSBS(L,M),
-     &                   IPBS(L),JPBS(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDS(L),TMPAMP,TMPPHS,PCBS(L,M),PSBS(L,M),IPBS(L),JPBS(L),SYMBOL(M)
             PCBS(L,M)=G*PCBS(L,M)
             PSBS(L,M)=G*PSBS(L,M)
           ENDDO
@@ -675,11 +627,9 @@ C
       ENDIF
 	IF(NPFORT.EQ.2)THEN
         DO L=1,NPBS
-          READ(1,*,IOSTAT=ISO) IPBS(L),JPBS(L),ISPBS(L),NPFORS,
-     &                         NPSERS(L),NPSERS1(L),TPCOORDS(L)
+          READ(1,*,IOSTAT=ISO) IPBS(L),JPBS(L),ISPBS(L),NPFORS,NPSERS(L),NPSERS1(L),TPCOORDS(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBS(L),JPBS(L),ISPBS(L),NPFORS,NPSERS(L),
-     &               NPSERS1(L),TPCOORDS(L)
+          WRITE(7,*) IPBS(L),JPBS(L),ISPBS(L),NPFORS,NPSERS(L),NPSERS1(L),TPCOORDS(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
 	      BOTTOM=PFX2(NPFORS,M)*(1.0-PFX2(NPFORS,M))
@@ -692,28 +642,25 @@ C
 	        TOP1=TOP1/BOTTOM
 	        TOP2=TOP2/BOTTOM
             ENDIF
-            PCBS(L,M)=CPFAM0(NPFORS,M)+TOP1*CPFAM1(NPFORS,M)
-     &               +TOP2*CPFAM2(NPFORS,M)
-            PSBS(L,M)=SPFAM0(NPFORS,M)+TOP1*SPFAM1(NPFORS,M)
-     &               +TOP2*SPFAM2(NPFORS,M)
+            PCBS(L,M)=CPFAM0(NPFORS,M)+TOP1*CPFAM1(NPFORS,M)+TOP2*CPFAM2(NPFORS,M)
+            PSBS(L,M)=SPFAM0(NPFORS,M)+TOP1*SPFAM1(NPFORS,M)+TOP2*SPFAM2(NPFORS,M)
             TMPAMP=SQRT(PCBS(L,M)*PCBS(L,M)+PSBS(L,M)*PSBS(L,M))
 		  TMPPHS=ATAN2(PSBS(L,M),PCBS(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDS(L),TMPAMP,TMPPHS,PCBS(L,M),PSBS(L,M),
-     &                   IPBS(L),JPBS(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDS(L),TMPAMP,TMPPHS,PCBS(L,M),PSBS(L,M),IPBS(L),JPBS(L),SYMBOL(M)
             PCBS(L,M)=G*PCBS(L,M)
             PSBS(L,M)=G*PSBS(L,M)
           ENDDO
         ENDDO
       ENDIF
-C
+!
  2068 FORMAT(I4,3X,A2,5X,E14.4,3E14.5,5X,2I5)
  2069 FORMAT(5E14.5,2I8,3X,A2)
-C
-C19*  READ PERIODIC FORCING (TIDAL) ELEVATION BOUNDARY CONDTIONS
-C     ON WEST OPEN BOUNDARIES
-C
+!
+!C19*  READ PERIODIC FORCING (TIDAL) ELEVATION BOUNDARY CONDTIONS
+!     ON WEST OPEN BOUNDARIES
+!
       NCARD=19
       DO NSKIP=1,11
       READ(1,1)
@@ -734,24 +681,21 @@ C
       ENDIF
 	IF(NPFORT.EQ.1)THEN
         DO L=1,NPBW
-          READ(1,*,IOSTAT=ISO) IPBW(L),JPBW(L),ISPBW(L),NPFORW,
-     &                         NPSERW(L),NPSERW1(L),TPCOORDW(L)
+          READ(1,*,IOSTAT=ISO) IPBW(L),JPBW(L),ISPBW(L),NPFORW,NPSERW(L),NPSERW1(L),TPCOORDW(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBW(L),JPBW(L),ISPBW(L),NPFORW,NPSERW(L),
-     &               NPSERW1(L),TPCOORDW(L)
+          WRITE(7,*) IPBW(L),JPBW(L),ISPBW(L),NPFORW,NPSERW(L),NPSERW1(L),TPCOORDW(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
-            PCBW(L,M)=CPFAM0(NPFORW,M)+TPCOORDW(L)*CPFAM1(NPFORW,M)
-     &               +TPCOORDW(L)*TPCOORDW(L)*CPFAM2(NPFORW,M)
-            PSBW(L,M)=SPFAM0(NPFORW,M)+TPCOORDW(L)*SPFAM1(NPFORW,M)
-     &               +TPCOORDW(L)*TPCOORDW(L)*SPFAM2(NPFORW,M)
+            PCBW(L,M)=CPFAM0(NPFORW,M)+TPCOORDW(L)*CPFAM1(NPFORW,M)+TPCOORDW(L)*TPCOORDW(L)       &
+                      *CPFAM2(NPFORW,M)
+            PSBW(L,M)=SPFAM0(NPFORW,M)+TPCOORDW(L)*SPFAM1(NPFORW,M)+TPCOORDW(L)*TPCOORDW(L)       &
+                      *SPFAM2(NPFORW,M)
             TMPAMP=SQRT(PCBW(L,M)*PCBW(L,M)+PSBW(L,M)*PSBW(L,M))
             TMPPHS=0.0
             IF(TMPAMP.GT.0.0) TMPPHS=ATAN2(PSBW(L,M),PCBW(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDW(L),TMPAMP,TMPPHS,PCBW(L,M),PSBW(L,M),
-     &                   IPBW(L),JPBW(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDW(L),TMPAMP,TMPPHS,PCBW(L,M),PSBW(L,M),IPBW(L),JPBW(L),SYMBOL(M)
             PCBW(L,M)=G*PCBW(L,M)
             PSBW(L,M)=G*PSBW(L,M)
           ENDDO
@@ -759,11 +703,9 @@ C
       ENDIF
 	IF(NPFORT.EQ.2)THEN
         DO L=1,NPBW
-          READ(1,*,IOSTAT=ISO) IPBW(L),JPBW(L),ISPBW(L),NPFORW,
-     &                         NPSERW(L),NPSERW1(L),TPCOORDW(L)
+          READ(1,*,IOSTAT=ISO) IPBW(L),JPBW(L),ISPBW(L),NPFORW,NPSERW(L),NPSERW1(L),TPCOORDW(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBW(L),JPBW(L),ISPBW(L),NPFORW,NPSERW(L),
-     &               NPSERW1(L),TPCOORDW(L)
+          WRITE(7,*) IPBW(L),JPBW(L),ISPBW(L),NPFORW,NPSERW(L),NPSERW1(L),TPCOORDW(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
 	      BOTTOM=PFX2(NPFORW,M)*(1.0-PFX2(NPFORW,M))
@@ -776,26 +718,23 @@ C
 	        TOP1=TOP1/BOTTOM
 	        TOP2=TOP2/BOTTOM
             ENDIF
-            PCBW(L,M)=CPFAM0(NPFORW,M)+TOP1*CPFAM1(NPFORW,M)
-     &               +TOP2*CPFAM2(NPFORW,M)
-            PSBW(L,M)=SPFAM0(NPFORW,M)+TOP1*SPFAM1(NPFORW,M)
-     &               +TOP2*SPFAM2(NPFORW,M)
+            PCBW(L,M)=CPFAM0(NPFORW,M)+TOP1*CPFAM1(NPFORW,M)+TOP2*CPFAM2(NPFORW,M)
+            PSBW(L,M)=SPFAM0(NPFORW,M)+TOP1*SPFAM1(NPFORW,M)+TOP2*SPFAM2(NPFORW,M)
             TMPAMP=SQRT(PCBW(L,M)*PCBW(L,M)+PSBW(L,M)*PSBW(L,M))
             TMPPHS=0.0
             IF(TMPAMP.GT.0.0) TMPPHS=ATAN2(PSBW(L,M),PCBW(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDW(L),TMPAMP,TMPPHS,PCBW(L,M),PSBW(L,M),
-     &                   IPBW(L),JPBW(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDW(L),TMPAMP,TMPPHS,PCBW(L,M),PSBW(L,M),IPBW(L),JPBW(L),SYMBOL(M)
             PCBW(L,M)=G*PCBW(L,M)
             PSBW(L,M)=G*PSBW(L,M)
           ENDDO
         ENDDO
       ENDIF
-C
-C20*  READ PERIODIC FORCING (TIDAL)ELEVATION BOUNDARY CONDTIONS
-C     ON EAST OPEN BOUNDARIES
-C
+!
+!C20*  READ PERIODIC FORCING (TIDAL)ELEVATION BOUNDARY CONDTIONS
+!     ON EAST OPEN BOUNDARIES
+!
       NCARD=20
       DO NSKIP=1,11
       READ(1,1)
@@ -816,24 +755,21 @@ C
       ENDIF
 	IF(NPFORT.EQ.1)THEN
         DO L=1,NPBE
-          READ(1,*,IOSTAT=ISO) IPBE(L),JPBE(L),ISPBE(L),NPFORE,
-     &                         NPSERE(L),NPSERE1(L),TPCOORDE(L)
+          READ(1,*,IOSTAT=ISO) IPBE(L),JPBE(L),ISPBE(L),NPFORE,NPSERE(L),NPSERE1(L),TPCOORDE(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBE(L),JPBE(L),ISPBE(L),NPFORE,NPSERE(L),
-     &               NPSERE1(L),TPCOORDE(L)
+          WRITE(7,*) IPBE(L),JPBE(L),ISPBE(L),NPFORE,NPSERE(L),NPSERE1(L),TPCOORDE(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
-            PCBE(L,M)=CPFAM0(NPFORE,M)+TPCOORDE(L)*CPFAM1(NPFORE,M)
-     &               +TPCOORDE(L)*TPCOORDE(L)*CPFAM2(NPFORE,M)
-            PSBE(L,M)=SPFAM0(NPFORE,M)+TPCOORDE(L)*SPFAM1(NPFORE,M)
-     &               +TPCOORDE(L)*TPCOORDE(L)*SPFAM2(NPFORE,M)
+            PCBE(L,M)=CPFAM0(NPFORE,M)+TPCOORDE(L)*CPFAM1(NPFORE,M)+TPCOORDE(L)*TPCOORDE(L)       &
+                      *CPFAM2(NPFORE,M)
+            PSBE(L,M)=SPFAM0(NPFORE,M)+TPCOORDE(L)*SPFAM1(NPFORE,M)+TPCOORDE(L)*TPCOORDE(L)       &
+                      *SPFAM2(NPFORE,M)
             TMPAMP=SQRT(PCBE(L,M)*PCBE(L,M)+PSBE(L,M)*PSBE(L,M))
             TMPPHS=0.0
             IF(TMPAMP.GT.0.0) TMPPHS=ATAN2(PSBE(L,M),PCBE(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDE(L),TMPAMP,TMPPHS,PCBE(L,M),PSBE(L,M),
-     &                   IPBE(L),JPBE(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDE(L),TMPAMP,TMPPHS,PCBE(L,M),PSBE(L,M),IPBE(L),JPBE(L),SYMBOL(M)
             PCBE(L,M)=G*PCBE(L,M)
             PSBE(L,M)=G*PSBE(L,M)
           ENDDO
@@ -841,11 +777,9 @@ C
       ENDIF
 	IF(NPFORT.EQ.2)THEN
         DO L=1,NPBE
-          READ(1,*,IOSTAT=ISO) IPBE(L),JPBE(L),ISPBE(L),NPFORE,
-     &                         NPSERE(L),NPSERE1(L),TPCOORDE(L)
+          READ(1,*,IOSTAT=ISO) IPBE(L),JPBE(L),ISPBE(L),NPFORE,NPSERE(L),NPSERE1(L),TPCOORDE(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBE(L),JPBE(L),ISPBE(L),NPFORE,NPSERE(L),
-     &               NPSERE1(L),TPCOORDE(L)
+          WRITE(7,*) IPBE(L),JPBE(L),ISPBE(L),NPFORE,NPSERE(L),NPSERE1(L),TPCOORDE(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
 	      BOTTOM=PFX2(NPFORE,M)*(1.0-PFX2(NPFORE,M))
@@ -858,26 +792,23 @@ C
 	        TOP1=TOP1/BOTTOM
 	        TOP2=TOP2/BOTTOM
             ENDIF
-            PCBE(L,M)=CPFAM0(NPFORE,M)+TOP1*CPFAM1(NPFORE,M)
-     &               +TOP2*CPFAM2(NPFORE,M)
-            PSBE(L,M)=SPFAM0(NPFORE,M)+TOP1*SPFAM1(NPFORE,M)
-     &               +TOP2*SPFAM2(NPFORE,M)
+            PCBE(L,M)=CPFAM0(NPFORE,M)+TOP1*CPFAM1(NPFORE,M)+TOP2*CPFAM2(NPFORE,M)
+            PSBE(L,M)=SPFAM0(NPFORE,M)+TOP1*SPFAM1(NPFORE,M)+TOP2*SPFAM2(NPFORE,M)
             TMPAMP=SQRT(PCBE(L,M)*PCBE(L,M)+PSBE(L,M)*PSBE(L,M))
             TMPPHS=0.0
             IF(TMPAMP.GT.0.0) TMPPHS=ATAN2(PSBE(L,M),PCBE(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDE(L),TMPAMP,TMPPHS,PCBE(L,M),PSBE(L,M),
-     &                   IPBE(L),JPBE(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDE(L),TMPAMP,TMPPHS,PCBE(L,M),PSBE(L,M),IPBE(L),JPBE(L),SYMBOL(M)
             PCBE(L,M)=G*PCBE(L,M)
             PSBE(L,M)=G*PSBE(L,M)
           ENDDO
         ENDDO
       ENDIF
-C
-C21*  READ PERIODIC FORCING (TIDAL) ELEVATION BOUNDARY CONDTIONS
-C     ON NORTH OPEN BOUNDARIES
-C
+!
+!C21*  READ PERIODIC FORCING (TIDAL) ELEVATION BOUNDARY CONDTIONS
+!     ON NORTH OPEN BOUNDARIES
+!
       NCARD=21
       DO NSKIP=1,11
       READ(1,1)
@@ -898,24 +829,21 @@ C
       ENDIF
 	IF(NPFORT.GE.1)THEN
         DO L=1,NPBN
-          READ(1,*,IOSTAT=ISO) IPBN(L),JPBN(L),ISPBN(L),NPFORN,
-     &                         NPSERN(L),NPSERN1(L),TPCOORDN(L)
+          READ(1,*,IOSTAT=ISO) IPBN(L),JPBN(L),ISPBN(L),NPFORN,NPSERN(L),NPSERN1(L),TPCOORDN(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBN(L),JPBN(L),ISPBN(L),NPFORN,NPSERN(L),
-     &               NPSERN1(L),TPCOORDN(L)
+          WRITE(7,*) IPBN(L),JPBN(L),ISPBN(L),NPFORN,NPSERN(L),NPSERN1(L),TPCOORDN(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
-            PCBN(L,M)=CPFAM0(NPFORN,M)+TPCOORDN(L)*CPFAM1(NPFORN,M)
-     &               +TPCOORDN(L)*TPCOORDN(L)*CPFAM2(NPFORN,M)
-            PSBN(L,M)=SPFAM0(NPFORN,M)+TPCOORDN(L)*SPFAM1(NPFORN,M)
-     &               +TPCOORDN(L)*TPCOORDN(L)*SPFAM2(NPFORN,M)
+            PCBN(L,M)=CPFAM0(NPFORN,M)+TPCOORDN(L)*CPFAM1(NPFORN,M)+TPCOORDN(L)*TPCOORDN(L)       &
+                      *CPFAM2(NPFORN,M)
+            PSBN(L,M)=SPFAM0(NPFORN,M)+TPCOORDN(L)*SPFAM1(NPFORN,M)+TPCOORDN(L)*TPCOORDN(L)       &
+                      *SPFAM2(NPFORN,M)
             TMPAMP=SQRT(PCBN(L,M)*PCBN(L,M)+PSBN(L,M)*PSBN(L,M))
             TMPPHS=0.0
             IF(TMPAMP.GT.0.0) TMPPHS=ATAN2(PSBN(L,M),PCBN(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDN(L),TMPAMP,TMPPHS,PCBN(L,M),PSBN(L,M),
-     &                   IPBN(L),JPBN(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDN(L),TMPAMP,TMPPHS,PCBN(L,M),PSBN(L,M),IPBN(L),JPBN(L),SYMBOL(M)
             PCBN(L,M)=G*PCBN(L,M)
             PSBN(L,M)=G*PSBN(L,M)
          ENDDO
@@ -923,11 +851,9 @@ C
       ENDIF
 	IF(NPFORT.EQ.2)THEN
         DO L=1,NPBN
-          READ(1,*,IOSTAT=ISO) IPBN(L),JPBN(L),ISPBN(L),NPFORN,
-     &                         NPSERN(L),NPSERN1(L),TPCOORDN(L)
+          READ(1,*,IOSTAT=ISO) IPBN(L),JPBN(L),ISPBN(L),NPFORN,NPSERN(L),NPSERN1(L),TPCOORDN(L)
           WRITE(7,1002)NCARD
-          WRITE(7,*) IPBN(L),JPBN(L),ISPBN(L),NPFORN,NPSERN(L),
-     &               NPSERN1(L),TPCOORDN(L)
+          WRITE(7,*) IPBN(L),JPBN(L),ISPBN(L),NPFORN,NPSERN(L),NPSERN1(L),TPCOORDN(L)
           IF(ISO.GT.0) GOTO 100
           DO M=1,MTIDE
 	      BOTTOM=PFX2(NPFORN,M)*(1.0-PFX2(NPFORN,M))
@@ -940,106 +866,98 @@ C
 	        TOP1=TOP1/BOTTOM
 	        TOP2=TOP2/BOTTOM
             ENDIF
-            PCBN(L,M)=CPFAM0(NPFORN,M)+TOP1*CPFAM1(NPFORN,M)
-     &               +TOP2*CPFAM2(NPFORN,M)
-            PSBN(L,M)=SPFAM0(NPFORN,M)+TOP1*SPFAM1(NPFORN,M)
-     &               +TOP2*SPFAM2(NPFORN,M)
+            PCBN(L,M)=CPFAM0(NPFORN,M)+TOP1*CPFAM1(NPFORN,M)+TOP2*CPFAM2(NPFORN,M)
+            PSBN(L,M)=SPFAM0(NPFORN,M)+TOP1*SPFAM1(NPFORN,M)+TOP2*SPFAM2(NPFORN,M)
             TMPAMP=SQRT(PCBN(L,M)*PCBN(L,M)+PSBN(L,M)*PSBN(L,M))
             TMPPHS=0.0
             IF(TMPAMP.GT.0.0) TMPPHS=ATAN2(PSBN(L,M),PCBN(L,M))
 		  TMPPHS=TMPPHS*TCP(M)/PI2
 		  IF(TMPPHS.LT.0.0)TMPPHS=TMPPHS+TCP(M)
-            WRITE(2,2069)TPCOORDN(L),TMPAMP,TMPPHS,PCBN(L,M),PSBN(L,M),
-     &                   IPBN(L),JPBN(L),SYMBOL(M)
+            WRITE(2,2069)TPCOORDN(L),TMPAMP,TMPPHS,PCBN(L,M),PSBN(L,M),IPBN(L),JPBN(L),SYMBOL(M)
             PCBN(L,M)=G*PCBN(L,M)
             PSBN(L,M)=G*PSBN(L,M)
           ENDDO
         ENDDO
       ENDIF
-C
+!
       IF(NPFORT.GE.1)THEN
 	  CLOSE(2)
       ENDIF
-C
-C21A* READ WATER SURFACE ELEVATION AND VELOCITY DATA ASSIMILATION
-C
+!
+!C21A* READ WATER SURFACE ELEVATION AND VELOCITY DATA ASSIMILATION
+!
       NCARD=211
       DO NSKIP=1,11
       READ(1,1)
       ENDDO
-C
+!
       READ(1,*,IOSTAT=ISO)ISWSEDA,NLWSEDA,ISUVDA,NLUVDA,NUVSER
       WRITE(7,1002)NCARD
       WRITE(7,*) ISWSEDA,NLWSEDA,ISUVDA,NLUVDA,NUVSER
       IF(ISO.GT.0) GOTO 100
-C
+!
       DO N=1,NUVSER
 	  MUVTLAST(N)=1
 	ENDDO
-C
-C21B* WATER SURFACE ELEVATION DATA ASSIMILATION
-C
+!
+!C21B* WATER SURFACE ELEVATION DATA ASSIMILATION
+!
       NCARD=212
       DO NSKIP=1,9
       READ(1,1)
       ENDDO
-C
+!
       IF(ISWSEDA.GT.0.0)THEN
 	  DO N=1,NLWSEDA
-          READ(1,*,IOSTAT=ISO)ICWSEDA(N),JCWSEDA(N),NWSESERA(N),
-     &                        TSWSEDA(N)
+          READ(1,*,IOSTAT=ISO)ICWSEDA(N),JCWSEDA(N),NWSESERA(N),TSWSEDA(N)
         ENDDO
         WRITE(7,1002)NCARD
 	  DO N=1,NLWSEDA
-          WRITE(7,*)ICWSEDA(N),JCWSEDA(N),NWSESERA(N),
-     &                        TSWSEDA(N)
+          WRITE(7,*)ICWSEDA(N),JCWSEDA(N),NWSESERA(N),TSWSEDA(N)
         ENDDO
         IF(ISO.GT.0) GOTO 100
 	ENDIF
-C
-C21C* VELOCITY DATA ASSIMILATION
-C
+!
+!C21C* VELOCITY DATA ASSIMILATION
+!
       NCARD=213
       DO NSKIP=1,13
       READ(1,1)
       ENDDO
-C
+!
       IF(ISUVDA.GT.0.0)THEN
 	  IF(NLUVDA.GT.0.AND.NUVSER.GT.0)THEN
 	    DO N=1,NLUVDA
-            READ(1,*,IOSTAT=ISO)ICUVDA(N),JCUVDA(N),NUVSERA(N),
-     &        TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),RRUVDA(N)
+            READ(1,*,IOSTAT=ISO)ICUVDA(N),JCUVDA(N),NUVSERA(N),TSUVDA(N),FSUVDA(N),IWUVDA(N),     &
+                                IRVUDA(N),RRUVDA(N)
           ENDDO
           WRITE(7,1002)NCARD
 	    DO N=1,NLUVDA
-            WRITE(7,*)ICUVDA(N),JCUVDA(N),NUVSERA(N),
-     &        TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),RRUVDA(N)
+            WRITE(7,*)ICUVDA(N),JCUVDA(N),NUVSERA(N),TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),     &
+                      RRUVDA(N)
           ENDDO
           IF(ISO.GT.0) GOTO 100
 	  ENDIF
 	  IF(NLUVDA.GT.0.AND.NUVSER.EQ.0)THEN
 	    N=1
-          READ(1,*,IOSTAT=ISO)IDUM,JDUM,NUVSERA(N),
-     &        TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),RRUVDA(N)
+          READ(1,*,IOSTAT=ISO)IDUM,JDUM,NUVSERA(N),TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),RRUVDA(N)
           WRITE(7,1002)NCARD
-          WRITE(7,*)IDUM,JDUM,NUVSERA(N),
-     &        TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),RRUVDA(N)
+          WRITE(7,*)IDUM,JDUM,NUVSERA(N),TSUVDA(N),FSUVDA(N),IWUVDA(N),IRVUDA(N),RRUVDA(N)
           IF(ISO.GT.0) GOTO 100
 	  ENDIF
 	ENDIF
-C
-C22*  READ NUM OF SEDIMENT AMD TOXICS AND NUM OF CONCENTRATION TIME SERIES
-C
+!
+!C22*  READ NUM OF SEDIMENT AMD TOXICS AND NUM OF CONCENTRATION TIME SERIES
+!
       NCARD=22
       DO NSKIP=1,19
       READ(1,1)
       ENDDO
-C                                          SAL      TEM      DYE
-      READ(1,*,IOSTAT=ISO) NTOX,NSED,NSND,NCSER(1),NCSER(2),NCSER(3),
-     &           NCSER(4),NTOXSER,NSEDSER,NSNDSER,ISSBAL
+!                                          SAL      TEM      DYE
+      READ(1,*,IOSTAT=ISO) NTOX,NSED,NSND,NCSER(1),NCSER(2),NCSER(3),NCSER(4),NTOXSER,NSEDSER,   &
+                           NSNDSER,ISSBAL
       WRITE(7,1002)NCARD
-      WRITE(7,*) NTOX,NSED,NSND,NCSER(1),NCSER(2),NCSER(3),
-     &           NCSER(4),NTOXSER,NSEDSER,NSNDSER,ISSBAL
+      WRITE(7,*) NTOX,NSED,NSND,NCSER(1),NCSER(2),NCSER(3),NCSER(4),NTOXSER,NSEDSER,NSNDSER,ISSBAL
       IF(ISO.GT.0) GOTO 100
       MTMP=4
       DO N=1,NTOX
@@ -1066,112 +984,94 @@ C                                          SAL      TEM      DYE
        M=MSVSND(N)
        NCSER(M)=NSNDSER
       ENDDO
-      if(ncser(1).gt.ncserm) then                                      !hnr
-        write(*,230)ncser(1),ncserm                                    !hnr
-230     FORMAT('The number of Salinity Time Series '                   !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 22_1'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(ncser(2).gt.ncserm) then                                      !hnr
-        write(*,240)ncser(2),ncserm                                    !hnr
-240     FORMAT('The number of Temperature Time Series '                !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 22_2'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(ncser(3).gt.ncserm) then                                      !hnr
-        write(*,250)ncser(3),ncserm                                    !hnr
-250     FORMAT('The number of Dye Time Series in your application'     !hnr
-     &  ,I5,'  is larger than the maximum allowed of',I5,              !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 22_3'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-C
-C23*  READ VELOCITY, VOL SOUR/SINK, FLOW CONTROL, & WITHDRAW/RETURN DATA
-C
+      if(ncser(1).gt.ncserm) then                                      
+        write(*,230)ncser(1),ncserm                                    
+230     FORMAT('The number of Salinity Time Series in your application',I5,                       &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 22_1'                    
+        stop                                                           
+      end if                                                           
+      if(ncser(2).gt.ncserm) then                                      
+        write(*,240)ncser(2),ncserm                                    
+240     FORMAT('The number of Temperature Time Series in your application',I5,                    &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 22_2'                    
+        stop                                                           
+      end if                                                           
+      if(ncser(3).gt.ncserm) then                                      
+        write(*,250)ncser(3),ncserm                                    
+250     FORMAT('The number of Dye Time Series in your application',I5,                            &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 22_3'                    
+        stop                                                           
+      end if                                                           
+!
+!C23*  READ VELOCITY, VOL SOUR/SINK, FLOW CONTROL, & WITHDRAW/RETURN DATA
+!
       NCARD=23
       DO NSKIP=1,17
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) NQSIJ,NQJPIJ,NQSER,NQCTL,
-     &                  NQCTLT,NQWR,NQWRSR,ISDIQ
+      READ(1,*,IOSTAT=ISO) NQSIJ,NQJPIJ,NQSER,NQCTL,NQCTLT,NQWR,NQWRSR,ISDIQ
       WRITE(7,1002)NCARD
-      WRITE(7,*) NVBS,NUBW,NUBE,NVBN,NQSIJ,NQJPIJ,NQSER,NQCTL,
-     &                  NQCTLT,NQWR,NQWRSR,ISDIQ
+      WRITE(7,*) NVBS,NUBW,NUBE,NVBN,NQSIJ,NQJPIJ,NQSER,NQCTL,NQCTLT,NQWR,NQWRSR,ISDIQ
       IF(ISO.GT.0) GOTO 100
-      if(nqsij.gt.nqsijm) then                                         !hnr
-        write(*,260)nqsij,nqsijm                                       !hnr
-260     FORMAT('The number of Inflow Locations in your application'    !hnr
-     &  ,I5,'  is larger than the maximum allowed of',I5,              !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 23_1'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(nqser.gt.nqserm) then                                         !hnr
-        write(*,270)nqser,nqserm                                       !hnr
-270     FORMAT('The number of Inflow Time Series in your application'  !hnr
-     &  ,I5,'  is larger than the maximum allowed of',I5,              !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 23_2'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(nqctl.gt.nqctlm) then                                         !hnr
-        write(*,280)nqctl,nqctlm                                       !hnr
-280     FORMAT('The number of Pressure Controlled Pairs '              !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 23_3'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(nqctlt.gt.nqcttm) then                                        !hnr
-        write(*,290)nqctlt,nqcttm                                      !hnr
-290     FORMAT('The number of Pressure Controlled Tables '             !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 23_4'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(nqwr.gt.nqwrm) then                                           !hnr
-        write(*,300)nqwr,nqwrm                                         !hnr
-300     FORMAT('The number of Specified Withdrawal/Return Pairs '      !hnr
-     &  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 23_5'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(nqwrsr.gt.nqwrsrm) then                                       !hnr
-        write(*,310)nqwrsr,nqwrsrm                                     !hnr
-310     FORMAT('The number of Time Series Specifying '                 !hnr
-     &  'Withdrawal/Return Pairs in your application',I5,              !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 23_6'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-C
-C24*  READ VOLUMN SOURCE/SINK LOCATIONS, MAGNITUDES, & VOL & CONC SERIES
-C
+      if(nqsij.gt.nqsijm) then                                         
+        write(*,260)nqsij,nqsijm                                       
+260     FORMAT('The number of Inflow Locations in your application',I5,                          &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 23_1'                    
+        stop                                                           
+      end if                                                           
+      if(nqser.gt.nqserm) then                                         
+        write(*,270)nqser,nqserm                                       
+270     FORMAT('The number of Inflow Time Series in your application',I5,                        &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 23_2'                    
+        stop                                                           
+      end if                                                           
+      if(nqctl.gt.nqctlm) then                                         
+        write(*,280)nqctl,nqctlm                                       
+280     FORMAT('The number of Pressure Controlled Pairs in your application',I5,                 &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 23_3'                    
+        stop                                                           
+      end if                                                           
+      if(nqctlt.gt.nqcttm) then                                        
+        write(*,290)nqctlt,nqcttm                                      
+290     FORMAT('The number of Pressure Controlled Tables in your application',I5,                &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 23_4'                    
+        stop                                                           
+      end if                                                           
+      if(nqwr.gt.nqwrm) then                                           
+        write(*,300)nqwr,nqwrm                                         
+300     FORMAT('The number of Specified Withdrawal/Return Pairs in your application',I5,         &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop card 23_5'                    
+        stop                                                           
+      end if                                                           
+      if(nqwrsr.gt.nqwrsrm) then                                       
+        write(*,310)nqwrsr,nqwrsrm                                     
+310     FORMAT('The number of Time Series Specifying Withdrawal/Return Pairs in your',           &
+               ' application',I5,' is larger than the maximum allowed of',I5,                    &
+               '  for this compilation')                                      
+        write(*,*)'The program will stop card 23_6'                    
+        stop                                                           
+      end if                                                           
+!
+!C24*  READ VOLUMN SOURCE/SINK LOCATIONS, MAGNITUDES, & VOL & CONC SERIES
+!
       NCARD=24
       DO NSKIP=1,27
       READ(1,1)
       ENDDO
       DO L=1,NQSIJ
-       READ(1,*,IOSTAT=ISO)IQS(L),JQS(L),QSSE,NQSMUL(L),NQSMF(L),
-     &          NQSERQ(L),NCSERQ(L,1),NCSERQ(L,2),NCSERQ(L,3),
-     &          NCSERQ(L,4),NTOXSRQ,NSEDSRQ,NSNDSRQ,QFACTOR(L)
+       READ(1,*,IOSTAT=ISO)IQS(L),JQS(L),QSSE,NQSMUL(L),NQSMF(L),NQSERQ(L),NCSERQ(L,1),           &
+                           NCSERQ(L,2),NCSERQ(L,3),NCSERQ(L,4),NTOXSRQ,NSEDSRQ,NSNDSRQ,QFACTOR(L)
        WRITE(7,1002)NCARD
-       WRITE(7,*)IQS(L),JQS(L),QSSE,NQSMUL(L),NQSMF(L),
-     &          NQSERQ(L),NCSERQ(L,1),NCSERQ(L,2),NCSERQ(L,3),
-     &          NCSERQ(L,4),NTOXSRQ,NSEDSRQ,NSNDSRQ,QFACTOR(L)
+       WRITE(7,*)IQS(L),JQS(L),QSSE,NQSMUL(L),NQSMF(L),NQSERQ(L),NCSERQ(L,1),NCSERQ(L,2),         &
+                 NCSERQ(L,3),NCSERQ(L,4),NTOXSRQ,NSEDSRQ,NSNDSRQ,QFACTOR(L)
        IF(ISO.GT.0) GOTO 100
        DO K=1,KC
        QSS(K,L)=QSSE*DZC(K)
@@ -1189,10 +1089,10 @@ C
         NCSERQ(L,M)=NSNDSRQ
        ENDDO
       ENDDO
-C
-C25*  READ TIME CONSTANT VOLUMETRIC SOURCE INFLOW CONCENTRATIONS
-C     SAL,TEM,DYE,SFL,TOX(1 TO NOTX)
-C
+!
+!C25*  READ TIME CONSTANT VOLUMETRIC SOURCE INFLOW CONCENTRATIONS
+!     SAL,TEM,DYE,SFL,TOX(1 TO NOTX)
+!
       NCARD=25
       DO NSKIP=1,12
       READ(1,1)
@@ -1209,10 +1109,10 @@ C
         ENDDO
        ENDDO
       ENDDO
-C
-C26*  READ TIME CONSTANT VOLUMETRIC SOURCE INFLOW CONCENTRATIONS
-C     SED(1 TO NSED),SND(1 TO NSND)
-C
+!
+!C26*  READ TIME CONSTANT VOLUMETRIC SOURCE INFLOW CONCENTRATIONS
+!     SED(1 TO NSED),SND(1 TO NSND)
+!
       NCARD=26
       DO NSKIP=1,13
       READ(1,1)
@@ -1230,55 +1130,49 @@ C
         ENDDO
        ENDDO
       ENDDO
-C
-C27*  READ JET/PLUME SOURCE LOCATIONS AND PARAMETERS
-C
+!
+!C27*  READ JET/PLUME SOURCE LOCATIONS AND PARAMETERS
+!
       NCARD=27
       DO NSKIP=1,19
       READ(1,1)
       ENDDO
       DO L=1,NQJPIJ
-      READ(1,*,IOSTAT=ISO) IDUM,ICALJP(L),IQJP(L),JQJP(L),KQJP(L),
-     &   NPORTJP(L),XJETL(L),YJETL(L),ZJET(L),PHJET(L),THJET(L),
-     &                      DJET(L),CFRD(L),DJPER(L)
+      READ(1,*,IOSTAT=ISO) IDUM,ICALJP(L),IQJP(L),JQJP(L),KQJP(L),NPORTJP(L),XJETL(L),YJETL(L),   &
+                           ZJET(L),PHJET(L),THJET(L),DJET(L),CFRD(L),DJPER(L)
       WRITE(7,1002)NCARD
-      WRITE(7,*) IDUM,ICALJP(L),IQJP(L),JQJP(L),KQJP(L),
-     &  NPORTJP(L),XJETL(L),YJETL(L),ZJET(L),PHJET(L),THJET(L),
-     &                   DJET(L),CFRD(L),DJPER(L)
+      WRITE(7,*) IDUM,ICALJP(L),IQJP(L),JQJP(L),KQJP(L),NPORTJP(L),XJETL(L),YJETL(L),ZJET(L),     &
+                 PHJET(L),THJET(L),DJET(L),CFRD(L),DJPER(L)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C28*  READ JET/PLUME SOURCE LOCATIONS AND PARAMETERS
-C
+!
+!C28*  READ JET/PLUME SOURCE LOCATIONS AND PARAMETERS
+!
       NCARD=28
       DO NSKIP=1,21
       READ(1,1)
       ENDDO
       DO L=1,NQJPIJ
-      READ(1,*,IOSTAT=ISO) IDUM,NJEL(L),NJPMX(L),ISENT(L),ISTJP(L),
-     &   NUDJP(L),IOUTJP(L),NZPRJP(L),ISDJP(L),IUPCJP(L),
-     &   JUPCJP(L),KUPCJP(L)
+      READ(1,*,IOSTAT=ISO) IDUM,NJEL(L),NJPMX(L),ISENT(L),ISTJP(L),NUDJP(L),IOUTJP(L),NZPRJP(L),  &
+                           ISDJP(L),IUPCJP(L),JUPCJP(L),KUPCJP(L)
       WRITE(7,1002)NCARD
-      WRITE(7,*) IDUM,NJEL(L),NJPMX(L),ISENT(L),ISTJP(L),
-     &   NUDJP(L),IOUTJP(L),NZPRJP(L),ISDJP(L),IUPCJP(L),
-     &   JUPCJP(L),KUPCJP(L)
+      WRITE(7,*) IDUM,NJEL(L),NJPMX(L),ISENT(L),ISTJP(L),NUDJP(L),IOUTJP(L),NZPRJP(L),ISDJP(L),   &
+                 IUPCJP(L),JUPCJP(L),KUPCJP(L)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C29*  READ ADDITIONAL JET/PLUME PARAMETERS
-C
+!
+!C29*  READ ADDITIONAL JET/PLUME PARAMETERS
+!
       NCARD=29
       DO NSKIP=1,17
       READ(1,1)
       ENDDO
       DO L=1,NQJPIJ
-       READ(1,*,IOSTAT=ISO) IDUM,QQCJP(L),NQSERJP(L),NQWRSERJP(L),
-     &   NCSERJP(L,1),NCSERJP(L,2),NCSERJP(L,3),
-     &   NCSERJP(L,4),NTXSRJP,NSDSRJP,NSNSRJP
+       READ(1,*,IOSTAT=ISO) IDUM,QQCJP(L),NQSERJP(L),NQWRSERJP(L), NCSERJP(L,1),NCSERJP(L,2),     &
+                            NCSERJP(L,3),NCSERJP(L,4),NTXSRJP,NSDSRJP,NSNSRJP
        WRITE(7,1002)NCARD
-       WRITE(7,*) IDUM,QQCJP(L),NQSERJP(L),NQWRSERJP(L),
-     &   NCSERJP(L,1),NCSERJP(L,2),NCSERJP(L,3),
-     &   NCSERJP(L,4),NTXSRJP,NSDSRJP,NSNSRJP
+       WRITE(7,*) IDUM,QQCJP(L),NQSERJP(L),NQWRSERJP(L),NCSERJP(L,1),NCSERJP(L,2),NCSERJP(L,3),   &
+                  NCSERJP(L,4),NTXSRJP,NSDSRJP,NSNSRJP
        NUDJPC(L)=1
        IF(ISO.GT.0) GOTO 100
        DO N=1,NTOX
@@ -1305,10 +1199,10 @@ C
          NUDJP(L)=NUDJP(1)
         ENDDO
       ENDIF
-C
-C30*  READ TIME CONSTANT INFLOW CONCENTRATIONS FOR TIME CONSTANT
-C     JET/PLUME SOURCES SAL,TEM,DYE,SFL,TOX(1 TO NOTX)
-C
+!
+!C30*  READ TIME CONSTANT INFLOW CONCENTRATIONS FOR TIME CONSTANT
+!     JET/PLUME SOURCES SAL,TEM,DYE,SFL,TOX(1 TO NOTX)
+!
       NCARD=30
       DO NSKIP=1,12
       READ(1,1)
@@ -1335,10 +1229,10 @@ C
        ENDDO
 	ENDIF
       ENDDO
-C
-C31*  READ TIME CONSTANT INFLOW CONCENTRATIONS FOR TIME CONSTANT
-C     JET/PLUME SOURCES SED(1 TO NSED),SND(1 TO NSND)
-C
+!
+!C31*  READ TIME CONSTANT INFLOW CONCENTRATIONS FOR TIME CONSTANT
+!     JET/PLUME SOURCES SED(1 TO NSED),SND(1 TO NSND)
+!
       NCARD=31
       DO NSKIP=1,13
       READ(1,1)
@@ -1366,51 +1260,45 @@ C
        ENDDO
 	ENDIF
       ENDDO
-C
-C32*  READ SURF ELEV OR PRESS DEPENDENT FLOW CONTROL STRUCTURE INFO
-C
+!
+!C32*  READ SURF ELEV OR PRESS DEPENDENT FLOW CONTROL STRUCTURE INFO
+!
       NCARD=32
       DO NSKIP=1,32
       READ(1,1)
       ENDDO
       DO L=1,NQCTL
-      READ(1,*,IOSTAT=ISO)IQCTLU(L),JQCTLU(L),IQCTLD(L),JQCTLD(L),
-     &                   NQCTYP(L),NQCTLQ(L),NQCMUL(L),NQCMFU(L),
-     &                   NQCMFD(L),BQCMFU(L),BQCMFD(L)
+      READ(1,*,IOSTAT=ISO)IQCTLU(L),JQCTLU(L),IQCTLD(L),JQCTLD(L),NQCTYP(L),NQCTLQ(L),NQCMUL(L),  &
+                          NQCMFU(L),NQCMFD(L),BQCMFU(L),BQCMFD(L)
       WRITE(7,1002)NCARD
-      WRITE(7,*)IQCTLU(L),JQCTLU(L),IQCTLD(L),JQCTLD(L),
-     &                   NQCTYP(L),NQCTLQ(L),NQCMUL(L),NQCMFU(L),
-     &                   NQCMFD(L),BQCMFU(L),BQCMFD(L)
-C     &                   NQCMFD(L),IQCAX(L),JQCAX(L)
+      WRITE(7,*)IQCTLU(L),JQCTLU(L),IQCTLD(L),JQCTLD(L),NQCTYP(L),NQCTLQ(L),NQCMUL(L),NQCMFU(L),  &
+                NQCMFD(L),BQCMFU(L),BQCMFD(L)
+!     &                   NQCMFD(L),IQCAX(L),JQCAX(L)
       IF(ISO.GT.0) GOTO 100
        DO K=1,KC
          QCTLTO(K,L)=0.
          QCTLT(K,L)=0.
        ENDDO
       ENDDO
-C
-C33*  READ FLOW WITHDRAWAL, HEAT OR MATERIAL ADDITION, FLOW RETURN DATA
-C
+!
+!C33*  READ FLOW WITHDRAWAL, HEAT OR MATERIAL ADDITION, FLOW RETURN DATA
+!
       NCARD=33
       DO NSKIP=1,27
       READ(1,1)
       ENDDO
       DO L=1,NQWR
-      READ(1,*,IOSTAT=ISO)IQWRU(L),JQWRU(L),KQWRU(L),
-     &                    IQWRD(L),JQWRD(L),KQWRD(L),QWR(L),
-     &    NQWRSERQ(L),NQWRMFU(L),NQWRMFD(L),BQWRMFU(L),BQWRMFD(L),
-     &    ANGWRMFD(L)
+      READ(1,*,IOSTAT=ISO)IQWRU(L),JQWRU(L),KQWRU(L),IQWRD(L),JQWRD(L),KQWRD(L),QWR(L),           &
+                         NQWRSERQ(L),NQWRMFU(L),NQWRMFD(L),BQWRMFU(L),BQWRMFD(L),ANGWRMFD(L)
       WRITE(7,1002)NCARD
-      WRITE(7,*)IQWRU(L),JQWRU(L),KQWRU(L),
-     &                     IQWRD(L),JQWRD(L),KQWRD(L),QWR(L),
-     &    NQWRSERQ(L),NQWRMFU(L),NQWRMFD(L),BQWRMFU(L),BQWRMFD(L),
-     &    ANGWRMFD(L)
+      WRITE(7,*)IQWRU(L),JQWRU(L),KQWRU(L),IQWRD(L),JQWRD(L),KQWRD(L),QWR(L),NQWRSERQ(L),         &
+                NQWRMFU(L),NQWRMFD(L),BQWRMFU(L),BQWRMFD(L),ANGWRMFD(L)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C34*  READ TIME CONSTANT WITHDRAWAL,ADD,RETURN, CONCENTRATION INCREASES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C34*  READ TIME CONSTANT WITHDRAWAL,ADD,RETURN, CONCENTRATION INCREASES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=34
       DO NSKIP=1,10
       READ(1,1)
@@ -1422,10 +1310,10 @@ C
       WRITE(7,*) (CQWR(L,MS),MS=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C35*  READ TIME CONSTANT WITHDRAWAL,ADD,RETURN, CONCENTRATION INCREASES
-C     SED(1 TO NSED),SND(1 TO NSND)
-C
+!
+!C35*  READ TIME CONSTANT WITHDRAWAL,ADD,RETURN, CONCENTRATION INCREASES
+!     SED(1 TO NSED),SND(1 TO NSND)
+!
       NCARD=35
       DO NSKIP=1,7
       READ(1,1)
@@ -1438,65 +1326,59 @@ C
       WRITE(7,*) (CQWR(L,MS),MS=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C36*  SEDIMENT INITIALIZATION AND WATER COLUMN/BED REPRESENTATION OPTIONS
-C
+!
+!C36*  SEDIMENT INITIALIZATION AND WATER COLUMN/BED REPRESENTATION OPTIONS
+!
       NCARD=36
       DO NSKIP=1,42
       READ(1,1)
       ENDDO
       IF(NSED.GT.0.OR.NSND.GT.0)THEN
-      READ(1,*,IOSTAT=ISO)ISEDINT,ISEDBINT,ISEDWC,ISMUD,ISNDWC,ISEDVW,
-     &                     ISNDVW,KB,ISDTXBUG
+      READ(1,*,IOSTAT=ISO)ISEDINT,ISEDBINT,ISEDWC,ISMUD,ISNDWC,ISEDVW,ISNDVW,KB,ISDTXBUG
       WRITE(7,1002)NCARD
-      WRITE(7,*)ISEDINT,ISEDBINT,ISEDWC,ISMUD,ISNDWC,ISEDVW,
-     &                     ISNDVW,KB,ISDTXBUG
+      WRITE(7,*)ISEDINT,ISEDBINT,ISEDWC,ISMUD,ISNDWC,ISEDVW,ISNDVW,KB,ISDTXBUG
       IF(ISO.GT.0) GOTO 100
       ENDIF
-C
-C36A*  SEDIMENT INITIALIZATION AND WATER COLUMN/BED REPRESENTATION OPTIONS
-C
+!
+!C36A*  SEDIMENT INITIALIZATION AND WATER COLUMN/BED REPRESENTATION OPTIONS
+!
       COEFTSBL=4.0
-C
+!
       NCARD=361
       DO NSKIP=1,29
       READ(1,1)
       ENDDO
       IF(NSED.GT.0.OR.NSND.GT.0)THEN
-      READ(1,*,IOSTAT=ISO)ISBEDSTR,ISBSDIAM,ISBSDFUF,COEFTSBL,VISMUDST,
-     &                    ISBKERO
+      READ(1,*,IOSTAT=ISO)ISBEDSTR,ISBSDIAM,ISBSDFUF,COEFTSBL,VISMUDST,ISBKERO
       WRITE(7,1002)NCARD
       WRITE(7,*)ISBEDSTR,ISBSDIAM,ISBSDFUF,COEFTSBL,VISMUDST,ISBKERO
       IF(ISO.GT.0) GOTO 100
 	ENDIF
-C
-C36B*  SEDIMENT INITIALIZATION AND WATER COLUMN/BED REPRESENTATION OPTIONS
-C
+!
+!C36B*  SEDIMENT INITIALIZATION AND WATER COLUMN/BED REPRESENTATION OPTIONS
+!
       NCARD=362
       DO NSKIP=1,19
       READ(1,1)
       ENDDO
       IF(NSED.GT.0.OR.NSND.GT.0)THEN
-      READ(1,*,IOSTAT=ISO)ISEDAL,ISNDAL,IALTYP,IALSTUP,
-     &                     ISEDEFF,HBEDAL,COEHEFF,COEHEFF2
+      READ(1,*,IOSTAT=ISO)ISEDAL,ISNDAL,IALTYP,IALSTUP,ISEDEFF,HBEDAL,COEHEFF,COEHEFF2
       WRITE(7,1002)NCARD
-      WRITE(7,*)ISEDAL,ISNDAL,IALTYP,IALSTUP,
-     &                     HBEDAL,COEHEFF,COEHEFF2
+      WRITE(7,*)ISEDAL,ISNDAL,IALTYP,IALSTUP,HBEDAL,COEHEFF,COEHEFF2
       IF(ISO.GT.0) GOTO 100
       ENDIF
-C
-C37*  BED MECHANICAL PROPERTIES PARAMETER SET 1
-C
+!
+!C37*  BED MECHANICAL PROPERTIES PARAMETER SET 1
+!
       NCARD=37
       DO NSKIP=1,32
         READ(1,1)
       ENDDO
       IF(NSED.GT.0.OR.NSND.GT.0)THEN
-        READ(1,*,IOSTAT=ISO)ISEDDT,IBMECH,IMORPH,HBEDMAX,BEDPORC,
-     &                      SEDMDMX,SEDMDMN,SEDVDRD,SEDVDRM,SEDVRDT
+        READ(1,*,IOSTAT=ISO)ISEDDT,IBMECH,IMORPH,HBEDMAX,BEDPORC,SEDMDMX,SEDMDMN,SEDVDRD,SEDVDRM, &
+                            SEDVRDT
         WRITE(7,1002)NCARD
-        WRITE(7,*)ISEDDT,IBMECH,IMORPH,HBEDMAX,BEDPORC,
-     &                      SEDMDMX,SEDMDMN,SEDVDRD,SEDVDRM,SEDVRDT
+        WRITE(7,*)ISEDDT,IBMECH,IMORPH,HBEDMAX,BEDPORC,SEDMDMX,SEDMDMN,SEDVDRD,SEDVDRM,SEDVRDT
         IF(ISO.GT.0) GOTO 100
         ISEDDTC=0
         IF(IBMECH.EQ.0) THEN
@@ -1510,79 +1392,76 @@ C
           ISEDINT=MAX(ISEDINT,2)
         END IF
       ENDIF
-C
+!
       SNDVDRD=BEDPORC/(1.-BEDPORC)
-C
+!
 	DO NS=1,NSED
 	  VDRDEPO(NS)=SEDVDRD
 	ENDDO
-C
+!
 	DO NS=1,NSND
 	  NX=NS+NSED
 	  VDRDEPO(NX)=SNDVDRD
 	ENDDO
-C
-C38*  BED MECHANICAL PROPERTIES PARAMETER SET 2
-C
+!
+!C38*  BED MECHANICAL PROPERTIES PARAMETER SET 2
+!
       NCARD=38
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
       IF(NSED.GT.0.OR.NSND.GT.0)THEN
-      READ(1,*,IOSTAT=ISO)IBMECHK,BMECH1,BMECH2,BMECH3,BMECH4,BMECH5,
-     &                     BMECH6
+      READ(1,*,IOSTAT=ISO)IBMECHK,BMECH1,BMECH2,BMECH3,BMECH4,BMECH5,BMECH6
       WRITE(7,1002)NCARD
       WRITE(7,*)IBMECHK,BMECH1,BMECH2,BMECH3,BMECH4,BMECH5,BMECH6
       IF(ISO.GT.0) GOTO 100
       ENDIF
-C
-C39*  READ COHESIVE SEDIMENT PARAMETER SET 1 REPEAT DATA LINE NSED TIMES
-C
+!
+!C39*  READ COHESIVE SEDIMENT PARAMETER SET 1 REPEAT DATA LINE NSED TIMES
+!
       NCARD=39
       DO NSKIP=1,24
       READ(1,1)
       ENDDO
       IF(NSED.GT.0)THEN
       DO N=1,NSED
-       READ(1,*,IOSTAT=ISO)SEDO(N),SEDBO(N),SDEN(N),SSG(N),
-     &        WSEDO(N),SEDN(N),SEXP(N),TAUD(N),ISEDSCOR(N),ISPROBDEP(N)
+       READ(1,*,IOSTAT=ISO)SEDO(N),SEDBO(N),SDEN(N),SSG(N),WSEDO(N),SEDN(N),SEXP(N),TAUD(N),      &
+                           ISEDSCOR(N),ISPROBDEP(N)
        WRITE(7,1002)NCARD
-      WRITE(7,*)SEDO(N),SEDBO(N),SDEN(N),SSG(N),
-     &        WSEDO(N),SEDN(N),SEXP(N),TAUD(N),ISEDSCOR(N),ISPROBDEP(N)
+      WRITE(7,*)SEDO(N),SEDBO(N),SDEN(N),SSG(N),WSEDO(N),SEDN(N),SEXP(N),TAUD(N),ISEDSCOR(N),     &
+                ISPROBDEP(N)
        IF(ISO.GT.0) GOTO 100
        SEDDIA(N)=0.
       ENDDO
       ENDIF
-C
+!
       IF(NSED.GT.0)THEN
         DO L=1,LC
 	    TAUDS(L)=TAUD(1)
         ENDDO
 	ENDIF
-C
-C40*  READ COHESIVE SEDIMENT PARAMETER SET 2 REPEAT DATA LINE NSED TIMES
-C
+!
+!C40*  READ COHESIVE SEDIMENT PARAMETER SET 2 REPEAT DATA LINE NSED TIMES
+!
       NCARD=40
       DO NSKIP=1,29
       READ(1,1)
       ENDDO
       IF(NSED.GT.0)THEN
       DO N=1,NSED
-       READ(1,*,IOSTAT=ISO)IWRSP(N),IWRSPB(N),WRSPO(N),TAUR(N),TAUN(N),
-     &      TEXP(N),VDRRSPO(N),COSEDHID(N)
+       READ(1,*,IOSTAT=ISO)IWRSP(N),IWRSPB(N),WRSPO(N),TAUR(N),TAUN(N),TEXP(N),VDRRSPO(N),COSEDHID(N)
        WRITE(7,1002)NCARD
-       WRITE(7,*)IWRSP(N),IWRSPB(N),WRSPO(N),TAUR(N),TAUN(N),TEXP(N),
-     &           VDRRSPO(N),COSEDHID(N)
+       WRITE(7,*)IWRSP(N),IWRSPB(N),WRSPO(N),TAUR(N),TAUN(N),TEXP(N),VDRRSPO(N),COSEDHID(N)
        IF(ISO.GT.0) GOTO 100
-C
+!
        ISNDEQ(N)=0
       ENDDO
       ENDIF
-C
-C     HOUSATONIC VERSION FOR CRITICAL STRESS
-C     HQI Change, 08/25/03, SO and RM
-C     Change to implement critical shear stress options
-C
+!
+!     HOUSATONIC VERSION FOR CRITICAL STRESS
+!     HQI Change, 08/25/03, SO and RM
+!     Change to implement critical shear stress options
+!
       IF(ISHOUSATONIC.EQ.1)THEN
       IF(NSED.GT.0)THEN
        if(IWRSP(N).EQ.999) then
@@ -1593,22 +1472,22 @@ C
              do k=KBINPUT+1,KB
                 TAUCRCOH(l,k)=TAUCRCOH(l,KBINPUT)
              enddo
-c             write(7,7777)l,(TAUCRCOH(l,k),k=1,KB)
+!             write(7,7777)l,(TAUCRCOH(l,k),k=1,KB)
           enddo
           close(1001)
           IF(ISO.GT.0) GOTO 100
        endif
 	ENDIF
 	ENDIF
-c
+!
  7777 format(i6,20e12.4)
-C
-C     SITE SPECIFIC RESUSPENSION INFORMATION BASED ON HAMRICK'S
-C     ANALYSIS OF SEDFLUME CORES JANUARY 2008
-C
+!
+!     SITE SPECIFIC RESUSPENSION INFORMATION BASED ON HAMRICK'S
+!     ANALYSIS OF SEDFLUME CORES JANUARY 2008
+!
       IF(NSED.GT.0)THEN
       IF(IWRSP(N).GE.99)THEN
-C
+!
         OPEN(99,FILE='SSCOHSEDPROP.INP')
         DO NSKIP=1,12
 	    READ(99,1)
@@ -1633,9 +1512,9 @@ C
 
       ENDIF
 	ENDIF
-C
-C41*  READ NONCOHESIVE SEDIMENT PARAMETER SET 1 REPEAT DATA LINE NSND TIMES
-C
+!
+!C41*  READ NONCOHESIVE SEDIMENT PARAMETER SET 1 REPEAT DATA LINE NSND TIMES
+!
       NCARD=41
       DO NSKIP=1,20
       READ(1,1)
@@ -1643,24 +1522,24 @@ C
       IF(NSND.GT.0)THEN
       DO NX=1,NSND
        N=NX+NSED
-       READ(1,*,IOSTAT=ISO)SEDO(N),SEDBO(N),SDEN(N),SSG(N),SEDDIA(N),
-     &                  WSEDO(N),SEDN(N),SEXP(N),TAUD(N),ISEDSCOR(N)
-C
-C IF SETTLING VELOCITY IS NEGATIVE, COMPUTE USING VAN RIJN'S FORMULA
-C
+       READ(1,*,IOSTAT=ISO)SEDO(N),SEDBO(N),SDEN(N),SSG(N),SEDDIA(N),WSEDO(N),SEDN(N),SEXP(N),    &
+                           TAUD(N),ISEDSCOR(N)
+!
+! IF SETTLING VELOCITY IS NEGATIVE, COMPUTE USING VAN RIJN'S FORMULA
+!
        IF(WSEDO(N).LT.0.0)THEN
          WSEDO(N)=SETSTVEL(SEDDIA(N),SSG(N))
        ENDIF
-C
+!
        WRITE(7,1002)NCARD
-       WRITE(7,*)SEDO(N),SEDBO(N),SDEN(N),SSG(N),SEDDIA(N),
-     &                  WSEDO(N),SEDN(N),SEXP(N),TAUD(N),ISEDSCOR(N)
+       WRITE(7,*)SEDO(N),SEDBO(N),SDEN(N),SSG(N),SEDDIA(N),WSEDO(N),SEDN(N),SEXP(N),TAUD(N),      &
+                 ISEDSCOR(N)
        IF(ISO.GT.0) GOTO 100
       ENDDO
       ENDIF
-C
-C42*  READ NONCOHESIVE SEDIMENT PARAMETER SET 2 REPEAT DATA LINE NSND TIMES
-C
+!
+!C42*  READ NONCOHESIVE SEDIMENT PARAMETER SET 2 REPEAT DATA LINE NSND TIMES
+!
       NCARD=42
       DO NSKIP=1,44
       READ(1,1)
@@ -1668,97 +1547,91 @@ C
       IF(NSND.GT.0)THEN
       DO NX=1,NSND
        N=NX+NSED
-       READ(1,*,IOSTAT=ISO)ISNDEQ(N),ISBDLD(N),TAUR(N),TAUN(N),
-     &                     TCSHIELDS(N),ISLTAUC(N),IBLTAUC(N),
-     &                     IROUSE(NX),ISNDM1(NX),ISNDM2(NX),RSNDM(NX)
-C     &                     TEXP(N),ISLTAUC(N),IBLTAUC(N)
-C
-C IF TAUR(N) IS NEGATIVE, COMPUTE USING VAN RIJN'S FORMULA
-C
-C       TAUR:     CRITICAL SHIELDS STRESS IN (M/S)**2   (ISNDEQ=2)
-C       TAUN:     EQUAL TO TAUR FOR NONCHOESIVE SED TRANS  (ISNDEQ=2)
-C       TEXP:     CRITICAL SHIELDS PARAMETER  (ISNDEQ=2)
-C
+       READ(1,*,IOSTAT=ISO)ISNDEQ(N),ISBDLD(N),TAUR(N),TAUN(N),TCSHIELDS(N),ISLTAUC(N),IBLTAUC(N), &
+                           IROUSE(NX),ISNDM1(NX),ISNDM2(NX),RSNDM(NX)
+!     &                     TEXP(N),ISLTAUC(N),IBLTAUC(N)
+!
+! IF TAUR(N) IS NEGATIVE, COMPUTE USING VAN RIJN'S FORMULA
+!
+!       TAUR:     CRITICAL SHIELDS STRESS IN (M/S)**2   (ISNDEQ=2)
+!       TAUN:     EQUAL TO TAUR FOR NONCHOESIVE SED TRANS  (ISNDEQ=2)
+!       TEXP:     CRITICAL SHIELDS PARAMETER  (ISNDEQ=2)
+!
        DSTAR=0.0
 	 USTAR=0.0
        IF(TAUR(N).LT.0.0)THEN
-C         CALL SETSHLD(TAUR(N),TEXP(N),SEDDIA(N),SSG(N),DSTAR,USTAR)
+!         CALL SETSHLD(TAUR(N),TEXP(N),SEDDIA(N),SSG(N),DSTAR,USTAR)
          CALL SETSHLD(TAUR(N),TCSHIELDS(N),SEDDIA(N),SSG(N),DSTAR,USTAR)
          TAUN(N)=TAUR(N)
        ENDIF
-C
-C IF TAUR(N) IS NEGATIVE, COMPUTE USING VAN RIJN'S FORMULA
-C
+!
+! IF TAUR(N) IS NEGATIVE, COMPUTE USING VAN RIJN'S FORMULA
+!
        WRITE(7,1002)NCARD
-C       WRITE(7,*)ISNDEQ(N),TAUR(N),TAUN(N),TEXP(N),SEDDIA(N),SSG(N),
-       WRITE(7,*)ISNDEQ(N),TAUR(N),TAUN(N),TCSHIELDS(N),SEDDIA(N),
-     &           SSG(N),DSTAR,USTAR
+!       WRITE(7,*)ISNDEQ(N),TAUR(N),TAUN(N),TEXP(N),SEDDIA(N),SSG(N),
+       WRITE(7,*)ISNDEQ(N),TAUR(N),TAUN(N),TCSHIELDS(N),SEDDIA(N),SSG(N),DSTAR,USTAR
        IF(ISO.GT.0) GOTO 100
        IWRSP(N)=0
        WRSPO(N)=0
       ENDDO
       ENDIF
-C
-C42A*  READ NONCOHESIVE SEDIMENT BED LOAD PARAMETERS
-C
+!
+!C42A*  READ NONCOHESIVE SEDIMENT BED LOAD PARAMETERS
+!
       NCARD=42
       DO NSKIP=1,19
       READ(1,1)
       ENDDO
       IF(NSND.GT.0)THEN
       DO NS=1,NSND
-       READ(1,*,IOSTAT=ISO)ISBDLDBC,SBDLDA(NS),SBDLDB(NS),
-     &           SBDLDG1(NS),SBDLDG2(NS),SBDLDG3(NS),SBDLDG4(NS),
-     &             SBDLDP(NS),ISBLFUC,BLBSNT
+       READ(1,*,IOSTAT=ISO)ISBDLDBC,SBDLDA(NS),SBDLDB(NS),SBDLDG1(NS),SBDLDG2(NS),SBDLDG3(NS),    &
+                           SBDLDG4(NS),SBDLDP(NS),ISBLFUC,BLBSNT
        WRITE(7,1002)NCARD
-       WRITE(7,*)ISBDLDBC,SBDLDA(NS),SBDLDB(NS),
-     &           SBDLDG1(NS),SBDLDG2(NS),SBDLDG3(NS),SBDLDG4(NS),
-     &             SBDLDP(NS),ISBLFUC,BLBSNT
+       WRITE(7,*)ISBDLDBC,SBDLDA(NS),SBDLDB(NS),SBDLDG1(NS),SBDLDG2(NS),SBDLDG3(NS),SBDLDG4(NS),  &
+                           SBDLDP(NS),ISBLFUC,BLBSNT
        IF(ISO.GT.0) GOTO 100
       ENDDO
-C      DO NX=1,NSND
-C       N=NX+NSED
-c       READ(1,*,IOSTAT=ISO)ISBDLDBC,SBDLDA,SBDLDB,SBDLDG1,
-c     &           SBDLDG2,SBDLDG3,SBDLDG4,SBDLDP,ISBLFUC,BLBSNT
-c       WRITE(7,1002)NCARD
-c       WRITE(7,*)ISBDLDBC,SBDLDA,SBDLDB,SBDLDG1,SBDLDG2,SBDLDG3,
-c     &           SBDLDG4,SBDLDP,ISBLFUC,BLBSNT
-c       IF(ISO.GT.0) GOTO 100
-C      ENDDO
-      ENDIF
-C
-C43*  READ TOXIC CONTAMINANT INITIAL CONDITIONS AND PARAMETERS
-C
+!      DO NX=1,NSND
+!       N=NX+NSED
+!       READ(1,*,IOSTAT=ISO)ISBDLDBC,SBDLDA,SBDLDB,SBDLDG1,
+!     &           SBDLDG2,SBDLDG3,SBDLDG4,SBDLDP,ISBLFUC,BLBSNT
+!       WRITE(7,1002)NCARD
+!       WRITE(7,*)ISBDLDBC,SBDLDA,SBDLDB,SBDLDG1,SBDLDG2,SBDLDG3,
+!     &           SBDLDG4,SBDLDP,ISBLFUC,BLBSNT
+!       IF(ISO.GT.0) GOTO 100
+!      ENDDO
+     ENDIF
+!
+!C43*  READ TOXIC CONTAMINANT INITIAL CONDITIONS AND PARAMETERS
+!
       NCARD=43
       DO NSKIP=1,23
       READ(1,1)
       ENDDO
       IF(NTOX.GT.0)THEN
       DO NT=1,NTOX
-        READ(1,*,IOSTAT=ISO)NDUM,ITXINT(NT),ITXBDUT(NT),TOXINTW(NT),
-     &      TOXINTB(NT),RKTOXW(NT),TKTOXW(NT),RKTOXB(NT),TRTOXB(NT)
+        READ(1,*,IOSTAT=ISO)NDUM,ITXINT(NT),ITXBDUT(NT),TOXINTW(NT),TOXINTB(NT),RKTOXW(NT),       &
+                            TKTOXW(NT),RKTOXB(NT),TRTOXB(NT)
         WRITE(7,1002)NCARD
-      WRITE(7,*)NDUM,ITXINT(NT),ITXBDUT(NT),TOXINTW(NT),
-     &      TOXINTB(NT),RKTOXW(NT),TKTOXW(NT),RKTOXB(NT),TRTOXB(NT)
+      WRITE(7,*)NDUM,ITXINT(NT),ITXBDUT(NT),TOXINTW(NT),TOXINTB(NT),RKTOXW(NT),TKTOXW(NT),        &
+                RKTOXB(NT),TRTOXB(NT)
         IF(ISO.GT.0) GOTO 100
       ENDDO
       ENDIF
-C
-C44*  READ TOXIC CONTAMINANT PARAMETERS
-C
+!
+!C44*  READ TOXIC CONTAMINANT PARAMETERS
+!
       NCARD=44
       DO NSKIP=1,24
       READ(1,1)
       ENDDO
       IF(NTOX.GT.0)THEN
       DO NT=1,NTOX
-        READ(1,*,IOSTAT=ISO)NDUM,ISTOC(NT),VOLTOX(NT),RMOLTX(NT),
-     &                       RKTOXP(NT),SKTOXP(NT),DIFTOX(NT),
-     &                       DIFTOXS(NT),PDIFTOX (NT),DPDIFTOX(NT)
+        READ(1,*,IOSTAT=ISO)NDUM,ISTOC(NT),VOLTOX(NT),RMOLTX(NT),RKTOXP(NT),SKTOXP(NT),DIFTOX(NT),&
+                            DIFTOXS(NT),PDIFTOX (NT),DPDIFTOX(NT)
         WRITE(7,1002)NCARD
-      WRITE(7,*)NDUM,ISTOC(NT),VOLTOX(NT),RMOLTX(NT),RKTOXP(NT),
-     &                       SKTOXP(NT),DIFTOX(NT),
-     &                       DIFTOXS(NT),PDIFTOX (NT),DPDIFTOX(NT)
+      WRITE(7,*)NDUM,ISTOC(NT),VOLTOX(NT),RMOLTX(NT),RKTOXP(NT),SKTOXP(NT),DIFTOX(NT),            &
+                DIFTOXS(NT),PDIFTOX (NT),DPDIFTOX(NT)
         IF(ISO.GT.0) GOTO 100
         ISPMXZ(NT)=0
         IF(PDIFTOX(NT).LT.0) ISPMXZ(NT)=1
@@ -1769,9 +1642,9 @@ C
 	  ENDIF
       ENDDO
       ENDIF
-C
-C44A*  READ TOXIC CONTAMINANT PARAMETERS
-C
+!
+!C44A*  READ TOXIC CONTAMINANT PARAMETERS
+!
       NCARD=441
       DO NSKIP=1,13
       READ(1,1)
@@ -1782,13 +1655,13 @@ C
         WRITE(7,*)IADTOXDP,IADTOXCOR,ISTOXALL,NSTOXALL
         IF(ISO.GT.0) GOTO 100
       ENDIF
-C
+!
       JSTOXALL=0
       IF(NSTOXALL.GT.0) MSTOXALL=NTSPTC/NSTOXALL
-C
-C
-C45*  READ TOXIC CONTAMINANT-SEDIMENT INTERACTION PARAMETERS
-C
+!
+!
+!C45*  READ TOXIC CONTAMINANT-SEDIMENT INTERACTION PARAMETERS
+!
       NCARD=45
       DO NSKIP=1,19
       READ(1,1)
@@ -1797,56 +1670,50 @@ C
       DO NT=1,NTOX
        IF(NSED.GT.0)THEN
          DO N=1,NSED
-         READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,
-     &         ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),
-     &         ITXPARB(N,NT),TOXPARB(N,NT),CONPARB(N,NT)
+         READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),               &
+                             ITXPARB(N,NT),TOXPARB(N,NT),CONPARB(N,NT)
          WRITE(7,1002)NCARD
-         WRITE(7,*)NDUM1,NDUM2,
-     &         ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),
-     &         ITXPARB(N,NT),TOXPARB(N,NT),CONPARB(N,NT)
+         WRITE(7,*)NDUM1,NDUM2,ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),ITXPARB(N,NT),           &
+                   TOXPARB(N,NT),CONPARB(N,NT)
          IF(ISO.GT.0) GOTO 100
          ENDDO
        ENDIF
        IF(NSND.GT.0)THEN
          DO NX=1,NSND
          N=NX+NSED
-         READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,
-     &         ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),
-     &         ITXPARB(N,NT),TOXPARB(N,NT),CONPARB(N,NT)
+         READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),               &
+                             ITXPARB(N,NT),TOXPARB(N,NT),CONPARB(N,NT)
          WRITE(7,1002)NCARD
-         WRITE(7,*)NDUM1,NDUM2,
-     &         ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),
-     &         ITXPARB(N,NT),TOXPARB(N,NT),CONPARB(N,NT)
+         WRITE(7,*)NDUM1,NDUM2,ITXPARW(N,NT),TOXPARW(N,NT),CONPARW(N,NT),ITXPARB(N,NT),           &
+                   TOXPARB(N,NT),CONPARB(N,NT)
          IF(ISO.GT.0) GOTO 100
          ENDDO
        ENDIF
       ENDDO
       ENDIF
-C
-C45A*  READ TOXIC CONTAMINANT ORGANIC CARBON PARAMETERS
-C
+!
+!C45A*  READ TOXIC CONTAMINANT ORGANIC CARBON PARAMETERS
+!
       NCARD=451
       DO NSKIP=1,25
       READ(1,1)
       ENDDO
       IF(NTOX.GT.0)THEN
-c	  NTMP=0
-c	  DO NT=1,NTOX
-c	    IF(ISTOC(NT).GT.0)NTMP=1
-c	  ENDDO
-c	  IF(NTMP.EQ.1)THEN
-          READ(1,*,IOSTAT=ISO)ISTDOCW,ISTPOCW,ISTDOCB,ISTPOCB,
-     & 	  STDOCWC,STPOCWC,STDOCBC,STPOCBC
+!	  NTMP=0
+!	  DO NT=1,NTOX
+!	    IF(ISTOC(NT).GT.0)NTMP=1
+!	  ENDDO
+!	  IF(NTMP.EQ.1)THEN
+          READ(1,*,IOSTAT=ISO)ISTDOCW,ISTPOCW,ISTDOCB,ISTPOCB,STDOCWC,STPOCWC,STDOCBC,STPOCBC
           WRITE(7,1002)NCARD
-          WRITE(7,*)ISTDOCW,ISTPOCW,ISTDOCB,ISTPOCB,
-     & 	  STDOCWC,STPOCWC,STDOCBC,STPOCBC
+          WRITE(7,*)ISTDOCW,ISTPOCW,ISTDOCB,ISTPOCB,STDOCWC,STPOCWC,STDOCBC,STPOCBC
           IF(ISO.GT.0) GOTO 100
-c        ENDIF
+!        ENDIF
       ENDIF
-C
+!
 
-C45B* READ TOXIC CONTAMINANT-ORGANIC CARBON INTERACTION PARAMETERS
-C
+!C45B* READ TOXIC CONTAMINANT-ORGANIC CARBON INTERACTION PARAMETERS
+!
       NCARD=452
       DO NSKIP=1,19
       READ(1,1)
@@ -1854,27 +1721,23 @@ C
       ENDDO
       IF(NTOX.GT.0)THEN
       DO NT=1,NTOX
-        READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,
-     &         ITXPARWC(1,NT),TOXPARWC(1,NT),CONPARWC(1,NT),
-     &         ITXPARBC(1,NT),TOXPARBC(1,NT),CONPARBC(1,NT)
+        READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,ITXPARWC(1,NT),TOXPARWC(1,NT),CONPARWC(1,NT),             &
+                            ITXPARBC(1,NT),TOXPARBC(1,NT),CONPARBC(1,NT)
         WRITE(7,1002)NCARD
-        WRITE(7,*)NDUM1,NDUM2,
-     &         ITXPARWC(1,NT),TOXPARWC(1,NT),CONPARWC(1,NT),
-     &         ITXPARBC(1,NT),TOXPARBC(1,NT),CONPARBC(1,NT)
+        WRITE(7,*)NDUM1,NDUM2,ITXPARWC(1,NT),TOXPARWC(1,NT),CONPARWC(1,NT),ITXPARBC(1,NT),        &
+                  TOXPARBC(1,NT),CONPARBC(1,NT)
         IF(ISO.GT.0) GOTO 100
-        READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,
-     &         ITXPARWC(2,NT),TOXPARWC(2,NT),CONPARWC(2,NT),
-     &         ITXPARBC(2,NT),TOXPARBC(2,NT),CONPARBC(2,NT)
+        READ(1,*,IOSTAT=ISO)NDUM1,NDUM2,ITXPARWC(2,NT),TOXPARWC(2,NT),CONPARWC(2,NT),             &
+                        ITXPARBC(2,NT),TOXPARBC(2,NT),CONPARBC(2,NT)
         WRITE(7,1002)NCARD
-        WRITE(7,*)NDUM1,NDUM2,
-     &         ITXPARWC(2,NT),TOXPARWC(2,NT),CONPARWC(2,NT),
-     &         ITXPARBC(2,NT),TOXPARBC(2,NT),CONPARBC(2,NT)
+        WRITE(7,*)NDUM1,NDUM2,ITXPARWC(2,NT),TOXPARWC(2,NT),CONPARWC(2,NT),ITXPARBC(2,NT),        &
+                  TOXPARBC(2,NT),CONPARBC(2,NT)
         IF(ISO.GT.0) GOTO 100
       ENDDO
       ENDIF
-C
-C45C* READ TOXIC CONTAMINANT-ORGANIC CARBON WATER COLUMN POC FRACTIONS
-C
+!
+!C45C* READ TOXIC CONTAMINANT-ORGANIC CARBON WATER COLUMN POC FRACTIONS
+!
       NCARD=453
       DO NSKIP=1,11
       READ(1,1)
@@ -1888,18 +1751,18 @@ C
         WRITE(7,*)NDUM1,(FPOCWST(NS,NT),NS=1,NTMP)
       ENDDO
       ENDIF
-C
-C reset inorganic sediment partition coefficients based on
-C fraction of POC assigned to each sediment class in water columnn
-C
+!
+! reset inorganic sediment partition coefficients based on
+! fraction of POC assigned to each sediment class in water columnn
+!
 
       DO NT=1,NTOX
-cjmh040203        IF(ISTOC(NT).GE.1.AND.ISTOC(NT).LE.2)THEN
+!jmh040203        IF(ISTOC(NT).GE.1.AND.ISTOC(NT).LE.2)THEN
         IF(ISTOC(NT).GE.2)THEN
           IF(NSED.GT.0)THEN
             DO NS=1,NSED
               ITXPARW(NS,NT)=0
-C              TOXPARW(NS,NT)=FPOCWST(NS,NT)*TOXPARWC(2,NT)
+!              TOXPARW(NS,NT)=FPOCWST(NS,NT)*TOXPARWC(2,NT)
               TOXPARW(NS,NT)=TOXPARWC(2,NT)
               CONPARW(NS,NT)=0.
             ENDDO
@@ -1908,16 +1771,16 @@ C              TOXPARW(NS,NT)=FPOCWST(NS,NT)*TOXPARWC(2,NT)
             DO NX=1,NSND
               NS=NSED+NX
               ITXPARW(NS,NT)=0
-C              TOXPARW(NS,NT)=FPOCWST(NS,NT)*TOXPARWC(2,NT)
+!              TOXPARW(NS,NT)=FPOCWST(NS,NT)*TOXPARWC(2,NT)
               TOXPARW(NS,NT)=TOXPARWC(2,NT)
               CONPARW(NS,NT)=0.
             ENDDO
           ENDIF
         ENDIF
       ENDDO
-C
-C45D* READ TOXIC CONTAMINANT-ORGANIC CARBON SED BED POC FRACTIONS
-C
+!
+!C45D* READ TOXIC CONTAMINANT-ORGANIC CARBON SED BED POC FRACTIONS
+!
       NCARD=454
       DO NSKIP=1,11
       READ(1,1)
@@ -1931,17 +1794,17 @@ C
         WRITE(7,*)NDUM1,(FPOCBST(NS,NT),NS=1,NTMP)
       ENDDO
       ENDIF
-C
-C reset inorganic sediment partition coefficients based on
-C fraction of POC assigned to each sediment class in sediment bed
-C
+!
+! reset inorganic sediment partition coefficients based on
+! fraction of POC assigned to each sediment class in sediment bed
+!
       DO NT=1,NTOX
-cjmn040203        IF(ISTOC(NT).GE.1.AND.ISTOC(NT).LE.2)THEN
+!jmn040203        IF(ISTOC(NT).GE.1.AND.ISTOC(NT).LE.2)THEN
         IF(ISTOC(NT).GE.2)THEN
           IF(NSED.GT.0)THEN
             DO NS=1,NSED
               ITXPARB(NS,NT)=0
-C              TOXPARB(NS,NT)=FPOCBST(NS,NT)*TOXPARBC(2,NT)
+!              TOXPARB(NS,NT)=FPOCBST(NS,NT)*TOXPARBC(2,NT)
               TOXPARB(NS,NT)=TOXPARBC(2,NT)
               CONPARB(NS,NT)=0
             ENDDO
@@ -1950,22 +1813,21 @@ C              TOXPARB(NS,NT)=FPOCBST(NS,NT)*TOXPARBC(2,NT)
             DO NX=1,NSND
               NS=NSED+NX
               ITXPARB(NS,NT)=0
-C              TOXPARB(NS,NT)=FPOCBST(NS,NT)*TOXPARBC(2,NT)
+!              TOXPARB(NS,NT)=FPOCBST(NS,NT)*TOXPARBC(2,NT)
               TOXPARB(NS,NT)=TOXPARBC(2,NT)
               CONPARB(NS,NT)=0
             ENDDO
           ENDIF
         ENDIF
       ENDDO
-C
-C46*  READ BUOYANCY, TEMPERATURE, DYE DATA AND CONCENTRATION BC DATA
-C
+!
+!C46*  READ BUOYANCY, TEMPERATURE, DYE DATA AND CONCENTRATION BC DATA
+!
       NCARD=46
       DO NSKIP=1,20
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO)BSC,TEMO,HEQT,ISBEDTEMI,KBH,RKDYE,
-     &                    NCBS,NCBW,NCBE,NCBN
+      READ(1,*,IOSTAT=ISO)BSC,TEMO,HEQT,ISBEDTEMI,KBH,RKDYE,NCBS,NCBW,NCBE,NCBN
       WRITE(7,1002)NCARD
       WRITE(7,*)BSC,TEMO,HEQT,ISBEDTEMI,KBH,RKDYE,NCBS,NCBW,NCBE,NCBN
       IF(ISO.GT.0) GOTO 100
@@ -1975,34 +1837,32 @@ C
        ELSE
         IBSC=0
       ENDIF
-C
-C46a*  READ ICE EFFECTS
-C
+!
+!C46a*  READ ICE EFFECTS
+!
       NCARD=461
       DO NSKIP=1,24
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO)ISICE,ISICECOV,ISICETHK,NISER,ICETHKFUN,
-     &     DYICEBEG,DYICEEND,DYICEM1,DYICEM2,RICETHKMAX,TEMPICE
+      READ(1,*,IOSTAT=ISO)ISICE,ISICECOV,ISICETHK,NISER,ICETHKFUN,DYICEBEG,DYICEEND,DYICEM1,      &
+                          DYICEM2,RICETHKMAX,TEMPICE
       WRITE(7,1002)NCARD
-      WRITE(7,*)ISICE,ISICECOV,ISICETHK,NISER,ICETHKFUN,DYICEBEG,
-     &     DYICEEND,DYICEM1,DYICEM2,RICETHKMAX,TEMPICE
+      WRITE(7,*)ISICE,ISICECOV,ISICETHK,NISER,ICETHKFUN,DYICEBEG,DYICEEND,DYICEM1,DYICEM2,        &
+                RICETHKMAX,TEMPICE
       IF(ISO.GT.0) GOTO 100
-C
-C47*  READ LOCATIONS OF CONC BC'S ON SOUTH BOUNDARIES
-C
+!
+!C47*  READ LOCATIONS OF CONC BC'S ON SOUTH BOUNDARIES
+!
       NCARD=47
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
       DO L=1,NCBS
-       READ(1,*,IOSTAT=ISO) ICBS(L),JCBS(L),NTSCRS(L),
-     &   NCSERS(L,1),NCSERS(L,2),NCSERS(L,3),NCSERS(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+       READ(1,*,IOSTAT=ISO) ICBS(L),JCBS(L),NTSCRS(L),NCSERS(L,1),NCSERS(L,2),NCSERS(L,3),        &
+                            NCSERS(L,4),NTOXSRC,NSEDSRC,NSNDSRC
        WRITE(7,1002)NCARD
-      WRITE(7,*) ICBS(L),JCBS(L),NTSCRS(L),
-     &   NCSERS(L,1),NCSERS(L,2),NCSERS(L,3),NCSERS(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+      WRITE(7,*) ICBS(L),JCBS(L),NTSCRS(L),NCSERS(L,1),NCSERS(L,2),NCSERS(L,3),NCSERS(L,4),       &
+                 NTOXSRC,NSEDSRC,NSNDSRC
        IF(ISO.GT.0) GOTO 100
        DO N=1,NTOX
         M=MSVTOX(N)
@@ -2017,10 +1877,10 @@ C
         NCSERS(L,M)=NSNDSRC
        ENDDO
       ENDDO
-C
-C48*  READ CONSTANT BOTTOM CONCENTRATION ON SOUTH CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C48*  READ CONSTANT BOTTOM CONCENTRATION ON SOUTH CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=48
       DO NSKIP=1,11
       READ(1,1)
@@ -2032,10 +1892,10 @@ C
       WRITE(7,*) (CBS(L,1,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C49*  READ CONSTANT BOTTOM CONCENTRATION ON SOUTH CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C49*  READ CONSTANT BOTTOM CONCENTRATION ON SOUTH CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=49
       DO NSKIP=1,9
       READ(1,1)
@@ -2048,10 +1908,10 @@ C
       WRITE(7,*) (CBS(L,1,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C50*  READ CONSTANT SURFACE CONCENTRATION ON SOUTH CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C50*  READ CONSTANT SURFACE CONCENTRATION ON SOUTH CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=50
       DO NSKIP=1,11
       READ(1,1)
@@ -2063,10 +1923,10 @@ C
       WRITE(7,*) (CBS(L,2,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C51*  READ CONSTANT SURFACE CONCENTRATION ON SOUTH CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C51*  READ CONSTANT SURFACE CONCENTRATION ON SOUTH CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=51
       DO NSKIP=1,9
       READ(1,1)
@@ -2079,21 +1939,19 @@ C
       WRITE(7,*) (CBS(L,2,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C52*  READ LOCATIONS OF CONC BC'S ON WEST BOUNDARIES
-C
+!
+!C52*  READ LOCATIONS OF CONC BC'S ON WEST BOUNDARIES
+!
       NCARD=52
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
       DO L=1,NCBW
-       READ(1,*,IOSTAT=ISO) ICBW(L),JCBW(L),NTSCRW(L),
-     &   NCSERW(L,1),NCSERW(L,2),NCSERW(L,3),NCSERW(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+       READ(1,*,IOSTAT=ISO) ICBW(L),JCBW(L),NTSCRW(L),NCSERW(L,1),NCSERW(L,2),NCSERW(L,3),        &
+                            NCSERW(L,4),NTOXSRC,NSEDSRC,NSNDSRC
        WRITE(7,1002)NCARD
-      WRITE(7,*) ICBW(L),JCBW(L),NTSCRW(L),
-     &   NCSERW(L,1),NCSERW(L,2),NCSERW(L,3),NCSERW(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+      WRITE(7,*) ICBW(L),JCBW(L),NTSCRW(L),NCSERW(L,1),NCSERW(L,2),NCSERW(L,3),NCSERW(L,4),       &
+                 NTOXSRC,NSEDSRC,NSNDSRC
        IF(ISO.GT.0) GOTO 100
        DO N=1,NTOX
         M=MSVTOX(N)
@@ -2108,10 +1966,10 @@ C
         NCSERW(L,M)=NSNDSRC
        ENDDO
       ENDDO
-C
-C53*  READ CONSTANT BOTTOM CONCENTRATION ON WEST CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C53*  READ CONSTANT BOTTOM CONCENTRATION ON WEST CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=53
       DO NSKIP=1,11
       READ(1,1)
@@ -2123,10 +1981,10 @@ C
       WRITE(7,*) (CBW(L,1,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C54*  READ CONSTANT BOTTOM CONCENTRATION ON WEST CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C54*  READ CONSTANT BOTTOM CONCENTRATION ON WEST CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=54
       DO NSKIP=1,9
       READ(1,1)
@@ -2139,10 +1997,10 @@ C
       WRITE(7,*) (CBW(L,1,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C55*  READ CONSTANT SURFACE CONCENTRATION ON WEST CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C55*  READ CONSTANT SURFACE CONCENTRATION ON WEST CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=55
       DO NSKIP=1,11
       READ(1,1)
@@ -2154,10 +2012,10 @@ C
       WRITE(7,*) (CBW(L,2,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C56*  READ CONSTANT SURFACE CONCENTRATION ON WEST CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C56*  READ CONSTANT SURFACE CONCENTRATION ON WEST CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=56
       DO NSKIP=1,9
       READ(1,1)
@@ -2170,21 +2028,19 @@ C
       WRITE(7,*) (CBW(L,2,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C57*  READ LOCATIONS OF CONC BC'S ON EAST BOUNDARIES
-C
+!
+!C57*  READ LOCATIONS OF CONC BC'S ON EAST BOUNDARIES
+!
       NCARD=57
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
       DO L=1,NCBE
-       READ(1,*,IOSTAT=ISO) ICBE(L),JCBE(L),NTSCRE(L),
-     &   NCSERE(L,1),NCSERE(L,2),NCSERE(L,3),NCSERE(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+       READ(1,*,IOSTAT=ISO) ICBE(L),JCBE(L),NTSCRE(L),NCSERE(L,1),NCSERE(L,2),NCSERE(L,3),        &
+                            NCSERE(L,4),NTOXSRC,NSEDSRC,NSNDSRC
        WRITE(7,1002)NCARD
-      WRITE(7,*) ICBE(L),JCBE(L),NTSCRE(L),
-     &   NCSERE(L,1),NCSERE(L,2),NCSERE(L,3),NCSERE(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+      WRITE(7,*) ICBE(L),JCBE(L),NTSCRE(L),NCSERE(L,1),NCSERE(L,2),NCSERE(L,3),NCSERE(L,4),       &
+                 NTOXSRC,NSEDSRC,NSNDSRC
        IF(ISO.GT.0) GOTO 100
        DO N=1,NTOX
         M=MSVTOX(N)
@@ -2199,10 +2055,10 @@ C
         NCSERE(L,M)=NSNDSRC
        ENDDO
       ENDDO
-C
-C58*  READ CONSTANT BOTTOM CONCENTRATION ON EAST CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C58*  READ CONSTANT BOTTOM CONCENTRATION ON EAST CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=58
       DO NSKIP=1,11
       READ(1,1)
@@ -2214,10 +2070,10 @@ C
       WRITE(7,*) (CBE(L,1,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C59*  READ CONSTANT BOTTOM CONCENTRATION ON EAST CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C59*  READ CONSTANT BOTTOM CONCENTRATION ON EAST CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=59
       DO NSKIP=1,9
       READ(1,1)
@@ -2230,10 +2086,10 @@ C
       WRITE(7,*) (CBE(L,1,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C60*  READ CONSTANT SURFACE CONCENTRATION ON EAST CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C60*  READ CONSTANT SURFACE CONCENTRATION ON EAST CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=60
       DO NSKIP=1,11
       READ(1,1)
@@ -2245,10 +2101,10 @@ C
       WRITE(7,*) (CBE(L,2,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C61*  READ CONSTANT SURFACE CONCENTRATION ON EAST CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C61*  READ CONSTANT SURFACE CONCENTRATION ON EAST CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=61
       DO NSKIP=1,9
       READ(1,1)
@@ -2261,21 +2117,19 @@ C
       WRITE(7,*) (CBE(L,2,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C62*  READ LOCATIONS OF CONC BC'S ON NORTH BOUNDARIES
-C
+!
+!C62*  READ LOCATIONS OF CONC BC'S ON NORTH BOUNDARIES
+!
       NCARD=62
       DO NSKIP=1,16
       READ(1,1)
       ENDDO
       DO L=1,NCBN
-       READ(1,*,IOSTAT=ISO) ICBN(L),JCBN(L),NTSCRN(L),
-     &   NCSERN(L,1),NCSERN(L,2),NCSERN(L,3),NCSERN(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+       READ(1,*,IOSTAT=ISO) ICBN(L),JCBN(L),NTSCRN(L),NCSERN(L,1),NCSERN(L,2),NCSERN(L,3),        &
+                            NCSERN(L,4),NTOXSRC,NSEDSRC,NSNDSRC
        WRITE(7,1002)NCARD
-      WRITE(7,*) ICBN(L),JCBN(L),NTSCRN(L),
-     &   NCSERN(L,1),NCSERN(L,2),NCSERN(L,3),NCSERN(L,4),
-     &   NTOXSRC,NSEDSRC,NSNDSRC
+      WRITE(7,*) ICBN(L),JCBN(L),NTSCRN(L),NCSERN(L,1),NCSERN(L,2),NCSERN(L,3),NCSERN(L,4),       &
+                 NTOXSRC,NSEDSRC,NSNDSRC
        IF(ISO.GT.0) GOTO 100
        DO N=1,NTOX
         M=MSVTOX(N)
@@ -2290,10 +2144,10 @@ C
         NCSERN(L,M)=NSNDSRC
        ENDDO
       ENDDO
-C
-C63*  READ CONSTANT BOTTOM CONCENTRATION ON NORTH CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C63*  READ CONSTANT BOTTOM CONCENTRATION ON NORTH CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=63
       DO NSKIP=1,11
       READ(1,1)
@@ -2305,10 +2159,10 @@ C
       WRITE(7,*) (CBN(L,1,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C64*  READ CONSTANT BOTTOM CONCENTRATION ON NORTH CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C64*  READ CONSTANT BOTTOM CONCENTRATION ON NORTH CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=64
       DO NSKIP=1,9
       READ(1,1)
@@ -2321,10 +2175,10 @@ C
       WRITE(7,*) (CBN(L,1,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C65*  READ CONSTANT SURFACE CONCENTRATION ON NORTH CONC BOUNDARIES
-C     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
-C
+!
+!C65*  READ CONSTANT SURFACE CONCENTRATION ON NORTH CONC BOUNDARIES
+!     SAL,TEM,DYE,SFL,TOX(1 TO NTOX)
+!
       NCARD=65
       DO NSKIP=1,11
       READ(1,1)
@@ -2336,10 +2190,10 @@ C
       WRITE(7,*) (CBN(L,2,M),M=1,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C66*  READ CONSTANT SURFACE CONCENTRATION ON NORTH CONC BOUNDARIES
-C     SED(1 TO NSED),SND(1,NSND)
-C
+!
+!C66*  READ CONSTANT SURFACE CONCENTRATION ON NORTH CONC BOUNDARIES
+!     SED(1 TO NSED),SND(1,NSND)
+!
       NCARD=66
       DO NSKIP=1,9
       READ(1,1)
@@ -2352,9 +2206,9 @@ C
       WRITE(7,*) (CBN(L,2,M),M=MMIN,MMAX)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C66A*  READ CONCENTRATION DATA ASSIMILATION PARAMETERS
-C
+!
+!C66A*  READ CONCENTRATION DATA ASSIMILATION PARAMETERS
+!
       NCARD=66
       DO NSKIP=1,8
        READ(1,1)
@@ -2363,10 +2217,10 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) NLCDA,TSCDA,(ISCDA(K),K=1,7)
       IF(ISO.GT.0) GOTO 100
-C
-C66B*  READ CONCENTRATION DATA ASSIMILATION LOCATIONS AND
-C      SERIES IDENTIFIERS
-C
+!
+!C66B*  READ CONCENTRATION DATA ASSIMILATION LOCATIONS AND
+!      SERIES IDENTIFIERS
+!
       NCARD=66
       DO NSKIP=1,15
        READ(1,1)
@@ -2374,29 +2228,26 @@ C
       IF(NLCDA.GT.0)THEN
         WRITE(7,1002)NCARD
         DO L=1,NLCDA
-         READ(1,*,IOSTAT=ISO) ITPCDA(L),ICDA(L),JCDA(L),
-     &               ICCDA(L),JCCDA(L),IDIRCDA(L),(NCSERA(L,K),K=1,7)
-         WRITE(7,*)  ITPCDA(L),ICDA(L),JCDA(L),
-     &               ICCDA(L),JCCDA(L),IDIRCDA(L),(NCSERA(L,K),K=1,7)
+         READ(1,*,IOSTAT=ISO) ITPCDA(L),ICDA(L),JCDA(L),ICCDA(L),JCCDA(L),IDIRCDA(L),             &
+                              (NCSERA(L,K),K=1,7)
+         WRITE(7,*)  ITPCDA(L),ICDA(L),JCDA(L),ICCDA(L),JCCDA(L),IDIRCDA(L),(NCSERA(L,K),K=1,7)
          IF(ISO.GT.0) GOTO 100
         ENDDO
       ENDIF
-C
-C67*  READ NEUTRALLY BUOYANT PARTICLE DRIFTER DATA
-C
+!
+!C67*  READ NEUTRALLY BUOYANT PARTICLE DRIFTER DATA
+!
       NCARD=67
       DO NSKIP=1,22
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) ISPD,NPD,NPDRT,NWPD,ISLRPD,ILRPD1,ILRPD2,
-     &                   JLRPD1, JLRPD2, MLRPDRT,IPLRPD
+      READ(1,*,IOSTAT=ISO) ISPD,NPD,NPDRT,NWPD,ISLRPD,ILRPD1,ILRPD2,JLRPD1, JLRPD2, MLRPDRT,IPLRPD
       WRITE(7,1002)NCARD
-      WRITE(7,*) ISPD,NPD,NPDRT,NWPD,ISLRPD,ILRPD1,ILRPD2,
-     &                   JLRPD1, JLRPD2, MLRPDRT,IPLRPD
+      WRITE(7,*) ISPD,NPD,NPDRT,NWPD,ISLRPD,ILRPD1,ILRPD2,JLRPD1, JLRPD2, MLRPDRT,IPLRPD
       IF(ISO.GT.0) GOTO 100
-C
-C68*  READ NEUTRALLY BUOYANT PARTICLE INITIAL POSITIONS
-C
+!
+!C68*  READ NEUTRALLY BUOYANT PARTICLE INITIAL POSITIONS
+!
       NCARD=68
       DO NSKIP=1,8
       READ(1,1)
@@ -2406,9 +2257,9 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) RI(NP),RJ(NP),RK(NP)
       ENDDO
-C
-C69*  CONSTANTS FOR LONGITUDE AND LATITUDE OF CELL CENTERS
-C
+!
+!C69*  CONSTANTS FOR LONGITUDE AND LATITUDE OF CELL CENTERS
+!
       NCARD=69
       DO NSKIP=1,11
       READ(1,1)
@@ -2417,24 +2268,22 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) CDLON1,CDLON2,CDLON3,CDLAT1,CDLAT2,CDLAT3
       IF(ISO.GT.0) GOTO 100
-C
-C70*  CONTROLS FOR WRITING ASCII OR BINARY DUMP FILES
-C
+!
+!C70*  CONTROLS FOR WRITING ASCII OR BINARY DUMP FILES
+!
       NCARD=70
       DO NSKIP=1,20
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO)ISDUMP,ISADMP,NSDUMP,TSDUMP,TEDUMP,ISDMPP,
-     &          ISDMPU,ISDMPW,ISDMPT,IADJDMP
+      READ(1,*,IOSTAT=ISO)ISDUMP,ISADMP,NSDUMP,TSDUMP,TEDUMP,ISDMPP,ISDMPU,ISDMPW,ISDMPT,IADJDMP
       WRITE(7,1002)NCARD
-      WRITE(7,*)ISDUMP,ISADMP,NSDUMP,TSDUMP,TEDUMP,ISDMPP,
-     &          ISDMPU,ISDMPW,ISDMPT,IADJDMP
+      WRITE(7,*)ISDUMP,ISADMP,NSDUMP,TSDUMP,TEDUMP,ISDMPP,ISDMPU,ISDMPW,ISDMPT,IADJDMP
       IF(ISO.GT.0) GOTO 100
       JSDUMP=1
       NCDUMP=1
-C
-C71*  CONTROLS FOR HORIZONTAL PLANE SCALAR FIELD CONTOURING
-C
+!
+!C71*  CONTROLS FOR HORIZONTAL PLANE SCALAR FIELD CONTOURING
+!
       NCARD=71
       DO NSKIP=1,15
       READ(1,1)
@@ -2445,7 +2294,7 @@ C
       WRITE(7,*) ISSPH(N),NPSPH(N),ISRSPH(N),ISPHXY(N)
       ENDDO
       IF(ISO.GT.0) GOTO 100
-C
+!
       ISSPH(8)=0
 	NPSPH(8)=0
       DO N=1,7
@@ -2456,25 +2305,24 @@ C
 	    NPSPH(8)=MAX(NPSPH(N),NPSPH(8))
 	  ENDDO
 	ENDIF
-C
-C71A*  CONTROLS FOR HORIZONTAL PLANE SEDIMENT BED PROPERTIES
-C
+!
+!C71A*  CONTROLS FOR HORIZONTAL PLANE SEDIMENT BED PROPERTIES
+!
       NCARD=71
       DO NSKIP=1,22
       READ(1,1)
       ENDDO
-       READ(1,*,IOSTAT=ISO) ISBPH,ISBEXP,NPBPH,ISRBPH,ISBBDN,ISBLAY,
-     &                ISBPOR,ISBSED,ISBSND,ISBVDR,ISBARD
+       READ(1,*,IOSTAT=ISO) ISBPH,ISBEXP,NPBPH,ISRBPH,ISBBDN,ISBLAY,ISBPOR,ISBSED,ISBSND,         &
+                            ISBVDR,ISBARD
        WRITE(7,1002)NCARD
-      WRITE(7,*) ISBPH,ISBEXP,NPBPH,ISRBPH,ISBBDN,ISBLAY,
-     &                      ISBPOR,ISBSED,ISBSND,ISBVDR,ISBARD
+      WRITE(7,*) ISBPH,ISBEXP,NPBPH,ISRBPH,ISBBDN,ISBLAY,ISBPOR,ISBSED,ISBSND,ISBVDR,ISBARD
       IF(ISO.GT.0) GOTO 100
 	IF(ISBEXP.GE.1) NPSPH(8)=MAX(NPSPH(8),NPBPH)
 	JSBPH=1
 	JSBPHA=1
-C
-C71B*  CONTROLS FOR FOOD CHAIN MODEL OUTPUT
-C
+!
+!C71B*  CONTROLS FOR FOOD CHAIN MODEL OUTPUT
+!
       NCARD=71
       DO NSKIP=1,9
       READ(1,1)
@@ -2484,10 +2332,10 @@ C
       WRITE(7,*) ISFDCH,NFDCHZ,HBFDCH,TFCAVG
       IF(ISO.GT.0) GOTO 100
 	JSFDCH=1
-C
-C72*  CONTROLS FOR HORIZONTAL PLANE SURFACE ELEVATION OR PRESSURE
-C     PLOTTING
-C
+!
+!C72*  CONTROLS FOR HORIZONTAL PLANE SURFACE ELEVATION OR PRESSURE
+!     PLOTTING
+!
       NCARD=72
       DO NSKIP=1,14
       READ(1,1)
@@ -2496,9 +2344,9 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) ISPPH,NPPPH,ISRPPH,IPPHXY
       IF(ISO.GT.0) GOTO 100
-C
-C73*  CONTROLS FOR HORIZONTAL PLANE VELOCITY PLOTTING
-C
+!
+!C73*  CONTROLS FOR HORIZONTAL PLANE VELOCITY PLOTTING
+!
       NCARD=73
       DO NSKIP=1,14
       READ(1,1)
@@ -2507,33 +2355,29 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) ISVPH,NPVPH,ISRVPH,IVPHXY
       IF(ISO.GT.0) GOTO 100
-C
-C74*  CONTROLS FOR VERTICAL PLANE SCALAR FIELD CONTOURING
-C
+!
+!C74*  CONTROLS FOR VERTICAL PLANE SCALAR FIELD CONTOURING
+!
       NCARD=74
       DO NSKIP=1,14
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO) ISECSPV,NPSPV(1),ISSPV(1),ISRSPV(1),
-     &                     ISHPLTV(1)
+      READ(1,*,IOSTAT=ISO) ISECSPV,NPSPV(1),ISSPV(1),ISRSPV(1),ISHPLTV(1)
       WRITE(7,1002)NCARD
-      WRITE(7,*) ISECSPV,NPSPV(1),ISSPV(1),ISRSPV(1),
-     &                     ISHPLTV(1)
+      WRITE(7,*) ISECSPV,NPSPV(1),ISSPV(1),ISRSPV(1),ISHPLTV(1)
       SHPLTV(1)=FLOAT(ISHPLTV(1))
       SBPLTV(1)=1.0-SHPLTV(1)
       DO N=2,7
-      READ(1,*,IOSTAT=ISO) IDUMMY,NPSPV(N),ISSPV(N),ISRSPV(N),
-     &                     ISHPLTV(N)
+      READ(1,*,IOSTAT=ISO) IDUMMY,NPSPV(N),ISSPV(N),ISRSPV(N),ISHPLTV(N)
       WRITE(7,1002)NCARD
-      WRITE(7,*) IDUMMY,NPSPV(N),ISSPV(N),ISRSPV(N),
-     &                     ISHPLTV(N)
+      WRITE(7,*) IDUMMY,NPSPV(N),ISSPV(N),ISRSPV(N),ISHPLTV(N)
       SHPLTV(N)=FLOAT(ISHPLTV(N))
       SBPLTV(N)=1.0-SHPLTV(N)
       ENDDO
       IF(ISO.GT.0) GOTO 100
-C
-C75*  MORE CONTROLS FOR VERTICAL PLANE SCALAR FIELD CONTOURING
-C
+!
+!C75*  MORE CONTROLS FOR VERTICAL PLANE SCALAR FIELD CONTOURING
+!
       NCARD=75
       DO NSKIP=1,8
       READ(1,1)
@@ -2544,9 +2388,9 @@ C
       WRITE(7,*) DUM,NIJSPV(IS),CCTITLE(10+IS)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C76*  I,J LOCATIONS DEFINING VERTICAL PLANE FOR CONTOURING
-C
+!
+!C76*  I,J LOCATIONS DEFINING VERTICAL PLANE FOR CONTOURING
+!
       NCARD=76
       DO NSKIP=1,8
       READ(1,1)
@@ -2559,9 +2403,9 @@ C
       IF(ISO.GT.0) GOTO 100
       ENDDO
       ENDDO
-C
-C77*  CONTROLS FOR VERTICAL PLANE VELOCITY VECTOR PLOTTING
-C
+!
+!C77*  CONTROLS FOR VERTICAL PLANE VELOCITY VECTOR PLOTTING
+!
       NCARD=77
       DO NSKIP=1,11
       READ(1,1)
@@ -2570,9 +2414,9 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) ISECVPV,NPVPV,ISVPV,ISRVPV
       IF(ISO.GT.0) GOTO 100
-C
-C78*  MORE CONTROLS FOR VERTICAL PLANE VELOCITY PLOTTING
-C
+!
+!C78*  MORE CONTROLS FOR VERTICAL PLANE VELOCITY PLOTTING
+!
       NCARD=78
       DO NSKIP=1,9
       READ(1,1)
@@ -2583,9 +2427,9 @@ C
       WRITE(7,*) DUM,NIJVPV(IS),ANGVPV(IS),CVTITLE(10+IS)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C79*  I,J LOCATIONS FOR VERTICAL PLANE VELOCITY PLOTTING
-C
+!
+!C79*  I,J LOCATIONS FOR VERTICAL PLANE VELOCITY PLOTTING
+!
       NCARD=79
       DO NSKIP=1,8
       READ(1,1)
@@ -2598,24 +2442,23 @@ C
       IF(ISO.GT.0) GOTO 100
       ENDDO
       ENDDO
-C
-C80*  CONTROLS FOR 3-D GRAPHICS ARRAYS
-C
+!
+!C80*  CONTROLS FOR 3-D GRAPHICS ARRAYS
+!
       NCARD=80
       DO NSKIP=1,39
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO)IS3DO,ISR3DO,NP3DO,KPC,NWGG,I3DMIN,I3DMAX,
-     &                 J3DMIN,J3DMAX,I3DRW,SELVMAX,BELVMIN
+      READ(1,*,IOSTAT=ISO)IS3DO,ISR3DO,NP3DO,KPC,NWGG,I3DMIN,I3DMAX,J3DMIN,J3DMAX,I3DRW,          &
+                          SELVMAX,BELVMIN
       WRITE(7,1002)NCARD
-      WRITE(7,*)IS3DO,ISR3DO,NP3DO,KPC,NWGG,I3DMIN,I3DMAX,
-     &                 J3DMIN,J3DMAX,I3DRW,SELVMAX,BELVMIN
+      WRITE(7,*)IS3DO,ISR3DO,NP3DO,KPC,NWGG,I3DMIN,I3DMAX,J3DMIN,J3DMAX,I3DRW,SELVMAX,BELVMIN
       IF(ISO.GT.0) GOTO 100
       NCALL3D=0
       NRCAL3D=0
-C
-C81*  CONTROLS FOR 3-D GRAPHICS ARRAYS
-C
+!
+!C81*  CONTROLS FOR 3-D GRAPHICS ARRAYS
+!
       NCARD=81
       DO NSKIP=1,15
       READ(1,1)
@@ -2656,10 +2499,10 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*)CDUM,IS3DTOX,JS3DTOX,TOX3DMA,TOX3DMI
       IF(ISO.GT.0) GOTO 100
-C
-C82*  READ NUMBER OF PERIODIC FORCING (TIDAL) CONSTITUENT AND HARMONIC
-C     ANALYSIS PARAMETERS
-C
+!
+!C82*  READ NUMBER OF PERIODIC FORCING (TIDAL) CONSTITUENT AND HARMONIC
+!     ANALYSIS PARAMETERS
+!
       NCARD=82
       DO NSKIP=1,10
       READ(1,1)
@@ -2668,72 +2511,62 @@ C
       WRITE(7,1002)NCARD
       WRITE(7,*) ISLSHA,MLLSHA,NTCLSHA,ISLSTR,ISHTA
       IF(ISO.GT.0) GOTO 100
-      if(mllsha.gt.mlm) then                                           !hnr
-        write(*,320)mllsha,mlm                                         !hnr
-320     FORMAT('The number of Harmonic Analysis Locations '            !hnr
-     *  'in your application',I5,                                      !hnr
-     $  '  is larger than the maximum allowed of',I5,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop car 82'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-C
-C83*  READ HARMONIC ANALYSIS AND TIME SERIES LOCATIONS AND SWITCHES
-C
+      if(mllsha.gt.mlm) then                                           
+        write(*,320)mllsha,mlm                                         
+320     FORMAT('The number of Harmonic Analysis Locations in your application',I5,                &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                      
+        write(*,*)'The program will stop car 82'                       
+        stop                                                           
+      end if                                                           
+!
+!C83*  READ HARMONIC ANALYSIS AND TIME SERIES LOCATIONS AND SWITCHES
+!
       NCARD=83
       DO NSKIP=1,12
       READ(1,1)
       ENDDO
       DO M=1,MLLSHA
-      READ(1,*,IOSTAT=ISO) ILLSHA(M),JLLSHA(M),LSHAP(M),LSHAB(M),
-     &          LSHAUE(M),LSHAU(M),CLSL(M)
+      READ(1,*,IOSTAT=ISO) ILLSHA(M),JLLSHA(M),LSHAP(M),LSHAB(M),LSHAUE(M),LSHAU(M),CLSL(M)
       WRITE(7,1002)NCARD
-      WRITE(7,*) ILLSHA(M),JLLSHA(M),LSHAP(M),LSHAB(M),
-     &          LSHAUE(M),LSHAU(M),CLSL(M)
+      WRITE(7,*) ILLSHA(M),JLLSHA(M),LSHAP(M),LSHAB(M),LSHAUE(M),LSHAU(M),CLSL(M)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C84*  CONTROLS FOR SAVING TIME SERIES
-C
+!
+!C84*  CONTROLS FOR SAVING TIME SERIES
+!
       NCARD=84
       DO NSKIP=1,17
       READ(1,1)
       ENDDO
-      READ(1,*,IOSTAT=ISO)ISTMSR,MLTMSR,NBTMSR,NSTMSR,NWTMSR,NTSSTSP,
-     &               TCTMSR
+      READ(1,*,IOSTAT=ISO)ISTMSR,MLTMSR,NBTMSR,NSTMSR,NWTMSR,NTSSTSP,TCTMSR
       WRITE(7,1002)NCARD
-      WRITE(7,*)ISTMSR,MLTMSR,NBTMSR,NSTMSR,NWTMSR,NTSSTSP,
-     &               TCTMSR
-C NEXT LINE ADDED BY DON KINERY
-C    &              ,IHYDOUT,NWHYDOUT
+      WRITE(7,*)ISTMSR,MLTMSR,NBTMSR,NSTMSR,NWTMSR,NTSSTSP,TCTMSR
+! NEXT LINE ADDED BY DON KINERY
+!    &              ,IHYDOUT,NWHYDOUT
       IF(ISO.GT.0) GOTO 100
-C     MLTMSR=MIN(MLTMSR,18)
+!     MLTMSR=MIN(MLTMSR,18)
       JSTMSR=1
       NCTMSR=1
-C NEXT TWO LINES ADDED BY DON KINERY
+! NEXT TWO LINES ADDED BY DON KINERY
       JSHYDOUT=1
       NCHYDOUT=1
-C
-      if(mltmsr.gt.mltmsrm) then                                       !hnr
-        write(*,330)mltmsr,mltmsrm                                      !hnr
-330     FORMAT('The number of Output Time Series Locations '           !hnr
-     &  'in your application',I6,                                      !hnr
-     $  '  is larger than the maximum allowed of',I6,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 84_1'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      if(ntsstsp.gt.ntsstspm) then                                     !hnr
-        write(*,340)ntsstsp,ntsstspm                                   !hnr
-340     FORMAT('The number of Time Series start/stop scenarios '       !hnr
-     &  'in your application',I3,                                      !hnr
-     $  '  is larger than the maximum allowed of',I3,                  !hnr
-     *  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop card 84_2'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-C85*  CONTROLS FOR SAVING TIME SERIES
-C
+!
+      if(mltmsr.gt.mltmsrm) then                                       
+        write(*,330)mltmsr,mltmsrm                                     
+330     FORMAT('The number of Output Time Series Locations in your application',I6,               &
+               ' is larger than the maximum allowed of',I6,'  for this compilation')                                      
+        write(*,*)'The program will stop card 84_1'                    
+        stop                                                           
+      end if                                                           
+      if(ntsstsp.gt.ntsstspm) then                                     
+        write(*,340)ntsstsp,ntsstspm                                   
+340     FORMAT('The number of Time Series start/stop scenarios in your application',I3,           &
+               '  is larger than the maximum allowed of',I3,'  for this compilation')                                      
+        write(*,*)'The program will stop card 84_2'                    
+        stop                                                           
+      end if                                                           
+!C85*  CONTROLS FOR SAVING TIME SERIES
+!
       NCARD=85
       DO NSKIP=1,7
       READ(1,1)
@@ -2744,53 +2577,48 @@ C
       WRITE(7,*)IDUM,MTSSTSP(ITSSS)
        IF(ISO.GT.0) GOTO 100
       ENDDO
-      if(mtsstsp(itsss).gt.mtsstspm) then                              !hnr
-        write(*,350)mtsstsp(itsss),itsss,mtsstspm                      !hnr
-350     FORMAT('The number of stop/start pairs Locations '             !hnr
-     &  'in your application',I6,                                      !hnr
-     $  '  for scenario',I6,'  is larger than the maximum allowed of', !hnr
-     *  I6,'  for this compilation')                                   !hnr
-        write(*,*)'The program will stop card 85'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-C
-C86*  CONTROLS FOR SAVING TIME SERIES
-C
+      if(mtsstsp(itsss).gt.mtsstspm) then                              
+        write(*,350)mtsstsp(itsss),itsss,mtsstspm                      
+350     FORMAT('The number of stop/start pairs Locations in your application',I6,                 &
+               '  for scenario',I6,'  is larger than the maximum allowed of',                     &
+                I6,'  for this compilation')                                   
+        write(*,*)'The program will stop card 85'                      
+        stop                                                           
+      end if                                                           
+!
+!C86*  CONTROLS FOR SAVING TIME SERIES
+!
       NCARD=86
       DO NSKIP=1,9
       READ(1,1)
       ENDDO
       DO ITSSS=1,NTSSTSP
        DO MTSSS=1,MTSSTSP(ITSSS)
-       READ(1,*,IOSTAT=ISO)IDUM,IDUM,TSSTRT(MTSSS,ITSSS),
-     &                               TSSTOP(MTSSS,ITSSS)
+       READ(1,*,IOSTAT=ISO)IDUM,IDUM,TSSTRT(MTSSS,ITSSS),TSSTOP(MTSSS,ITSSS)
        WRITE(7,1002)NCARD
-      WRITE(7,*)IDUM,IDUM,TSSTRT(MTSSS,ITSSS),
-     &                               TSSTOP(MTSSS,ITSSS)
+      WRITE(7,*)IDUM,IDUM,TSSTRT(MTSSS,ITSSS),TSSTOP(MTSSS,ITSSS)
        IF(ISO.GT.0) GOTO 100
        ENDDO
       ENDDO
-C
-C87*  CONTROLS FOR SAVING TIME SERIES
-C
+!
+!C87*  CONTROLS FOR SAVING TIME SERIES
+!
       NCARD=87
       DO NSKIP=1,17
       READ(1,1)
       ENDDO
       DO M=1,MLTMSR
-      READ(1,*,IOSTAT=ISO)ILTMSR(M),JLTMSR(M),NTSSSS(M),MTMSRP(M),
-     &       MTMSRC(M),MTMSRA(M),MTMSRUE(M),MTMSRUT(M),MTMSRU(M),
-     &                 MTMSRQE(M),MTMSRQ(M),CLTMSR(M)
+      READ(1,*,IOSTAT=ISO)ILTMSR(M),JLTMSR(M),NTSSSS(M),MTMSRP(M),MTMSRC(M),MTMSRA(M),MTMSRUE(M), &
+                          MTMSRUT(M),MTMSRU(M),MTMSRQE(M),MTMSRQ(M),CLTMSR(M)
       WRITE(7,1002)NCARD
-      WRITE(7,*)ILTMSR(M),JLTMSR(M),NTSSSS(M),MTMSRP(M),
-     &       MTMSRC(M),MTMSRA(M),MTMSRUE(M),MTMSRUT(M),MTMSRU(M),
-     &                 MTMSRQE(M),MTMSRQ(M),CLTMSR(M)
+      WRITE(7,*)ILTMSR(M),JLTMSR(M),NTSSSS(M),MTMSRP(M),MTMSRC(M),MTMSRA(M),MTMSRUE(M),MTMSRUT(M), &
+                MTMSRU(M),MTMSRQE(M),MTMSRQ(M),CLTMSR(M)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C88*  CONTROLS FOR EXTRACTING INSTANTANEOUS VERTICAL SCALAR FIELD
-C     PROFILES
-C
+!
+!C88*  CONTROLS FOR EXTRACTING INSTANTANEOUS VERTICAL SCALAR FIELD
+!     PROFILES
+!
       NCARD=88
       DO NSKIP=1,10
       READ(1,1)
@@ -2800,10 +2628,10 @@ C
       WRITE(7,*)ISVSFP,MDVSFP,MLVSFP,TMVSFP,TAVSFP
       IF(ISO.GT.0) GOTO 100
       JSVSFP=1
-C
-C89*  SAMPLING DEPTHS FOR EXTRACTING INST VERTICAL SCALAR FIELD
-C     PROFILES
-C
+!
+!C89*  SAMPLING DEPTHS FOR EXTRACTING INST VERTICAL SCALAR FIELD
+!     PROFILES
+!
       NCARD=89
       DO NSKIP=1,7
       READ(1,1)
@@ -2814,9 +2642,9 @@ C
       WRITE(7,*)IDUM,DMVSFP(M)
       IF(ISO.GT.0) GOTO 100
       ENDDO
-C
-C90*  HORIZONTAL SPACE-TIME LOCATIONS FOR SAMPLING
-C
+!
+!C90*  HORIZONTAL SPACE-TIME LOCATIONS FOR SAMPLING
+!
       NCARD=90
       DO NSKIP=1,9
       READ(1,1)
@@ -2844,19 +2672,19 @@ C
       DO M=1,MLVSFP
       TIMVSFP(M)=(TIMVSFP(M)/TMVSFP)-TAVSFP
       ENDDO
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ISHOUSATONIC.EQ.1)THEN
-C
-C91
-C
-C#############################################################################
-C     HQI change to input settling velocity function parameters
-C     RM 06/24/04
-C   Reference settling velocity and concentration above which concentration
-C   enhanced occurs and below which constant settling velocity
-C
+!
+!C91
+!
+!#############################################################################
+!     HQI change to input settling velocity function parameters
+!     RM 06/24/04
+!   Reference settling velocity and concentration above which concentration
+!   enhanced occurs and below which constant settling velocity
+!
       DO NSKIP=1,10
          READ(1,1)
       ENDDO
@@ -2865,14 +2693,14 @@ C
          WRITE(*,*)'Reference settling velocity not input'
          STOP
       ENDIF
-C#############################################################################
-C
-C92
-C
-C#############################################################################
-C     HQI change to input parameters to maintain a constant TSS in the reach
-C     5D backwaters
-C     RM 07/30/04
+!!#############################################################################
+!
+!C92
+!
+!#############################################################################
+!     HQI change to input parameters to maintain a constant TSS in the reach
+!     5D backwaters
+!     RM 07/30/04
 
       DO NSKIP=1,8
          READ(1,1)
@@ -2882,9 +2710,9 @@ C     RM 07/30/04
          WRITE(*,*)'Min TSS in backwaters not input'
          STOP
       ENDIF
-C
-C     READ CELL INDEXES OF CELLS IN BACKWATERS
-C
+!
+!     READ CELL INDEXES OF CELLS IN BACKWATERS
+!
       IF(LABKWTR.GT.0)THEN
       OPEN(101,FILE='BKWTR.INP',STATUS='UNKNOWN')
       READ(101,*)
@@ -2893,14 +2721,14 @@ C
       ENDDO
       CLOSE(101)
       ENDIF
-C
-C#############################################################################
-C
-C93
-C
-C#############################################################################
-C     HQI change to input spatially varying cohesive erosion function parameters
-C     RM 10/03/05
+!
+!#############################################################################
+!
+!C93
+!
+!#############################################################################
+!     HQI change to input spatially varying cohesive erosion function parameters
+!     RM 10/03/05
 
       DO NSKIP=1,10
          READ(1,1)
@@ -2910,18 +2738,18 @@ C     RM 10/03/05
          WRITE(*,*)'Cohesive resuspension parameters not input'
          STOP
       ENDIF
-C#############################################################################
-C
-C94
-C
-C#############################################################################
-C     HQI change to input spatially foodchain averaging depths
-C     RM 10/05/05
+!#############################################################################
+!
+!C94
+!
+!#############################################################################
+!     HQI change to input spatially foodchain averaging depths
+!     RM 10/05/05
 
       DO NSKIP=1,9
          READ(1,1)
       ENDDO
-C
+!
       IF(ISFDCH.GT.0)THEN
       READ(1,*,IOSTAT=ISO) FCMHBDUS, FCMHBDDS, FCMHBDWP
       IF(ISO.GT.0) THEN
@@ -2929,38 +2757,38 @@ C
          STOP
       ENDIF
       ENDIF
-C
-C      DO NSKIP=1,5
-C         READ(1,1)
-C      ENDDO
-C      READ(1,*,IOSTAT=ISO)ISTOXALL,NSTOXALL
-C      JSTOXALL=0
-C      MSTOXALL=NTSPTC/NSTOXALL
-C#############################################################################
-C
+!
+!      DO NSKIP=1,5
+!         READ(1,1)
+!      ENDDO
+!      READ(1,*,IOSTAT=ISO)ISTOXALL,NSTOXALL
+!      JSTOXALL=0
+!      MSTOXALL=NTSPTC/NSTOXALL
+!#############################################################################
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       GOTO 2000
-C
-C**********************************************************************C
-C
-C **  WRITE INPUT ERROR MESSAGES AND TERMINATE RUN
-C
+!
+!**********************************************************************C
+!
+! **  WRITE INPUT ERROR MESSAGES AND TERMINATE RUN
+!
 
   100 WRITE(*,1001)NCARD
 !      WRITE(8,1001)NCARD   !hnr 7/27/2009
       WRITE(7,1001)NCARD
       STOP
  2000 CONTINUE
-C
-C**********************************************************************C
-C
-C **  NOW REWIND UNIT 1 & READ IN AS CHARACTER TO WRITE TO UNIT 7
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  NOW REWIND UNIT 1 & READ IN AS CHARACTER TO WRITE TO UNIT 7
+!
+!----------------------------------------------------------------------C
+!
       REWIND (1)
    21 READ(1,22,END=24) TEXT
       WRITE (7,23) TEXT
@@ -2969,46 +2797,46 @@ C
       CLOSE(1)
    22 FORMAT (A80)
    23 FORMAT (1X,A80)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       IF(ISDRY.GT.0)THEN
-C
+!
       OPEN(1,FILE='WETDRYCHG.OUT')
       CLOSE(1,STATUS='DELETE')
       OPEN(1,FILE='WETDRYCHG.OUT',POSITION='APPEND')
       TIME=TCON*TBEGIN/86400.
       WRITE(1,1234)TIME,NWETCELLSNEW,NWETCELLSOLD
-C
+!
 	ENDIF
-C
+!
  1234 FORMAT(F12.4,2I8)
-C
-C**********************************************************************C
-C
-C **  READ CELL TYPES FROM FILES CELL.INP AND CELLLT.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ CELL TYPES FROM FILES CELL.INP AND CELLLT.INP
+!
+!----------------------------------------------------------------------C
+!
       OPEN(1,FILE='CELL.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES AND DETERMINE FILE FORMAT
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES AND DETERMINE FILE FORMAT
+!
       DO IS=1,4
       READ(1,1)
       ENDDO
       READ(1,*)JCTMP
       CLOSE(1)
       OPEN(1,FILE='CELL.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,4
       READ(1,1)
       ENDDO
-C
+!
       IF(JCTMP.NE.JC)THEN
-C **    READ OLD FILE FORMAT
+! **    READ OLD FILE FORMAT
         JACROSS=JC
         IF(JC.GT.640)JACROSS=640
         DO JT=1,JC,JACROSS
@@ -3024,8 +2852,8 @@ C **    READ OLD FILE FORMAT
         WRITE(7,15)
         ENDDO
        ELSE
-C **    READ NEW FILE FORMAT
-C       READ(1,66)JCTMP
+! **    READ NEW FILE FORMAT
+!       READ(1,66)JCTMP
         IF(IC.GT.640)THEN
           IACROSS=640
           DO IT=1,IC,IACROSS
@@ -3068,11 +2896,11 @@ C       READ(1,66)JCTMP
           WRITE(7,15)
         ENDIF
       ENDIF
-C
+!
       CLOSE(1)
-C
-C **  IF JCTMP NE JC WRITE NEWCELL.INP FILE
-C
+!
+! **  IF JCTMP NE JC WRITE NEWCELL.INP FILE
+!
       IF(JCTMP.NE.JC)THEN
         OPEN(1,FILE='NEWCELL.INP',STATUS='UNKNOWN')
         IACROSS=IC
@@ -3087,14 +2915,14 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C------------------------------------------------------------------------C
-C
+!
+!------------------------------------------------------------------------C
+!
       IF(ISWASP.GT.0)THEN
       OPEN(1,FILE='CELLLT.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES AND DETERMINE FILE FORMAT
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES AND DETERMINE FILE FORMAT
+!
       DO IS=1,4
       READ(1,1)
       ENDDO
@@ -3102,15 +2930,15 @@ C
       READ(1,*)JCTMP           !hnr
       CLOSE(1)
       OPEN(1,FILE='CELLLT.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,4
       READ(1,1)
       ENDDO
-C
+!
       IF(JCTMP.NE.JC)THEN
-C **    READ OLD FILE FORMAT
+! **    READ OLD FILE FORMAT
         JACROSS=JC
         IF(JC.GT.640)JACROSS=640
         DO JT=1,JC,JACROSS
@@ -3126,8 +2954,8 @@ C **    READ OLD FILE FORMAT
         WRITE(7,15)
         ENDDO
        ELSE
-C **    READ NEW FILE FORMAT
-C       READ(1,66)JCTMP
+! **    READ NEW FILE FORMAT
+!       READ(1,66)JCTMP
         IF(IC.GT.640)THEN
           IACROSS=640
           DO IT=1,IC,IACROSS
@@ -3178,10 +3006,10 @@ C       READ(1,66)JCTMP
           WRITE(7,15)
         ENDIF
       ENDIF
-C
+!
       CLOSE(1)
 	ENDIF
-C
+!
       IF(ISLTMT.GE.1)THEN
       DO J=1,JC
       DO I=1,IC
@@ -3189,157 +3017,156 @@ C
       ENDDO
       ENDDO
       ENDIF
-C
+!
     8 FORMAT ('   CELL TYPE ARRAY,J=',I5,2X,'TO J=',I5,//)
    88 FORMAT ('   CELLLT TYPE ARRAY,I=',I5,2X,'TO I=',I5,//)
-C
-C**********************************************************************C
-C
-C **  IF ISPGNS GE 1, READ IN NORTH-SOUTH BOUNDARY CELLS FROM
-C **  FILE MAPPGNS.INP TO SPECIFY A PERIODIC DOMAIN IN THE NORTH-SOUTH
-C **  DIRECTION
-C
+!
+!**********************************************************************C
+!
+! **  IF ISPGNS GE 1, READ IN NORTH-SOUTH BOUNDARY CELLS FROM
+! **  FILE MAPPGNS.INP TO SPECIFY A PERIODIC DOMAIN IN THE NORTH-SOUTH
+! **  DIRECTION
+!
       IF(ISPGNS.GE.1)THEN
-C
+!
       OPEN(1,FILE='MAPPGNS.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,8
       READ(1,1)
       ENDDO
-C
+!
       READ(1,*,IOSTAT=ISO) NPNSBP
       IF(ISO.GT.0) GOTO 950
-C
+!
       DO NPNS=1,NPNSBP
-      READ(1,*,IOSTAT=ISO) ISPNS(NPNS),JSPNS(NPNS),
-     &                     INPNS(NPNS),JNPNS(NPNS)
+      READ(1,*,IOSTAT=ISO) ISPNS(NPNS),JSPNS(NPNS),INPNS(NPNS),JNPNS(NPNS)
       IF(ISO.GT.0) GOTO 950
       ENDDO
-C
+!
       CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  GENERATE CELL MAPPINGS
-C
+!
+!**********************************************************************C
+!
+! **  GENERATE CELL MAPPINGS
+!
       CALL CELLMAP
-C
-C**********************************************************************C
-C
-C **  READ IN CELL CENTER DEPTHS AND BOTTOM BED ELEVATION FOR CARTESIAN
-C **  OR MIXED CATERSIAN CURVILINEAR GRID FORM FILE DEPTH.INP.  IF THE
-C **  NUMBER OF VARIALBLE CELLS EQUALS NUMBER OF WATER CELLS OR
-C **  ISCLO=1 DEPTHS ARE READ FROM THE FILE DXDY.INP
-C
-C----------------------------------------------------------------------C
-C
-C     LCM2=LC-2
-C     IF(LCM2.GT.LVC)THEN
-C
-C     OPEN(1,FILE='DEPTH.INP',STATUS='UNKNOWN')
-C     GOTO 999
-C
-C     WRITE (7,9)
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
-C     DO IS=1,5
-C     READ(1,1)
-C     ENDDO
-C
-C     IF(JC.LE.30)THEN
-C       DO I=1,IC
-C       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=1,JC)
-C       IF(ISO.GT.0) GOTO 820
-C       WRITE (7,17) (RTMP1IJ(I,J),J=1,JC)
-C       ENDDO
-C      ELSE
-C       DO JJ=1,JC,30
-C       JF=JJ
-C       JLAST=JF+29
-C       IF(JLAST.GT.JC) JLAST=JC
-C       DO I=1,IC
-C       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=JF,JLAST)
-C       IF(ISO.GT.0) GOTO 820
-C       WRITE (7,17) (RTMP1IJ(I,J),J=JF,JLAST)
-C       ENDDO
-C       WRITE (7,15)
-C       ENDDO
-C     ENDIF
-C
-C     DO L=2,LA
-C     HMP(L)=RTMP1IJ(IL(L),JL(L)
-C     ENDDO
-C
-C **  SKIP OVER BLANK, TITLE AND AND HEADER LINES
-C
-C     DO IS=1,5
-C     READ(1,1)
-C     ENDDO
-C
-C     IF(JC.LE.30)THEN
-C       DO I=1,IC
-C       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=1,JC)
-C       IF(ISO.GT.0) GOTO 820
-C       WRITE (7,17) (RTMP1IJ(I,J),J=1,JC)
-C       ENDDO
-C      ELSE
-C       DO JJ=1,JC,30
-C       JF=JJ
-C       JLAST=JF+29
-C       IF(JLAST.GT.JC) JLAST=JC
-C       DO I=1,IC
-C       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=JF,JLAST)
-C       IF(ISO.GT.0) GOTO 820
-C       WRITE (7,17) (RTMP1IJ(I,J),J=JF,JLAST)
-C       ENDDO
-C       WRITE (7,15)
-C       ENDDO
-C     ENDIF
-C
-C     DO L=2,LA
-C     BELV(L)=RTMP1IJ(IL(L),JL(L))
-C     ENDDO
-C
-C **  SKIP OVER BLANK, TITLE AND AND HEADER LINES
-C
-C     DO IS=1,5
-C     READ(1,1)
-C     ENDDO
-C
-C     IF(JC.LE.30)THEN
-C       DO I=1,IC
-C       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=1,JC)
-C       IF(ISO.GT.0) GOTO 820
-C       WRITE (7,17) (RTMP1IJ(I,J),J=1,JC)
-C       ENDDO
-C      ELSE
-C       DO JJ=1,JC,30
-C       JF=JJ
-C       JLAST=JF+29
-C       IF(JLAST.GT.JC) JLAST=JC
-C       DO I=1,IC
-C       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=JF,JLAST)
-C       IF(ISO.GT.0) GOTO 820
-C       WRITE (7,17) (RTMP1IJ(I,J),J=JF,JLAST)
-C       ENDDO
-C       WRITE (7,15)
-C       ENDDO
-C     ENDIF
-C
-C     DO L=2,LA
-C     ZBR(L)=RTMP1IJ(IL(L),JL(L))
-C     ENDDO
-C
-C     CLOSE(1)
-C
-C     ENDIF
-C
+!
+!**********************************************************************C
+!
+! **  READ IN CELL CENTER DEPTHS AND BOTTOM BED ELEVATION FOR CARTESIAN
+! **  OR MIXED CATERSIAN CURVILINEAR GRID FORM FILE DEPTH.INP.  IF THE
+! **  NUMBER OF VARIALBLE CELLS EQUALS NUMBER OF WATER CELLS OR
+! **  ISCLO=1 DEPTHS ARE READ FROM THE FILE DXDY.INP
+!
+!----------------------------------------------------------------------C
+!
+!     LCM2=LC-2
+!     IF(LCM2.GT.LVC)THEN
+!
+!     OPEN(1,FILE='DEPTH.INP',STATUS='UNKNOWN')
+!     GOTO 999
+!
+!     WRITE (7,9)
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
+!     DO IS=1,5
+!     READ(1,1)
+!     ENDDO
+!
+!     IF(JC.LE.30)THEN
+!       DO I=1,IC
+!       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=1,JC)
+!       IF(ISO.GT.0) GOTO 820
+!       WRITE (7,17) (RTMP1IJ(I,J),J=1,JC)
+!       ENDDO
+!      ELSE
+!       DO JJ=1,JC,30
+!       JF=JJ
+!       JLAST=JF+29
+!       IF(JLAST.GT.JC) JLAST=JC
+!       DO I=1,IC
+!       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=JF,JLAST)
+!       IF(ISO.GT.0) GOTO 820
+!       WRITE (7,17) (RTMP1IJ(I,J),J=JF,JLAST)
+!       ENDDO
+!       WRITE (7,15)
+!       ENDDO
+!     ENDIF
+!
+!     DO L=2,LA
+!     HMP(L)=RTMP1IJ(IL(L),JL(L)
+!     ENDDO
+!
+! **  SKIP OVER BLANK, TITLE AND AND HEADER LINES
+!
+!     DO IS=1,5
+!     READ(1,1)
+!     ENDDO
+!
+!     IF(JC.LE.30)THEN
+!       DO I=1,IC
+!       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=1,JC)
+!       IF(ISO.GT.0) GOTO 820
+!       WRITE (7,17) (RTMP1IJ(I,J),J=1,JC)
+!       ENDDO
+!      ELSE
+!       DO JJ=1,JC,30
+!       JF=JJ
+!       JLAST=JF+29
+!       IF(JLAST.GT.JC) JLAST=JC
+!       DO I=1,IC
+!       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=JF,JLAST)
+!       IF(ISO.GT.0) GOTO 820
+!       WRITE (7,17) (RTMP1IJ(I,J),J=JF,JLAST)
+!       ENDDO
+!       WRITE (7,15)
+!       ENDDO
+!     ENDIF
+!
+!     DO L=2,LA
+!     BELV(L)=RTMP1IJ(IL(L),JL(L))
+!     ENDDO
+!
+! **  SKIP OVER BLANK, TITLE AND AND HEADER LINES
+!
+!     DO IS=1,5
+!     READ(1,1)
+!     ENDDO
+!
+!     IF(JC.LE.30)THEN
+!       DO I=1,IC
+!       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=1,JC)
+!       IF(ISO.GT.0) GOTO 820
+!       WRITE (7,17) (RTMP1IJ(I,J),J=1,JC)
+!       ENDDO
+!      ELSE
+!       DO JJ=1,JC,30
+!       JF=JJ
+!       JLAST=JF+29
+!       IF(JLAST.GT.JC) JLAST=JC
+!       DO I=1,IC
+!       READ(1,7,IOSTAT=ISO) (RTMP1IJ(I,J),J=JF,JLAST)
+!       IF(ISO.GT.0) GOTO 820
+!       WRITE (7,17) (RTMP1IJ(I,J),J=JF,JLAST)
+!       ENDDO
+!       WRITE (7,15)
+!       ENDDO
+!     ENDIF
+!
+!     DO L=2,LA
+!     ZBR(L)=RTMP1IJ(IL(L),JL(L))
+!     ENDDO
+!
+!     CLOSE(1)
+!
+!     ENDIF
+!
    15 FORMAT (/)
-C   6 FORMAT (60I2)
+!   6 FORMAT (60I2)
     6 FORMAT (640I1)
    66 FORMAT (I3,2X,640I1)
   660 FORMAT (I4,2X,640I1)
@@ -3349,37 +3176,37 @@ C   6 FORMAT (60I2)
  1660 FORMAT (1X,I4,2X,640I1)
     7 FORMAT (30F4.1)
    17 FORMAT(1X,30F4.1)
-C
-C**********************************************************************C
-C
-C **  READ CURVILINEAR-ORTHOGONAL OR VARIABLE CELL DATA FROM FILE
-C **  DXDY.INP
-C
-C----------------------------------------------------------------------C
-C
-C **  INITIALIZE CELL DIMENSIONS TO CONSTANT CARTESIAN OR DUMMY VALUES
-C
+!
+!**********************************************************************C
+!
+! **  READ CURVILINEAR-ORTHOGONAL OR VARIABLE CELL DATA FROM FILE
+! **  DXDY.INP
+!
+!----------------------------------------------------------------------C
+!
+! **  INITIALIZE CELL DIMENSIONS TO CONSTANT CARTESIAN OR DUMMY VALUES
+!
       DO L=1,LC
       DXP(L)=DX*DXYCVT
       DYP(L)=DY*DXYCVT
       ZBR(L)=ZBRADJ
       ENDDO
-C
-C **  READ IN DX, DY, DEPTH AND BOTTOM ELEVATION AT CELL CENTERS OF
-C **  VARIABLE CELLS
-C
+!
+! **  READ IN DX, DY, DEPTH AND BOTTOM ELEVATION AT CELL CENTERS OF
+! **  VARIABLE CELLS
+!
       IF(LVC.GT.0)THEN
       OPEN(1,FILE='DXDY.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,4
       READ(1,1)
       ENDDO
-C
+!
       IF(ISVEG.EQ.0)THEN
         DO LT=1,LVC
-C       READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ
+!       READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ
         READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ,ZBRIJ
         IF(ISO.GT.0) GOTO 830
         L=LIJ(I,J)
@@ -3393,7 +3220,7 @@ C       READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ
         ENDDO
        ELSE
         DO LT=1,LVC
-C       READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ
+!       READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ
         READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ,ZBRIJ,MVEGIJT
         IF(ISO.GT.0) GOTO 830
         L=LIJ(I,J)
@@ -3407,32 +3234,32 @@ C       READ(1,*,IOSTAT=ISO)I,J,DXIJ,DYIJ,HIJ,BELVIJ
         MVEGL(L)=MVEGIJT
         ENDDO
       ENDIF
-C
-C ** MODIFY DX AND DY FOR 1D CHANNELS
-C
+!
+! ** MODIFY DX AND DY FOR 1D CHANNELS
+!
       IF(IS1DCHAN.GT.0)THEN
        DO L=2,LA
          IF(LCT(L).EQ.6) DYP(L)=1.
          IF(LCT(L).EQ.7) DXP(L)=1.
        ENDDO
       ENDIF
-C
+!
       CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE MODDXDY.INP TO MODIFY INPUT VALUES OF DX AND DY
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE MODDXDY.INP TO MODIFY INPUT VALUES OF DX AND DY
+!
       IF(IMDXDY.GT.0)THEN
       OPEN(1,FILE='MODDXDY.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,4
       READ(1,1)
       ENDDO
-C
+!
       READ(1,*) NMDXDY
       IF(NMDXDY.GE.1)THEN
         DO NMD=1,NMDXDY
@@ -3442,33 +3269,31 @@ C
         DYP(LTMP)=RMDY*DYP(LTMP)
         ENDDO
       ENDIF
-C
+!
       CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE MODCHAN.INP TO INSERT SUBGRID CHANNELS INTO
-C **  HOST CELLS
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE MODCHAN.INP TO INSERT SUBGRID CHANNELS INTO
+! **  HOST CELLS
+!
       MDCHH=0
       IF(ISCHAN.GT.0)THEN
       OPEN(1,FILE='MODCHAN.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,8
       READ(1,1)
       ENDDO
-C
+!
       IF(ISCHAN.EQ.1)THEN
       READ(1,*) MDCHH,MDCHHD,MDCHHD2
       READ(1,*) MDCHITM,MDCHHQ,QCHERR
       IF(MDCHH.GE.1)THEN
         DO NMD=1,MDCHH
-        READ(1,*)MDCHTYP(NMD),IMDCHH(NMD),JMDCHH(NMD),
-     &                        IMDCHU(NMD),JMDCHU(NMD),
-     &                        IMDCHV(NMD),JMDCHV(NMD)
+        READ(1,*)MDCHTYP(NMD),IMDCHH(NMD),JMDCHH(NMD),IMDCHU(NMD),JMDCHU(NMD),IMDCHV(NMD),JMDCHV(NMD)
         QCHANU(NMD)=0.
         QCHANUN(NMD)=0.
         QCHANV(NMD)=0.
@@ -3476,16 +3301,14 @@ C
         ENDDO
       ENDIF
       ENDIF
-C
+!
       IF(ISCHAN.EQ.2)THEN
       READ(1,*) MDCHH,MDCHHD,MDCHHD2
       READ(1,*) MDCHITM,MDCHHQ,QCHERR
       IF(MDCHH.GE.1)THEN
         DO NMD=1,MDCHH
-        READ(1,*)MDCHTYP(NMD),IMDCHH(NMD),JMDCHH(NMD),
-     &                        IMDCHU(NMD),JMDCHU(NMD),
-     &                        IMDCHV(NMD),JMDCHV(NMD),
-     &                        CHANLEN(NMD),PMDCH(NMD)
+        READ(1,*)MDCHTYP(NMD),IMDCHH(NMD),JMDCHH(NMD),IMDCHU(NMD),JMDCHU(NMD),IMDCHV(NMD),        &
+                 JMDCHV(NMD),CHANLEN(NMD),PMDCH(NMD)
         QCHANU(NMD)=0.
         QCHANUN(NMD)=0.
         QCHANV(NMD)=0.
@@ -3493,9 +3316,9 @@ C
         ENDDO
       ENDIF
       ENDIF
-C
+!
       CLOSE(1)
-C
+!
       IF(MDCHH.GE.1)THEN
         DO NMD=1,MDCHH
         LMDCHH(NMD)=LIJ(IMDCHH(NMD),JMDCHH(NMD))
@@ -3511,24 +3334,24 @@ C
         ENDIF
         ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE CHANSEC.INP FOR 1-D CHANNEL CROSS SECTION DATA
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE CHANSEC.INP FOR 1-D CHANNEL CROSS SECTION DATA
+!
       IF(IS1DCHAN.GT.0)THEN
       OPEN(1,FILE='CHANSEC.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,21
       READ(1,1)
       ENDDO
-C
+!
       DO LL=1,LC-2
-C
+!
       READ(1,*) ISEC,JSEC,ISECDAT,NXYSDATT,BELVBT,RMULADJ
       L=LIJ(ISEC,JSEC)
       NXYSDAT(L)=NXYSDATT
@@ -3564,34 +3387,34 @@ C
          EHXYS(ND,L)=EHXYS(ND,L)-BELVB(L)
         ENDDO
       ENDIF
-C
+!
       ENDDO
-C
+!
       CLOSE(1)
       ENDIF
-C
-C
-C**********************************************************************C
-C
-C **  OPEN FILE CHANJUN.INP FOR 1-D CHANNEL JUNCTION DATA
-C
+!
+!
+!**********************************************************************C
+!
+! **  OPEN FILE CHANJUN.INP FOR 1-D CHANNEL JUNCTION DATA
+!
       IF(IS1DCHAN.GT.0)THEN
-C
+!
       OPEN(1,FILE='CHANJUN.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,17
       READ(1,1)
       ENDDO
-C
+!
       NJUNX=0
       NJUNY=0
       READ(1,*) NJUNTMP
-CDIA      WRITE(6,6543) NJUNTMP
-C
+!DIA      WRITE(6,6543) NJUNTMP
+!
       IF(NJUNTMP.GT.0)THEN
-C
+!
       DO NJ=1,NJUNTMP
        READ(1,*) IJUNTMP,JJUNTMP,JDIR,JUNTYP
        IF(JDIR.EQ.1)THEN
@@ -3605,59 +3428,59 @@ C
          JUNTPY(NJUNY)=JUNTYP
        ENDIF
       ENDDO
-C
+!
       ENDIF
-C
+!
       CLOSE(1)
-C
+!
       ENDIF
-C
+!
  6543 FORMAT(' NJUNTMP = ',I5)
-C
-C**********************************************************************C
-C
-C **  OPEN FILE GWATER.INP TO SPECIFY GROUNDWATER INTERACTION
-C **  BY INFILTRATION AND EVAPOTRANSPIRATION
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE GWATER.INP TO SPECIFY GROUNDWATER INTERACTION
+! **  BY INFILTRATION AND EVAPOTRANSPIRATION
+!
       ISGWIE=0
       IF(ISGWIT.EQ.1)THEN
       OPEN(1,FILE='GWATER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,6
       READ(1,1)
       ENDDO
-C
+!
       READ(1,*) ISGWIE
-C     WRITE(6,339)ISGWIE
+!     WRITE(6,339)ISGWIE
       IF(ISGWIE.GE.1)THEN
         READ(1,*) DAGWZ,RNPOR,RIFTRM
-C       WRITE(6,907) DAGWZ,RNPOR,RIFTRM
+!       WRITE(6,907) DAGWZ,RNPOR,RIFTRM
        ELSE
         DAGWZ=0.0
         RNPOR=1.E-12
         RIFTRM=0.0
       ENDIF
-C
+!
       CLOSE(1)
       ENDIF
-C
+!
   339 FORMAT(2I5,6F14.5)
-C
-C**********************************************************************C
-C
-C **  OPEN FILE FBODY.INP TO READ IN SPATIALLY VARYING BODY FORCES
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE FBODY.INP TO READ IN SPATIALLY VARYING BODY FORCES
+!
       IF(ISBODYF.GE.1)THEN
         OPEN(1,FILE='FBODY.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,7
           READ(1,1)
         ENDDO
-C
+!
         READ(1,*)CVTFACX,CVTFACY
         DO LL=2,LA
           READ(1,*)ITMP,JTMP,FBODY1,FBODY2
@@ -3687,7 +3510,7 @@ C
           FBODYFXI(L)=0.0
           FBODYFYI(L)=0.0
         END DO
-C
+!
         CLOSE(1)
       ELSE
 	  DO K=1,KC
@@ -3701,23 +3524,23 @@ C
           FBODYFYI(L)=0.0
         END DO
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE SEDBLBC.INP TO READ IN SEDIMENT BEDLOAD OUTFLOW
-C **  OR RECIRCULATION BOUNDARY CONDITIONS
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE SEDBLBC.INP TO READ IN SEDIMENT BEDLOAD OUTFLOW
+! **  OR RECIRCULATION BOUNDARY CONDITIONS
+!
       NSBDLDBC=0
-C
+!
       IF(ISBDLDBC.GE.1)THEN
         OPEN(1,FILE='SEDBLBC.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,12
           READ(1,1)
         ENDDO
-C
+!
         READ(1,*)NSBDLDBC
         DO N=1,NSBDLDBC
           READ(1,*)ITMPU,JTMPU,ITMPD,JTMPD,ISDBLDIR(N)
@@ -3728,42 +3551,42 @@ C
             LSBLBCD(N)=0
           ENDIF
         ENDDO
-C
+!
         CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE GWMAP.INP TO SPECIFY GROUNDWATER INTERACTION BY
-C **  AMBIENT GROUNDWATER FLOW
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE GWMAP.INP TO SPECIFY GROUNDWATER INTERACTION BY
+! **  AMBIENT GROUNDWATER FLOW
+!
       IF(ISGWIT.EQ.2)THEN
         OPEN(1,FILE='GWMAP.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,10
           READ(1,1)
         ENDDO
-C
+!
         DO LL=2,LA
           READ(1,*)ITMP,JTMP,IVALUE,RVALUE
           L=LIJ(ITMP,JTMP)
           NGWSL(L)=IVALUE
           GWFAC(L)=RVALUE
         END DO
-C
+!
         CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN SPATIALLY VARYING SEDIMENT ROUGHNESS HEIGHT FOR
-C **  DETERMINING GRAIN STRESS
-C
+!
+!**********************************************************************C
+!
+! **  READ IN SPATIALLY VARYING SEDIMENT ROUGHNESS HEIGHT FOR
+! **  DETERMINING GRAIN STRESS
+!
       IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)THEN
       IF(ISBEDSTR.EQ.3)THEN
-C
+!
          OPEN(1,FILE='SEDROUGH.INP')
 	   DO IS=1,2
             READ(1,1)
@@ -3772,22 +3595,22 @@ C
            READ(1,*) LDUM,IDUM,JDUM,ZBRSED(L)
          ENDDO
 	   CLOSE(1)
-C
+!
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE DOCW.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
-C **  DISSOLVED ORGANIC CARBON IN WATER COLUMN
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE DOCW.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
+! **  DISSOLVED ORGANIC CARBON IN WATER COLUMN
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).EQ.1.OR.ISTOC(NT).EQ.2)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTDOCW.EQ.1)THEN
         OPEN(1,FILE='DOCW.INP',STATUS='UNKNOWN')
         DO IS=1,8
@@ -3806,21 +3629,21 @@ C
           ENDDO
         ENDIF
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE POCW.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
-C **  PARTICULATE ORGANIC CARBON IN WATER COLUMN
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE POCW.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
+! **  PARTICULATE ORGANIC CARBON IN WATER COLUMN
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).EQ.1)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTPOCW.EQ.1)THEN
         OPEN(1,FILE='POCW.INP',STATUS='UNKNOWN')
         DO IS=1,8
@@ -3839,22 +3662,22 @@ C
           ENDDO
         ENDIF
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE FPOCW.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
-C **  PARTICULATE ORGANIC CARBON FRACTION FOR EACH SEDIMENT CLASS
-C **  IN WATER COLUMN
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE FPOCW.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
+! **  PARTICULATE ORGANIC CARBON FRACTION FOR EACH SEDIMENT CLASS
+! **  IN WATER COLUMN
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).EQ.2.OR.ISTOC(NT).EQ.3)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTPOCW.EQ.3)THEN
         OPEN(1,FILE='FPOCW.INP',STATUS='UNKNOWN')
 	  DO NS=1,NSED+NSND
@@ -3869,28 +3692,27 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                            (STFPOCW(L,K,NS),K=1,KC)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STFPOCW(L,K,NS),K=1,KC)
               IF(ISO.GT.0) GOTO 854
             ENDDO
           ENDIF
         ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE DOCB.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
-C **  DISSOLVED ORGANIC CARBON IN SEDIMENT BED
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE DOCB.INP TO SPECIFY SPATIAL VARYING, TIME CONSTANT
+! **  DISSOLVED ORGANIC CARBON IN SEDIMENT BED
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).EQ.1.OR.ISTOC(NT).EQ.2)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTDOCB.EQ.1)THEN
         OPEN(1,FILE='DOCB.INP',STATUS='UNKNOWN')
         DO IS=1,8
@@ -3929,8 +3751,7 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (STDOCB(L,K),K=1,KB)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STDOCB(L,K),K=1,KB)
               IF(ISO.GT.0) GOTO 856
             ENDDO
           ENDIF
@@ -3946,8 +3767,7 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (STDOCB(L,K),K=1,KBINPUT)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STDOCB(L,K),K=1,KBINPUT)
               IF(ISO.GT.0) GOTO 856
 	        DO K=KBINPUT,KB
 	          STDOCB(L,K)=STDOCB(L,KBINPUT)
@@ -3957,21 +3777,21 @@ C
         ENDIF
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE POCB.INP TO READ SPATIALY VARYING, TIME CONSTANT
-C **  PARTICULATE ORGANIC CARBON IN BED
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE POCB.INP TO READ SPATIALY VARYING, TIME CONSTANT
+! **  PARTICULATE ORGANIC CARBON IN BED
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).EQ.1)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTPOCB.EQ.1)THEN
         OPEN(1,FILE='POCB.INP',STATUS='UNKNOWN')
         DO IS=1,8
@@ -4010,8 +3830,7 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (STPOCB(L,K),K=1,KB)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STPOCB(L,K),K=1,KB)
               IF(ISO.GT.0) GOTO 856
             ENDDO
           ENDIF
@@ -4027,8 +3846,7 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (STPOCB(L,K),K=1,KBINPUT)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STPOCB(L,K),K=1,KBINPUT)
               IF(ISO.GT.0) GOTO 856
 	        DO K=KBINPUT,KB
 	          STPOCB(L,K)=STPOCB(L,KBINPUT)
@@ -4038,22 +3856,22 @@ C
         ENDIF
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  OPEN FILE FPOCB.INP TO READ SPATIALY VARYING, TIME CONSTANT
-C **  PARTICULATE ORGANIC CARBON FRACTION FOR EACH SEDIMENT CLASS
-C **  IN BED
-C
+!
+!**********************************************************************C
+!
+! **  OPEN FILE FPOCB.INP TO READ SPATIALY VARYING, TIME CONSTANT
+! **  PARTICULATE ORGANIC CARBON FRACTION FOR EACH SEDIMENT CLASS
+! **  IN BED
+!
       IVAL=0
 	DO NT=1,NTOX
 	  IF(ISTOC(NT).EQ.2.OR.ISTOC(NT).EQ.3)IVAL=1
 	ENDDO
-C
+!
       IF(IVAL.EQ.1)THEN
-C
+!
       IF(ISTPOCB.EQ.3)THEN
         OPEN(1,FILE='FPOCB.INP',STATUS='UNKNOWN')
 	  DO NS=1,NSED+NSND
@@ -4093,8 +3911,7 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (STFPOCB(L,K,NS),K=1,KB)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STFPOCB(L,K,NS),K=1,KB)
               IF(ISO.GT.0) GOTO 856
             ENDDO
           ENDIF
@@ -4110,8 +3927,7 @@ C
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (STFPOCB(L,K,NS),K=1,KBINPUT,NS)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(STFPOCB(L,K,NS),K=1,KBINPUT,NS)
               IF(ISO.GT.0) GOTO 856
 	        DO K=KBINPUT,KB
 	          STFPOCB(L,K,NS)=STFPOCB(L,KBINPUT,NS)
@@ -4122,22 +3938,22 @@ C
 	  ENDDO
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C###########################################################################
-C HQI Change to include sptially varying, but time constant bulk foc
-C FPOCB  - Bulk foc from data
-C PFPOCB - Pseudo foc from data, to be used for all partitioning calculations
-C RM, 02/29/04
-C**********************************************************************C
-C
-C **  OPEN FILE FOCB.INP TO READ SPATIALY VARYING, TIME CONSTANT
-C **  PARTICULATE ORGANIC CARBON IN BED AND PSEUDO-POC IN BED
-C
+!
+!**********************************************************************C
+!###########################################################################
+! HQI Change to include sptially varying, but time constant bulk foc
+! FPOCB  - Bulk foc from data
+! PFPOCB - Pseudo foc from data, to be used for all partitioning calculations
+! RM, 02/29/04
+!**********************************************************************C
+!
+! **  OPEN FILE FOCB.INP TO READ SPATIALY VARYING, TIME CONSTANT
+! **  PARTICULATE ORGANIC CARBON IN BED AND PSEUDO-POC IN BED
+!
       IF(ISTPOCB.EQ.4)THEN
-C
+!
         OPEN(1,FILE='FOCB.INP',STATUS='UNKNOWN')
         DO IS=1,8
           READ(1,1)
@@ -4159,7 +3975,7 @@ C
            IF(ISO.GT.0) GOTO 856
         ENDDO
         CLOSE(1)
-C
+!
         OPEN(1,FILE='PSEUDO_FOCB.INP',STATUS='UNKNOWN')
         DO IS=1,8
           READ(1,1)
@@ -4182,45 +3998,43 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C###########################################################################
-C**********************************************************************C
-C
-C **  WRITE NEW DXDY FILES TO UPDATE OLD VERSIONS OF THE MODEL
-C **  OR INCORPORATE MODIFIED DX'S AND DY'S DIRECTLY INTO
-C **  DXDY.INP FILE
-C
-C     DXTMP=20.
-C     DYTMP=20.
+!
+!###########################################################################
+!**********************************************************************C
+!
+! **  WRITE NEW DXDY FILES TO UPDATE OLD VERSIONS OF THE MODEL
+! **  OR INCORPORATE MODIFIED DX'S AND DY'S DIRECTLY INTO
+! **  DXDY.INP FILE
+!
+!     DXTMP=20.
+!     DYTMP=20.
       OPEN(1,FILE='NEWDXDY.INP',STATUS='UNKNOWN')
       DO J=1,JC
       DO I=1,IC
       L=LIJ(I,J)
       IF(IJCT(I,J).GE.1.AND.IJCT(I,J).LT.9)THEN
-        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HMP(L),BELV(L),
-     &              ZBR(L)
-C       WRITE(1,339)I,J,DXTMP,DYTMP,H(I,J),BELVIJ(I,J),
-C    &              ZBRIJ(I,J)
+        WRITE(1,339)IL(L),JL(L),DXP(L),DYP(L),HMP(L),BELV(L),ZBR(L)
+!       WRITE(1,339)I,J,DXTMP,DYTMP,H(I,J),BELVIJ(I,J),ZBRIJ(I,J)
       ENDIF
       ENDDO
       ENDDO
       CLOSE(1)
-C
-C**********************************************************************C
-C
-C **  READ IN INITIAL SALINITY, TEMPERATURE, DYE, SED, SND, TOX
-C **  FOR COLD STARTS FORM FILE XXXX.INP
-C
-C----------------------------------------------------------------------C
-C
-C **  SALINITY
-C
+!
+!**********************************************************************C
+!
+! **  READ IN INITIAL SALINITY, TEMPERATURE, DYE, SED, SND, TOX
+! **  FOR COLD STARTS FORM FILE XXXX.INP
+!
+!----------------------------------------------------------------------C
+!
+! **  SALINITY
+!
       DO K=1,KC
       DO L=2,LA
        SALINIT(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(1).GE.1)THEN
 	IFLAG=0
       IF(ISRESTI.EQ.0)IFLAG=1
@@ -4228,7 +4042,7 @@ C
       IF(IFLAG.EQ.1)THEN
       IF(ISLTMT.EQ.0.AND.ISTOPT(1).GE.1)THEN
         OPEN(1,FILE='SALT.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,4
          READ(1,1)
         ENDDO
@@ -4248,26 +4062,26 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
       ENDIF
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  TEMPERATURE
-C
+!
+!**********************************************************************C
+!
+! **  TEMPERATURE
+!
       DO K=1,KC
       DO L=2,LA
        TEMINIT(L,K)=TEMO
       ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(2).GE.1)THEN
 	IFLAG=0
       IF(ISRESTI.EQ.0)IFLAG=1
 	IF(ISRESTI.EQ.1.AND.ISCI(2).EQ.0)IFLAG=1
       IF(IFLAG.EQ.1)THEN
       IF(ISLTMT.EQ.0.AND.ISTOPT(2).EQ.1)THEN
-C
+!
         OPEN(1,FILE='TEMP.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,4
          READ(1,1)
         ENDDO
@@ -4284,10 +4098,10 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
           ENDDO
         ENDIF
         CLOSE(1)
-C
+!
         IF(ISRESTI.EQ.0.AND.ISBEDTEMI.EQ.0)THEN
           OPEN(1,FILE='TEMPB.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
           DO IS=1,4
             READ(1,1)
           ENDDO
@@ -4305,22 +4119,22 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
           ENDIF
           CLOSE(1)
         ENDIF
-C
+!
       ENDIF
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  DYE
-C
+!
+!**********************************************************************C
+!
+! **  DYE
+!
       DO K=1,KC
       DO L=2,LA
        DYEINIT(L,K)=0.
       ENDDO
       ENDDO
-C
-C
+!
+!
       IF(ISTRAN(3).GE.1)THEN
 	IFLAG=0
       IF(ISRESTI.EQ.0)IFLAG=1
@@ -4328,7 +4142,7 @@ C
       IF(IFLAG.EQ.1)THEN
       IF(ISLTMT.EQ.0.AND.ISTOPT(3).GE.1)THEN
         OPEN(1,FILE='DYE.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,4
         READ(1,1)
         ENDDO
@@ -4348,17 +4162,17 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
       ENDIF
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SFL
-C
+!
+!**********************************************************************C
+!
+! **  SFL
+!
       DO K=1,KC
       DO L=2,LA
        SFLINIT(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       IF(ISTRAN(4).GE.1)THEN
 	IFLAG=0
       IF(ISRESTI.EQ.0)IFLAG=1
@@ -4366,7 +4180,7 @@ C
       IF(IFLAG.EQ.1)THEN
       IF(ISLTMT.EQ.0.AND.ISTOPT(4).GE.1)THEN
         OPEN(1,FILE='SFL.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,4
         READ(1,1)
         ENDDO
@@ -4386,13 +4200,13 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
       ENDIF
       ENDIF
       ENDIF
-C
-C**********************************************************************C
-C
-C **  TOXICS
-C
+!
+!**********************************************************************C
+!
+! **  TOXICS
+!
       IF(ISTRAN(5).EQ.0) THEN
-C
+!
       DO NT=1,NTOX
       DO K=1,KC
       DO L=2,LA
@@ -4400,7 +4214,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NT=1,NTOX
       DO K=1,KB
       DO L=2,LA
@@ -4408,11 +4222,11 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       ENDIF
-C
+!
       IF(ISTRAN(5).GE.1) THEN
-C
+!
       DO NT=1,NTOX
       DO K=1,KC
       DO L=2,LA
@@ -4420,7 +4234,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NT=1,NTOX
       DO K=1,KB
       DO L=2,LA
@@ -4428,18 +4242,18 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(5).EQ.0) IISTMP=0
-C
+!
       IF(IISTMP.EQ.0.AND.ISTRAN(5).GE.1)THEN
       IF(ISLTMT.EQ.0)THEN
         OPEN(1,FILE='TOXW.INP',STATUS='UNKNOWN')
         IF(ITXINT(1).EQ.1.OR.ITXINT(1).EQ.3)THEN
-C        IF(ITXINT(NT).EQ.1.OR.ITXINT(NT).EQ.3)THEN
+!        IF(ITXINT(NT).EQ.1.OR.ITXINT(NT).EQ.3)THEN
         DO NT=1,NTOX
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4460,18 +4274,18 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         CLOSE(1)
       ENDIF
       ENDIF
-C
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(5).EQ.0) IISTMP=0
-C
+!
       IF(IISTMP.EQ.0.AND.ISTRAN(5).GE.1)THEN
       IF(ISLTMT.EQ.0.)THEN
         OPEN(1,FILE='TOXB.INP',STATUS='UNKNOWN')
         IF(ITXINT(1).EQ.2.OR.ITXINT(1).EQ.3)THEN
-C        IF(ITXINT(NT).EQ.2.OR.ITXINT(NT).EQ.3)THEN
+!        IF(ITXINT(NT).EQ.2.OR.ITXINT(NT).EQ.3)THEN
         DO NT=1,NTOX
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4483,8 +4297,7 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
           ENDDO
          ELSE
           DO L=2,LC-1
-           READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                        (TOXBINIT(L,K,NT),K=1,KBINPUT)
+           READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(TOXBINIT(L,K,NT),K=1,KBINPUT)
            IF(ISO.GT.0) GOTO 852
           ENDDO
         ENDIF
@@ -4493,15 +4306,15 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         CLOSE(1)
       ENDIF
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  COHESIVE SEDIMENT
-C
+!
+!**********************************************************************C
+!
+! **  COHESIVE SEDIMENT
+!
       IF(ISTRAN(6).EQ.0)THEN
-C
+!
       DO NS=1,NSED
       DO K=1,KC
       DO L=2,LA
@@ -4509,7 +4322,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSED
       DO K=1,KB
       DO L=2,LA
@@ -4517,11 +4330,11 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       END IF
-C
+!
       IF(ISTRAN(6).GE.1)THEN
-C
+!
       DO NS=1,NSED
       DO K=1,KC
       DO L=2,LA
@@ -4529,7 +4342,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NS=1,NSED
       DO K=1,KB
       DO L=2,LA
@@ -4537,20 +4350,20 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       ITXINTT=0
       IF(ISEDINT.EQ.1) ITXINTT=1
       IF(ISEDINT.EQ.3) ITXINTT=1
-C
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(6).EQ.0) IISTMP=0
-C
+!
       IF(IISTMP.EQ.0.AND.ISTRAN(6).GE.1)THEN
       IF(ISLTMT.EQ.0.AND.ITXINTT.GE.1)THEN
         OPEN(1,FILE='SEDW.INP',STATUS='UNKNOWN')
         DO NS=1,NSED
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4570,20 +4383,20 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         CLOSE(1)
       ENDIF
       ENDIF
-C
+!
       ITXINTT=0
       IF(ISEDINT.EQ.2) ITXINTT=1
       IF(ISEDINT.EQ.3) ITXINTT=1
-C
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(6).EQ.0) IISTMP=0
-C
+!
       IF(IISTMP.EQ.0.AND.ISTRAN(6).GE.1)THEN
       IF(ISLTMT.EQ.0.AND.ITXINTT.GE.1)THEN
         OPEN(1,FILE='SEDB.INP',STATUS='UNKNOWN')
         DO NS=1,NSED
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4600,8 +4413,7 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
           ENDDO
          ELSE
           DO L=2,LC-1
-           READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &                          (SEDBINIT(L,K,NS),K=1,KBINPUT)
+           READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(SEDBINIT(L,K,NS),K=1,KBINPUT)
            IF(ISO.GT.0) GOTO 856
           ENDDO
         ENDIF
@@ -4609,15 +4421,15 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         CLOSE(1)
       ENDIF
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  NON-COHESIVE SEDIMENT
-C
+!
+!**********************************************************************C
+!
+! **  NON-COHESIVE SEDIMENT
+!
       IF(ISTRAN(7).EQ.0)THEN
-C
+!
       DO NX=1,NSND
       DO K=1,KC
       DO L=2,LA
@@ -4625,7 +4437,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NX=1,NSND
       DO K=1,KB
       DO L=2,LA
@@ -4633,11 +4445,11 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       END IF
-C
+!
       IF(ISTRAN(7).GE.1)THEN
-C
+!
       DO NX=1,NSND
       NS=NX+NSED
       DO K=1,KC
@@ -4646,7 +4458,7 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       DO NX=1,NSND
       NS=NX+NSED
       DO K=1,KB
@@ -4655,20 +4467,20 @@ C
       ENDDO
       ENDDO
       ENDDO
-C
+!
       ITXINTT=0
       IF(ISEDINT.EQ.1) ITXINTT=1
       IF(ISEDINT.EQ.3) ITXINTT=1
-C
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(7).EQ.0) IISTMP=0
-C
+!
       IF(IISTMP.EQ.0.AND.ISTRAN(7).GE.1)THEN
       IF(ISLTMT.EQ.0.AND.ITXINTT.GE.1)THEN
         OPEN(1,FILE='SNDW.INP',STATUS='UNKNOWN')
         DO NX=1,NSND
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4688,20 +4500,20 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         CLOSE(1)
       ENDIF
       ENDIF
-C
+!
       ITXINTT=0
       IF(ISEDINT.EQ.2) ITXINTT=1
       IF(ISEDINT.EQ.3) ITXINTT=1
-C
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(7).EQ.0) IISTMP=0
-C
+!
       IF(IISTMP.EQ.0.AND.ISTRAN(7).GE.1)THEN
       IF(ISLTMT.EQ.0.AND.ITXINTT.GE.1)THEN
         OPEN(1,FILE='SNDB.INP',STATUS='UNKNOWN')
         DO NX=1,NSND
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4718,8 +4530,7 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
           ENDDO
          ELSE
           DO L=2,LC-1
-           READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &     (SNDBINIT(L,K,NX),K=1,KBINPUT)
+           READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(SNDBINIT(L,K,NX),K=1,KBINPUT)
            IF(ISO.GT.0) GOTO 862
           ENDDO
         ENDIF
@@ -4727,25 +4538,25 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         CLOSE(1)
       ENDIF
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C  ** SEDIMENT BED MECHANICAL INITIAL CONDITIONS
-C
+!
+!**********************************************************************C
+!
+!  ** SEDIMENT BED MECHANICAL INITIAL CONDITIONS
+!
       IISTMP=1
       IF(ISRESTI.EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(6).EQ.0) IISTMP=0
       IF(ISRESTI.GE.1.AND.ISCI(7).EQ.0) IISTMP=0
-C
+!
       IF(ISTRAN(6).GT.0.OR.ISTRAN(7).GT.0) THEN
-C
-C  ** BED LAYER THICKNESS
-C
+!
+!  ** BED LAYER THICKNESS
+!
       IF(IISTMP.EQ.0.AND.IBMECH.GE.1)THEN
         OPEN(1,FILE='BEDLAY.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
           READ(1,1)
         ENDDO
@@ -4763,20 +4574,19 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &        (BEDLINIT(L,K),K=1,KBINPUT)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(BEDLINIT(L,K),K=1,KBINPUT)
               IF(ISO.GT.0) GOTO 862
             ENDDO
           ENDIF
         ENDIF
         CLOSE(1)
       ENDIF
-C
-C  ** BED LAYER BULK DENSITY
-C
+!
+!  ** BED LAYER BULK DENSITY
+!
       IF(IISTMP.EQ.0.AND.IBMECH.GE.1)THEN
         OPEN(1,FILE='BEDBDN.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
           READ(1,1)
         ENDDO
@@ -4794,20 +4604,19 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &        (BEDBINIT(L,K),K=1,KBINPUT)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(BEDBINIT(L,K),K=1,KBINPUT)
               IF(ISO.GT.0) GOTO 862
             ENDDO
           ENDIF
         ENDIF
         CLOSE(1)
       ENDIF
-C
-C  ** BED LAYER DRY DENSITY, POROSITY OR VOID RATIO
-C
+!
+!  ** BED LAYER DRY DENSITY, POROSITY OR VOID RATIO
+!
       IF(IISTMP.EQ.0.AND.IBMECH.GE.1)THEN
         OPEN(1,FILE='BEDDDN.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,8
         READ(1,1)
         ENDDO
@@ -4825,20 +4634,19 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
             ENDDO
           ELSE
             DO L=2,LC-1
-              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,
-     &        (BEDDINIT(L,K),K=1,KBINPUT)
+              READ(1,*,IOSTAT=ISO)LDUM,IDUM,JDUM,(BEDDINIT(L,K),K=1,KBINPUT)
               IF(ISO.GT.0) GOTO 862
              ENDDO
           ENDIF
         ENDIF
         CLOSE(1)
       ENDIF
-C
-C  ** CONSOLIDATION MAP
-C
+!
+!  ** CONSOLIDATION MAP
+!
       IF(IBMECH.EQ.9)THEN
         OPEN(1,FILE='CONSOLMAP.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,6
         READ(1,1)
         ENDDO
@@ -4856,33 +4664,32 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         ENDIF
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
    19 FORMAT (/,' INITIAL BUOYANCY ARRAY:',//)
   907 FORMAT(12F6.2)
-C
-C**********************************************************************C
-C
-C **  READ IN HORIZONTAL VELOCITY TIME SERIES FOR DATA ASSIMILATION
-C **  FILE UVSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN HORIZONTAL VELOCITY TIME SERIES FOR DATA ASSIMILATION
+! **  FILE UVSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NUVSER.GE.1)THEN
       OPEN(1,FILE='UVSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,19
       READ(1,1)
       ENDDO
-C
+!
       DO NS=1,NUVSER
-        READ(1,*,IOSTAT=ISO) ITYPE,MUVSER(NS),TCUVSER(NS),TAUVSER(NS),
-     &                   RMULADJ,ADDADJ
+        READ(1,*,IOSTAT=ISO) ITYPE,MUVSER(NS),TCUVSER(NS),TAUVSER(NS),RMULADJ,ADDADJ
         IF(ISO.GT.0) GOTO 850
         IF(ITYPE.EQ.-1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
@@ -4901,8 +4708,7 @@ C
         ENDIF
         IF(ITYPE.EQ.0)THEN
           DO M=1,MUVSER(NS)
-            READ(1,*,IOSTAT=ISO)TUVSER(M,NS),(USER(M,K,NS),K=1,KC),
-     &                                      (VSER(M,K,NS),K=1,KC)
+            READ(1,*,IOSTAT=ISO)TUVSER(M,NS),(USER(M,K,NS),K=1,KC),(VSER(M,K,NS),K=1,KC)
             IF(ISO.GT.0) GOTO 860
             TUVSER(M,NS)=TUVSER(M,NS)+TAUVSER(NS)
             DO K=1,KC
@@ -4927,29 +4733,29 @@ C
           ENDDO
         ENDIF
       ENDDO
-C
+!
       CLOSE(1)
       ENDIF
-C
+!
  7001 FORMAT(2I6,F12.5,50F10.5)
-C
-C**********************************************************************C
-C
-C **  READ IN HORIZONTAL VELOCITY SPATIAL FIELD FOR DATA ASSIMILATION
-C **  FILE UVDAMAP.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN HORIZONTAL VELOCITY SPATIAL FIELD FOR DATA ASSIMILATION
+! **  FILE UVDAMAP.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NLUVDA.GT.0.AND.NUVSER.eq.0)THEN
       OPEN(1,FILE='UVDAMAP.INP',STATUS='UNKNOWN')
       OPEN(99,FILE='UVDAMAP.OUT',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,7
       READ(1,1)
       ENDDO
-C
+!
       UVMAX=0.
 	IMAX=0
 	JMAX=0
@@ -4983,32 +4789,31 @@ C
       ENDDO
 	NLUVDA=NL
 !	WRITE(8,*)'I,J,UVMAX=',IMAX,JMAX,UVMAX  !hnr 7/27/2009
-C
+!
       CLOSE(1)
 	CLOSE(99)
       ENDIF
-C
+!
  1999 FORMAT(2I6,3F10.3)
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY SURFACE ELEVATION TIME SERIES FROM THE
-C **  FILE PSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY SURFACE ELEVATION TIME SERIES FROM THE
+! **  FILE PSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NPSER.GE.1)THEN
       OPEN(1,FILE='PSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,10
       READ(1,1)
       ENDDO
-C
+!
       DO NS=1,NPSER
-        READ(1,*,IOSTAT=ISO) ITYPE,MPSER(NS),TCPSER(NS),TAPSER(NS),
-     &                   RMULADJ,ADDADJ,PSERZDF(NS)
+        READ(1,*,IOSTAT=ISO) ITYPE,MPSER(NS),TCPSER(NS),TAPSER(NS),RMULADJ,ADDADJ,PSERZDF(NS)
         IF(ISO.GT.0) GOTO 850
         PSERZDF(NS)=G*PSERZDF(NS)
 	  IF(ITYPE.EQ.1)THEN
@@ -5039,37 +4844,37 @@ C
 	    ENDDO
         ENDIF
       ENDDO
-C
+!
       CLOSE(1)
       ENDIF
-C
-CDIA      WRITE(6,6776)'READ PSER.INP'
-C
+!
+!DIA      WRITE(6,6776)'READ PSER.INP'
+!
  6776 FORMAT(A20)
-C
-C**********************************************************************C
-C
-C **  READ IN VOLUMETRIC SOURCE OR RIVER INFLOW TIME SERIES FROM THE
-C **  FILE QSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN VOLUMETRIC SOURCE OR RIVER INFLOW TIME SERIES FROM THE
+! **  FILE QSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NQSER.GE.1)THEN
       OPEN(1,FILE='QSER.INP',STATUS='UNKNOWN')
-C      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
-C      CLOSE(2,STATUS='DELETE')
-C      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
+!      CLOSE(2,STATUS='DELETE')
+!      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,14
         READ(1,1)
         ENDDO
-C
+!
         DO NS=1,NQSER
          ISMOOTH=0
-C        NTMP=0
-C **  FIX FOR EXTRA HEADERS IN SOME QSER.INP FILES
+!        NTMP=0
+! **  FIX FOR EXTRA HEADERS IN SOME QSER.INP FILES
          READ(1,6789)CHARSPACE
 	   IF(CHARSPACE.NE.CHARSKP1)THEN
 	     IF(CHARSPACE.NE.CHARSKP2) BACKSPACE(1)
@@ -5078,30 +4883,27 @@ C **  FIX FOR EXTRA HEADERS IN SOME QSER.INP FILES
 	   IF(CHARSPACE.NE.CHARSKP1)THEN
 	     IF(CHARSPACE.NE.CHARSKP2) BACKSPACE(1)
 	   ENDIF
-C
-        READ(1,*,IOSTAT=ISO)ISTYP, MQSER(NS),TCQSER(NS),TAQSER(NS),
-     &                   RMULADJ,ADDADJ,ICHGQS
+!
+        READ(1,*,IOSTAT=ISO)ISTYP, MQSER(NS),TCQSER(NS),TAQSER(NS),RMULADJ,ADDADJ,ICHGQS
         IF(MQSER(NS).LT.0)THEN
            ISMOOTH=1
            MQSER(NS)=-MQSER(NS)
         ENDIF
         IF(ISO.GT.0) GOTO 860
-      if(mqser(ns).gt.ndqser) then                                     !hnr
-        write(*,370)mqser(ns),ns,ndqser                                !hnr
-370     FORMAT('The number of data pairs in your application',I8,      !hnr
-     $  '  for Qser time series',I6,                                   !hnr
-     &  '  is larger than the maximum allowed of',I8,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop qser file'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
+      if(mqser(ns).gt.ndqser) then                                     
+        write(*,370)mqser(ns),ns,ndqser                                
+370     FORMAT('The number of data pairs in your application',I8,'  for Qser time series',I6,     &
+               '  is larger than the maximum allowed of',I8,'  for this compilation')                                      
+        write(*,*)'The program will stop qser file'                    
+        stop                                                           
+      end if                                                           
         IF(ISTYP.EQ.1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
           IF(ISO.GT.0) GOTO 860
            DO M=1,MQSER(NS)
-C           NTMP=NTMP+1
+!           NTMP=NTMP+1
            READ(1,*,IOSTAT=ISO)TQSER(M,NS),QSERTMP
-C          WRITE(2,2222)NS,NTMP,TQSER(M,NS),QSERTMP
+!          WRITE(2,2222)NS,NTMP,TQSER(M,NS),QSERTMP
            IF(ISO.GT.0) GOTO 860
            TQSER(M,NS)=TQSER(M,NS)+TAQSER(NS)
            QSERTMP=(RMULADJ*(QSERTMP+ADDADJ))
@@ -5131,47 +4933,45 @@ C          WRITE(2,2222)NS,NTMP,TQSER(M,NS),QSERTMP
           ENDDO
           DO K=1,KC
           DO M=2,MQSER(NS)-1
-            QSER(N,K,NS)=0.25*(QSERSM(M-1,K)+QSERSM(M+1,K))
-     &                  +0.5*QSERSM(M,K)
+            QSER(N,K,NS)=0.25*(QSERSM(M-1,K)+QSERSM(M+1,K))+0.5*QSERSM(M,K)
           ENDDO
           ENDDO
         ENDIF
         ENDDO
-C
+!
       CLOSE(1)
-C      CLOSE(2)
+!      CLOSE(2)
       ENDIF
-C
+!
  2222 FORMAT(2I5,F12.7,F12.4)
  6789 FORMAT(A1)
-C
-CDIA      WRITE(6,6776)'READ QSER.INP'
-C
-C**********************************************************************C
-C
-C **  READ IN FLOW WITHDRAWL-RETURN FLOW AND CONCENTRATION RISE
-C **  TIME SERIES FROM THE FILE QWRS.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!DIA      WRITE(6,6776)'READ QSER.INP'
+!
+!**********************************************************************C
+!
+! **  READ IN FLOW WITHDRAWL-RETURN FLOW AND CONCENTRATION RISE
+! **  TIME SERIES FROM THE FILE QWRS.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NQWRSR.GE.1)THEN
       OPEN(1,FILE='QWRS.INP',STATUS='UNKNOWN')
-C      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
-C      CLOSE(2,STATUS='DELETE')
-C      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
+!      CLOSE(2,STATUS='DELETE')
+!      OPEN(2,FILE='QSER.CK',STATUS='UNKNOWN')
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         NCTMP=4+NSED+NSND+NTOX
-C
+!
         DO IS=1,16
         READ(1,1)
         ENDDO
-C
+!
         DO NS=1,NQWRSR
-C        NTMP=0
-        READ(1,*,IOSTAT=ISO)ISTYP,MQWRSR(NS),TCQWRSR(NS),TAQWRSR(NS),
-     &                   RMULADJ,ADDADJ
+!        NTMP=0
+        READ(1,*,IOSTAT=ISO)ISTYP,MQWRSR(NS),TCQWRSR(NS),TAQWRSR(NS),RMULADJ,ADDADJ
         IF(ISO.GT.0) GOTO 865
         IF(ISTYP.EQ.0)THEN
           DO NC=1,NCTMP
@@ -5187,133 +4987,127 @@ C        NTMP=0
           ENDDO
          ELSE
           DO M=1,MQWRSR(NS)
-           READ(1,*,IOSTAT=ISO)TQWRSER(M,NS),QWRSER(M,NS),
-     &                  (CQWRSER(M,NS,NC),NC=1,NCTMP)
+           READ(1,*,IOSTAT=ISO)TQWRSER(M,NS),QWRSER(M,NS),(CQWRSER(M,NS,NC),NC=1,NCTMP)
            IF(ISO.GT.0) GOTO 865
            TQWRSER(M,NS)=TQWRSER(M,NS)+TAQWRSR(NS)
            QWRSER(M,NS)=(RMULADJ*(QWRSER(M,NS)+ADDADJ))
           ENDDO
         ENDIF
         ENDDO
-C
+!
       CLOSE(1)
-C
+!
       ENDIF
-C
-CDIA      WRITE(6,6776)'READ QWRS.INP'
-C
-C**********************************************************************C
-C
-C **  READ IN GROUNDWATER INFLOW/OUTFLOW AND CONCENTRATION TIME
-C **  SERIES FROM THE FILE GWSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!DIA      WRITE(6,6776)'READ QWRS.INP'
+!
+!**********************************************************************C
+!
+! **  READ IN GROUNDWATER INFLOW/OUTFLOW AND CONCENTRATION TIME
+! **  SERIES FROM THE FILE GWSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(ISGWIT.EQ.2)THEN
         OPEN(1,FILE='GWSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         NCTMP=4+NSED+NSND+NTOX
-C
+!
         DO IS=1,14
         READ(1,1)
         ENDDO
-C
+!
         READ(1,*)NGWSER
         IF(NGWSER.GT.0)THEN
           DO NS=1,NGWSER
-            READ(1,*,IOSTAT=ISO)MGWSER(NS),TCGWSER(NS),TAGWSER(NS),
-     &                   RMULADJ,ADDADJ
+            READ(1,*,IOSTAT=ISO)MGWSER(NS),TCGWSER(NS),TAGWSER(NS),RMULADJ,ADDADJ
             IF(ISO.GT.0) GOTO 865
             DO M=1,MGWSER(NS)
-              READ(1,*,IOSTAT=ISO)TGWSER(M,NS),GWSER(M,NS),
-     &                  (GWCSER(M,NS,NC),NC=1,NCTMP)
+              READ(1,*,IOSTAT=ISO)TGWSER(M,NS),GWSER(M,NS),(GWCSER(M,NS,NC),NC=1,NCTMP)
               IF(ISO.GT.0) GOTO 865
               TGWSER(M,NS)=TGWSER(M,NS)+TAGWSER(NS)
               GWSER(M,NS)=(RMULADJ*(GWSER(M,NS)+ADDADJ))
             ENDDO
           ENDDO
         ENDIF
-C
+!
         CLOSE(1)
-C
+!
       ENDIF
-C
-C
-C**********************************************************************C
-C
-C **  READ IN SPATIAL MAPS AND TIME SERIES FOR EXTERNAL SPECIFICATION OF DISSOLVED AND
-C **  PARTICULATE ORGANIC CARBON FOR USE IN TOXIC CONTAMINANT SORPTION
-C
-C----------------------------------------------------------------------C
-C
-C **  DISSOLVED ORGANIC CARBON
-c      IF(ISTOC.GE.1)THEN
-c        OPEN(1,FILE='OCSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
-C
-c        DO IS=1,14
-c        READ(1,1)
-c        ENDDO
-C
-c        READ(1,*)NOCSER
-c        IF(NOCSER.GT.0)THEN
-c          DO NS=1,NOCSER
-c            READ(1,*,IOSTAT=ISO)MOCSER(NS),TCOCSER(NS),TAOCSER(NS),
-c     &                   RMULADJ,ADDADJ
-c            IF(ISO.GT.0) GOTO 865
-c            DO M=1,MCOSER(NS)
-c              READ(1,*,IOSTAT=ISO)TOCSER(M,NS),DOCWSER(M,NS),
-c     &          DOCBSER(M,NS),POCWSER(M,NS),POCBSER(M,NS)
-c              IF(ISO.GT.0) GOTO 865
-c              TOCSER(M,NS)=TOCSER(M,NS)+TACOSER(NS)
-c              DOCWSER(M,NS)=(RMULADJ*(DOCWSER(M,NS)+ADDADJ))
-c              POCWSER(M,NS)=(RMULADJ*(POCWSER(M,NS)+ADDADJ))
-c              DOCBSER(M,NS)=(RMULADJ*(DOCBSER(M,NS)+ADDADJ))
-c              POCWSER(M,NS)=(RMULADJ*(POCBSER(M,NS)+ADDADJ))
-c            ENDDO
-c          ENDDO
-c        ENDIF
-C
-c        CLOSE(1)
-C
-c      ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE SALINITY TIME SERIES
-C **  FROM THE FILE SSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!
+!**********************************************************************C
+!
+! **  READ IN SPATIAL MAPS AND TIME SERIES FOR EXTERNAL SPECIFICATION OF DISSOLVED AND
+! **  PARTICULATE ORGANIC CARBON FOR USE IN TOXIC CONTAMINANT SORPTION
+!
+!----------------------------------------------------------------------C
+!
+! **  DISSOLVED ORGANIC CARBON
+!      IF(ISTOC.GE.1)THEN
+!        OPEN(1,FILE='OCSER.INP',STATUS='UNKNOWN')
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
+!
+!        DO IS=1,14
+!        READ(1,1)
+!        ENDDO
+!
+!        READ(1,*)NOCSER
+!        IF(NOCSER.GT.0)THEN
+!          DO NS=1,NOCSER
+!            READ(1,*,IOSTAT=ISO)MOCSER(NS),TCOCSER(NS),TAOCSER(NS),
+!     &                   RMULADJ,ADDADJ
+!            IF(ISO.GT.0) GOTO 865
+!            DO M=1,MCOSER(NS)
+!              READ(1,*,IOSTAT=ISO)TOCSER(M,NS),DOCWSER(M,NS),
+!     &          DOCBSER(M,NS),POCWSER(M,NS),POCBSER(M,NS)
+!              IF(ISO.GT.0) GOTO 865
+!              TOCSER(M,NS)=TOCSER(M,NS)+TACOSER(NS)
+!              DOCWSER(M,NS)=(RMULADJ*(DOCWSER(M,NS)+ADDADJ))
+!              POCWSER(M,NS)=(RMULADJ*(POCWSER(M,NS)+ADDADJ))
+!              DOCBSER(M,NS)=(RMULADJ*(DOCBSER(M,NS)+ADDADJ))
+!              POCWSER(M,NS)=(RMULADJ*(POCBSER(M,NS)+ADDADJ))
+!            ENDDO
+!          ENDDO
+!        ENDIF
+!
+!        CLOSE(1)
+!
+!      ENDIF
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE SALINITY TIME SERIES
+! **  FROM THE FILE SSER.INP
+!
+!----------------------------------------------------------------------C
+!
  8888 format(3i5,2f10.2)
-c
+!
       IF(NCSER(1).GE.1)THEN
         OPEN(1,FILE='SSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=1
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADJ,ADDADJ
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADJ,ADDADJ
         IF(ISO.GT.0) GOTO 870
-      if(mcser(ns,nc).gt.ndcser) then                                  !hnr
-        write(*,390)mcser(ns,nc),ns,ndcser                             !hnr
-390     FORMAT('The number of data pairs in your application',I8,      !hnr
-     $  '  for Sser time series',I6,                                   !hnr
-     &  '  is larger than the maximum allowed of',I8,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop sser file'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
+      if(mcser(ns,nc).gt.ndcser) then                                  
+        write(*,390)mcser(ns,nc),ns,ndcser                             
+390     FORMAT('The number of data pairs in your application',I8,'  for Sser time series',I6,     &
+               '  is larger than the maximum allowed of',I8,'  for this compilation')                                      
+        write(*,*)'The program will stop sser file'                    
+        stop                                                           
+      end if                                                           
         IF(ISTYP.EQ.1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
           IF(ISO.GT.0) GOTO 870
@@ -5343,37 +5137,34 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE TEMPERATURE TIME
-C **  SERIES FROM THE FILE TSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE TEMPERATURE TIME
+! **  SERIES FROM THE FILE TSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NCSER(2).GE.1)THEN
         OPEN(1,FILE='TSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=2
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADJ,ADDADJ
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADJ,ADDADJ
         IF(ISO.GT.0) GOTO 880
-      if(mcser(ns,nc).gt.ndcser) then                                  !hnr
-        write(*,400)mcser(ns,nc),ns,ndcser                             !hnr
-400     FORMAT('The number of data pairs in your application',I8,      !hnr
-     $  '  for Tser time series',I6,                                   !hnr
-     &  '  is larger than the maximum allowed of',I8,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop tser file'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
+      if(mcser(ns,nc).gt.ndcser) then                                  
+        write(*,400)mcser(ns,nc),ns,ndcser                             
+400     FORMAT('The number of data pairs in your application',I8,'  for Tser time series',I6,     &
+               '  is larger than the maximum allowed of',I8,'  for this compilation')                                      
+        write(*,*)'The program will stop tser file'                    
+        stop                                                           
+      end if                                                           
         IF(ISTYP.EQ.1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
           IF(ISO.GT.0) GOTO 880
@@ -5403,37 +5194,34 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE DYE CONCENTRATION
-C **  TIME SERIES FROM THE FILE DSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE DYE CONCENTRATION
+! **  TIME SERIES FROM THE FILE DSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NCSER(3).GE.1)THEN
         OPEN(1,FILE='DSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=3
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADJ,ADDADJ
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADJ,ADDADJ
         IF(ISO.GT.0) GOTO 890
-      if(mcser(ns,nc).gt.ndcser) then                                  !hnr
-        write(*,410)mcser(ns,nc),ns,ndcser                             !hnr
-410     FORMAT('The number of data pairs in your application',I8,      !hnr
-     $  '  for Dser time series',I6,                                   !hnr
-     &  '  is larger than the maximum allowed of',I8,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop dser file'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
+      if(mcser(ns,nc).gt.ndcser) then                                  
+        write(*,410)mcser(ns,nc),ns,ndcser                             
+410     FORMAT('The number of data pairs in your application',I8,'  for Dser time series',I6,     &
+               '  is larger than the maximum allowed of',I8,'  for this compilation')                                      
+        write(*,*)'The program will stop dser file'                    
+        stop                                                           
+      end if                                                           
         IF(ISTYP.EQ.1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
           IF(ISO.GT.0) GOTO 890
@@ -5458,30 +5246,29 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE COHESIVE SEDIMENT
-C **  CONCENTRATION TIME SERIES FROM THE FILE SDSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE COHESIVE SEDIMENT
+! **  CONCENTRATION TIME SERIES FROM THE FILE SDSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NSED.GT.0)THEN
-C
+!
       NFSED=MSVSED(1)
       IF(NCSER(NFSED).GE.1)THEN
         OPEN(1,FILE='SDSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=MSVSED(1)
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADS(1),ADDADS(1)
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADS(1),ADDADS(1)
         IF(ISO.GT.0) GOTO 900
         IF(NSED.GT.1)THEN
           DO NT=2,NSED
@@ -5509,8 +5296,7 @@ C
             READ(1,*,IOSTAT=ISO)CSERTMP
             IF(ISO.GT.0) GOTO 900
             DO K=1,KC
-              CSER(M,K,NS,NC+NTT)
-     &                      =(RMULADS(NT)*(CSERTMP+ADDADS(NT)))*WKQ(K)
+              CSER(M,K,NS,NC+NTT)=(RMULADS(NT)*(CSERTMP+ADDADS(NT)))*WKQ(K)
             ENDDO
            ENDDO
           ENDDO
@@ -5528,8 +5314,7 @@ C
             READ(1,*,IOSTAT=ISO)(CSER(M,K,NS,NC+NTT), K=1,KC)
             IF(ISO.GT.0) GOTO 900
             DO K=1,KC
-             CSER(M,K,NS,NC+NTT)
-     &                   =RMULADS(NT)*(CSER(M,K,NS,NC+NTT)+ADDADS(NT))
+             CSER(M,K,NS,NC+NTT)=RMULADS(NT)*(CSER(M,K,NS,NC+NTT)+ADDADS(NT))
             ENDDO
            ENDDO
           ENDDO
@@ -5537,46 +5322,45 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C **  CHECK SEDIMENT SERIES
-C
-C        OPEN(2,FILE='SEDCK.OUT')
-C        CLOSE(2,STATUS='DELETE')
-C        OPEN(2,FILE='SEDCK.OUT')
-C        DO NC=MSVSED(1),MSVSED(NSED)
-C         DO NS=1,NCSER(NC)
-C          DO M=1,MCSER(NS,NC)
-C           WRITE(2,2001)NC,NS,M,TCSER(M,NS,NC),CSER(M,1,NS,NC)
-C          ENDDO
-C         ENDDO
-C        ENDDO
-C        CLOSE(2)
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE NONCOHESIVE SEDIMENT
-C **  CONCENTRATION TIME SERIES FROM THE FILE SNSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+! **  CHECK SEDIMENT SERIES
+!
+!        OPEN(2,FILE='SEDCK.OUT')
+!        CLOSE(2,STATUS='DELETE')
+!        OPEN(2,FILE='SEDCK.OUT')
+!        DO NC=MSVSED(1),MSVSED(NSED)
+!         DO NS=1,NCSER(NC)
+!          DO M=1,MCSER(NS,NC)
+!           WRITE(2,2001)NC,NS,M,TCSER(M,NS,NC),CSER(M,1,NS,NC)
+!          ENDDO
+!         ENDDO
+!        ENDDO
+!        CLOSE(2)
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE NONCOHESIVE SEDIMENT
+! **  CONCENTRATION TIME SERIES FROM THE FILE SNSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NSND.GT.0)THEN
-C
+!
       NFSND=MSVSND(1)
       IF(NCSER(NFSND).GE.1)THEN
         OPEN(1,FILE='SNSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=MSVSND(1)
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADS(1),ADDADS(1)
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADS(1),ADDADS(1)
         IF(ISO.GT.0) GOTO 902
         IF(NSND.GT.1)THEN
           DO NT=2,NSND
@@ -5604,8 +5388,7 @@ C
             READ(1,*,IOSTAT=ISO)CSERTMP
             IF(ISO.GT.0) GOTO 902
             DO K=1,KC
-              CSER(M,K,NS,NC+NTT)
-     &                     =(RMULADS(NT)*(CSERTMP+ADDADS(NT)))*WKQ(K)
+              CSER(M,K,NS,NC+NTT)=(RMULADS(NT)*(CSERTMP+ADDADS(NT)))*WKQ(K)
             ENDDO
            ENDDO
           ENDDO
@@ -5623,8 +5406,7 @@ C
             READ(1,*,IOSTAT=ISO)(CSER(M,K,NS,NC+NTT), K=1,KC)
             IF(ISO.GT.0) GOTO 902
             DO K=1,KC
-             CSER(M,K,NS,NC+NTT)
-     &                  =RMULADS(NT)*(CSER(M,K,NS,NC+NTT)+ADDADS(NT))
+             CSER(M,K,NS,NC+NTT)=RMULADS(NT)*(CSER(M,K,NS,NC+NTT)+ADDADS(NT))
             ENDDO
            ENDDO
           ENDDO
@@ -5632,48 +5414,47 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C **  CHECK SEDIMENT SERIES
-C
-C        OPEN(2,FILE='SNDCK.OUT')
-C        CLOSE(2,STATUS='DELETE')
-C        OPEN(2,FILE='SNDCK.OUT')
-C        DO NC=MSVSND(1),MSVSED(NSND)
-C         DO NS=1,NCSER(NC)
-C          DO M=1,MCSER(NS,NC)
-C           WRITE(2,2001)NC,NS,M,TCSER(M,NS,NC),CSER(M,1,NS,NC)
-C          ENDDO
-C         ENDDO
-C        ENDDO
-C        CLOSE(2)
-C
+!
+! **  CHECK SEDIMENT SERIES
+!
+!        OPEN(2,FILE='SNDCK.OUT')
+!        CLOSE(2,STATUS='DELETE')
+!        OPEN(2,FILE='SNDCK.OUT')
+!        DO NC=MSVSND(1),MSVSED(NSND)
+!         DO NS=1,NCSER(NC)
+!          DO M=1,MCSER(NS,NC)
+!           WRITE(2,2001)NC,NS,M,TCSER(M,NS,NC),CSER(M,1,NS,NC)
+!          ENDDO
+!         ENDDO
+!        ENDDO
+!        CLOSE(2)
+!
  2001 FORMAT(3I5,2F12.5)
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE TOXIC CONTAMINANT
-C **  CONCENTRATION TIME SERIES FROM THE FILE TXSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE TOXIC CONTAMINANT
+! **  CONCENTRATION TIME SERIES FROM THE FILE TXSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NTOX.GT.0)THEN
-C
+!
       NFTOX=MSVTOX(1)
       IF(NCSER(NFTOX).GE.1)THEN
         OPEN(1,FILE='TXSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=MSVTOX(1)
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADS(1),ADDADS(1)
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADS(1),ADDADS(1)
         IF(ISO.GT.0) GOTO 904
         IF(NTOX.GT.1)THEN
           DO NT=2,NTOX
@@ -5701,8 +5482,7 @@ C
             READ(1,*,IOSTAT=ISO)CSERTMP
             IF(ISO.GT.0) GOTO 904
             DO K=1,KC
-              CSER(M,K,NS,NC+NTT)
-     &                     =(RMULADS(NT)*(CSERTMP+ADDADS(NT)))*WKQ(K)
+              CSER(M,K,NS,NC+NTT)=(RMULADS(NT)*(CSERTMP+ADDADS(NT)))*WKQ(K)
             ENDDO
            ENDDO
           ENDDO
@@ -5720,8 +5500,7 @@ C
             READ(1,*,IOSTAT=ISO)(CSER(M,K,NS,NC+NTT), K=1,KC)
             IF(ISO.GT.0) GOTO 904
             DO K=1,KC
-             CSER(M,K,NS,NC+NTT)=RMULADS(NT)*(CSER(M,K,NS,NC+NTT)
-     &                                       +ADDADJ)
+             CSER(M,K,NS,NC+NTT)=RMULADS(NT)*(CSER(M,K,NS,NC+NTT)+ADDADJ)
             ENDDO
            ENDDO
           ENDDO
@@ -5729,29 +5508,28 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE SHELL FISH LARVAE
-C **  TIME SERIES FROM THE FILE SFSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN OPEN BOUNDARY OR VOLUMETRIC SOURCE SHELL FISH LARVAE
+! **  TIME SERIES FROM THE FILE SFSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(NCSER(4).GE.1)THEN
         OPEN(1,FILE='SFSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,15
       READ(1,1)
       ENDDO
-C
+!
         NC=7
         DO NS=1,NCSER(NC)
-        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),
-     &                   TACSER(NS,NC),RMULADJ,ADDADJ
+        READ(1,*,IOSTAT=ISO)ISTYP,MCSER(NS,NC),TCCSER(NS,NC),TACSER(NS,NC),RMULADJ,ADDADJ
         IF(ISO.GT.0) GOTO 910
         IF(ISTYP.EQ.1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
@@ -5777,13 +5555,13 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C*************************************************************************************************C
-C
-C ** START READ LOAD INPUT CONTROL FILE AND LOAD TIME SERIES FOR SALT, TEMP(HEAT), DYE, SHELLFISH LARVE 
-C
-C**********************************************************************C    START HNR_GHD ADDED ON 7/2023
-C
+!
+!*************************************************************************************************C
+!
+! ** START READ LOAD INPUT CONTROL FILE AND LOAD TIME SERIES FOR SALT, TEMP(HEAT), DYE, SHELLFISH LARVE 
+!
+!**********************************************************************C    START HNR_GHD ADDED ON 7/2023
+!
       OPEN(94,FILE='LOADTIMESERIES.CTL',IOSTAT=IOS,STATUS='OLD')
       IF(IOS.NE.0) GOTO 500
       DO I=1,4
@@ -5798,41 +5576,33 @@ C
       DO I=1,9
         READ(94,*)
       ENDDO
-C                           SAL      TEM      DYE      SF
+!                           SAL      TEM      DYE      SF
       READ(94,*,IOSTAT=ISO) NLSER(1),NLSER(2),NLSER(3),NLSER(4)
       IF(NLSER(1).GT.NLSERM) THEN
         WRITE(*,510)NLSER(1),NLSERM
-510     FORMAT('The number of Load Salinity Time Series '             
-     &  'in your application',I5,                                     
-     $  '  is larger than the maximum allowed of',I5,                 
-     &  '  for this compilation')                                     
+510     FORMAT('The number of Load Salinity Time Series in your application',I5,                  &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                     
         WRITE(*,*)'The program will stop check file LOADTIMESERIES.CTL'
         STOP                                                          
       END IF   
       IF(NLSER(2).GT.NLSERM) THEN
         WRITE(*,511)NLSER(2),NLSERM
-511     FORMAT('The number of Load Temperature Time Series '            
-     &  'in your application',I5,                                     
-     $  '  is larger than the maximum allowed of',I5,                 
-     &  '  for this compilation')                                     
+511     FORMAT('The number of Load Temperature Time Series in your application',I5,                &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                     
         WRITE(*,*)'The program will stop check file LOADTIMESERIES.CTL'
         STOP                                                          
       END IF                                                          
       IF(NLSER(3).GT.NLSERM) THEN
         WRITE(*,512)NLSER(3),NLSERM
-512     FORMAT('The number of Load Dye Time Series '             
-     &  'in your application',I5,                                     
-     $  '  is larger than the maximum allowed of',I5,                 
-     &  '  for this compilation')                                     
+512     FORMAT('The number of Load Dye Time Series in your application',I5,                        &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                     
         WRITE(*,*)'The program will stop check file LOADTIMESERIES.CTL'
         STOP                                                          
       END IF                                                          
       IF(NLSER(4).GT.NLSERM) THEN
         WRITE(*,513)NLSER(4),NLSERM
-513     FORMAT('The number of Load Shellfish Larvae Time Series ' 
-     &  'in your application',I5,                                     
-     $  '  is larger than the maximum allowed of',I5,                 
-     &  '  for this compilation')                                     
+513     FORMAT('The number of Load Shellfish Larvae Time Series in your application',I5,          &
+               '  is larger than the maximum allowed of',I5,'  for this compilation')                                     
         WRITE(*,*)'The program will stop check file LOADTIMESERIES.CTL'
         STOP                                                          
       END IF                                                          
@@ -5844,9 +5614,8 @@ C                           SAL      TEM      DYE      SF
       DO I=1,4
         IF(NLIJ(I).GT.NLIJM) THEN                        
           WRITE(*,514)NLIJ(I),NLIJM                                    
-514       FORMAT('The number of LOAD DISCHARGE Locations NLIJ(',I5,')',
-     & ' is larger than the maximum allowed of',I5,
-     & '  for this compilation')                                      
+514       FORMAT('The number of LOAD DISCHARGE Locations NLIJ(',I5,')',                           &
+                 ' is larger than the maximum allowed of',I5,'  for this compilation')                                      
         WRITE(*,*)'The program will stop check file LOADTIMESERIES.CTL'
         STOP                                                           
         END IF  
@@ -5860,8 +5629,8 @@ C                           SAL      TEM      DYE      SF
          READ(94,*,IOSTAT=ISO)ILDS(L,NL),JLDS(L,NL),NSERL(L,NL)
          IF(ISO.GT.0) THEN
           WRITE(*,5104)NLIJ(I)                                   
-5104       FORMAT('The number of I,J LOAD Locations for NLIJ(',I3,')',
-     & ' is different than the number indicated')                                      
+5104       FORMAT('The number of I,J LOAD Locations for NLIJ(',I3,')',                             &
+                  ' is different than the number indicated')                                      
          WRITE(*,*)'The program will stop check file LOADTIMESERIES.CTL'
           STOP                                                           
          END IF  
@@ -5873,7 +5642,7 @@ C                           SAL      TEM      DYE      SF
       CLOSE(94)
       WRITE(*,*)'FILE LOADTIMESERIES.CTL WAS ACTIVE AND READ CORRECTLY'
        
-C    READ LOAD TIME SERIES FILES
+!    READ LOAD TIME SERIES FILES
        
       DO NC=1,4
         IF(NC.EQ.1.AND.NLSER(NC).GE.1) THEN
@@ -5891,17 +5660,15 @@ C    READ LOAD TIME SERIES FILES
         DO I=1,15  
          READ(1,*)
         ENDDO
-C
+!
         DO NS=1,NLSER(NC)
-          READ(1,*,IOSTAT=ISO)ISTYP,MLSER(NS,NC),TCLSER(NS,NC),
-     &                   TALSER(NS,NC),RMULADJ,ADDADJ
+          READ(1,*,IOSTAT=ISO)ISTYP,MLSER(NS,NC),TCLSER(NS,NC),TALSER(NS,NC),RMULADJ,ADDADJ
            IF(ISO.GT.0) GOTO 8700  
           IF(MLSER(NS,NC).gt.NDLSER) then                             
             WRITE(*,515)MLSER(NS,NC),NS,NC,NDLSER                        
-515         FORMAT('The number of data pairs in your application',I8, 
-     $      '  for LOAD time series',I6,'for variable NC=',I2,                         
-     &      '  is larger than the maximum allowed of',I8,             
-     &      '  for this compilation')                                 
+515         FORMAT('The number of data pairs in your application',I8,                             &
+                   '  for LOAD time series',I6,'for variable NC=',I2,                             &
+                   '  is larger than the maximum allowed of',I8,'  for this compilation')                                 
             WRITE(*,*)'The program will stop'   
             WRITE(*,*)'(NC=1 SALT, NC=2 HEAT, NC=3 DYE, NC=4 SFL)' 
             STOP                                                      
@@ -5932,57 +5699,57 @@ C
       END DO
         
 500   CONTINUE     !SKIP TO HERE IF THERE IS NO LOAD TIME SERIES CONTROL FILE OR THE USER DON'T WANT TO READ THE CTL FILE
-C**************************************************************************************************C
-C
-C ** END READ LOAD INPUT CONTROL FILE AND LOAD TIME SERIES FOR SALT, TEMP(HEAT), DYE, SHELLFISH LARVE 
-C
-C*************************************************************^^^^^^*********C    END HNR_GHD ADDED ON 7/2023
-C
-C      
-C****************************************************************C
-C
-C **  READ IN FREE SURFACE ELEVATION OR PRESSURE CONTROLLED FLOW
-C **  SPECIFICATION FROM THE FILE QCTL.INP
-C
-C **  THE FLOW IS GIVEN BY:
-C
-C     HUP=HP(L)+BELV(L)+HCTLUA(NS)=ADJUSTED ELEVATION OF UPSTREAM CELL
-C         FREE SURFACE
-C
-C     HDW=HP(L)+BELV(L)+HCTLDA(NS)=ADJUSTED ELEVATION OF DOWNSTREAM CELL
-C         FREE SURFACE
-C
-C     DELH=HCTLUM(NS)*HUP-HCTLDM(NS)*HDW
-C
-C     IF(DELH.LE.0)THEN
-C        FLOW=0
-C      ELSE
-C        ENTER QCTL(M,K,NS) VS HDIFCTL(M,NS) TABLE WITH DELH TO GIVE
-C        FLOW=QCTL(M,K,NS)
-C     ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!**************************************************************************************************C
+!
+! ** END READ LOAD INPUT CONTROL FILE AND LOAD TIME SERIES FOR SALT, TEMP(HEAT), DYE, SHELLFISH LARVE 
+!
+!*************************************************************^^^^^^*********C    END HNR_GHD ADDED ON 7/2023
+!
+!      
+!****************************************************************C
+!
+! **  READ IN FREE SURFACE ELEVATION OR PRESSURE CONTROLLED FLOW
+! **  SPECIFICATION FROM THE FILE QCTL.INP
+!
+! **  THE FLOW IS GIVEN BY:
+!
+!     HUP=HP(L)+BELV(L)+HCTLUA(NS)=ADJUSTED ELEVATION OF UPSTREAM CELL
+!         FREE SURFACE
+!
+!     HDW=HP(L)+BELV(L)+HCTLDA(NS)=ADJUSTED ELEVATION OF DOWNSTREAM CELL
+!         FREE SURFACE
+!
+!     DELH=HCTLUM(NS)*HUP-HCTLDM(NS)*HDW
+!
+!     IF(DELH.LE.0)THEN
+!        FLOW=0
+!      ELSE
+!        ENTER QCTL(M,K,NS) VS HDIFCTL(M,NS) TABLE WITH DELH TO GIVE
+!        FLOW=QCTL(M,K,NS)
+!     ENDIF
+!
+!----------------------------------------------------------------------C
+!
       IF(NQCTL.GE.1)THEN
         OPEN(1,FILE='QCTL.INP',STATUS='UNKNOWN')
         OPEN(99,FILE='QCTLCK.INP',STATUS='UNKNOWN')
         CLOSE(99,STATUS='DELETE')
         OPEN(99,FILE='QCTLCK.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,14
         READ(1,1)
         ENDDO
-C
+!
         DO NS=1,NQCTLT
-        READ(1,*, IOSTAT=ISO)ISTYP,MQCTL(NS),HCTLUA(NS),HCTLUM(NS),
-     &              HCTLDA(NS),HCTLDM(NS),RMULADJ,ADDADJ,AQCTL(NS)
+        READ(1,*, IOSTAT=ISO)ISTYP,MQCTL(NS),HCTLUA(NS),HCTLUM(NS),HCTLDA(NS),HCTLDM(NS),         &
+                             RMULADJ,ADDADJ,AQCTL(NS)
         WRITE(99,991)NS
-        WRITE(99,992)ISTYP,MQCTL(NS),HCTLUA(NS),HCTLUM(NS),
-     &              HCTLDA(NS),HCTLDM(NS),RMULADJ,ADDADJ,AQCTL(NS)
+        WRITE(99,992)ISTYP,MQCTL(NS),HCTLUA(NS),HCTLUM(NS),HCTLDA(NS),HCTLDM(NS),RMULADJ,ADDADJ,  &
+                     AQCTL(NS)
         IF(ISO.GT.0) GOTO 920
-C
+!
         IF(ISTYP.EQ.0)THEN
           DO M=1,MQCTL(NS)
            READ(1,*,IOSTAT=ISO) HDIFCTL(M,NS),(QCTL(M,1,K,NS),K=1,KC)
@@ -5992,7 +5759,7 @@ C
            ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTYP.EQ.1)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
           IF(ISO.GT.0) GOTO 920
@@ -6004,12 +5771,11 @@ C
            ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTYP.EQ.2)THEN
           DO MD=1,MQCTL(NS)
           DO MU=1,MQCTL(NS)
-           READ(1,*,IOSTAT=ISO) HDIFCTL(MU,NS),HDIFCTD(MD,NS),
-     &                          (QCTL(MU,MD,K,NS),K=1,KC)
+           READ(1,*,IOSTAT=ISO) HDIFCTL(MU,NS),HDIFCTD(MD,NS),(QCTL(MU,MD,K,NS),K=1,KC)
            IF(ISO.GT.0) GOTO 920
            DO K=1,KC
             QCTL(MU,MD,K,NS)=RMULADJ*(QCTL(MU,MD,K,NS)+ADDADJ)
@@ -6017,7 +5783,7 @@ C
           ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTYP.EQ.3)THEN
           READ(1,*,IOSTAT=ISO) (WKQ(K),K=1,KC)
           IF(ISO.GT.0) GOTO 920
@@ -6031,7 +5797,7 @@ C
           ENDDO
           ENDDO
         ENDIF
-C
+!
         IF(ISTYP.LE.1)THEN
          DO M=1,MQCTL(NS)
           WRITE(99,993)M,HDIFCTL(M,NS),(QCTL(M,1,K,NS),K=1,KC)
@@ -6040,76 +5806,75 @@ C
         IF(ISTYP.GE.2)THEN
          DO MD=1,MQCTL(NS)
          DO MU=1,MQCTL(NS)
-          WRITE(99,994)MU,MD,HDIFCTL(MU,NS),HDIFCTD(MD,NS),
-     &                   (QCTL(MU,MD,K,NS),K=1,KC)
+          WRITE(99,994)MU,MD,HDIFCTL(MU,NS),HDIFCTD(MD,NS),(QCTL(MU,MD,K,NS),K=1,KC)
          ENDDO
          ENDDO
         ENDIF
-C
+!
         ENDDO
-C
+!
         CLOSE(1)
         CLOSE(99)
       ENDIF
-C
+!
   991 FORMAT(/,' CONTROL TABLE NS =',I5,/)
   992 FORMAT(2I5,7F10.4)
   993 FORMAT(I5,11F10.4)
   994 FORMAT(2I5,11F10.4)
  1001 FORMAT(/,' READ ERROR FROM FILE EFDC.INP ON CARD ',I5/)
  1002 FORMAT(/,' INPUT ECHO NCARD = ',I5/)
-C
-C**********************************************************************C
-C
-C **  READ IN WITHDRAWAL, ADD HEAT OR MATERIAL, RETURN TIME SERIES
-C **  FROM THE FILE QWRSER.INP
-C
-C----------------------------------------------------------------------C
-C
-C     IF(NQCOOL.GE.1)THEN
-C       OPEN(1,FILE='QCOOL.INP',STATUS='UNKNOWN')
-C       DO NS=1,NQCOOL
-C       READ(1,*,ERR=930)ISTYP,MQLSER(NS),TCQLSER(NS),TAQLSER(NS),
-C    &                   RMULADJ,ADDADJ
-C       IF(ISTYP.EQ.1)THEN
-C         READ(1,*,ERR=930) (WKQ(K),K=1,KC)
-C          DO M=1,MQLSER(NS)
-C          READ(1,*,ERR=930)TQLSER(M,NS),QLSERTMP,TRISETMP
-C          TQLSER(M,NS)=TQLSER(M,NS)+TAQLSER(NS)
-C           DO K=1,KC
-C           QLSER(M,K,NS)=RMULADJ*(CSERTMP+ADDADJ))*WKQ(K)
-C            DO NC=1,5
-C            CQLSER(M,K,NS,NC)=0.
-C            ENDDO
-C           CQLSER(M,K,NS,2)=TRISETMP
-C           ENDDO
-C          ENDDO
-C        ELSE
-C         DO M=1,MCSER(NS,NC)
-C         READ(1,*,ERR=910)TQLSER(M,NS),TRISETMP,(QLSER(M,K,NS),K=1,KC)
-C         TQLSER(M,NS)=TQLSER(M,NS)+TAQLSER(NS)
-C          DO K=1,KC
-C          QLSER(M,K,NS)=RMULADJ*(QLSER(M,K,NS)+ADDADJ)
-C            DO NC=1,5
-C            CQLSER(M,K,NS,NC)=0.
-C            ENDDO
-C          CQLSER(M,K,NS,2)=TRISETMP
-C          ENDDO
-C         ENDDO
-C       ENDIF
-C       ENDDO
-C       CLOSE(1)
-C     ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN ATMOSPHERIC AND WEATHER CONDITION TIME SERIES FROM THE
-C **  FILE ASER.INP
-C
-C----------------------------------------------------------------------C
-C
-C     INITIALIZE ATMOSPHERIC VARIABLES
-C
+!
+!**********************************************************************C
+!
+! **  READ IN WITHDRAWAL, ADD HEAT OR MATERIAL, RETURN TIME SERIES
+! **  FROM THE FILE QWRSER.INP
+!
+!----------------------------------------------------------------------C
+!
+!     IF(NQCOOL.GE.1)THEN
+!       OPEN(1,FILE='QCOOL.INP',STATUS='UNKNOWN')
+!       DO NS=1,NQCOOL
+!       READ(1,*,ERR=930)ISTYP,MQLSER(NS),TCQLSER(NS),TAQLSER(NS),
+!    &                   RMULADJ,ADDADJ
+!       IF(ISTYP.EQ.1)THEN
+!         READ(1,*,ERR=930) (WKQ(K),K=1,KC)
+!          DO M=1,MQLSER(NS)
+!          READ(1,*,ERR=930)TQLSER(M,NS),QLSERTMP,TRISETMP
+!          TQLSER(M,NS)=TQLSER(M,NS)+TAQLSER(NS)
+!           DO K=1,KC
+!           QLSER(M,K,NS)=RMULADJ*(CSERTMP+ADDADJ))*WKQ(K)
+!            DO NC=1,5
+!            CQLSER(M,K,NS,NC)=0.
+!            ENDDO
+!           CQLSER(M,K,NS,2)=TRISETMP
+!           ENDDO
+!          ENDDO
+!        ELSE
+!         DO M=1,MCSER(NS,NC)
+!         READ(1,*,ERR=910)TQLSER(M,NS),TRISETMP,(QLSER(M,K,NS),K=1,KC)
+!         TQLSER(M,NS)=TQLSER(M,NS)+TAQLSER(NS)
+!          DO K=1,KC
+!          QLSER(M,K,NS)=RMULADJ*(QLSER(M,K,NS)+ADDADJ)
+!            DO NC=1,5
+!            CQLSER(M,K,NS,NC)=0.
+!            ENDDO
+!          CQLSER(M,K,NS,2)=TRISETMP
+!          ENDDO
+!         ENDDO
+!       ENDIF
+!       ENDDO
+!       CLOSE(1)
+!     ENDIF
+!
+!**********************************************************************C
+!
+! **  READ IN ATMOSPHERIC AND WEATHER CONDITION TIME SERIES FROM THE
+! **  FILE ASER.INP
+!
+!----------------------------------------------------------------------C
+!
+!     INITIALIZE ATMOSPHERIC VARIABLES
+!
       DO L=2,LA
        PATMT(L)=1000.
        TATMT(L)=0.
@@ -6123,48 +5888,43 @@ C
        CLEVAP(L)=0.
        CCNHTT(L)=0.
       ENDDO
-C
+!
       TBEDITTMP=TEMO
-C
+!
       IF(NASER.GT.0)THEN
       OPEN(1,FILE='ASER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,36
        READ(1,1)
       ENDDO
-C
+!
       DO N=1,NASER
-C
-      READ(1,*,IOSTAT=ISO) MASER(N),TCASER(N),TAASER(N),IRELH(N),
-     &                RAINCVT,EVAPCVT,SOLRCVT,CLDCVT
-c      write(*,*) MASER(N),TCASER(N),TAASER(N),IRELH(N),
-c     &                RAINCVT,EVAPCVT,SOLRCVT,CLDCVT      
+!
+      READ(1,*,IOSTAT=ISO) MASER(N),TCASER(N),TAASER(N),IRELH(N),RAINCVT,EVAPCVT,SOLRCVT,CLDCVT
+!c      write(*,*) MASER(N),TCASER(N),TAASER(N),IRELH(N),RAINCVT,EVAPCVT,SOLRCVT,CLDCVT      
       IF(ISO.GT.0) GOTO 940
-      if(maser(n).gt.ndaser) then                                      !hnr
-        write(*,380)maser(n),n,ndaser                                  !hnr
-380     FORMAT('The number of data pairs in your application',I7,      !hnr
-     $  '  for Aser time series',I3,                                   !hnr
-     &  '  is larger than the maximum allowed of',I7,                  !hnr
-     &  '  for this compilation')                                      !hnr
-        write(*,*)'The program will stop aser file'                    !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
-      READ(1,*,IOSTAT=ISO) IASWRAD,REVC,RCHC,SWRATNF,
-     &  SWRATNS,FSWRATF,DABEDT,TBEDITTMP,HTBED1,HTBED2
-c      write(*,*) IASWRAD,REVC,RCHC,SWRATNF,
-c     &  SWRATNS,FSWRATF,DABEDT,TBEDITTMP,HTBED1,HTBED2      
+      if(maser(n).gt.ndaser) then                                      
+        write(*,380)maser(n),n,ndaser                                  
+380     FORMAT('The number of data pairs in your application',I7,'  for Aser time series',I3,     &
+               '  is larger than the maximum allowed of',I7,'  for this compilation')                                      
+        write(*,*)'The program will stop aser file'                    
+        stop                                                           
+      end if                                                           
+      READ(1,*,IOSTAT=ISO) IASWRAD,REVC,RCHC,SWRATNF,SWRATNS,FSWRATF,DABEDT,TBEDITTMP,HTBED1,HTBED2
+!      write(*,*) IASWRAD,REVC,RCHC,SWRATNF,
+!     &  SWRATNS,FSWRATF,DABEDT,TBEDITTMP,HTBED1,HTBED2      
       IF(ISO.GT.0) GOTO 940
-C
+!
       DO M=1,MASER(N)
-      READ(1,*,IOSTAT=ISO)TASER(M,N),PATM(M,N),TDRY(M,N),
-     &       TWET(M,N),RAIN(M,N),EVAP(M,N),SOLSWR(M,N),CLOUD(M,N)
-c      WRITE(*,*)TASER(M,N),PATM(M,N),TDRY(M,N),
-c     &       TWET(M,N),RAIN(M,N),EVAP(M,N),SOLSWR(M,N),CLOUD(M,N)      
+      READ(1,*,IOSTAT=ISO)TASER(M,N),PATM(M,N),TDRY(M,N),                             &       
+                          TWET(M,N),RAIN(M,N),EVAP(M,N),SOLSWR(M,N),CLOUD(M,N)
+!      WRITE(*,*)TASER(M,N),PATM(M,N),TDRY(M,N),
+!     &       TWET(M,N),RAIN(M,N),EVAP(M,N),SOLSWR(M,N),CLOUD(M,N)      
       IF(ISO.GT.0) GOTO 940
       ENDDO
-C
+!
       DO M=1,MASER(N)
       TASER(M,N)=TASER(M,N)+TAASER(N)
       RAIN(M,N)=RAINCVT*RAIN(M,N)
@@ -6172,18 +5932,18 @@ C
       SOLSWR(M,N)=SOLRCVT*SOLSWR(M,N)
       CLOUD(M,N)=CLDCVT*CLOUD(M,N)
       ENDDO
-C
+!
       ENDDO
-C
+!
       CLOSE(1)
       ENDIF
-C
+!
       IF(NASER.LE.1)THEN
         DO L=2,LA
          ATMWHT(L,1)=1.
         ENDDO
       ENDIF
-C
+!
       IF(NASER.GT.1)THEN
         OPEN(1,FILE='ATMMAP.INP',STATUS='UNKNOWN')
         DO IS=1,4
@@ -6194,16 +5954,16 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
+!
       IF(TBEDITTMP.GE.0.0)THEN
 	DO L=1,LC
 	  TBEDIT(L)=TBEDITTMP
 	ENDDO
 	ENDIF
-C
+!
       IF(TBEDITTMP.LT.0.0)THEN
         OPEN(1,FILE='TEMPBBOT.INP',STATUS='UNKNOWN')
-C **    SKIP OVER TITLE AND AND HEADER LINES
+! **    SKIP OVER TITLE AND AND HEADER LINES
         DO IS=1,4
           READ(1,1)
         ENDDO
@@ -6223,15 +5983,15 @@ C **    SKIP OVER TITLE AND AND HEADER LINES
         TBEDIT(1)=TBEDIT(1)
         TBEDIT(LC)=TBEDIT(LC-1)
 	ENDIF
-C
+!
       DO K=1,KBHM
       TEMB(1,K)=TBEDIT(1)
       TEMB(LC,K)=TBEDIT(LC)
       TEMB1(1,K)=TBEDIT(1)
       TEMB1(LC,K)=TBEDIT(LC)
 	ENDDO
-C
-C      IF(ISRESTI.EQ.0)THEN
+!
+!      IF(ISRESTI.EQ.0)THEN
       IF(ISRESTI.EQ.0.AND.ISBEDTEMI.EQ.1)THEN
       DO K=1,KBHM
         DO L=2,LA
@@ -6240,66 +6000,63 @@ C      IF(ISRESTI.EQ.0)THEN
         ENDDO
         ENDDO
       ENDIF
-C
-CDIA      WRITE(6,6776)'READ ASER.INP'
-C
-C**********************************************************************C
-C
-C **  READ IN ABOVE WATER SURFACE WIND TIME SERIES FROM THE
-C **  FILE WSER.INP OF TIME VARYING WIND FORCING FUNCTION FROM
-C **  FILE WFSER.INP
-C
-C----------------------------------------------------------------------C
-C
-C     INITIALIZE WIND STRESS AND SPEED
-C
+!
+!DIA      WRITE(6,6776)'READ ASER.INP'
+!
+!**********************************************************************C
+!
+! **  READ IN ABOVE WATER SURFACE WIND TIME SERIES FROM THE
+! **  FILE WSER.INP OF TIME VARYING WIND FORCING FUNCTION FROM
+! **  FILE WFSER.INP
+!
+!----------------------------------------------------------------------C
+!
+!     INITIALIZE WIND STRESS AND SPEED
+!
       DO L=2,LA
         WINDST(L)=0.
         TSX(L)=0.
         TSY(L)=0.
       ENDDO
-C
+!
       IF(NWSER.GT.0)THEN
       OPEN(1,FILE='WSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
-C      DO IS=1,19
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
+!      DO IS=1,19
       DO IS=1,17
       READ(1,1)
       ENDDO
-C
+!
       DO N=1,NWSER
-C
-      READ(1,*,IOSTAT=ISO) MWSER(N),TCWSER(N),TAWSER(N),WINDSCT,
-     &                      ISWDINT(N)
-C     &                      ISWDINT(N),WSHELE,WSHELN
+!
+      READ(1,*,IOSTAT=ISO) MWSER(N),TCWSER(N),TAWSER(N),WINDSCT,ISWDINT(N)
+!     &                      ISWDINT(N),WSHELE,WSHELN
       IF(ISO.GT.0) GOTO 940
-C
-      if(mwser(n).gt.ndwser) then                                      !hnr
-        write(*,490)mwser(n),n,ndwser                                  !hnr
-490     FORMAT('The number of data pairs in your application',I7,      !hnr
-     $  ' for Wser time series',I3,                                    !hnr
-     &  ' is larger than the maximum allowed of',I7,                   !hnr
-     &  ' for this compilation')                                       !hnr
-        write(*,*)'The program will stop wser file'                              !hnr
-        stop                                                           !hnr
-      end if                                                           !hnr
+!
+      if(mwser(n).gt.ndwser) then                                      
+        write(*,490)mwser(n),n,ndwser                                  
+490     FORMAT('The number of data pairs in your application',I7,' for Wser time series',I3,      &
+               ' is larger than the maximum allowed of',I7,' for this compilation')                                       
+        write(*,*)'The program will stop wser file'                    
+        stop                                                           
+      end if                                                           
       DO M=1,MWSER(N)
       READ(1,*,IOSTAT=ISO)TWSER(M,N),WINDS(M,N),WINDD(M,N)
       IF(ISO.GT.0) GOTO 940
       ENDDO
-C
+!
       DO M=1,MWSER(N)
        TWSER(M,N)=TWSER(M,N)+TAWSER(N)
       ENDDO
-C
+!
       IF(ISWDINT(N).LE.1)THEN
       DO M=1,MWSER(N)
        WINDS(M,N)=WINDSCT*WINDS(M,N)
       ENDDO
       ENDIF
-C
+!
       IF(ISWDINT(N).EQ.1)THEN
       DO M=1,MWSER(N)
         IF(WINDD(M,N).LE.180.)THEN
@@ -6311,25 +6068,25 @@ C
         ENDIF
       ENDDO
       ENDIF
-C
+!
       IF(ISWDINT(N).EQ.2)THEN
       DO M=1,MWSER(N)
        WINDS(M,N)=WINDSCT*WINDS(M,N)
        WINDD(M,N)=WINDSCT*WINDD(M,N)
       ENDDO
       ENDIF
-C
+!
       ENDDO
-C
+!
       CLOSE(1)
       ENDIF
-C
+!
       IF(NWSER.EQ.1)THEN
         DO L=2,LA
          WNDWHT(L,1,1)=1.
         ENDDO
       ENDIF
-C
+!
       IF(NWSER.GT.1)THEN
         OPEN(1,FILE='WNDMAP.INP',STATUS='UNKNOWN')
         DO IS=1,6
@@ -6344,23 +6101,23 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C ** READ WIND FIELD FORCING FUNCTION
-C
+!
+! ** READ WIND FIELD FORCING FUNCTION
+!
       IF(NWSER.LE.-1) THEN
-C
+!
         OPEN(1,FILE='WFSER.INP')
-C
-C **    SIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **    SIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,29
           READ(1,1)
         ENDDO
-C
-        READ(1,*,IOSTAT=ISO) MWSERTMP,MWSER(1),TCWSER(1),TAWSER(1),
-     &          RMULADJ,MCOEFWF,XWFMUL,XWFADD,YWFMUL,YWFADD
+!
+        READ(1,*,IOSTAT=ISO) MWSERTMP,MWSER(1),TCWSER(1),TAWSER(1),RMULADJ,MCOEFWF,XWFMUL,        &
+                             XWFADD,YWFMUL,YWFADD
         IF(ISO.GT.0) GOTO 940
-C
+!
         DO M=1,MWSERTMP
 	    READ(1,*)XWFKER(M),YWFKER(M)
         ENDDO
@@ -6368,7 +6125,7 @@ C
 	    XWFKER(M)=XWFMUL*(XWFKER(M)+XWFADD)
 		YWFKER(M)=YWFMUL*(YWFKER(M)+YWFADD)
         ENDDO
-C
+!
         DO M=1,MWSER(1)
           READ(1,*,IOSTAT=ISO)TWSER(M,1),(WFCOEF(M,K),K=1,MCOEFWF)
 	    DO K=1,MCOEFWF
@@ -6376,75 +6133,74 @@ C
           ENDDO
           IF(ISO.GT.0) GOTO 940
         ENDDO
-C
+!
         DO M=1,MWSER(1)
           TWSER(M,1)=TWSER(M,1)+TAWSER(1)
         ENDDO
-C
+!
         CLOSE(1)
-C
+!
       ENDIF
-C
-C      IF(NWSER.EQ.-2) THEN
-C
-C        OPEN(1,FILE='WFSER.OUT')
-C        DO M=1,MWSER(1)
-C          WRITE(1,1981)TWSER(M,1),(WFCOEF(M,K),K=1,MCOEFWF)
-C        ENDDO
-C        CLOSE(1)
-C
-C      ENDIF
-C
+!
+!      IF(NWSER.EQ.-2) THEN
+!
+!        OPEN(1,FILE='WFSER.OUT')
+!        DO M=1,MWSER(1)
+!          WRITE(1,1981)TWSER(M,1),(WFCOEF(M,K),K=1,MCOEFWF)
+!        ENDDO
+!        CLOSE(1)
+!
+!      ENDIF
+!
  1981 FORMAT(F12.4,12E13.5)
-C
-CDIA      WRITE(6,6776)'READ WSER.INP'
-C
-C**********************************************************************C
-C
-C **  READ IN EXTERNALLY SPECIFIED ICE COVER INFORMATION
-C **  FROM THE FILE ICECOVER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!DIA      WRITE(6,6776)'READ WSER.INP'
+!
+!**********************************************************************C
+!
+! **  READ IN EXTERNALLY SPECIFIED ICE COVER INFORMATION
+! **  FROM THE FILE ICECOVER.INP
+!
+!----------------------------------------------------------------------C
+!
       DO L=2,LA
         RICECOVL(L)=0.0
 	  RICETHKL(L)=0.0
 	  RICEWHT(L,1)=1.0
       ENDDO
-C
+!
       IF(ISICE.EQ.1.AND.NISER.GE.1)THEN
       OPEN(1,FILE='ICECOVER.INP')
       DO IS=1,14
 	  READ(1,1)
 	ENDDO
-C
+!
       DO N=1,NISER
 	  RICECOVT(N)=0.
 	  RICETHKT(N)=0.
         MITLAST(N)=1
-C
-	  READ(1,*,IOSTAT=ISO)MISER(N),TCISER(N),TAISER(N),
-     &                      RMULADJCOV,RMULADJTHK
+!
+	  READ(1,*,IOSTAT=ISO)MISER(N),TCISER(N),TAISER(N),RMULADJCOV,RMULADJTHK
         IF(ISO.GT.0) GOTO 950
-C
+
 	  DO M=1,MISER(N)
 	    READ(1,*,IOSTAT=ISO)TISER(M,N),RICECOVS(M,N),RICETHKS(M,N)
           IF(ISO.GT.0) GOTO 950
         ENDDO
-C
+!
 	  DO M=1,MISER(N)
           TISER(M,N)=TISER(M,N)+TAISER(N)
 		RICECOVS(M,N)=RMULADJCOV*RICECOVS(M,N)
 		RICETHKS(M,N)=RMULADJTHK*RICETHKS(M,N)
         ENDDO
-C
+!
       ENDDO
-C
+!
       CLOSE(1)
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ISICE.EQ.1.AND.NISER.GT.1)THEN
         OPEN(1,FILE='ICEMAP.INP')
         DO IS=1,4
@@ -6455,100 +6211,98 @@ C
         ENDDO
         CLOSE(1)
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN SHELL FISH LARAVE BEHAVIOR DATA
-C **  FROM THE FILE SFBSER.INP
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN SHELL FISH LARAVE BEHAVIOR DATA
+! **  FROM THE FILE SFBSER.INP
+!
+!----------------------------------------------------------------------C
+!
       IF(ISTRAN(4).GE.1)THEN
         OPEN(1,FILE='SFBSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
       DO IS=1,18
       READ(1,1)
       ENDDO
-C
-      READ(1,*,IOSTAT=ISO) MSFSER,TCSFSER,TASFSER,TSRSF,TSSSF,
-     &                     ISSFLDN,ISSFLFE,SFLKILL
+!
+      READ(1,*,IOSTAT=ISO) MSFSER,TCSFSER,TASFSER,TSRSF,TSSSF,ISSFLDN,ISSFLFE,SFLKILL
       IF(ISO.GT.0) GOTO 960
-C
+!
       DO M=1,MSFSER
-      READ(1,*,IOSTAT=ISO) TSFSER(M),RKDSFL(M),WSFLST(M),WSFLSM(M),
-     &                     DSFLMN(M),DSFLMX(M),SFNTBE(M),SFATBT(M)
+      READ(1,*,IOSTAT=ISO) TSFSER(M),RKDSFL(M),WSFLST(M),WSFLSM(M),DSFLMN(M),DSFLMX(M),           &
+                           SFNTBE(M),SFATBT(M)
       IF(ISO.GT.0) GOTO 960
       ENDDO
-C
+!
       CLOSE(1)
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ VEGETATION DATA FROM VEGE.INP AND VEGSER.INP
-C
+!
+!**********************************************************************C
+!
+! **  READ VEGETATION DATA FROM VEGE.INP AND VEGSER.INP
+!
       IF(ISVEG.GE.1)THEN
-C
+!
       OPEN(1,FILE='VEGE.INP',STATUS='UNKNOWN')
-C
+!
       DO NS=1,12
       READ(1,1)
       ENDDO
-C
+!
       READ(1,*)MVEGTYP,MVEGOW,NVEGSER,UVEGSCL
       DO M=1,MVEGTYP
-      READ(1,*,ERR=3120)IDUM,NVEGSERV(M),RDLPSQ(M),BPVEG(M),HPVEG(M),
-     &         ALPVEG(M),BETVEG(M),GAMVEG(M),SCVEG(M)
+      READ(1,*,ERR=3120)IDUM,NVEGSERV(M),RDLPSQ(M),BPVEG(M),HPVEG(M),ALPVEG(M),BETVEG(M),         &
+                        GAMVEG(M),SCVEG(M)
       BDLTMP=BPVEG(M)*BPVEG(M)*RDLPSQ(M)
       PVEGX(M)=1.-BETVEG(M)*BDLTMP
       PVEGY(M)=1.-BETVEG(M)*BDLTMP
       PVEGZ(M)=1.-ALPVEG(M)*BDLTMP
       BDLPSQ(M)=BPVEG(M)*RDLPSQ(M)
       ENDDO
-C
+!
       CLOSE(1)
-C
+
       IF(NVEGSER.GT.0)THEN
 	  DO M=1,NVEGSER
           MVEGTLAST(M)=1
 	  ENDDO
 	ENDIF
-C
+!
       ENDIF
-C
+!
       GOTO 3122
  3120 WRITE(6,3121)
  3121 FORMAT('  READ ERROR FOR FILE VEGE.INP ')
       STOP
  3122 CONTINUE
 
-C
+!
       IF(NVEGSER.GE.1)THEN
         OPEN(1,FILE='VEGSER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,8
         READ(1,1)
         ENDDO
-C
+!
         DO NS=1,NVEGSER
           READ(1,*,IOSTAT=ISO) MVEGSER(NS),TCVEGSER(NS),TAVEGSER(NS)
           IF(ISO.GT.0) GOTO 7120
           DO M=1,MVEGSER(NS)
-            READ(1,*,IOSTAT=ISO)TVEGSER(M,NS),VEGSERR(M,NS),
-     &      VEGSERB(M,NS),VEGSERH(M,NS)
+            READ(1,*,IOSTAT=ISO)TVEGSER(M,NS),VEGSERR(M,NS),VEGSERB(M,NS),VEGSERH(M,NS)
             IF(ISO.GT.0) GOTO 7120
             TVEGSER(M,NS)=TVEGSER(M,NS)+TAVEGSER(NS)
           ENDDO
         ENDDO
         CLOSE(1)
-C
-C **  REINITIALIZE CLASSES HAVING TIME SERIES INFORMATION
-C
+!
+! **  REINITIALIZE CLASSES HAVING TIME SERIES INFORMATION
+!
       DO M=1,MVEGTYP
         IF(NVEGSERV(M).GT.0)THEN
 	    NS=NVEGSERV(M)
@@ -6562,28 +6316,27 @@ C
           BDLPSQ(M)=BPVEG(M)*RDLPSQ(M)
 	  ENDIF
       ENDDO
-C
+!
       ENDIF
-C
+!
       GOTO 7122
  7120 WRITE(6,7121)
  7121 FORMAT('  READ ERROR FOR FILE VEGSER.INP ')
       STOP
  7122 CONTINUE
-C
-C**********************************************************************C
-C
-C  READ MASS BALANCE ADJUSTMENT FOR A LAKE PARAMETERS       HNR
-C
+!
+!**********************************************************************C
+!
+!  READ MASS BALANCE ADJUSTMENT FOR A LAKE PARAMETERS       HNR
+!
       islake=0                                                         !hnr
       OPEN(1,FILE='efdclakecorrection.inp',iostat=ios,STATUS='old')    !hnr
       IF(ios.eq.0) then                                                !hnr
-C                                                                      !hnr
+!                                                                      !hnr
         DO NSKIP=1,13                                                  !hnr
           READ(1,1)                                                    !hnr
         END DO                                                         !hnr
-        READ(1,*,IOSTAT=ISO)ISLAKE,ILK,JLK,PSERLK,ILKTS,NWLKTS,        !hnr
-     &           SMTHF,NCLK                                            !hnr
+        READ(1,*,IOSTAT=ISO)ISLAKE,ILK,JLK,PSERLK,ILKTS,NWLKTS,SMTHF,NCLK                                            !hnr
         IF(ISO.GT.0) then                                              !hnr
           write(6,*)'error in efdclakecorrection.inp'                  !hnr
           stop                                                         !hnr
@@ -6592,158 +6345,157 @@ C                                                                      !hnr
       JSLKTS=1                                                         !hnr
       NCLKTS=1                                                         !hnr
       NCL=1                                                            !hnr
-C
-C
-C**********************************************************************C
-C
-C **  READ BANK EROSION MAP AND TIME SERIES FILE
-C
+!
+!
+!**********************************************************************C
+!
+! **  READ BANK EROSION MAP AND TIME SERIES FILE
+!
       IF(ISBKERO.GE.1)THEN
-C
+!
         OPEN(1,FILE='BEMAP.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,10
         READ(1,1)
         ENDDO
-C
+!
         READ(1,*)NBEPAIR,NBESER
-C
+!
         DO NS=1,NBEPAIR
-          READ(1,*)IBANKBE(NS),JBANKBE(NS),ICHANBE(NS),JCHANBE(NS),
-     &             NBESERN(NS),FBESER(NS)
+          READ(1,*)IBANKBE(NS),JBANKBE(NS),ICHANBE(NS),JCHANBE(NS),NBESERN(NS),FBESER(NS)
         ENDDO
-C
+!
         CLOSE(1)
-C
+!
       ENDIF
-C
-C
+!
+!
       IF(ISBKERO.GE.1.AND.NBESER.GT.0)THEN
-C
+!
         OPEN(1,FILE='BESER.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,10
         READ(1,1)
         ENDDO
-C
+!
         DO NS=1,NBESER
-C
+!
           READ(1,*)MBESER(NS),TCBESER(NS),TABESER(NS),RMULADJ,ADDADJ
           MBETLAST(NS)=1
-C
+!
           DO M=1,MBESER(NS)
             READ(1,*)TBESER(M,NS),BESER(M,NS),FWCBESER(M,NS)
             TBESER(M,NS)=TBESER(M,NS)+TABESER(NS)
             BESER(M,NS)=RMULADJ*(BESER(M,NS)+ADDADJ)
           ENDDO
-C
+!
         ENDDO
-C
+!
         CLOSE(1)
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ ZONALLY VARYING SEDIMENT BED PARTICLE MIXING
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  READ ZONALLY VARYING SEDIMENT BED PARTICLE MIXING
+!
+!----------------------------------------------------------------------C
+!
       ITMPPMX=0
       DO NT=1,NTOX
         IF(ISPMXZ(NT).EQ.1)ITMPPMX=1
       ENDDO
-C
+!
       IF(ITMPPMX.EQ.1)THEN
-C
+!
         OPEN(1,FILE='PARTMIX.INP')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,7
         READ(1,1)
         ENDDO
-C
-C#######################################################################
-C     HQI change to input multiplication scale factor for particle mixing rate
-C     RM 10/06/05
-c        READ(1,*)NPMXZ,NPMXPTS
+!
+!#######################################################################
+!     HQI change to input multiplication scale factor for particle mixing rate
+!     RM 10/06/05
+!        READ(1,*)NPMXZ,NPMXPTS
          READ(1,*)NPMXZ,NPMXPTS,PMIXSF
-C#######################################################################
+!#######################################################################
         DO NZ=1,NPMXZ
           DO NP=1,NPMXPTS
               READ(1,*)PMXDEPTH(NP,NZ),PMXCOEF(NP,NZ)
-C#######################################################################
-C     HQI change to input multiplication scale factor for particle mixing rate
-C     RM 10/06/05
+!#######################################################################
+!     HQI change to input multiplication scale factor for particle mixing rate
+!     RM 10/06/05
               PMXCOEF(NP,NZ) = PMIXSF*PMXCOEF(NP,NZ)
-C#######################################################################
+!#######################################################################
           ENDDO
         ENDDO
-C
+!
         CLOSE(1)
-C
-C
+!
+!
         OPEN(1,FILE='PMXMAP.INP')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
         DO IS=1,4
         READ(1,1)
         ENDDO
-C
+!
         DO L=2,LC-1
            READ(1,*)LDUM,IDUM,JDUM,LPMXZ(L)
         ENDDO
-C
+!
         CLOSE(1)
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  READ IN HARMONIC TIDE GAUGE DATA FOR TIDE ELEVAVTION
-C **  ASSIMULATION FROM FILE TIDASM.INP
-C
-C----------------------------------------------------------------------C
-C
-C      IF(ITIDASM.GE.1)THEN
-C        OPEN(1,FILE='TIDASM.INP',STATUS='UNKNOWN')
-C
-C **  SKIP OVER TITLE AND AND HEADER LINES
-C
-C      DO IS=1,25
-C      READ(1,1)
-C      ENDDO
-C
-C      READ(1,*,IOSTAT=ISO) MLTIDAMS, MTTIDASM
-C      IF(ISO.GT.0) GOTO 960
-C
-C      DO ML=1,MLTIDAMS
-C      READ(1,*,IOSTAT=ISO) IITIDASM(ML),JJTIDASM(ML),TTIDASM(ML)
-C      IF(ISO.GT.0) GOTO 970
-C        DO MT=1,MTIDE
-C          READ(1,*,IOSTAT=ISO)PFAM(ML,MT), PFPH(ML,MT)
-C          IF(ISO.GT.0) GOTO 970
-C        ENDDO
-C      ENDDO
-C
-C      CLOSE(1)
-C
-C      ENDIF
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
+! **  READ IN HARMONIC TIDE GAUGE DATA FOR TIDE ELEVAVTION
+! **  ASSIMULATION FROM FILE TIDASM.INP
+!
+!----------------------------------------------------------------------C
+!
+!      IF(ITIDASM.GE.1)THEN
+!        OPEN(1,FILE='TIDASM.INP',STATUS='UNKNOWN')
+!
+! **  SKIP OVER TITLE AND AND HEADER LINES
+!
+!      DO IS=1,25
+!      READ(1,1)
+!      ENDDO
+!
+!      READ(1,*,IOSTAT=ISO) MLTIDAMS, MTTIDASM
+!      IF(ISO.GT.0) GOTO 960
+!
+!      DO ML=1,MLTIDAMS
+!      READ(1,*,IOSTAT=ISO) IITIDASM(ML),JJTIDASM(ML),TTIDASM(ML)
+!      IF(ISO.GT.0) GOTO 970
+!        DO MT=1,MTIDE
+!          READ(1,*,IOSTAT=ISO)PFAM(ML,MT), PFPH(ML,MT)
+!          IF(ISO.GT.0) GOTO 970
+!        ENDDO
+!      ENDDO
+!
+!      CLOSE(1)
+!
+!      ENDIF
+!
+!**********************************************************************C
+!
       GOTO 3000
-C
-C**********************************************************************C
-C
-C **  WRITE READ ERROR FOR OTHER INPUT FILES AND TERMINATE RUN
-C
+!
+!**********************************************************************C
+!
+! **  WRITE READ ERROR FOR OTHER INPUT FILES AND TERMINATE RUN
+!
   800 WRITE(6,801)
 !      WRITE(8,801)  !hnr 7/27/2009
   801 FORMAT('  READ ERROR FOR FILE CELL.INP ')
@@ -6844,9 +6596,9 @@ C
 !      WRITE(8,921)     !hnr 7/27/2009
   921 FORMAT('  READ ERROR FOR FILE QCTL.INP ')
       STOP
-C 930 WRITE(6,931)
-C 931 FORMAT('  READ ERROR FOR FILE QCOOL.INP ')
-C     STOP
+! 930 WRITE(6,931)
+! 931 FORMAT('  READ ERROR FOR FILE QCOOL.INP ')
+!     STOP
   940 WRITE(6,941)
 !      WRITE(8,941)   !hnr 7/27/2009
   941 FORMAT('  READ ERROR FOR FILE ASER.INP ')
@@ -6864,17 +6616,17 @@ C     STOP
   971 FORMAT('  READ ERROR FOR FILE TIDASM.INP ')
       STOP
 
-C*************************************************************^^^^^^*********C    START HNR_GHD ADDED ON 7/2023
+!*************************************************************^^^^^^*********C    START HNR_GHD ADDED ON 7/2023
 8700  WRITE(*,*)'READ ERROR FOR LOAD FILE LxSER.INP FOR VARIABLE NC=',NC
       WRITE(*,*)'(NC=1 SALT, NC=2 HEAT, NC=3 DYE, NC=4 SFL)' 
       STOP
-C*************************************************************^^^^^^*********C    END HNR_GHD ADDED ON 7/2023
+!*************************************************************^^^^^^*********C    END HNR_GHD ADDED ON 7/2023
 
       
-C
+!
  3000 CONTINUE
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
       END

@@ -244,8 +244,7 @@
 !
       DO K=1,KS
       DO L=2,LA
-      FWU(L,K)=MAX(W2(L,K),0.)*CONT(L,K)
-     &        +MIN(W2(L,K),0.)*CONT(L,K+1)
+      FWU(L,K)=MAX(W2(L,K),0.)*CONT(L,K)+MIN(W2(L,K),0.)*CONT(L,K+1)
       ENDDO
       ENDDO
 !

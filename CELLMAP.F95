@@ -66,8 +66,7 @@
 !SO   CLOSE(1)
   601 FORMAT('  LA=',I10,//)
  1616 FORMAT(2I10)
- 1617 FORMAT(' LC =',I5,' DETERMINED IN CELLMAP',
-     &        ' INCONSITENT WITH INPUT VALUE =',I5//)
+ 1617 FORMAT(' LC =',I5,' DETERMINED IN CELLMAP',' INCONSITENT WITH INPUT VALUE =',I5//)
 !
 !----------------------------------------------------------------------C
 !

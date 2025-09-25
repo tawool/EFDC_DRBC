@@ -46,8 +46,7 @@
 !**********************************************************************C
 !
       DIMENSION TMPVEC1(KCM),TMPVEC2(KCM)
-      DIMENSION QMCSINKX(LCM,KCM),QMCSOURX(LCM,KCM),
-     &          QMCSINKY(LCM,KCM),QMCSOURY(LCM,KCM)
+      DIMENSION QMCSINKX(LCM,KCM),QMCSOURX(LCM,KCM),QMCSINKY(LCM,KCM),QMCSOURY(LCM,KCM)
       DIMENSION FUHJ(LCM,KCM),FVHJ(LCM,KCM),DZPC(LCM,KCM)
 !
 !**********************************************************************C
@@ -714,7 +713,7 @@
       ENDIF
 !
       IF(ISBODYF.EQ.2)THEN
-C
+
         DZICKC=1./DZC(KC)
         DO L=2,LA
           FX(L,KC)=FX(L,KC)-DZICKC*DXYU(L)*FBODYFX(L,KC)

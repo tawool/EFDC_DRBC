@@ -257,7 +257,7 @@
 !
       IF(KC.EQ.1)THEN
         DO L=2,LA
-CLZ      CONCZ(L,1)=CONCY(L,1)
+!CLZ      CONCZ(L,1)=CONCY(L,1)
          CONCYZ(L,1)=CONCY(L,1)                   !DRBC, LZ, 2/7/2020
         ENDDO
       ENDIF

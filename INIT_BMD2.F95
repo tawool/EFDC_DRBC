@@ -221,8 +221,8 @@
                
       OPTFLAG=2
 
-      CALL BMD2CREATE(DMPFIL1,NUMSEG,NUMVAR,NumBMD2Writes,
-     &IYEAR,IMON,IDAY,IHOUR,IMIN,ISEC,OPTFLAG,HANDLEBMD2,IERROR) 
+      CALL BMD2CREATE(DMPFIL1,NUMSEG,NUMVAR,NumBMD2Writes,                   &
+                      IYEAR,IMON,IDAY,IHOUR,IMIN,ISEC,OPTFLAG,HANDLEBMD2,IERROR) 
       IF(iError .gt. 0)Then
         Call bmd2getlasterror(80,errMessage)
         Write(*,*)errMessage

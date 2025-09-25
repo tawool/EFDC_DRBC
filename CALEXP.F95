@@ -277,7 +277,7 @@
 ! ** END HARDWIRE FOR PEACH BOTTOM
 !
 !----------------------------------------------------------------------C
-C
+!C
       DO K=1,KS
        DO L=2,LA
        LS=LSC(L)
@@ -474,7 +474,7 @@ C
       ELSE
 !
       CFMAX=CF
-C
+
       DO K=1,KC
        DO L=2,LA
        LN=LNC(L)          
@@ -1026,16 +1026,16 @@ C
                 +SNLT*(FY(L,K)-FY(L,K+1))) )
        ENDDO
       ENDDO
-C
+
       DO K=1,KS
        DO L=2,LA
         DU(L,K)=SUB(L)*DU(L,K)
         DV(L,K)=SVB(L)*DV(L,K)
        ENDDO
       ENDDO
-C
+
       IF(ISTL.EQ.2)THEN
-C 
+ 
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -1044,18 +1044,18 @@ C
         DV(L,KS)=DV(L,KS)-CDZU(KS)*TSY(L)
        ENDDO
       ENDDO
-C
+
       ENDIF
-C
-C**********************************************************************C
-C
+!C
+!C**********************************************************************C
+!C
       IF(N.LE.4)THEN
         CLOSE(1)
       ENDIF
-C
+!C
  1112 FORMAT('N,NW,NS,I,J,K,NF,H,Q,QU,FUU,FVV=',/,2X,7I5,5E12.4)
-C
-C**********************************************************************C
-C
+!C
+!C**********************************************************************C
+!C
       RETURN
       END

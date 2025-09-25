@@ -50,7 +50,7 @@
 !
       COMMON/SSEDTOX6/DELT,DELTI,DSEDGMM,FOURDPI,SEDMDGM,S2TL,S3TL,CORDT,DIASED,GPDIASED,BEDEX
 !
-      COMMON/SSEDTOX7 ISTL,IS2TL,ISUD
+      COMMON/SSEDTOX7/ ISTL,IS2TL,ISUD
 !
 !**********************************************************************C
 !
@@ -657,8 +657,7 @@
           DO K=1,KB
             DO L=2,LA
               IF(HBED(L,K).GT.0.)THEN
-                BDENBED(L,K)=1000.*PORBED(L,K)
-     &          +0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
+                BDENBED(L,K)=1000.*PORBED(L,K)+0.001*(SEDBT(L,K)+SNDBT(L,K))/HBED(L,K)
               ELSE
                 BDENBED(L,K)=0.
               ENDIF

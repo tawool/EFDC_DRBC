@@ -61,6 +61,6 @@
 !
       CLOSE(1)
       CLOSE(2)
-C
+
       RETURN
       END

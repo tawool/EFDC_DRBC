@@ -200,7 +200,7 @@
 !      ENDDO
 !
       IF(ISWAVE.GE.2)THEN
-C
+
       IF(N.LT.NTSWV)THEN
         TMPVAL=FLOAT(N)/FLOAT(NTSWV)
         WVFACT=0.5-0.5*COS(PI*TMPVAL)

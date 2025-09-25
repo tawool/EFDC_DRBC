@@ -1609,11 +1609,11 @@
 ! **  UPDATE SEDIMENT BED LAYERING
 !
       IF(ISTRAN(6).GE.1.OR.ISTRAN(7).GE.1)CALL CALBLAY
-C
-C**********************************************************************C
-C
-C **  RESET SEDIMENT VOLUME FRACTIONS
-C
+!
+!**********************************************************************C
+!
+! **  RESET SEDIMENT VOLUME FRACTIONS
+!
       DO K=1,KB
         DO L=2,LA
           BEDLINIT(L,K)=0.

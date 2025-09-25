@@ -87,10 +87,10 @@
       IF(BSC.GT.1.E-6)THEN
       DO L=2,LA
       LS=LSC(L)
-      FPGXE(L)=ROLD*FPGXE(L)+RNEW*(-SBX(L)*HU(L)*((BI2(L)+BI2(L-1))*(HP(L)-HP(L-1))+2.*HU(L)      &
-               *(BI1(L)-BI1(L-1))+(BE(L)+BE(L-1))*(BELV(L)-BELV(L-1))) )
-      FPGYE(L)=ROLD*FPGYE(L)+RNEW*(-SBY(L)*HV(L)*((BI2(L)+BI2(LS))*(HP(L)-HP(LS))+2.*HV(L)        &
-               *(BI1(L)-BI1(LS))+(BE(L)+BE(LS))*(BELV(L)-BELV(LS))) )
+      FPGXE(L)=ROLD*FPGXE(L)+RNEW*(-SBX(L)*HU(L)*((BI2(L)+BI2(L-1))*(HP(L)-HP(L-1))               &
+               +2.*HU(L)*(BI1(L)-BI1(L-1))+(BE(L)+BE(L-1))*(BELV(L)-BELV(L-1))) )
+      FPGYE(L)=ROLD*FPGYE(L)+RNEW*(-SBY(L)*HV(L)*((BI2(L)+BI2(LS))*(HP(L)-HP(LS))                 &
+               +2.*HV(L)*(BI1(L)-BI1(LS))+(BE(L)+BE(LS))*(BELV(L)-BELV(LS))) )
       ENDDO
       ENDIF
 !
@@ -119,7 +119,7 @@
          TBY1(L)=TMPVALV*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1))*VHDXE(L)
         ENDDO
       ENDIF
-
+!
       IF(ISTL.EQ.2)THEN
         DO L=2,LA
 !        HUTMP(L)=0.5*(HU(L)+H1U(L))
@@ -135,26 +135,32 @@
         HVTMP(L)=FADXV(L)
         ENDDO
       ENDIF
-
+!
       DO L=2,LA
       LS=LSC(L)
       LN=LNC(L)
-      FUHDYE(L)=UHDYE(L)-DELTD2*SUB(L)*HRUO(L)*HUTMP(L)*(P(L)-P(L-1))+SUB(L)*DELT*SRFYU(L)*TSX(L) &
-                -SUB(L)*DELT*WPDYU(L)*RITB1*TBX1(L)+SUB(L)*DELT*DXIU(L)*( FPGXE(L)-SNLT*FXE(L))
-      FVHDXE(L)=VHDXE(L)-DELTD2*SVB(L)*HRVO(L)*HVTMP(L)*(P(L)-P(LS))+SVB(L)*DELT*SRFXV(L)*TSY(L)  &
-                -SVB(L)*DELT*WPDXV(L)*RITB1*TBY1(L)+SVB(L)*DELT*DYIV(L)*( FPGYE(L)-SNLT*FYE(L))
+      FUHDYE(L)=UHDYE(L)                                                                          &
+              -DELTD2*SUB(L)*HRUO(L)*HUTMP(L)*(P(L)-P(L-1))                                       &
+              +SUB(L)*DELT*SRFYU(L)*TSX(L)                                                        &
+              -SUB(L)*DELT*WPDYU(L)*RITB1*TBX1(L)                                                 &
+              +SUB(L)*DELT*DXIU(L)*( FPGXE(L)-SNLT*FXE(L) )
+      FVHDXE(L)=VHDXE(L)                                                                          &
+              -DELTD2*SVB(L)*HRVO(L)*HVTMP(L)*(P(L)-P(LS ))                                       &
+              +SVB(L)*DELT*SRFXV(L)*TSY(L)                                                        &
+              -SVB(L)*DELT*WPDXV(L)*RITB1*TBY1(L)                                                 &
+              +SVB(L)*DELT*DYIV(L)*( FPGYE(L)-SNLT*FYE(L) )
       ENDDO
-
+!
       DO L=2,LA
       RCX(L)=1.
       RCY(L)=1.
       ENDDO
-
+!
       RCX(1)=0.
       RCY(1)=0.
       RCX(LC)=0.
       RCY(LC)=0.
-
+!
       IF(ISITB.GE.1)THEN
         DO L=2,LA
          TMPVALU=WPDYU(L)/FADYU(L)
@@ -165,10 +171,9 @@
 ! MANNING
 !        RCX(L)=1./( 1.
 !     &    +RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)) )
-         RCX(L)=1./(1.+RITB*DELT*TMPVALU*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)))
-!        RCY(L)=1./( 1.
-!     &    +RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)) )
-         RCY(L)=1./(1.+RITB*DELT*TMPVALV*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)))
+         RCX(L)=1./( 1.+RITB*DELT*TMPVALU*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)) )
+!        RCY(L)=1./( 1.+RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)) )
+         RCY(L)=1./( 1.+RITB*DELT*TMPVALV*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)) )
 !DIAG         WRITE(1,2113)IL(L),JL(L),FUHDYE(L),RCX(L),FVHDXE(L),RCY(L),
 !DIAG     &                TMPVALV
          FUHDYE(L)=FUHDYE(L)*RCX(L)
@@ -199,7 +204,7 @@
         SBX(L+1)=SBXO(L+1)
         SBY(LN)=SBYO(LN)
       ENDDO
-
+!
       DO L=1,LC
       FP(L)=0.
       FP1(L)=0.
@@ -216,7 +221,7 @@
       ELSE
         TN=TIMESEC
       ENDIF
-
+!
       DO M=1,MTIDE
       TM=MOD(TN,TCP(M))
       TM=PI2*TM/TCP(M)
@@ -266,7 +271,7 @@
       TS=SSSIN(M)
       FP1(L)=FP1(L)+PCBE(LL,M)*TC+PSBE(LL,M)*TS
       ENDDO
-      CWT=0.5*DELTD2*G*HRUO(L)*RCX(L)*HUTMP(L)
+      CWT=0.5*DELTD2*G*HRUO(L  )*RCX(L)*HUTMP(L  )
       IF(ISPBE(LL).GE.1)THEN
        TMP=DELTD2*SQRT(G*HMU(L))*DXIU(L)
        CC(L)=CWT*(1.+TMP)/TMP
@@ -455,7 +460,7 @@
 !----------------------------------------------------------------------C
 !
       IF(ISGWIE.EQ.0)THEN
-
+!
       DO L=2,LA
       IF(QSUME(L).LE.0.)THEN
         IF(HP(L).LE.HDRY)THEN
@@ -468,7 +473,7 @@
         QSUMTMP(L)=QSUME(L)
       ENDIF
       ENDDO
-
+!
       DO L=2,LA
        DIFQVOL=QSUME(L)-QSUMTMP(L)
        DO K=1,KC
@@ -476,7 +481,7 @@
        ENDDO
        QSUME(L)=QSUMTMP(L)
       ENDDO
-
+!
       ENDIF
 !
 !**********************************************************************C
@@ -487,7 +492,7 @@
 !----------------------------------------------------------------------C
 !
       IF(ISGWIE.GE.1)THEN
-
+!
       DO L=2,LA
       RIFTR(L)=0.
       EVAPSW(L)=0.
@@ -556,8 +561,7 @@
 !      FP1(L)=FP1(L)+SPB(L)*( DELTI*DXYP(L)*P1(L)
 !     &      -0.5*G*(UHDY1E(L+1)-UHDY1E(L)
 !     &             +VHDX1E(LN )-VHDX1E(L)) )
-      FP1(L)=FP1(L)+SPB(L)*(DELTI*DXYP(L)*DADH(L)*P(L)-0.5*G*(UHDYE(L+1)-UHDYE(L)+VHDXE(LN )      &
-             -VHDXE(L)) )
+      FP1(L)=FP1(L)+SPB(L)*( DELTI*DXYP(L)*DADH(L)*P(L)-0.5*G*(UHDYE(L+1)-UHDYE(L)+VHDXE(LN )-VHDXE(L)) )
       ENDDO
 !
 !**********************************************************************C
@@ -611,7 +615,7 @@
 !
       DO L=2,LA
       LN=LNC(L)
-      FP(L)=FP1(L)-0.5*G*SPB(L)*( SUB(L+1)*FUHDYE(L+1)-SUB(L)*FUHDYE(L)+SVB(LN)*FVHDXE(LN)-SVB(L) &
+      FP(L)=FP1(L)-0.5*G*SPB(L)*(SUB(L+1)*FUHDYE(L+1)-SUB(L)*FUHDYE(L)+SVB(LN)*FVHDXE(LN)-SVB(L)  &
             *FVHDXE(L)-2.0*QSUME(L) )
 !C      P(L)=0.
       ENDDO
@@ -786,8 +790,8 @@
 !
       DO L=2,LA
       LS=LSC(L)
-      UTMP=SUB(L)*(FUHDYE(L)-DELTD2*HRUO(L)*RCX(L)*HUTMP(L)*(P(L)-P(L-1)))
-      VTMP=SVB(L)*(FVHDXE(L)-DELTD2*HRVO(L)*RCY(L)*HVTMP(L)*(P(L)-P(LS)))
+      UTMP=SUB(L)*( FUHDYE(L)-DELTD2*HRUO(L)*RCX(L)*HUTMP(L)*(P(L)-P(L-1)) )
+      VTMP=SVB(L)*( FVHDXE(L)-DELTD2*HRVO(L)*RCY(L)*HVTMP(L)*(P(L)-P(LS )) )
       UHDYE(L)=UTMP
       VHDXE(L)=VTMP
 !      UHE(L)=UTMP*DYIU(L)
@@ -824,7 +828,7 @@
 !      ENDIF
 !
 !
-      DO L=2
+!      DO L=2
       IF(ISTL.EQ.3)THEN
         DO L=2,LA
          AREAOLD(L)=0.
@@ -833,8 +837,8 @@
         ENDDO
         DO L=2,LA
         LN=LNC(L)
-        AREATMP=AREAOLD(L)+DELT*DXYIP(L)*(QSUME(L)-0.5*(UHDYE(L+1)+UHDY2E(L+1)-UHDYE(L)           &
-                -UHDY2E(L)+VHDXE(LN)+VHDX2E(LN)-VHDXE(L)-VHDX2E(L)))
+        AREATMP=AREAOLD(L)+DELT*DXYIP(L)*(QSUME(L)-0.5*(UHDYE(L+1)+UHDY2E(L+1)-UHDYE(L)-UHDY2E(L) &
+                +VHDXE(LN)+VHDX2E(LN)-VHDXE(L)-VHDX2E(L)))
         IF(ISGWIE.GE.1) AREATMP=AREATMP-DELT*DXYIP(L)*(RIFTR(L)+EVAPSW(L))
          AREANEW(L)=SPB(L)*AREATMP+(1.-SPB(L))*AREANEW(L)
         ENDDO
@@ -1195,11 +1199,11 @@
 !----------------------------------------------------------------------C
 !
       IF(ISTL.EQ.3)THEN
-C
+
       DO L=2,LA
       IF(SPB(L).NE.0)THEN
       LN=LNC(L)
-      DIVEX=SPB(L)*(DXYP(L)*(HP(L)-H2P(L))*DELTI+0.5*(UHDYE(L+1)+UHDY2E(L+1)-UHDYE(L)-UHDY2E(L)   &
+      DIVEX=SPB(L)*(DXYP(L)*(HP(L)-H2P(L))*DELTI+0.5*(UHDYE(L+1)+UHDY2E(L+1)-UHDYE(L)-UHDY2E(L) &
             +VHDXE(LN)+VHDX2E(LN)-VHDXE(L)-VHDX2E(L))-QSUME(L)+RIFTR(L)+EVAPSW(L))
       IF(DIVEX.GT.DIVEXMX)THEN
        DIVEXMX=DIVEX
@@ -1211,7 +1215,7 @@ C
       ENDIF
       ENDIF
       ENDDO
-!
+
       ELSE
 !
       DO L=2,LA
@@ -1229,14 +1233,14 @@ C
       ENDIF
       ENDIF
       ENDDO
-
+!
       ENDIF
-
+!
       IMAX=IL(LMAX)
       JMAX=JL(LMAX)
       IMIN=IL(LMIN)
       JMIN=JL(LMIN)
-
+!
       WRITE(6,6628)DIVEXMX,IMAX,JMAX
       WRITE(6,6629)DIVEXMN,IMIN,JMIN
 !

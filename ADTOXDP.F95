@@ -175,11 +175,16 @@
 !     &          -(DIFTOX_DP(NT)+PARTDIF_DP(L,K))*(PORBED_DP(L,K)
 !     &                  +PORBED_DP(L,K+1))/
 !     &                  (HBED_DP(L,K)+HBED_DP(L,K+1))
-	CUPP(L,K)=DMIN1(QWTRBED_DP(L,K),0.)-((DIFTOX_DP(NT)/(HBED_DP(L,K)+HBED_DP(L,K+1)))              &
-	          +PARTDIF_DP(L,K))*(PORBED_DP(L,K)+PORBED_DP(L,K+1))
+!	CUPP(L,K)=MIN(QWTRBED_DP(L,K),0.)-((DIFTOX_DP(NT)/(HBED_DP(L,K)+HBED_DP(L,K+1)))              &
+!	          +PARTDIF_DP(L,K))*(PORBED_DP(L,K)+PORBED_DP(L,K+1))
+	          
+        CUPP(L,K)=MIN(QWTRBED_DP(L,K),DBLE(0.))                                                       &
+               -((DIFTOX_DP(NT)/(HBED_DP(L,K)+HBED_DP(L,K+1)))+                                       &
+               PARTDIF_DP(L,K))*(PORBED_DP(L,K)+PORBED_DP(L,K+1))	          
 !###############################################################################
               ENDDO
-  CUPP(L,KBT(L))=AMIN1(QWTRBED_DP(L,KBT(L)),0.)-DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
+        CUPP(L,KBT(L))=MIN(QWTRBED_DP(L,KBT(L)),DBLE(0.)) -DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
+ ! CUPP(L,KBT(L))=AMIN1(QWTRBED_DP(L,KBT(L)),0.)-DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
 !
               DO K=2,KBT(L)
 !###############################################################################
@@ -190,11 +195,14 @@
 !     &          -(DIFTOX_DP(NT)+PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)
 !     &                  +PORBED_DP(L,K))
 !     &                  /(HBED_DP(L,K-1)+HBED_DP(L,K))
-	ALOW(L,K)=-AMAX1(QWTRBED_DP(L,K-1),0.)-((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))           &
-	           +ARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)+PORBED_DP(L,K))
+	!ALOW(L,K)=-AMAX1(QWTRBED_DP(L,K-1),0.)-((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))           &
+	!           +ARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)+PORBED_DP(L,K))
+	ALOW(L,K)=-MAX(QWTRBED_DP(L,K-1),DBLE(0.))-((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))+     &
+                  PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)+PORBED_DP(L,K))
 !###############################################################################
               ENDDO
-	ALOW(L,KBTP1)=-AMAX1(QWTRBED_DP(L,KBT(L)),0.)-DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
+	!ALOW(L,KBTP1)=-AMAX1(QWTRBED_DP(L,KBT(L)),0.)-DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
+	ALOW(L,KBTP1)=-MAX(QWTRBED_DP(L,KBT(L)),DBLE(0.))-DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
 !
               DO K=1,KBT(L)
                 BMNN(L,K)=DELTI_DP*HBED_DP(L,K)*PORBED_DP(L,K)/(1.-TOXPFTB_DP(L,K,NT))
@@ -209,8 +217,10 @@
 !     &        +(DIFTOX_DP(NT)+PARTDIF_DP(L,1))*(PORBED_DP(L,2)
 !     &                  +PORBED_DP(L,1))/
 !     &                  (HBED_DP(L,2)+HBED_DP(L,1))
-	BMNN(L,1)=BMNN(L,1)+AMAX1(QWTRBED_DP(L,1),0.) +((DIFTOX_DP(NT)/(HBED_DP(L,2)+HBED_DP(L,1)))     &
-	          + PARTDIF_DP(L,1))*(PORBED_DP(L,2)+PORBED_DP(L,1))
+!	BMNN(L,1)=BMNN(L,1)+AMAX1(QWTRBED_DP(L,1),0.) +((DIFTOX_DP(NT)/(HBED_DP(L,2)+HBED_DP(L,1)))     &
+!	          + PARTDIF_DP(L,1))*(PORBED_DP(L,2)+PORBED_DP(L,1))
+        BMNN(L,1)=BMNN(L,1)+MAX(QWTRBED_DP(L,1),DBLE(0.))+((DIFTOX_DP(NT)/(HBED_DP(L,2)+HBED_DP(L,1)))+ &
+                  PARTDIF_DP(L,1))*(PORBED_DP(L,2)+PORBED_DP(L,1))	          
 !###############################################################################
               DO K=2,KBTM1
 !###############################################################################
@@ -225,10 +235,14 @@
 !     &         +(DIFTOX_DP(NT)+PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)
 !     &                  +PORBED_DP(L,K))/
 !     &                  (HBED_DP(L,K-1)+HBED_DP(L,K))
-	BMNN(L,K)=BMNN(L,K)+AMAX1(QWTRBED_DP(L,K),0.) +((DIFTOX_DP(NT)/(HBED_DP(L,K+1)+HBED_DP(L,K)))   &
-	          + PARTDIF_DP(L,K))*(PORBED_DP(L,K+1)+PORBED_DP(L,K))-AMIN1(QWTRBED_DP(L,K-1),0.)      &
-	          +((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))+PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)  &
-	          +PORBED_DP(L,K))
+!	BMNN(L,K)=BMNN(L,K)+AMAX1(QWTRBED_DP(L,K),0.) +((DIFTOX_DP(NT)/(HBED_DP(L,K+1)+HBED_DP(L,K)))   &
+!	          + PARTDIF_DP(L,K))*(PORBED_DP(L,K+1)+PORBED_DP(L,K))-AMIN1(QWTRBED_DP(L,K-1),0.)      &
+!	          +((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))+PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)  &
+!	          +PORBED_DP(L,K))
+        BMNN(L,K)=BMNN(L,K)+MAX(QWTRBED_DP(L,K),DBLE(0.))+((DIFTOX_DP(NT)/(HBED_DP(L,K+1)+HBED_DP(L,K)))+  &
+              PARTDIF_DP(L,K))*(PORBED_DP(L,K+1)+PORBED_DP(L,K))-MIN(QWTRBED_DP(L,K-1),DBLE(0.))           &
+              +((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))+PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)+PORBED_DP(L,K))	          
+	          
 !###############################################################################
               ENDDO
               K=KBT(L)
@@ -236,23 +250,23 @@
 ! HQI Change to implement particle mixing as a rate in units of length/time
 ! instead of a mixing coefficient in units of length**2/time
 ! RM, 09/28/05
-!              BMNN(L,K)=BMNN(L,K)+MAX(QWTRBED_DP(L,K),0.)
-!     &           +DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
-!     &                         -MIN(QWTRBED_DP(L,K-1),0.)
-!     &           +(DIFTOX_DP(NT)+PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)
-!     &                  +PORBED_DP(L,K))/(HBED_DP(L,K-1)+HBED_DP(L,K))
-	MNN(L,K)=BMNN(L,K)+AMAX1(QWTRBED_DP(L,K),0.) +DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))          &
-	        -AMIN1(QWTRBED_DP(L,K-1),0.) +((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))            &
-	        +PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)+PORBED_DP(L,K))
+
+        BMNN(L,K)=BMNN(L,K)+MAX(QWTRBED_DP(L,K),DBLE(0.))                             &
+                +DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))                             &
+                              -MIN(QWTRBED_DP(L,K-1),DBLE(0.))                        &
+                +((DIFTOX_DP(NT)/(HBED_DP(L,K-1)+HBED_DP(L,K)))                       &
+                +PARTDIF_DP(L,K-1))*(PORBED_DP(L,K-1)+PORBED_DP(L,K))
 !###############################################################################
               K=KBTP1
-	MNN(L,K)=BMNN(L,K)-AMIN1(QWTRBED_DP(L,K-1),0.) +DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
+!	MNN(L,K)=BMNN(L,K)-AMIN1(QWTRBED_DP(L,K-1),0.) +DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
+	BMNN(L,K)=BMNN(L,K)-MIN(QWTRBED_DP(L,K-1),DBLE(0.))+DIFBWFAC*DIFTOXBW(L)*PORBED_DP(L,KBT(L))
 !
               DO K=1,KBT(L)
                 RRHS(L,K)=DELTI_DP*TOXB_DP(L,K,NT)
                 TOXBBALO(L)=TOXBBALO(L)+TOXB_DP(L,K,NT)
               ENDDO
-	RHS(L,1)=RRHS(L,1)+AMAX1(QWTRBED_DP(L,0),0.) *CONGW_DP(L,NT+4)
+	!RHS(L,1)=RRHS(L,1)+AMAX1(QWTRBED_DP(L,0),0.) *CONGW_DP(L,NT+4)
+	RRHS(L,1)=RRHS(L,1)+MAX(QWTRBED_DP(L,0),DBLE(0.))*CONGW_DP(L,NT+4)
               RRHS(L,KBTP1)=DELTI_DP*DZC_DP(1)*HP_DP(L)*TOX_DP(L,1,NT)
               TOXWBALO(L)=DZC_DP(1)*HP_DP(L)*TOX_DP(L,1,NT)
 !

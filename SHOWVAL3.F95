@@ -274,7 +274,8 @@
 !
 ! - COHESIVE AND NONCOHESIVE SEDIMENT OUTPUT for the HOUSATONIC & GREEN RIVERS - NSHTYPE=8
 !
-  590 FORMAT('    TIME    ZSUR  VELE  VELN COHSED  SED1  SND1  SND2  SND   3  SND4 BEDLD1 BEDLD2 BEDLD3 BEDLD4 BEDLD5  TAUBSED       TAUB')
+  590 FORMAT('    TIME    ZSUR  VELE  VELN COHSED  SED1  SND1  SND2  SND   3  SND4 BEDLD1 BEDLD2',&
+            ' BEDLD3 BEDLD4 BEDLD5  TAUBSED       TAUB')
   591 FORMAT('                                                                     ')
   592 FORMAT('    days      m   cm/s  cm/s  mg/L   mg/L  mg/L  mg/L  mg/    L  mg/L   gm/s',      &
              '   gm/s   gm/s   gm/s   gm/s     Pa          Pa')

@@ -191,13 +191,17 @@
 
       IF(BSC.GT.1.E-6)THEN
         DO L=2,LA
-          FPGXE(L)=ROLDPG*FPGXE(L)+RNEWPG*(-SBX(L)*HU(L)*((BI2(L)+BI2(L-1))*(HP(L)-HP(L-1))+2.    &
-                   *HU(L)*(BI1(L)-BI1(L-1))+(BE(L)+BE(L-1))*(BELV(L)-BELV(L-1))))
+          FPGXE(L)=ROLDPG*FPGXE(L)+RNEWPG*(                                                       &
+                -SBX(L)*HU(L)*((BI2(L)+BI2(L-1))*(HP(L)-HP(L-1))                                  &
+                +2.*HU(L)*(BI1(L)-BI1(L-1))                                                       &
+                +(BE(L)+BE(L-1))*(BELV(L)-BELV(L-1)))  )
         ENDDO
         DO L=2,LA
           LS=LSC(L)      
-          FPGYE(L)=ROLDPG*FPGYE(L)+RNEWPG*(-SBY(L)*HV(L)*((BI2(L)+BI2(LS))*(HP(L)-HP(LS))+2.*HV(L)&
-                   *(BI1(L)-BI1(LS))+(BE(L)+BE(LS))*(BELV(L)-BELV(LS))))
+          FPGYE(L)=ROLDPG*FPGYE(L)+RNEWPG*(                                                       &
+                -SBY(L)*HV(L)*((BI2(L)+BI2(LS))*(HP(L)-HP(LS))                                    &
+                +2.*HV(L)*(BI1(L)-BI1(LS))                                                        &
+                +(BE(L)+BE(LS))*(BELV(L)-BELV(LS)))  )
        ENDDO
       ENDIF
 !
@@ -242,26 +246,28 @@
 	ENDDO
 !
       DO L=2,LA
-        FUHDYE(L)=UHDYE(L)-DELTD2*SUB(L)*HRUO(L)*HUTMP(L)*(P(L)-P(L-1))+SUB(L)*DELT*DXIU(L)       &
-                  *(DXYU(L)*(TSX(L)-RITB1*TBX(L))+FCAXE(L)+FPGXE(L)-SNLT*FXE(L))
-        FVHDXE(L)=VHDXE(L)-DELTD2*SVB(L)*HRVO(L)*HVTMP(L)*(P(L)-TVAR3S(L))+SVB(L)*DELT*DYIV(L)    &
-                  *(DXYV(L)*(TSY(L)-RITB1*TBY(L))-FCAYE(L)+FPGYE(L)-SNLT*FYE(L))
+        FUHDYE(L)=UHDYE(L)                                                                        &
+              -DELTD2*SUB(L)*HRUO(L)*HUTMP(L)*(P(L)-P(L-1))                                       &
+              +SUB(L)*DELT*DXIU(L)*(DXYU(L)*(TSX(L)-RITB1*TBX(L))                                 &
+              +FCAXE(L)+FPGXE(L)-SNLT*FXE(L))
+        FVHDXE(L)=VHDXE(L)                                                                        &
+              -DELTD2*SVB(L)*HRVO(L)*HVTMP(L)*(P(L)-TVAR3S(L))                                    &
+              +SVB(L)*DELT*DYIV(L)*(DXYV(L)*(TSY(L)-RITB1*TBY(L))                                 &
+              -FCAYE(L)+FPGYE(L)-SNLT*FYE(L))
       ENDDO
 !
       IF(ISDSOLV.GE.1)THEN
         OPEN(1,FILE='FUV.OUT',POSITION='APPEND',STATUS='UNKNOWN')
         WRITE(1,1001)N,ISTL
         DO L=2,LA
-        WRITE(1,1001)IL(L),JL(L),UHDY1E(L),HRUO(L),HUTMP(L),P1(L),P1(L-1),TSX1(L),TBX1(L),        &
-                     FCAXE(L),FPGXE(L),FXE(L)
+        WRITE(1,1001)IL(L),JL(L),UHDY1E(L),HRUO(L),HUTMP(L),P1(L),P1(L-1),TSX1(L),TBX1(L),FCAXE(L),FPGXE(L),FXE(L)
         ENDDO
         CLOSE(1)
         IF(N.EQ.1)THEN
           OPEN(1,FILE='FUV1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
           WRITE(1,1001)N,ISTL
           DO L=2,LA
-        WRITE(1,1001)IL(L),JL(L),UHDY1E(L),HRUO(L),HUTMP(L),P1(L),P1(L-1),TSX1(L),TBX1(L),        &
-                     FCAXE(L),FPGXE(L),FXE(L)
+        WRITE(1,1001)IL(L),JL(L),UHDY1E(L),HRUO(L),HUTMP(L),P1(L),P1(L-1),TSX1(L),TBX1(L),FCAXE(L),FPGXE(L),FXE(L)
           ENDDO
           CLOSE(1)
         ENDIF
@@ -297,8 +303,8 @@
 !
       IF(KC.EQ.1.AND.ISVEG.EQ.0)THEN
         DO L=2,LA
-        RCX(L)=1./(1.+FBODYFXI(L)+RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)))
-        RCY(L)=1./(1.+FBODYFYI(L)+RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)))
+        RCX(L)=1./( 1.+FBODYFXI(L)+RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)) )
+        RCY(L)=1./( 1.+FBODYFYI(L)+RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)) )
         FUHDYE(L)=FUHDYE(L)*RCX(L)
         FVHDXE(L)=FVHDXE(L)*RCY(L)
         ENDDO
@@ -308,11 +314,11 @@
 !
       IF(KC.EQ.1.AND.ISVEG.GE.1)THEN
         DO L=2,LA
-        RCX(L)=1./(1.+FBODYFXI(L)+RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1))+DELT   &
-               *FXVEGE(L) )
+        RCX(L)=1./( 1.+FBODYFXI(L)+RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1))       &
+              +DELT*FXVEGE(L) )
 !     &    +RITB*DELT*FXVEGE(L) )
-        RCY(L)=1./(1.+FBODYFYI(L)+RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1))+DELT   &
-               *FYVEGE(L) )
+        RCY(L)=1./( 1.+FBODYFYI(L)+RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1))       &
+              +DELT*FYVEGE(L) )
 !     &    +RITB*DELT*FYVEGE(L) )
         FUHDYE(L)=FUHDYE(L)*RCX(L)
         FVHDXE(L)=FVHDXE(L)*RCY(L)
@@ -328,8 +334,8 @@
 	  TMPY=1.0
 	  IF(UHE(L).NE.0.0) TMPX=U(L,1)*HU(L)/UHE(L)
 	  IF(VHE(L).NE.0.0) TMPY=V(L,1)*HV(L)/VHE(L)
-        RCX(L)=1./( 1.+FBODYFXI(L)+TMPX*RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)))
-        RCY(L)=1./( 1.+FBODYFYI(L)+TMPY*RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)))
+        RCX(L)=1./( 1.+FBODYFXI(L)+TMPX*RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1)) )
+        RCY(L)=1./( 1.+FBODYFYI(L)+TMPY*RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1)) )
         FUHDYE(L)=FUHDYE(L)*RCX(L)
         FVHDXE(L)=FVHDXE(L)*RCY(L)
         ENDDO
@@ -343,10 +349,12 @@
 	  TMPY=1.0
 	  IF(UHE(L).NE.0.0) TMPX=U(L,1)*HU(L)/UHE(L)
 	  IF(VHE(L).NE.0.0) TMPY=V(L,1)*HV(L)/VHE(L)
-        RCX(L)=1./(1.+FBODYFXI(L)+TMPX*RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1))   &
-               +DELT*FXVEGE(L) )
-        RCY(L)=1./(1.+FBODYFYI(L)+TMPY*RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1))   &
-               +DELT*FYVEGE(L) )
+        RCX(L)=1./( 1.+FBODYFXI(L)                                                                &
+         +TMPX*RITB*DELT*HUI(L)*STBX(L)*SQRT(VU(L)*VU(L)+U(L,1)*U(L,1))                           &
+         +DELT*FXVEGE(L) )
+        RCY(L)=1./( 1.+FBODYFYI(L)                                                                &
+          +TMPY*RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1))                          &
+          +DELT*FYVEGE(L) )                                                                       
         FUHDYE(L)=FUHDYE(L)*RCX(L)
         FVHDXE(L)=FVHDXE(L)*RCY(L)
         ENDDO
@@ -585,9 +593,7 @@
         TVAR3N(L)=VHDXE(LNC(L))
 	ENDDO
       DO L=2,LA
-      FP1(L)=FP1(L)+SPB(L)*( DELTI*DXYP(L)*P(L)
-     &      -0.5*G*(UHDYE(L+1)-UHDYE(L)
-     &             +TVAR3N(L)-VHDXE(L)) )
+      FP1(L)=FP1(L)+SPB(L)*( DELTI*DXYP(L)*P(L)-0.5*G*(UHDYE(L+1)-UHDYE(L)+TVAR3N(L)-VHDXE(L)) )
       ENDDO
 !
 !**********************************************************************C
@@ -608,7 +614,9 @@
         TVAR3N(L)=SVB(LN )*FVHDXE(LN)
 	ENDDO
       DO L=2,LA
-      FP(L)=FP1(L)-0.5*G*SPB(L)*(SUB(L+1)*FUHDYE(L+1)-SUB(L)*FUHDYE(L)+TVAR3N(L)-SVB(L)*FVHDXE(L) &
+      FP(L)=FP1(L)-0.5*G*SPB(L)*                                                                  &
+           ( SUB(L+1)*FUHDYE(L+1)-SUB(L)*FUHDYE(L)                                                &
+            +TVAR3N(L)-SVB(L)*FVHDXE(L)                                                           &
             -2.0*QSUME(L) )
 !C      P(L)=0.
       ENDDO
@@ -623,7 +631,7 @@
         OPEN(1,FILE='FP.OUT',POSITION='APPEND',STATUS='UNKNOWN')
         WRITE(1,1001)N,ISTL
         DO L=2,LA
-        WRITE(1,1001)IL(L),JL(L),FP1(L),FUHDYE(L),FUHDYE(L+1),FVHDXE(L),FVHDXE(LNC(L)),QSUME(L),  &
+        WRITE(1,1001)IL(L),JL(L),FP1(L),FUHDYE(L),FUHDYE(L+1), FVHDXE(L),FVHDXE(LNC(L)),QSUME(L), &
                      RIFTR(L),EVAPSW(L)
         ENDDO
         CLOSE(1)
@@ -631,8 +639,8 @@
           OPEN(1,FILE='FP1.OUT',POSITION='APPEND',STATUS='UNKNOWN')
           WRITE(1,1001)N,ISTL
           DO L=2,LA
-          WRITE(1,1001)IL(L),JL(L),FP1(L),FUHDYE(L),FUHDYE(L+1),FVHDXE(L),FVHDXE(LNC(L)),QSUME(L),&
-                       RIFTR(L),EVAPSW(L)
+          WRITE(1,1001)IL(L),JL(L),FP1(L),FUHDYE(L),FUHDYE(L+1),FVHDXE(L),FVHDXE(LNC(L)),          &
+                       QSUME(L),RIFTR(L),EVAPSW(L)
           ENDDO
           CLOSE(1)
         ENDIF
@@ -741,8 +749,7 @@
         OPEN(1,FILE='EQCOEFNEGDIA.OUT')
         WRITE(1,1001)N,ISTL
         DO L=2,LA
-          WRITE(1,1001)IL(L),JL(L),CS(L),CW(L),CC(L),CE(L),CN(L),HP(L),HUTMP(L),HVTMP(L),RCX(L)   &
-                       ,RCY(L)
+          WRITE(1,1001)IL(L),JL(L),CS(L),CW(L),CC(L),CE(L),CN(L), HP(L),HUTMP(L),HVTMP(L),RCX(L),RCY(L)
         ENDDO
         CLOSE(1)
 	ENDIF
@@ -867,8 +874,8 @@
         ENDDO
         IF(MDCHH.GE.1)THEN
           DO NMD=1,MDCHH
-            WRITE(1,1001)NMD,MDCHTYP(NMD),CCCCHH(NMD),CCCCHU(NMD),CCCCHV(NMD),QCHANUT(NMD),       &
-                         QCHANVT(NMD)
+            WRITE(1,1001)NMD,MDCHTYP(NMD),CCCCHH(NMD),CCCCHU(NMD),                                &
+                         CCCCHV(NMD),QCHANUT(NMD),QCHANVT(NMD)
           ENDDO
         ENDIF
         CLOSE(1)
@@ -883,8 +890,7 @@
           ENDDO
           IF(MDCHH.GE.1)THEN
             DO NMD=1,MDCHH
-             WRITE(1,1001)NMD,MDCHTYP(NMD),CCCCHH(NMD),CCCCHU(NMD),CCCCHV(NMD),QCHANUT(NMD),      &
-                          QCHANVT(NMD)
+             WRITE(1,1001)NMD,MDCHTYP(NMD),CCCCHH(NMD),CCCCHU(NMD),CCCCHV(NMD),QCHANUT(NMD),QCHANVT(NMD)
             ENDDO
           ENDIF
           CLOSE(1)
@@ -900,8 +906,7 @@
           ENDDO
           IF(MDCHH.GE.1)THEN
             DO NMD=1,MDCHH
-             WRITE(1,1001)NMD,MDCHTYP(NMD),CCCCHH(NMD),CCCCHU(NMD),CCCCHV(NMD),QCHANUT(NMD),      &
-                          QCHANVT(NMD)
+             WRITE(1,1001)NMD,MDCHTYP(NMD),CCCCHH(NMD),CCCCHU(NMD),CCCCHV(NMD),QCHANUT(NMD),QCHANVT(NMD)
             ENDDO
           ENDIF
           CLOSE(1)
@@ -948,7 +953,7 @@
 	ENDDO
       DO L=2,LA
         UHDYE(L)=SUB(L)*( FUHDYE(L)-DELTD2*HRUO(L)*RCX(L)*HUTMP(L)*(P(L)-P(L-1)) )
-        VHDXE(L)=SVB(L)*( FVHDXE(L)-DELTD2*HRVO(L)*RCY(L)*HVTMP(L)*(P(L)-TVAR3S(L)))
+        VHDXE(L)=SVB(L)*( FVHDXE(L)-DELTD2*HRVO(L)*RCY(L)*HVTMP(L)*(P(L)-TVAR3S(L)) )
       ENDDO
       DO L=2,LA
         UHE(L)=UHDYE(L)*DYIU(L)
@@ -971,17 +976,17 @@
 !             QCHANU(NMD)=0.
 !             IF(IACTIVE(NMD).EQ.1)THEN
               QCHANU(NMD)=CCCCHU(NMD)*QCHANUT(NMD)-RLAMN*CCCCHU(NMD)*CCCCHV(NMD)*(P(LHOST)        &
-                          -P(LCHNU))-RLAMO*CCCCHU(NMD)*CCCCHV(NMD)*(P1(LHOST)-P1(LCHNU))
+              -P(LCHNU))-RLAMO*CCCCHU(NMD)*CCCCHV(NMD)*(P1(LHOST)-P1(LCHNU))
 !             ENDIF
               QCHANUN(NMD)=QCHANUT(NMD)
-              QCHANV(NMD)=0.
+              QCHANV(NMD)=0.0
               QCHANVN(NMD)=QCHANVT(NMD)
             ENDIF
             IF(MDCHTYP(NMD).EQ.2)THEN
 !             QCHANV(NMD)=0.
 !             IF(IACTIVE(NMD).EQ.1)THEN
               QCHANV(NMD)=CCCCHU(NMD)*QCHANVT(NMD)-RLAMN*CCCCHU(NMD)*CCCCHV(NMD)*(P(LHOST)        &
-                          -P(LCHNV))-RLAMO*CCCCHU(NMD)*CCCCHV(NMD)*(P1(LHOST)-P1(LCHNV))
+                         -P(LCHNV))-RLAMO*CCCCHU(NMD)*CCCCHV(NMD)*(P1(LHOST)-P1(LCHNV))
 !             ENDIF
               QCHANVN(NMD)=QCHANVT(NMD)
               QCHANU(NMD)=0.
@@ -1070,7 +1075,7 @@
       DO L=2,LA
 !      HU(L)=0.5*(HP(L)+HP(L-1))
 !      HV(L)=0.5*(HP(L)+HP(LS))
-       HU(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(L-1)*DYP(L-1)*HP(L-1))/(DXU(L)*DYU(L))
+       HU(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(L-1)*DYP(L-1)*HP(L-1)) /(DXU(L)*DYU(L))
        HV(L)=0.5*(DXP(L)*DYP(L)*HP(L)+TVAR3C(L)*TVAR3S(L))/(DXV(L)*DYV(L))
       ENDDO
 	ENDIF
@@ -1089,7 +1094,7 @@
 !jajah    stop
 !jah   endif
 !jah end
-       HU(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(L-1)*DYP(L-1)*HP(L-1))/(DXU(L)*DYU(L))
+       HU(L)=0.5*(DXP(L)*DYP(L)*HP(L)+DXP(L-1)*DYP(L-1)*HP(L-1)) /(DXU(L)*DYU(L))
        IF(ABS(HU(L)).LT.HDRY/1000.) THEN
        HU(L)=HDRY/1000.
 !        write(6,*) ' *** WARNING CELL RESET TO HYDR/100:',L,'***'
@@ -1456,8 +1461,7 @@
           SRFHOST=HP(LHOST)+BELV(LHOST)
           SRFCHAN1=H1P(LCHNU)+BELV(LCHNU)
           SRFHOST1=H1P(LHOST)+BELV(LHOST)
-          WRITE(1,8001)N,NMD,MDCHTYP(NMD),ICHNU,JCHNU,ISCDRY(LCHNU),SRFCHAN,HP(LCHNU),SRFCHAN1,   &
-                       H1P(LCHNU)
+          WRITE(1,8001)N,NMD,MDCHTYP(NMD),ICHNU,JCHNU,ISCDRY(LCHNU), SRFCHAN,HP(LCHNU),SRFCHAN1,H1P(LCHNU)
           WRITE(1,8002)IHOST,JHOST,ISCDRY(LHOST),SRFHOST,HP(LHOST),SRFHOST1,H1P(LHOST)
           WRITE(1,8003)QCHANU(NMD),QCHANUT(NMD),CCCCHU(NMD),CCCCHV(NMD)
           ENDIF
@@ -1469,8 +1473,7 @@
           SRFHOST=HP(LHOST)+BELV(LHOST)
           SRFCHAN1=H1P(LCHNV)+BELV(LCHNV)
           SRFHOST1=H1P(LHOST)+BELV(LHOST)
-          WRITE(1,8001)N,NMD,MDCHTYP(NMD),ICHNV,JCHNV,ISCDRY(LCHNV),SRFCHAN,HP(LCHNV),SRFCHAN1,   &
-                       H1P(LCHNV)
+          WRITE(1,8001)N,NMD,MDCHTYP(NMD),ICHNV,JCHNV,ISCDRY(LCHNV),SRFCHAN,HP(LCHNV),SRFCHAN1,H1P(LCHNV)
           WRITE(1,8002)IHOST,JHOST,ISCDRY(LHOST),SRFHOST,HP(LHOST),SRFHOST1,H1P(LHOST)
           WRITE(1,8003)QCHANV(NMD),QCHANVT(NMD),CCCCHU(NMD),CCCCHV(NMD)
           ENDIF
@@ -1587,67 +1590,57 @@
 !
       IF(ISNEGH.GE.1.AND.ISHOUSATONIC.EQ.0)CALL NEGDEP(QCHANUT,QCHANVT,2)
       IF(ISNEGH.GE.1.AND.ISHOUSATONIC.EQ.1)CALL NEGDEPHOUS(QCHANUT,QCHANVT,2)
-C
-C**********************************************************************C
-C
- 6910 FORMAT('  DRYING AT N,I,J =',I10,2I6,'  HP,H1P,H2P ='
-     &         ,3(2X,E12.4))
+!
+!**********************************************************************C
+!
+ 6910 FORMAT('  DRYING AT N,I,J =',I10,2I6,'  HP,H1P,H2P =',3(2X,E12.4))
  6911 FORMAT('  DRY W FACE N,I,J =',I10,2I6,' HU,H,H1 =',3(2X,E12.4))
  6912 FORMAT('  DRY E FACE N,I,J =',I10,2I6,' HU,H,H1 =',3(2X,E12.4))
  6913 FORMAT('  DRY S FACE N,I,J =',I10,2I6,' HV,H,H1 =',3(2X,E12.4))
  6914 FORMAT('  DRY N FACE N,I,J =',I10,2I6,' HV,H,H1 =',3(2X,E12.4))
-C
- 6920 FORMAT('  WETTING AT N,I,J =',I10,2I6,' HP,H1P,H2P ='
-     &         ,3(2X,E12.4))
+!
+ 6920 FORMAT('  WETTING AT N,I,J =',I10,2I6,' HP,H1P,H2P =',3(2X,E12.4))
  6921 FORMAT('  WET S FACE N,I,J =',I10,2I6,' HV,H,H1 =',3(2X,E12.4))
  6922 FORMAT('  WET W FACE N,I,J =',I10,2I6,' HU,H,H1 =',3(2X,E12.4))
  6923 FORMAT('  WET E FACE N,I,J =',I10,2I6,' HU,H,H1 =',3(2X,E12.4))
  6924 FORMAT('  WET N FACE N,I,J =',I10,2I6,' HV,H,H1 =',3(2X,E12.4))
-C
- 6930 FORMAT('  WET BY VOL  N,I,J =',I10,2I6,' HP,H1P,H2P ='
-     &         ,3(2X,E12.4))
- 6940 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HP,H1P,H2P ='
-     &         ,3(2X,E12.4))
- 6941 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HUE,HP,H1P ='
-     &         ,3(2X,E12.4))
- 6942 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HUW,HP,H1P ='
-     &         ,3(2X,E12.4))
- 6943 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HVS,HP,H1P ='
-     &         ,3(2X,E12.4))
- 6944 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HVN,HP,H1P ='
-     &         ,3(2X,E12.4))
- 6945 FORMAT('  RESOLVE NEG,  N,I,J =',I10,2I6,' HP,H1P,H2P ='
-     &         ,3(2X,E12.4))
- 6950 FORMAT('  RESOLVE, NEG DEP N,I,J =',I10,2I6,' HP,H1P,H2P ='
-     &         ,3(2X,E12.4))
+!
+ 6930 FORMAT('  WET BY VOL  N,I,J =',I10,2I6,' HP,H1P,H2P =',3(2X,E12.4))
+ 6940 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HP,H1P,H2P =',3(2X,E12.4))
+ 6941 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HUE,HP,H1P =',3(2X,E12.4))
+ 6942 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HUW,HP,H1P =',3(2X,E12.4))
+ 6943 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HVS,HP,H1P =',3(2X,E12.4))
+ 6944 FORMAT('  RESOLVE,  N,I,J =',I10,2I6,' HVN,HP,H1P =',3(2X,E12.4))
+ 6945 FORMAT('  RESOLVE NEG,  N,I,J =',I10,2I6,' HP,H1P,H2P =',3(2X,E12.4))
+ 6950 FORMAT('  RESOLVE, NEG DEP N,I,J =',I10,2I6,' HP,H1P,H2P =',3(2X,E12.4))
  8001 FORMAT(I7,5I5,4E13.4)
  8002 FORMAT(17X,3I5,4E13.4)
  8003 FORMAT(32X,4E13.4)
- 8000 FORMAT('    N    NMD  MTYP   I    J  IDRY      P           H',
-     &       '           P1           H1')
- 8004 FORMAT('                                     QCHANU',
-     &       '       QCHANUT      CCCCHU       CCCCHV ')   
-C
-C**********************************************************************C
-C
-C **  CALCULATE THE EXTERNAL DIVERGENCE 
-C
-C----------------------------------------------------------------------C
-C
+ 8000 FORMAT('    N    NMD  MTYP   I    J  IDRY      P           H',                             &
+             '           P1           H1')
+ 8004 FORMAT('                                     QCHANU',                                      &
+             '       QCHANUT      CCCCHU       CCCCHV ')   
+!
+!**********************************************************************C
+!
+! **  CALCULATE THE EXTERNAL DIVERGENCE 
+!
+!----------------------------------------------------------------------C
+!
       IF(ISDIVEX.EQ.1)THEN
-C
+!
       DIVEXMX=0.
       DIVEXMN=1000000.
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO L=2,LA
       IF(SPB(L).NE.0)THEN
       LN=LNC(L)
-      DIVEX=SPB(L)*(DXYP(L)*(HP(L)-H1P(L))*DELTI
-     &     +0.5*(UHDYE(L+1)+UHDY1E(L+1)-UHDYE(L)-UHDY1E(L)
-     &     +VHDXE(LN)+VHDX1E(LN)-VHDXE(L)-VHDX1E(L))-QSUME(L)
-     &     +RIFTR(L)+EVAPSW(L))
+      DIVEX=SPB(L)*(DXYP(L)*(HP(L)-H1P(L))*DELTI                                                 &
+          +0.5*(UHDYE(L+1)+UHDY1E(L+1)-UHDYE(L)-UHDY1E(L)                                        &
+          +VHDXE(LN)+VHDX1E(LN)-VHDXE(L)-VHDX1E(L))-QSUME(L)                                     &
+          +RIFTR(L)+EVAPSW(L))
       IF(DIVEX.GT.DIVEXMX)THEN
        DIVEXMX=DIVEX
        LMAX=L
@@ -1658,31 +1651,31 @@ C
       ENDIF
       ENDIF
       ENDDO
-C
+!
       IMAX=IL(LMAX)
       JMAX=JL(LMAX)
       IMIN=IL(LMIN)
       JMIN=JL(LMIN)
-C
+!
       WRITE(6,6628)DIVEXMX,IMAX,JMAX
       WRITE(6,6629)DIVEXMN,IMIN,JMIN
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
   566 FORMAT('  I=',I5,3X,'J=',I5,3X,'HP=',F12.4)
  6628 FORMAT('  DIVEXMX=',E13.5,5X,2I10)
  6629 FORMAT('  DIVEXMN=',E13.5,5X,2I10)
-C
-C**********************************************************************C
-C
-C **  UPDATE ZERO DIMENSION VOLUME BALANCE
-C 
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  UPDATE ZERO DIMENSION VOLUME BALANCE
+! 
+!----------------------------------------------------------------------C
+!
       ISTL=2
       IF(ISDRY.GE.1.AND.ISTL.EQ.3)THEN
         VOLADD=0.
@@ -1697,8 +1690,8 @@ C
       ENDIF
  
  5303 FORMAT(2X,F10.4,2X,F10.5,3(2X,E13.5))
-C                         
-C**********************************************************************C
-C
+!                         
+!**********************************************************************C
+!
       RETURN
       END

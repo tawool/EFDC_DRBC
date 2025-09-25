@@ -208,7 +208,7 @@
 !           IF(IMASKDRY(L).EQ.1.) TEMB(L,KBHM)=TATMT(L)
 !         ENDDO
        ENDIF
-C      
+      
        NTSTBCM1=NTSTBC-1
 	 IF(DABEDT.GT.0.0) THEN
          IF(IS2TIM.EQ.1) CALL CALHEATB(ISTL)	

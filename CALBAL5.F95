@@ -196,23 +196,21 @@
       CLOSE(89)
 !
   890 FORMAT (' VOLUME, MASS, AND ENERGY BALANCE OVER',I5,' TIME STEPS',' ENDING AT TIME STEP',I5,//)
-  891 FORMAT (' INITIAL VOLUME    INITIAL SALT    INITIAL DYE     '
-     &,'INITIAL ENER    INITIAL UMO     INITIAL VMO     '
-     &,'INITIAL AMO',/)
+  891 FORMAT (' INITIAL VOLUME    INITIAL SALT    INITIAL DYE     ',                              &
+              'INITIAL ENER    INITIAL UMO     INITIAL VMO     ','INITIAL AMO',/)
   892 FORMAT (1X,7(E14.6,2X))
-  893 FORMAT (' VOLUME OUT        SALT OUT        DYE OUT         '
-     &,'ENERGY OUT      UMO OUT         VMO OUT',/)
-  894 FORMAT (' INITIAL-OUT VOL   INIT-OUT SALT   INIT-OUT DYE    '
-     &,'INIT-OUT ENER   INIT-OUT UMO    INIT-OUT VMO',/)
-  895 FORMAT (' FINAL VOLUME      FINAL SALT      FINAL DYE       '
-     &,'FINAL ENERGY    FINAL UMO       FINAL VMO       '
-     &,'FINAL AMO',/)
-  896 FORMAT (' VOLUME ERR        SALT ERR        DYE ERR         '
-     &,'ENERGY ERR      UMO ERR         VMO ERR',/)
-  897 FORMAT (' R VOL/END ER      R SAL/END ER    R DYE/END ER    '
-     &,'R ENE/END ER    R UMO/END ER    R VMO/END ER',/)
-  898 FORMAT (' R VOL/OUT ER      R SAL/OUT ER    R DYE/OUT ER    '
-     &,'R ENE/OUT ER    R UMO/OUT ER    R VMO/OUT ER',/)
+  893 FORMAT (' VOLUME OUT        SALT OUT        DYE OUT         ',                              &
+              'ENERGY OUT      UMO OUT         VMO OUT',/)
+  894 FORMAT (' INITIAL-OUT VOL   INIT-OUT SALT   INIT-OUT DYE    ',                              &
+              'INIT-OUT ENER   INIT-OUT UMO    INIT-OUT VMO',/)
+  895 FORMAT (' FINAL VOLUME      FINAL SALT      FINAL DYE       ',                              &
+              'FINAL ENERGY    FINAL UMO       FINAL VMO       ','FINAL AMO',/)
+  896 FORMAT (' VOLUME ERR        SALT ERR        DYE ERR         ',                              &
+              'ENERGY ERR      UMO ERR         VMO ERR',/)
+  897 FORMAT (' R VOL/END ER      R SAL/END ER    R DYE/END ER    ',                              &
+              'R ENE/END ER    R UMO/END ER    R VMO/END ER',/)
+  898 FORMAT (' R VOL/OUT ER      R SAL/OUT ER    R DYE/OUT ER    ',                              &
+              'R ENE/OUT ER    R UMO/OUT ER    R VMO/OUT ER',/)
   899 FORMAT (////)
   900 FORMAT (//)
   901 FORMAT(' UUEBEG =  ',E14.6)

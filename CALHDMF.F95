@@ -89,10 +89,10 @@
        IF(SVBO(L).GT.0.5.AND.SVBO(LW).LT.0.5) ICORDXV(L)=3
       ENDDO
 !
-C**********************************************************************C
-C
-C **  CALCULATE HORIZONTAL VELOCITY SHEARS - OLD
-C
+!C**********************************************************************C
+!C
+!C **  CALCULATE HORIZONTAL VELOCITY SHEARS - OLD
+!C
 !SO      DO K=1,KC
 !SO      DO L=2,LA
 !SO      LS=LSC(L)      
@@ -241,8 +241,7 @@ C
         OPEN(1,FILE='AHSXY.DIA')
         DO L=2,LA
 !        WRITE(1,1112)IL(L),JL(L),(AH(L,K),K=1,KC),(AHC(L,K),K=1,KC)
-        WRITE(1,1112)IL(L),JL(L),SXY2CC(L,KC),SXY2EE(L,KC),
-     &                                    SXY2NN(L,KC)
+        WRITE(1,1112)IL(L),JL(L),SXY2CC(L,KC),SXY2EE(L,KC),SXY2NN(L,KC)
         ENDDO
         CLOSE(1)
       ENDIF
@@ -452,7 +451,7 @@ C
 !
 !
       AHWVX=WVFACT*WVLSX*WVPRD*WVPRD
-C
+
       DO K=1,KC
       DO L=2,LA
       DTMPH=(WVFACT*WVDISP(L,K))**0.3333

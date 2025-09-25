@@ -732,7 +732,7 @@
       IF(ISSKIP .EQ. 0) READ(1,999)
       READ(1,*) WQKHBMF,WQBFTAM,WQTTAM,WQKTAM,WQTAMDMX,WQKDOTAM,WQKFCB,WQTFCB
       WRITE(2,*) WQKHBMF,WQBFTAM,WQTTAM,WQKTAM,WQTAMDMX,WQKDOTAM,WQKFCB,WQTFCB
-      WRITE(2,82)
+      WRITE(2,82)                                                                                &
        '* DO WHERE TAM RELEASE IS HALF ANOXIC ONE  = ',WQKHBMF                                   &
       ,'  ANOXIC RELEASE OF TAM (MOL/M^2/D)        = ',WQBFTAM                                   &
       ,'  REFERENCE TEMP FOR TAM RELEASE (OC)      = ',WQTTAM                                    &
@@ -1245,9 +1245,8 @@
         WQKMVE(LL)=XMRME
         WQV(LL,1,IDNOTRVA)=WQV(1,1,IDNOTRVA)
         WQVO(LL,1,IDNOTRVA)=WQV(1,1,IDNOTRVA)
-        WRITE(2,9004) II, JJ, LL, PSHADE(LL), WQKMV(LL), WQKMVMIN(LL),
-     +    WQKBP(LL), WQKMVA(LL), WQKMVB(LL), WQKMVC(LL), WQKMVD(LL),
-     +    WQKMVE(LL)
+        WRITE(2,9004) II, JJ, LL, PSHADE(LL), WQKMV(LL), WQKMVMIN(LL),                     &
+         WQKBP(LL), WQKMVA(LL), WQKMVB(LL), WQKMVC(LL), WQKMVD(LL), WQKMVE(LL)
 9004    FORMAT(' ',I3,' ',I3,' ',I3, 9F7.3)
         GOTO 9001
 9002    CLOSE(3)
@@ -1264,12 +1263,10 @@
       READ(1,90) TITLE(1)
       IF(ISSKIP .GT. 0) CALL SKIPCOMM(1,CCMRM)
       IF(ISSKIP .EQ. 0) READ(1,999)
-      READ(1,*) WQPMC(1),WQPMD(1),WQPMG(1),WQPMM(1),WQBMRC(1),
-     *    WQBMRD(1),WQBMRG(1),WQBMRM(1),WQPRRC(1),WQPRRD(1),
-     *    WQPRRG(1),WQPRRM(1),WQKEB(1)
-      WRITE(2,*) WQPMC(1),WQPMD(1),WQPMG(1),WQPMM(1),WQBMRC(1),
-     *    WQBMRD(1),WQBMRG(1),WQBMRM(1),WQPRRC(1),WQPRRD(1),
-     *    WQPRRG(1),WQPRRM(1),WQKEB(1)
+      READ(1,*) WQPMC(1),WQPMD(1),WQPMG(1),WQPMM(1),WQBMRC(1),WQBMRD(1),WQBMRG(1),WQBMRM(1),      &
+                WQPRRC(1),WQPRRD(1),WQPRRG(1),WQPRRM(1),WQKEB(1)
+      WRITE(2,*) WQPMC(1),WQPMD(1),WQPMG(1),WQPMM(1),WQBMRC(1),WQBMRD(1),WQBMRG(1),WQBMRM(1),     &
+                 WQPRRC(1),WQPRRD(1),WQPRRG(1),WQPRRM(1),WQKEB(1)
       IF(IWQAGR.NE.1)THEN
         WRITE(2,999)
         WRITE(2,90) TITLE(1)
@@ -1540,12 +1537,12 @@
        ELSE
         IF(RSTOFN(1:4).NE.'NONE')STOP 'ERROR!! INVALID IWQORST/RSTOFN'
       ENDIF
-  888 FORMAT('    L    K',
-     *'          BC          BD          BG        RPOC        LPOC',
-     *'         DOC        RPOP        LPOP         DOP        PO4T',
-     *'        RPON        LPON         DON         NH4         NO3',
-     *'          SU          SA         COD          O2         TAM',
-     *'         FCB')
+  888 FORMAT('    L    K',                                                                        &
+     '          BC          BD          BG        RPOC        LPOC',                              &
+     '         DOC        RPOP        LPOP         DOP        PO4T',                              &
+     '        RPON        LPON         DON         NH4         NO3',                              &
+     '          SU          SA         COD          O2         TAM',                              &
+     '         FCB')
 !
       READ(1,295) ICIFN
       WRITE(2,85)'* FILE FOR INITIAL CONDITIONS             = ', ICIFN
@@ -1680,20 +1677,16 @@
         WRITE(2,*) ' SPATIALLY-VARYING KINETICS.INP FILE'
         WRITE(2,9111)
         DO I=1,IWQZ
-          READ(1,*) IZ, IWQKA(IZ), WQKRO(IZ), WQKTR(IZ), REAC(IZ),
-     +     WQKDC(IZ), WQKDCALM(IZ), WQKHRM(IZ), WQDOPM(IZ), WQKCD(IZ),
-     +     WQKHCOD(IZ)
-          WRITE(2,*) IZ, IWQKA(IZ), WQKRO(IZ), WQKTR(IZ), REAC(IZ),
-     +     WQKDC(IZ), WQKDCALM(IZ), WQKHRM(IZ), WQDOPM(IZ), WQKCD(IZ),
-     +     WQKHCOD(IZ)
-          WRITE(2,9112) IZ, IWQKA(IZ), WQKRO(IZ), WQKTR(IZ), REAC(IZ),
-     +     WQKDC(IZ), WQKDCALM(IZ), WQKHRM(IZ), WQDOPM(IZ), WQKCD(IZ),
-     +     WQKHCOD(IZ)
+          READ(1,*) IZ, IWQKA(IZ), WQKRO(IZ), WQKTR(IZ), REAC(IZ),                                &
+          WQKDC(IZ), WQKDCALM(IZ), WQKHRM(IZ), WQDOPM(IZ), WQKCD(IZ),WQKHCOD(IZ)
+         WRITE(2,*) IZ, IWQKA(IZ), WQKRO(IZ), WQKTR(IZ), REAC(IZ),                                &
+          WQKDC(IZ), WQKDCALM(IZ), WQKHRM(IZ), WQDOPM(IZ), WQKCD(IZ),WQKHCOD(IZ)
+         WRITE(2,9112) IZ, IWQKA(IZ), WQKRO(IZ), WQKTR(IZ), REAC(IZ),                             &
+          WQKDC(IZ), WQKDCALM(IZ), WQKHRM(IZ), WQDOPM(IZ), WQKCD(IZ),WQKHCOD(IZ)
         ENDDO
         CLOSE(1)
       ENDIF
-9111  FORMAT(/,'ZONE IWQKA   KRO   KTR  REAC   KDC KDCALGM  KHRM',
-     + ' DOPTM   KCD KHCOD')
+9111  FORMAT(/,'ZONE IWQKA   KRO   KTR  REAC   KDC KDCALGM  KHRM',' DOPTM   KCD KHCOD')
 9112  FORMAT(I4, I6, 4F6.3, F8.3, 4F6.3)
 !
 ! SET UP LOOK-UP TABLE FOR TEMPERATURE DEPENDENCY OVER -15OC TO 40OC

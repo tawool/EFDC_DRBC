@@ -166,7 +166,7 @@
          CONCZ(L,1)=CON1(L,1)+RCOSMICZ(L,1)*(COSMICZN(L,1)*DELCZ(L,1))
         ENDDO
         DO L=2,LA
-         CONCZ(L,KC)=CON1(L,KC)+RCOSMICZ(L,KC)*(COSMICZP(L,KS)*DELCZ(L,KS)
+         CONCZ(L,KC)=CON1(L,KC)+RCOSMICZ(L,KC)*(COSMICZP(L,KS)*DELCZ(L,KS))
         ENDDO
       ENDIF
 !
@@ -289,7 +289,7 @@
       ENDDO
       ENDDO
 !
-!     DO K=1,KC    
+     DO K=1,KC    
       DO L=2,LA
       CONCZX(L,K)=CONCZ(L,K)+RCOSMICX(L,K)*(COSMICXP(L,K)*DELCX(L,K)+COSMICXN(L+1,K)*DELCX(L+1,K))
       ENDDO
@@ -772,7 +772,8 @@
         IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(GVCSCLU(L+1)*UHDY2(LE,K)*CON1(L,K)-FUHU(LE,K)) &
                                    *DXYIP(L)*GVCSCLPI(L)*HPI(L) 
         IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)&
-                                   +DELT*(0.5*UHDY2(LE,K)*(CON1(L,K)+CON(L,K))                                                                               &     -FUHU(LE,K))*DXYIP(L)*GVCSCLPI(L)*HPI(L) 
+                                   +DELT*(0.5*UHDY2(LE,K)*(CON1(L,K)+CON(L,K))                    &
+                                   -FUHU(LE,K))*DXYIP(L)*GVCSCLPI(L)*HPI(L) 
 !LZ     &   +DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))*DXYIP(L)*HPI(L)     
 !LZ     &     +DELT*(0.5*UHDY2(L+1,K)*(CON1(L,K)+CON(L,K))
 !LZ     &     -FUHU(L+1,K))*DXYIP(L)*HPI(L)     
@@ -814,9 +815,9 @@
               *DXYIP(L)*GVCSCLPI(L)*HPI(L)  
         IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L) &
               +DELT*(FUHU(L,K)-0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*GVCSCLPI(L)*HPI(L) 
-CLZ     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)    
-CLZ     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L) 
-CLZ     &      -0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
+!CLZ     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)    
+!CLZ     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L) 
+!CLZ     &      -0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP

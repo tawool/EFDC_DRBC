@@ -68,7 +68,7 @@
           DO L=2,LA
             LN=LNC(L)
             LS=LSC(L)
-            WZ(L,K)=W(L,K)+GI*ZZ(K)*( DELTI*(P(L)-P1(L))&+0.5*U(L+1,K)*(P(L+1)-P(L))*DXIU(L+1)+0.5&
+            WZ(L,K)=W(L,K)+GI*ZZ(K)*( DELTI*(P(L)-P1(L))+0.5*U(L+1,K)*(P(L+1)-P(L))*DXIU(L+1)+0.5 &
                     *U(L,K)*(P(L)-P(L-1))*DXIU(L)+0.5*V(LN,K)*(P(LN)-P(L))*DYIV(LN)+0.5*V(L,K)    &
                     *(P(L)-P(LS))*DYIV(L))+(1.-ZZ(K))*( DELTI*(BELV(L)-BELV1(L))+0.5*U(L+1,K)     &
                     *(BELV(L+1)-BELV(L))*DXIU(L+1)+0.5*U(L,K)*(BELV(L)-BELV(L-1))*DXIU(L)+0.5     &

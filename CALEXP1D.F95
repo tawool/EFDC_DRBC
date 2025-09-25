@@ -442,12 +442,12 @@
       DO K=1,KS
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*( HU(L)*( (B(L,K+1)-B(L-1,K+1))*DZC(K+1)      &
-                +(B(L,K)-B(L-1,K))*DZC(K)+(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*(HMP(L)-HMP(L-1)  &
-                -Z(K)*(HP(L)-HP(L-1))))
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*( HV(L)*( (B(L,K+1)-B(LS,K+1))*DZC(K+1)       &
-                +(B(L,K)-B(LS,K))*DZC(K))+(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*(HMP(L)-HMP(LS)-Z(K)&
-                *(HP(L)-HP(LS))) )
+ FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*(HU(L)*((B(L,K+1)-B(L-1,K+1))*DZC(K+1)             &
+           +(B(L,K)-B(L-1,K))*DZC(K))+(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*                      &
+           (HMP(L)-HMP(L-1)-Z(K)*(HP(L)-HP(L-1))) )
+ FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*( HV(L)*( (B(L,K+1)-B(LS,K+1))*DZC(K+1)            &
+           +(B(L,K)-B(LS,K))*DZC(K) )+(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*                        &
+           (HMP(L)-HMP(LS)-Z(K)*(HP(L)-HP(LS))))  
       ENDDO
       ENDDO
 !

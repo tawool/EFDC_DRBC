@@ -656,9 +656,8 @@
 !
       DO L=2,LA
       LN=LNC(L)
-      FP1(L)=FP1(L)+SPB(L)*( DELTI*DXYP(L)*P1(L)
-     &      -0.5*G*(UHDY1E(L+1)-UHDY1E(L)
-     &             +VHDX1E(LN )-VHDX1E(L)) )
+      FP1(L)=FP1(L)+SPB(L)*( DELTI*DXYP(L)*P1(L)-0.5*G*(UHDY1E(L+1)-UHDY1E(L)  &
+             +VHDX1E(LN )-VHDX1E(L)) )
       ENDDO
 !
 !**********************************************************************C

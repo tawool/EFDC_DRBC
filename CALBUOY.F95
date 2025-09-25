@@ -47,7 +47,7 @@
       ENDDO
 !
       ENDIF
-C
+!
       IF(ISTRAN(1).GE.1.AND.ISTRAN(2).EQ.0)THEN
 !
       DO K=1,KC

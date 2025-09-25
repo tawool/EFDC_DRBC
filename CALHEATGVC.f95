@@ -241,7 +241,7 @@
 !           ENDDO
 !         ENDIF
        ENDIF
-C
+
        NTSTBCM1=NTSTBC-1
 	 IF(DABEDT.GT.0.0) THEN
          IF(IS2TIM.EQ.1) CALL CALHEATBGVC(ISTL)	

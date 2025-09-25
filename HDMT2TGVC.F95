@@ -204,7 +204,7 @@
       IF(ISBSDFUF.GE.1)THEN
 !jh060305      HDFUFM=1.E-12
       HDFUFM=0.0
-C
+
       DO L=2,LA
         LS=LSC(L)
         HDFUFX(L)=HDFUFM+G*SUB(L)*HU(L)*(BELV(L-1)-BELV(L))*DXIU(L)
@@ -309,7 +309,7 @@ C
 !----------------------------------------------------------------------c
 !
        IF(ISCORTBC.GE.1) THEN
-C
+
        IF(ISCORTBCD.GE.1)THEN
          OPEN(1,FILE='ADJSTRESSE.OUT')
          CLOSE(1,STATUS='DELETE')
@@ -362,7 +362,7 @@ C
        QQ1(L,KC)=0.5*CTURB2*SQRT((RSSBCE(L)*TVAR3W(L)+RSSBCW(L)*TSX1(L))**2+(RSSBCN(L)*TVAR3S(L)  &
                  +RSSBCS(L)*TSY1(L))**2)
        ENDDO
-C
+
        DO L=2,LA
        TVAR3S(L)=TSY(LNC(L))
        TVAR3W(L)=TSX(L+1)
@@ -394,25 +394,25 @@ C
 	     ENDIF
 	   ENDIF
        ENDDO
-C
+
        CLOSE(1)
-C
+
        ENDIF
-C
-C----------------------------------------------------------------------c
-C
+!C
+!C----------------------------------------------------------------------c
+!C
       ENDIF
-C
-C**********************************************************************C
-C
-C **  SET BOTTOM AND SURFACE TURBULENT INTENSITY SQUARED
-C
-C----------------------------------------------------------------------C
-C
-C     IF(KC.GT.1.OR.ISTRAN(4).GE.1)THEN
-C
+!C
+!C**********************************************************************C
+!C
+!C **  SET BOTTOM AND SURFACE TURBULENT INTENSITY SQUARED
+!C
+!C----------------------------------------------------------------------C
+!C
+!C     IF(KC.GT.1.OR.ISTRAN(4).GE.1)THEN
+!C
       IF(ISWAVE.GE.1)THEN
-C
+!C
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -423,7 +423,7 @@ C
        TVAR3N(L)=TBY1(LNC(L))
        ENDDO
       ENDDO
-C
+!C
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1

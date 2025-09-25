@@ -83,17 +83,14 @@
       DO K=1,KS    
       DO L=2,LA
       LS=LSC(L)      
-      FUHU(L,K)=MAX(UHDY2(L,K),0.)*QCON1(L-1,K)
-     &         +MIN(UHDY2(L,K),0.)*QCON1(L,K)
-      FVHU(L,K)=MAX(VHDX2(L,K),0.)*QCON1(LS,K)
-     &         +MIN(VHDX2(L,K),0.)*QCON1(L,K)
+      FUHU(L,K)=MAX(UHDY2(L,K),0.)*QCON1(L-1,K)+MIN(UHDY2(L,K),0.)*QCON1(L,K)
+      FVHU(L,K)=MAX(VHDX2(L,K),0.)*QCON1(LS,K)+MIN(VHDX2(L,K),0.)*QCON1(L,K)
       ENDDO
       ENDDO
 !
       DO K=0,KS
       DO L=2,LA
-      FWU(L,K)=MAX(W2(L,K),0.)*QCON1(L,K)
-     &        +MIN(W2(L,K),0.)*QCON1(L,K+1)
+      FWU(L,K)=MAX(W2(L,K),0.)*QCON1(L,K)+MIN(W2(L,K),0.)*QCON1(L,K+1)
       ENDDO
       ENDDO
 !
@@ -611,8 +608,7 @@
 !
       DO K=0,KS
       DO L=2,LA
-      FWU(L,K)=MIN(DV(L,K),DU(L,K+1))*FWU(L,K)
-     &        +MIN(DU(L,K),DV(L,K+1))*FWV(L,K)
+      FWU(L,K)=MIN(DV(L,K),DU(L,K+1))*FWU(L,K)+MIN(DU(L,K),DV(L,K+1))*FWV(L,K)
       ENDDO
       ENDDO  
 !

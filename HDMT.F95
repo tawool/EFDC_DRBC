@@ -1294,7 +1294,7 @@
 !     IF(KC.GT.1.OR.ISTRAN(4).GE.1)THEN
 !
       IF(ISWAVE.GE.1)THEN
-C
+
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1

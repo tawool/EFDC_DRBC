@@ -964,7 +964,7 @@
                 +B(LS ,K+1)-B(LS,K))*(BELV(L)-BELV(LS )+Z(K)*(HP(L)-HP(LS)))-0.25*(B(L,K)-B(L,K-1)&
                 +B(LS,K)-B(LS,K-1))*(BELV(L)-BELV(LS)+Z(K-1)*(HP(L)-HP(LS))))
       ENDDO
-C
+
       IF(KC.GT.3)THEN
       DO K=2,KS-1
       DO L=2,LA

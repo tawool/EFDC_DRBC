@@ -3,7 +3,7 @@
 !**********************************************************************C
 !**********************************************************************C
 !
-!     SUBROUTINE CALQQ1 (ISTL)
+     SUBROUTINE CALQQ1 (ISTL)
 !
 ! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a 
 !
@@ -184,7 +184,7 @@
 !----------------------------------------------------------------------C
 !
       DO K=1,KC
-C
+
       DO LL=1,NCBS
       L=LCBS(LL)
       LN=LNC(L)
@@ -224,7 +224,7 @@ C
 !
       IF(ISWAVE.LE.1)THEN
       IF(ISTL.EQ.2)THEN
-C
+
         DO K=1,KS
         DO L=2,LA
           LN=LNC(L)

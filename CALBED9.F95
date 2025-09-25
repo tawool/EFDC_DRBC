@@ -31,39 +31,39 @@
 !zzdiff      REAL*4 DSTAR  
 !zzdiff      REAL*4 CCUSTAR(LCM)  
 !
-      COMMON/SSEDTOX1/ CTMPDRY(LCM),CSHIELDS50(LCM),
-     &                 USTAR(LCM),UCELLCTR(LCM),VCELLCTR(LCM),
-     &                 QWBDTOP(LCM),QSBDTOP(LCM),ZETATOP(LCM),
-     &                 ZBEDGT(LCM),QSBDLDP(LCM),RBPSBL(LCM),
-     &                 TOXBBALO(LCM),TOXBBALN(LCM),TOXWBALO(LCM),
-     &                 ROUSE(LCM),ZEQ(LCM),ZEQI(LCM),ZEQD(LCM),
-     &                 ZEQDI(LCM),SNDEQ(LCM),SNDEQB(LCM),
-     &                 TOXWBALN(LCM),FACSUSL(LCM),FACBEDL(LCM),
-     &                 PEXP(LCM,NSNM),PHID(LCM,NSNM),
-     &                 SEDFPA(LCM,NSCM),SNDFPA(LCM,NSNM)
+      COMMON/SSEDTOX1/ CTMPDRY(LCM),CSHIELDS50(LCM),                                              &
+                      USTAR(LCM),UCELLCTR(LCM),VCELLCTR(LCM),                                     &
+                      QWBDTOP(LCM),QSBDTOP(LCM),ZETATOP(LCM),                                     &
+                      ZBEDGT(LCM),QSBDLDP(LCM),RBPSBL(LCM),                                       &
+                      TOXBBALO(LCM),TOXBBALN(LCM),TOXWBALO(LCM),                                  &
+                      ROUSE(LCM),ZEQ(LCM),ZEQI(LCM),ZEQD(LCM),                                    &
+                      ZEQDI(LCM),SNDEQ(LCM),SNDEQB(LCM),                                          &
+                      TOXWBALN(LCM),FACSUSL(LCM),FACBEDL(LCM),                                    &
+                      PEXP(LCM,NSNM),PHID(LCM,NSNM),                                              &
+                      SEDFPA(LCM,NSCM),SNDFPA(LCM,NSNM)
 !
-      COMMON/SSEDTOX1A/ CBEDTOTAL(LCM),QCELLCTR(LCM),HGDH(LCM),
-     &                  FRACCOH(LCM,KBM),FRACNON(LCM,KBM),USTARSED(LCM),
-     &                  USTARSND(LCM),QWATPA(LCM),QSSDPA(LCM)
+      COMMON/SSEDTOX1A/ CBEDTOTAL(LCM),QCELLCTR(LCM),HGDH(LCM),                                   &
+                       FRACCOH(LCM,KBM),FRACNON(LCM,KBM),USTARSED(LCM),                           &
+                       USTARSND(LCM),QWATPA(LCM),QSSDPA(LCM)
 !
-      COMMON/SSEDTOX2/ CDECAYW(LCM,KCM),CDECAYB(LCM,KBM),STRSE(LCM,KBM),
-     &                 HYDCN(LCM,KBM),COEFK(LCM,KBM),COEFSK(LCM,KBM),
-     &                 PRESE(LCM,KBM),PRESH(LCM,KBM),PREST(LCM,KBM),
-     &                 STRST(LCM,KBM),DZBTR1(LCM,KBM),SEDDIA50(LCM,KBM),
-     &                 SEDBALL(LCM,KBM),ZBEDC(LCM,KBM),SGSM1(LCM,KBM),
-     &                 DSTRSE(LCM,KBM),DZBTR(LCM,KBM),STRSEM(LCM,KBM),
-     &                 SEDDIA90(LCM,KBM),SEDGEOSTD(LCM,KBM),
-     &                 SEDDIAGS(LCM,KBM),ZOTOTAL(LCM),ZOGRAIN(LCM)
+      COMMON/SSEDTOX2/ CDECAYW(LCM,KCM),CDECAYB(LCM,KBM),STRSE(LCM,KBM),                          &
+                      HYDCN(LCM,KBM),COEFK(LCM,KBM),COEFSK(LCM,KBM),                              &
+                      PRESE(LCM,KBM),PRESH(LCM,KBM),PREST(LCM,KBM),                               &
+                      STRST(LCM,KBM),DZBTR1(LCM,KBM),SEDDIA50(LCM,KBM),                           &
+                      SEDBALL(LCM,KBM),ZBEDC(LCM,KBM),SGSM1(LCM,KBM),                             &
+                      DSTRSE(LCM,KBM),DZBTR(LCM,KBM),STRSEM(LCM,KBM),                             &
+                      SEDDIA90(LCM,KBM),SEDGEOSTD(LCM,KBM),                                       &
+                      SEDDIAGS(LCM,KBM),ZOTOTAL(LCM),ZOGRAIN(LCM)
 !
-      COMMON/SSEDTOX3/ ALOW(LCM,KBM+1),BMNN(LCM,KBM+1),CUPP(LCM,KBM+1),
-     &                 RRHS(LCM,KBM+1),TOXTMP(LCM,KBM+1),
-     &                 GAMTMP(LCM,KBM+1),ACOEF(LCM,0:KBM),
-     &                 QCOEF(LCM,0:KBM),ZBEDG(LCM,0:KBM)
+      COMMON/SSEDTOX3/ ALOW(LCM,KBM+1),BMNN(LCM,KBM+1),CUPP(LCM,KBM+1),                           &
+                      RRHS(LCM,KBM+1),TOXTMP(LCM,KBM+1),                                          &
+                      GAMTMP(LCM,KBM+1),ACOEF(LCM,0:KBM),                                         &
+                      QCOEF(LCM,0:KBM),ZBEDG(LCM,0:KBM)
 !
-      COMMON/SSEDTOX4/ WSETA(LCM,0:KSM,NSTM),SEDS(LCM,KCM,NSCM),
-     &                 SNDS(LCM,KCM,NSNM),TOXS(LCM,KCM,NTXM),
-     &                 SEDBS(LCM,KBM,NSCM),SNDBS(LCM,KBM,NSNM),
-     &                 TOXBS(LCM,KBM,NTXM)
+      COMMON/SSEDTOX4/ WSETA(LCM,0:KSM,NSTM),SEDS(LCM,KCM,NSCM),                                  &
+                      SNDS(LCM,KCM,NSNM),TOXS(LCM,KCM,NTXM),                                      &
+                      SEDBS(LCM,KBM,NSCM),SNDBS(LCM,KBM,NSNM),                                    &
+                      TOXBS(LCM,KBM,NTXM)
 !
       COMMON/SSEDTOX5/ NSP2(NTXM),DERRB(KBM),STRESSS(0:KSM)
 !
@@ -1095,7 +1095,7 @@
 ! ** ADD OR REMOVE LAYERS
 !
 !          CALL CALBLAY
-C
+
         ENDIF
 !
 !----------------------------------------------------------------------C

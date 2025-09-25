@@ -619,7 +619,7 @@
 !----------------------------------------------------------------------C
 !
       IF(ISGWIE.GE.1)THEN
-C
+
       DO L=2,LA
       RIFTR(L)=0.
       EVAPSW(L)=0.
@@ -729,15 +729,13 @@ C
 ! **  INTERACTION
 !
 !----------------------------------------------------------------------C
-C
+
  1000 CONTINUE
 !
       DO L=2,LA
       LN=LNC(L)
-      FP(L)=FP1(L)-0.5*G*SPB(L)*
-     &      ( SUB(L+1)*FUHDYE(L+1)-SUB(L)*FUHDYE(L)
-     &       +SVB(LN )*FVHDXE(LN )-SVB(L)*FVHDXE(L)
-     &       -2.0*QSUME(L) )
+      FP(L)=FP1(L)-0.5*G*SPB(L)*(SUB(L+1)*FUHDYE(L+1)-SUB(L)*FUHDYE(L)     &
+            +SVB(LN )*FVHDXE(LN )-SVB(L)*FVHDXE(L)-2.0*QSUME(L) )
 !C      P(L)=0.
       ENDDO
 !
@@ -888,7 +886,7 @@ C
           LCHNU=LMDCHU(NMD)
           LCHNV=LMDCHV(NMD)
           GBELVTMP=G*BELV(LHOST)
-C         X-DIRECTION CHANNEL
+!C         X-DIRECTION CHANNEL
           IF(MDCHTYP(NMD).EQ.1)THEN
             IACTIVE=0
             IF(P(LCHNU).GT.P(LHOST).AND.H1P(LCHNU).GT.HWET)THEN

@@ -37,11 +37,11 @@
 !
       LINES=LA-1
       IF(JSPPH.EQ.1)THEN
-        OPEN(92,FILE='SURFCON.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',
+        OPEN(92,FILE='SURFCON.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',FORM='BINARY')
 !######################################################################
 !     HQI Change for EFDC Explorer compatibility
 !    .        FORM='UNFORMATTED')
-     .        FORM='BINARY')
+ 
 !######################################################################
         CLOSE(92,STATUS='DELETE')
         OPEN(92,FILE='SURFCON.OUT',STATUS='UNKNOWN',ACCESS='SEQUENTIAL',FORM='BINARY')

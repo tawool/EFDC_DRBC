@@ -86,7 +86,8 @@
         DO K=1,KC
         DO L=2,LA
 	    IF(LGVCP(L,K))THEN
-            WB=0.5*DXYP(L)*(W2(L,K-1)+W2(L,K))FWQQ(L,K)=MAX(WB,0.)*QQ1(L,K-1)+MIN(WB,0.)*QQ1(L,K)
+            WB=0.5*DXYP(L)*(W2(L,K-1)+W2(L,K))
+            FWQQ(L,K)=MAX(WB,0.)*QQ1(L,K-1)+MIN(WB,0.)*QQ1(L,K)
             FWQQL(L,K)=MAX(WB,0.)*QQL1(L,K-1)*H1P(L)+MIN(WB,0.)*QQL1(L,K)*H1P(L)
           ELSE
             FWQQ(L,K)=0.

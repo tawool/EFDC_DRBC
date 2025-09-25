@@ -283,7 +283,7 @@
             ENDDO
 !
             DO L=2,LA
-C
+
               DIFBWFAC=2./HBED(L,KBT(L))
               IF(ISDIFBW(NT).EQ.1)DIFBWFAC=1.0
               TOXBBALO(L)=0.

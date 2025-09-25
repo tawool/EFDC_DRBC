@@ -105,7 +105,7 @@
 !      WRITE (8,6064)IL(L),JL(L),HV(LN),H1V(LN)               !hnr 7/27/2009
 !jah
       HV(L)=HDRY
-Ccjah
+
       ENDIF
       ENDDO
 !

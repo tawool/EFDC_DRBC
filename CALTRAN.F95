@@ -266,8 +266,7 @@
 !
       DO K=1,KC
       DO L=2,LA
-      CONT(L,K)=0.5*(CON(L,K)+CON1(L,K))
-     &         +DELT*0.5*FQC(L,K)*DXYIP(L)/H2P(L)
+      CONT(L,K)=0.5*(CON(L,K)+CON1(L,K))+DELT*0.5*FQC(L,K)*DXYIP(L)/H2P(L)
       ENDDO
       ENDDO
 !
@@ -456,13 +455,13 @@
 !1023     &       +DELT*( ( FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
 !1023     &                        +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
 !1023     &                        +(FWU(L,K-1)-FWU(L,K))*RDZIC )
-      CH(L,K)=CON1(L,K)*H2P(L)
-     &       +DELT*( ( RDZIC*FQC(L,K)         +FUHU(L,K)-FUHU(L+1,K)+FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)+(FWU(L,K-1)-FWU(L,K))*RDZIC )
-C      TMPFAC=1.0/(1.0-0.5*DELT*RDZIC*HPI(L)*QSUMNAD(L,K)*DXYIP(L))
-C      CH(L,K)=TMPFAC*CH(L,K)
+      CH(L,K)=CON1(L,K)*H2P(L)+DELT*((RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)+FVHU(L,K)              &
+              -FVHU(LNC(L),K))*DXYIP(L)+(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!C      TMPFAC=1.0/(1.0-0.5*DELT*RDZIC*HPI(L)*QSUMNAD(L,K)*DXYIP(L))
+!C      CH(L,K)=TMPFAC*CH(L,K)
       ENDDO
       ENDDO
-C
+!C
       IF(ISFCT(MVAR).GE.1)THEN
        DO K=1,KC
        DO L=2,LA
@@ -470,11 +469,11 @@ C
        ENDDO
        ENDDO
       ENDIF
-C
+!C
       ENDIF
-C
-C ENDIF ON TIME LEVEL CHOICE FOR ISCDAC=0
-C
+!C
+!C ENDIF ON TIME LEVEL CHOICE FOR ISCDAC=0
+!C
       IF(ISUD.EQ.1)THEN
       DO K=1,KC
       DO L=2,LA
@@ -482,70 +481,62 @@ C
       ENDDO
       ENDDO
       ENDIF
-C
+!C
       DO K=1,KC
       DO L=2,LA
       CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
       CONT(L,K)=0.0
       ENDDO
       ENDDO
-C
-C **  ADD REMAINING SEDIMENT SETTLING AND FLUX
-C
-C     IF(M.EQ.4)THEN
-C      IF(ISTOPT(4).EQ.2) CALL CALSED2(ISTL,0.5,CON )
-C      NTSWVD=ISWVSD
-C      IF(ISTOPT(4).EQ.13) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.14.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.15) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.16.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
-C     ENDIF
-C
-C **  IF ISACAC NE 0 DO NOT INCLUDE FQC MASS SOURCES IN UPDATE
-C
-C ELSE ON TRANSPORT OPTION CHOICE
-C
+!
+! **  ADD REMAINING SEDIMENT SETTLING AND FLUX
+!
+!     IF(M.EQ.4)THEN
+!      IF(ISTOPT(4).EQ.2) CALL CALSED2(ISTL,0.5,CON )
+!      NTSWVD=ISWVSD
+!      IF(ISTOPT(4).EQ.13) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.14.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.15) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.16.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
+!     ENDIF
+!
+! **  IF ISACAC NE 0 DO NOT INCLUDE FQC MASS SOURCES IN UPDATE
+!
+! ELSE ON TRANSPORT OPTION CHOICE
+!
       ELSE
-C
-C BEGIN IF ON TIME LEVEL CHOICE FOR ISCDAC.NE.0
-C
+!
+! BEGIN IF ON TIME LEVEL CHOICE FOR ISCDAC.NE.0
+!
       IF(ISTL.EQ.2)THEN
-C
+!
       IF(IDRYTBP.EQ.0)THEN
-C
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
-CX      CH(L,K)=CONT(L,K)*H1P(L)
-CX     &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
-      CH(L,K)=CON1(L,K)*H1P(L)
-     &       +DELT*( ( RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
-     &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-     &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!X      CH(L,K)=CONT(L,K)*H1P(L)
+!X     &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
+      CH(L,K)=CON1(L,K)*H1P(L)+DELT*( ( RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)+FVHU(L,K)            &
+              -FVHU(LNC(L),K))*DXYIP(L)+(FWU(L,K-1)-FWU(L,K))*RDZIC )
       ENDDO
       ENDDO
-C
+!
       ELSE
-C
-C
+!
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
-      IF(IMASKDRY(L).EQ.0)
-     &  CH(L,K)=CON1(L,K)*H1P(L)
-     &       +DELT*( ( RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
-     &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-     &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
-      IF(IMASKDRY(L).EQ.1)
-     &  CH(L,K)=CON1(L,K)*H1P(L)
-     &       +DELT*( ( FQC(L,K) )*DXYIP(L) )
-      IF(IMASKDRY(L).EQ.2)
-     &  CH(L,K)=CON1(L,K)*H1P(L)
+      IF(IMASKDRY(L).EQ.0)CH(L,K)=CON1(L,K)*H1P(L)+DELT*(( RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)   &
+                                  +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)+(FWU(L,K-1)-FWU(L,K))*RDZIC )
+      IF(IMASKDRY(L).EQ.1)CH(L,K)=CON1(L,K)*H1P(L)+DELT*( ( FQC(L,K) )*DXYIP(L) )
+      IF(IMASKDRY(L).EQ.2)CH(L,K)=CON1(L,K)*H1P(L)
       ENDDO
       ENDDO
-C
+!
       ENDIF
-C
+!
       IF(ISFCT(MVAR).GE.1)THEN
        DO K=1,KC
        DO L=2,LA
@@ -553,23 +544,21 @@ C
        ENDDO
        ENDDO
       ENDIF
-C
-C ELSE ON TIME LEVEL CHOICE FOR ISCDAC.NE.0
-C
+!
+! ELSE ON TIME LEVEL CHOICE FOR ISCDAC.NE.0
+!
       ELSE
-C
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
-CX      CH(L,K)=CONT(L,K)*H2P(L)
-CX     &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
-      CH(L,K)=CON1(L,K)*H2P(L)
-     &       +DELT*( ( RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
-     &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-     &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!X      CH(L,K)=CONT(L,K)*H2P(L)
+!X     &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
+      CH(L,K)=CON1(L,K)*H2P(L)+DELT*( ( RDZIC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)+FVHU(L,K)            &
+              -FVHU(LNC(L),K))*DXYIP(L)+(FWU(L,K-1)-FWU(L,K))*RDZIC )
       ENDDO
       ENDDO
-C
+!
       IF(ISFCT(MVAR).GE.1)THEN
        DO K=1,KC
        DO L=2,LA
@@ -577,11 +566,11 @@ C
        ENDDO
        ENDDO
       ENDIF
-C
+!
       ENDIF
-C
-C ENDIF ON TIME LEVEL CHOICE FOR ISCDAC.NE.0
-C
+!
+! ENDIF ON TIME LEVEL CHOICE FOR ISCDAC.NE.0
+!
       IF(ISUD.EQ.1)THEN
       DO K=1,KC
       DO L=2,LA
@@ -589,45 +578,41 @@ C
       ENDDO
       ENDDO
       ENDIF
-C
+!
       DO K=1,KC
       DO L=2,LA
       CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
       CONT(L,K)=0.0
       ENDDO
       ENDDO
-C  
+!  
       ENDIF
-C
-C ENDIF ON TRANSPORT OPTION CHOICE
-C
-C**********************************************************************C
-C
-C **  CALCULATE LAST OUTFLOWING CONCENTRATION OR SPECIFY INFLOW 
-C **  CONCENTRATION AT OPEN BOUNDARIES
-C
+!
+! ENDIF ON TRANSPORT OPTION CHOICE
+!
+!**********************************************************************C
+!
+! **  CALCULATE LAST OUTFLOWING CONCENTRATION OR SPECIFY INFLOW 
+! **  CONCENTRATION AT OPEN BOUNDARIES
+!
   700 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.0)THEN
       DO K=1,KC
       DO LL=1,NCBS
       NSID=NCSERS(LL,M)
       L=LCBS(LL)
       LN=LNC(L)
-C
+!
       IF(VHDX2(LN,K).LT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)
-     &      -FVHU(LN,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)-FVHU(LN,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)
-     &      -FVHU(LN,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &     +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)
-     &     +DELT*(0.5*VHDX2(LN,K)*(CON1(L,K)+CON(L,K))
-     &     -FVHU(LN,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)-FVHU(LN,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)  &
+                              +DELT*(0.5*VHDX2(LN,K)*(CON1(L,K)+CON(L,K))-FVHU(LN,K))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
@@ -638,41 +623,38 @@ C
       ELSE
        IF(ISUD.EQ.1) CON1(L,K)=CON(L,K)
        CBT=WTCI(K,1)*CBS(LL,1,M)+WTCI(K,2)*CBS(LL,2,M)+CSERT(K,NSID,M)
-C      WRITE(6,6001)N,K,CBT
+!      WRITE(6,6001)N,K,CBT
        NMNLO=N-NLOS(LL,K,M)
        IF(NMNLO.GE.NTSCRS(LL))THEN
         CON(L,K)=CBT
        ELSE
-        CON(L,K)=CLOS(LL,K,M)
-     &         +(CBT-CLOS(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRS(LL))
+        CON(L,K)=CLOS(LL,K,M)+(CBT-CLOS(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRS(LL))
        ENDIF
       ENDIF
-C
+!
       ENDDO
       ENDDO
 	ENDIF
-C
+!
  6001 FORMAT('N,K,CBTS = ',2I10,F12.3)
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.0)THEN
       DO K=1,KC
       DO LL=1,NCBW
       NSID=NCSERW(LL,M)
       L=LCBW(LL)      
-C
+!
       IF(UHDY2(L+1,K).LT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(UHDY2(L+1,K)*CON1(L,K)
-     &      -FUHU(L+1,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)
-     &   +DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &     +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)
-     &     +DELT*(0.5*UHDY2(L+1,K)*(CON1(L,K)+CON(L,K))
-     &     -FUHU(L+1,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))            &
+                                   *DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+                                   *HPI(L)+DELT*(0.5*UHDY2(L+1,K)*(CON1(L,K)+CON(L,K))            &
+                                   -FUHU(L+1,K))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
@@ -687,33 +669,30 @@ C
        IF(NMNLO.GE.NTSCRW(LL))THEN
         CON(L,K)=CBT
        ELSE
-        CON(L,K)=CLOW(LL,K,M)
-     &         +(CBT-CLOW(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRW(LL))
+        CON(L,K)=CLOW(LL,K,M)+(CBT-CLOW(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRW(LL))
        ENDIF
       ENDIF
-C
+!
       ENDDO
       ENDDO
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.0)THEN
       DO K=1,KC
       DO LL=1,NCBE
       NSID=NCSERE(LL,M)
       L=LCBE(LL)      
-C
+!
       IF(UHDY2(L,K).GT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(FUHU(L,K)
-     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(FUHU(L,K)-UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FUHU(L,K)
-     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &      +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)+DELT*(FUHU(L,K)
-     &      -0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FUHU(L,K)-UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+                              *HPI(L)+DELT*(FUHU(L,K)-0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))        &
+                              *DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
@@ -728,34 +707,31 @@ C
        IF(NMNLO.GE.NTSCRE(LL))THEN
         CON(L,K)=CBT
        ELSE
-        CON(L,K)=CLOE(LL,K,M)
-     &         +(CBT-CLOE(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRE(LL))
+        CON(L,K)=CLOE(LL,K,M)+(CBT-CLOE(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRE(LL))
        ENDIF
       ENDIF
-C
+!
       ENDDO
       ENDDO
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.0)THEN
       DO K=1,KC
       DO LL=1,NCBN
       NSID=NCSERN(LL,M)
       L=LCBN(LL)
       LS=LSC(L)
-C
+!
       IF(VHDX2(L,K).GT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(FVHU(L,K)
-     &      -VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(FVHU(L,K)-VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FVHU(L,K)
-     &      -VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &      +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)+DELT*(FVHU(L,K)
-     &      -0.5*VHDX2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FVHU(L,K)-VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+                              *HPI(L)+DELT*(FVHU(L,K)-0.5*VHDX2(L,K)*(CON1(L,K)+CON(L,K)))        &
+                              *DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
@@ -766,149 +742,136 @@ C
       ELSE
        IF(ISUD.EQ.1) CON1(L,K)=CON(L,K)
        CBT=WTCI(K,1)*CBN(LL,1,M)+WTCI(K,2)*CBN(LL,2,M)+CSERT(K,NSID,M)
-C      WRITE(6,6002)N,K,CBT
+!      WRITE(6,6002)N,K,CBT
        NMNLO=N-NLON(LL,K,M)
        IF(NMNLO.GE.NTSCRN(LL))THEN
         CON(L,K)=CBT
        ELSE
-        CON(L,K)=CLON(LL,K,M)
-     &         +(CBT-CLON(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRN(LL))
+        CON(L,K)=CLON(LL,K,M) +(CBT-CLON(LL,K,M))*FLOAT(NMNLO)/FLOAT(NTSCRN(LL))
        ENDIF
       ENDIF
-C
+!
       ENDDO
       ENDDO
       ENDIF
-C
+!
  6002 FORMAT('N,K,CBTN = ',2I10,F12.3)
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.1)THEN
       DO K=1,KC
       DO LL=1,NCBS
       NSID=NCSERS(LL,M)
       L=LCBS(LL)
       LN=LNC(L)
-C
+!
       IF(VHDX2(LN,K).LT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)
-     &      -FVHU(LN,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)-FVHU(LN,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)
-     &      -FVHU(LN,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &     +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)
-     &     +DELT*(0.5*VHDX2(LN,K)*(CON1(L,K)+CON(L,K))
-     &     -FVHU(LN,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(VHDX2(LN,K)*CON1(L,K)                          &
+                                   -FVHU(LN,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+              *HPI(L)+DELT*(0.5*VHDX2(LN,K)*(CON1(L,K)+CON(L,K))-FVHU(LN,K))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
       ENDIF
-C
+!
       ENDDO
       ENDDO
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.1)THEN
       DO K=1,KC
       DO LL=1,NCBW
       NSID=NCSERW(LL,M)
       L=LCBW(LL)      
-C
+!
       IF(UHDY2(L+1,K).LT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(UHDY2(L+1,K)*CON1(L,K)
-     &      -FUHU(L+1,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)
-     &   +DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &     +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)
-     &     +DELT*(0.5*UHDY2(L+1,K)*(CON1(L,K)+CON(L,K))
-     &     -FUHU(L+1,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(UHDY2(L+1,K)*CON1(L,K)-FUHU(L+1,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+           *HPI(L)+DELT*(0.5*UHDY2(L+1,K)*(CON1(L,K)+CON(L,K))-FUHU(L+1,K))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
       ENDIF
-C
+!
       ENDDO
       ENDDO
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.1)THEN
       DO K=1,KC
       DO LL=1,NCBE
       NSID=NCSERE(LL,M)
       L=LCBE(LL)      
-C
+!
       IF(UHDY2(L,K).GT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(FUHU(L,K)
-     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(FUHU(L,K)-UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FUHU(L,K)
-     &      -UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &      +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)+DELT*(FUHU(L,K)
-     &      -0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FUHU(L,K)-UHDY2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+            *HPI(L)+DELT*(FUHU(L,K)-0.5*UHDY2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
       ENDIF
-C
+!
       ENDDO
       ENDDO
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       IF(ITRANFLOC.EQ.1)THEN
       DO K=1,KC
       DO LL=1,NCBN
       NSID=NCSERN(LL,M)
       L=LCBN(LL)
       LS=LSC(L)
-C
+!
       IF(VHDX2(L,K).GT.0.)THEN
        IF(ISTL.EQ.2)THEN
-        CTMP=CON1(L,K)+DELT*(FVHU(L,K)
-     &      -VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        CTMP=CON1(L,K)+DELT*(FVHU(L,K)-VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
        ELSE
-        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FVHU(L,K)
-     &      -VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
-        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))
-     &      +0.5*(CON1(L,K)-CON(L,K))*H2P(L)*HPI(L)+DELT*(FVHU(L,K)
-     &      -0.5*VHDX2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).NE.2) CTMP=CON1(L,K)+DELT*(FVHU(L,K)                                      &
+                                   -VHDX2(L,K)*CON1(L,K))*DXYIP(L)*HPI(L)
+        IF(ISCDCA(MVAR).EQ.2) CTMP=0.5*(CON1(L,K)+CON(L,K))+0.5*(CON1(L,K)-CON(L,K))*H2P(L)       &
+            *HPI(L)+DELT*(FVHU(L,K)-0.5*VHDX2(L,K)*(CON1(L,K)+CON(L,K)))*DXYIP(L)*HPI(L)
         CON1(L,K)=CON(L,K)
        ENDIF
        CON(L,K)=CTMP
       ENDIF
-C
+!
       ENDDO
       ENDDO
       ENDIF
-C
-C**********************************************************************C
-C
-C **  ANTI-DIFFUSIVE ADVECTIVE FLUX CALCULATION 
-C
+!
+!**********************************************************************C
+!
+! **  ANTI-DIFFUSIVE ADVECTIVE FLUX CALCULATION 
+!
       IF(ISADAC(MVAR).EQ.0) RETURN
       IF(ISCDCA(MVAR).EQ.1) RETURN
-C
-C**********************************************************************C
-C
-C **  STANDARD ANTI-DIFFUSIVE ADVECTIVE FLUX CALCULATION 
-C
+!
+!**********************************************************************C
+!
+! **  STANDARD ANTI-DIFFUSIVE ADVECTIVE FLUX CALCULATION 
+!
       IF(IDRYTBP.EQ.0)THEN
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       DO L=1,LC
       UUU(L,K)=0.0
@@ -916,11 +879,11 @@ C
 	WWW(L,K)=0.0
       ENDDO
       ENDDO
-C
+!
       DO L=1,LC
 	WWW(L,0)=0.0
       ENDDO
-C
+!
 
       DO K=1,KC
       DO L=2,LA
@@ -929,16 +892,16 @@ C
       VVV(L,K)=V2(L,K)*(CON(L,K)-CON(LS,K))*DYIV(L)
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       RDZIG=DZIG(K)
       DO L=2,LA
       WWW(L,K)=W2(L,K)*(CON(L,K+1)-CON(L,K))*HPI(L)*RDZIG
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
@@ -948,59 +911,49 @@ C
       LSE=LSEC(L)      
       AUHU=ABS(UHDY2(L,K))
       AVHV=ABS(VHDX2(L,K))
-c      UTERM=AUHU*(1.-DELTA*AUHU*DXYIU(L)*HUI(L))*(CON(L,K)-CON(L-1,K))
-c      VTERM=AVHV*(1.-DELTA*AVHV*DXYIV(L)*HVI(L))*(CON(L,K)-CON(LS,K))
+!      UTERM=AUHU*(1.-DELTA*AUHU*DXYIU(L)*HUI(L))*(CON(L,K)-CON(L-1,K))
+!      VTERM=AVHV*(1.-DELTA*AVHV*DXYIV(L)*HVI(L))*(CON(L,K)-CON(LS,K))
       UTERM=AUHU*(CON(L,K)-CON(L-1,K))
       VTERM=AVHV*(CON(L,K)-CON(LS,K))
       IF(ISADAC(MVAR).GE.2)THEN
-        SSCORUE=DELTA*RDZIC*DXYIP(L  )*HPI(L  )*(FQCPAD(L  ,K)
-     &                                 -QSUMPAD(L  ,K)*CON(L  ,K))
-        SSCORUW=DELTA*RDZIC*DXYIP(L-1)*HPI(L-1)*(FQCPAD(L-1,K)
-     &                                 -QSUMPAD(L-1,K)*CON(L-1,K))
-        SSCORVN=DELTA*RDZIC*DXYIP(L  )*HPI(L  )*(FQCPAD(L  ,K)
-     &                                 -QSUMPAD(L  ,K)*CON(L  ,K))
-        SSCORVS=DELTA*RDZIC*DXYIP(LS )*HPI(LS )*(FQCPAD(LS ,K)
-     &                                 -QSUMPAD(LS ,K)*CON(LS ,K))
+        SSCORUE=DELTA*RDZIC*DXYIP(L  )*HPI(L  )*(FQCPAD(L  ,K)-QSUMPAD(L  ,K)*CON(L  ,K))
+        SSCORUW=DELTA*RDZIC*DXYIP(L-1)*HPI(L-1)*(FQCPAD(L-1,K)-QSUMPAD(L-1,K)*CON(L-1,K))
+        SSCORVN=DELTA*RDZIC*DXYIP(L  )*HPI(L  )*(FQCPAD(L  ,K)-QSUMPAD(L  ,K)*CON(L  ,K))
+        SSCORVS=DELTA*RDZIC*DXYIP(LS )*HPI(LS )*(FQCPAD(LS ,K)-QSUMPAD(LS ,K)*CON(LS ,K))
         SSCORU=MAX(UHDY2(L,K),0.0)*SSCORUW+MIN(UHDY2(L,K),0.0)*SSCORUE
         SSCORV=MAX(VHDX2(L,K),0.0)*SSCORVS+MIN(VHDX2(L,K),0.0)*SSCORVN
 	  UTERM=UTERM+SSCORU
 	  VTERM=VTERM+SSCORV
 	ENDIF
-CADD1023
-C     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
-C     AHU(L,K)=MAX(AHTMP,0.)
-C     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
-C     AHV(L,K)=MAX(AHTMP,0.)
-C     UTERM=UTERM*(CON(L,K)-CON(L-1,K))
-C     VTERM=VTERM*(CON(L,K)-CON(LS,K))
-C
-C      UTERM=UTERM-DELTA4*UHDY2(L,K)*
-C     &      (VVV(L,K)+VVV(LN,K)+VVV(LNW,K)+VVV(L-1,K)
-C     &      +WWW(L,K)+WWW(L-1,K)+WWW(L-1,K-1)+WWW(L,K-1))
-C      VTERM=VTERM-DELTA4*VHDX2(L,K)*
-C     &      (UUU(L,K)+UUU(LS,K)+UUU(LSE,K)+UUU(L+1,K)
-C     &      +WWW(L,K)+WWW(LS,K)+WWW(LS,K-1)+WWW(L,K-1))
-C
+!ADD1023
+!     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
+!     AHU(L,K)=MAX(AHTMP,0.)
+!     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
+!     AHV(L,K)=MAX(AHTMP,0.)
+!     UTERM=UTERM*(CON(L,K)-CON(L-1,K))
+!     VTERM=VTERM*(CON(L,K)-CON(LS,K))
+!
+!      UTERM=UTERM-DELTA4*UHDY2(L,K)*
+!     &      (VVV(L,K)+VVV(LN,K)+VVV(LNW,K)+VVV(L-1,K)
+!     &      +WWW(L,K)+WWW(L-1,K)+WWW(L-1,K-1)+WWW(L,K-1))
+!      VTERM=VTERM-DELTA4*VHDX2(L,K)*
+!     &      (UUU(L,K)+UUU(LS,K)+UUU(LSE,K)+UUU(L+1,K)
+!     &      +WWW(L,K)+WWW(LS,K)+WWW(LS,K-1)+WWW(L,K-1))
+!
       IF(UHDY2(L,K).GE.0.0)THEN
-        UTERM=UTERM-0.5*DELTA*UHDY2(L,K)*
-     &      (VVV(LNW,K)+VVV(L-1,K)+WWW(L-1,K)+WWW(L-1,K-1)
-     &      +UUU(L,K)+UUU(L-1,K))
+        UTERM=UTERM-0.5*DELTA*UHDY2(L,K)*(VVV(LNW,K)+VVV(L-1,K)+WWW(L-1,K)+WWW(L-1,K-1)           &
+        +UUU(L,K)+UUU(L-1,K))
       ELSE
-        UTERM=UTERM-0.5*DELTA*UHDY2(L,K)*
-     &      (VVV(LN,K)+VVV(L,K)+WWW(L,K)+WWW(L,K-1)
-     &      +UUU(L,K)+UUU(L+1,K))
+        UTERM=UTERM-0.5*DELTA*UHDY2(L,K)*(VVV(LN,K)+VVV(L,K)+WWW(L,K)+WWW(L,K-1)                  &
+              +UUU(L,K)+UUU(L+1,K))
 	ENDIF
-C
+!
       IF(VHDX2(L,K).GE.0.0)THEN
-        VTERM=VTERM-0.5*DELTA*VHDX2(L,K)*
-     &      (UUU(LS,K)+UUU(LSE,K)+WWW(LS,K)+WWW(LS,K-1)
-     &      +VVV(LS,K)+VVV(L,K))
+        VTERM=VTERM-0.5*DELTA*VHDX2(L,K)*(UUU(LS,K)+UUU(LSE,K)+WWW(LS,K)+WWW(LS,K-1)+VVV(LS,K)+VVV(L,K))
       ELSE
-        VTERM=VTERM-0.5*DELTA*VHDX2(L,K)*
-     &      (UUU(L,K)+UUU(L+1,K)+WWW(L,K)+WWW(L,K-1)
-     &      +VVV(LN,K)+VVV(L,K))
+        VTERM=VTERM-0.5*DELTA*VHDX2(L,K)*(UUU(L,K)+UUU(L+1,K)+WWW(L,K)+WWW(L,K-1)+VVV(LN,K)+VVV(L,K))
 	ENDIF
-C
+!
       IF(ISFCT(MVAR).GE.2)THEN
         FUHU(L,K)=0.5*UTERM
         FVHU(L,K)=0.5*VTERM
@@ -1011,52 +964,46 @@ C
       ELSE
         UHU=UTERM/(CON(L,K)+CON(L-1,K)+BSMALL)
         VHV=VTERM/(CON(L,K)+CON(LS,K)+BSMALL)
-C     AUHU=ABS(UHU)
-C     AVHV=ABS(VHV)
-C     UTERM=AUHU*(1.-DELTD2*AUHU/(DXYU(L)*HU(L)))
-C     VTERM=AVHV*(1.-DELTD2*AVHV/(DXYV(L)*HV(L)))
-C     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
-C     AHU(L,K)=MAX(AHTMP,0.)
-C     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
-C     AHV(L,K)=MAX(AHTMP,0.)
-        FUHU(L,K)=MAX(UHU,0.)*CON(L-1,K)
-     &           +MIN(UHU,0.)*CON(L,K)
-        FVHU(L,K)=MAX(VHV,0.)*CON(LS,K)
-     &           +MIN(VHV,0.)*CON(L,K)
+!     AUHU=ABS(UHU)
+!     AVHV=ABS(VHV)
+!     UTERM=AUHU*(1.-DELTD2*AUHU/(DXYU(L)*HU(L)))
+!     VTERM=AVHV*(1.-DELTD2*AVHV/(DXYV(L)*HV(L)))
+!     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
+!     AHU(L,K)=MAX(AHTMP,0.)
+!     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
+!     AHV(L,K)=MAX(AHTMP,0.)
+        FUHU(L,K)=MAX(UHU,0.)*CON(L-1,K)+MIN(UHU,0.)*CON(L,K)
+        FVHU(L,K)=MAX(VHV,0.)*CON(LS,K)+MIN(VHV,0.)*CON(L,K)
       ENDIF
       ENDDO
       ENDDO
-C
+!
       IF(KC.GT.1)THEN
       DO K=1,KS
       DO L=2,LA
       LN=LNC(L)
       AWW=ABS(W2(L,K))
-c      WTERM=AWW*(1.-DELTA*AWW*DZIG(K)*HPI(L))*(CON(L,K+1)-CON(L,K))
+!      WTERM=AWW*(1.-DELTA*AWW*DZIG(K)*HPI(L))*(CON(L,K+1)-CON(L,K))
       WTERM=AWW*(CON(L,K+1)-CON(L,K))
       IF(ISADAC(MVAR).GE.2)THEN
-        SSCORWA=DELTA*DZIG(K+1)*HPI(L)*DXYIP(L)
-     &         *(FQCPAD(L,K+1)-QSUMPAD(L,K+1)*CON(L,K+1))
-        SSCORWB=DELTA*DZIG(K)*HPI(L)*DXYIP(L)
-     &         *(FQCPAD(L,K  )-QSUMPAD(L,K  )*CON(L,K  ))
+        SSCORWA=DELTA*DZIG(K+1)*HPI(L)*DXYIP(L)*(FQCPAD(L,K+1)-QSUMPAD(L,K+1)*CON(L,K+1))
+        SSCORWB=DELTA*DZIG(K)*HPI(L)*DXYIP(L)*(FQCPAD(L,K  )-QSUMPAD(L,K  )*CON(L,K  ))
         SSCORW=MAX(W2(L,K),0.0)*SSCORWB+MIN(W2(L,K),0.0)*SSCORWA
 	  WTERM=WTERM+SSCORW
       ENDIF
-C
-C      WTERM=WTERM-DELTA4*W2(L,K)*
-C     &      (UUU(L,K)+UUU(L+1,K)+UUU(L+1,K+1)+UUU(L,K+1)
-C     &      +VVV(L,K)+VVV(LN,K)+VVV(LN,K+1)+VVV(L,K+1))
-C
+!
+!      WTERM=WTERM-DELTA4*W2(L,K)*
+!     &      (UUU(L,K)+UUU(L+1,K)+UUU(L+1,K+1)+UUU(L,K+1)
+!     &      +VVV(L,K)+VVV(LN,K)+VVV(LN,K+1)+VVV(L,K+1))
+!
       IF(W2(L,K).GE.0.0)THEN
-        WTERM=WTERM-0.5*DELTA*W2(L,K)*
-     &      (UUU(L,K)+UUU(L+1,K)+VVV(L,K)+VVV(LN,K)
-     &      +WWW(L,K)+WWW(L,K-1))
+        WTERM=WTERM-0.5*DELTA*W2(L,K)*(UUU(L,K)+UUU(L+1,K)+VVV(L,K)+VVV(LN,K)                     &
+              +WWW(L,K)+WWW(L,K-1))
 	ELSE
-        WTERM=WTERM-0.5*DELTA*W2(L,K)*
-     &      (UUU(L+1,K+1)+UUU(L,K+1)+VVV(LN,K+1)+VVV(L,K+1)
-     &      +WWW(L,K)+WWW(L,K+1))
+        WTERM=WTERM-0.5*DELTA*W2(L,K)*(UUU(L+1,K+1)+UUU(L,K+1)+VVV(LN,K+1)+VVV(L,K+1)             &
+              +WWW(L,K)+WWW(L,K+1))
 	ENDIF
-C
+!
       IF(ISFCT(MVAR).GE.2)THEN
         FWU(L,K)=0.5*WTERM
         IF(ISFCT(MVAR).EQ.3)THEN
@@ -1064,8 +1011,7 @@ C
         ENDIF
       ELSE
         WW=WTERM/(CON(L,K+1)+CON(L,K)+BSMALL)
-        FWU(L,K)=MAX(WW,0.)*CON(L,K)
-     &          +MIN(WW,0.)*CON(L,K+1)
+        FWU(L,K)=MAX(WW,0.)*CON(L,K)+MIN(WW,0.)*CON(L,K+1)
       ENDIF
       ENDDO
       ENDDO
@@ -1074,57 +1020,57 @@ C
 	FWU(L,KC)=0.0
 	ENDDO
 	ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR SOURCE CELLS JMH20MARCH97
-C
-CLH
-CLH   DO K=1,KC
-CLH   DO L=2,LA
-CLH     CONT(L,K)=1.
-CLH     ABSQSUM=ABS(QSUM(L,K))
-CLH     IF(ABSQSUM.GT.1.E-12) CONT(L,K)=0.
-CLH   ENDDO
-CLH   ENDDO
-C    
-CLH   DO K=1,KC
-CLH   DO L=2,LA
-CLH       TMPVAL=CONT(L,K)
-CLH       LN=LNC(L)
-CLH       FUHU(L  ,K)=TMPVAL*FUHU(L  ,K)
-CLH       FUHU(L+1,K)=TMPVAL*FUHU(L+1,K)
-CLH       FVHU(L  ,K)=TMPVAL*FVHU(L  ,K)
-CLH       FVHU(LN ,K)=TMPVAL*FVHU(LN ,K)
-CLH       FWU(L,K  )=TMPVAL*FWU(L,K  )
-CLH       FWU(L,K-1)=TMPVAL*FWU(L,K-1)
-CLH   ENDDO
-CLH   ENDDO
-C
-C1023      DO K=1,KC
-CDIR& IVDEP
-C1023      DO L=2,LA
-C1023        IF(ABS(QSUM(L,K)).GT.1.E-12)THEN
-C1023          LN=LNC(L)
-C1023          FUHU(L  ,K)=0.
-C1023          FUHU(L+1,K)=0.
-C1023          FVHU(L  ,K)=0.
-C1023          FVHU(LN ,K)=0.
-C1023          FWU(L,K  )=0.
-C1023          FWU(L,K-1)=0.
-C1023          CONT(L,K)=0.
-C1023        ELSE
-C1023          CONT(L,K)=1.
-C1023        ENDIF
-C1023      ENDDO
-C1023      ENDDO
-C
-c  ** ANTIDIFFUSION TURNED OFF FOR SOURCE CELLS
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR SOURCE CELLS JMH20MARCH97
+!
+!LH
+!LH   DO K=1,KC
+!LH   DO L=2,LA
+!LH     CONT(L,K)=1.
+!LH     ABSQSUM=ABS(QSUM(L,K))
+!LH     IF(ABSQSUM.GT.1.E-12) CONT(L,K)=0.
+!LH   ENDDO
+!LH   ENDDO
+!    
+!LH   DO K=1,KC
+!LH   DO L=2,LA
+!LH       TMPVAL=CONT(L,K)
+!LH       LN=LNC(L)
+!LH       FUHU(L  ,K)=TMPVAL*FUHU(L  ,K)
+!LH       FUHU(L+1,K)=TMPVAL*FUHU(L+1,K)
+!LH       FVHU(L  ,K)=TMPVAL*FVHU(L  ,K)
+!LH       FVHU(LN ,K)=TMPVAL*FVHU(LN ,K)
+!LH       FWU(L,K  )=TMPVAL*FWU(L,K  )
+!LH       FWU(L,K-1)=TMPVAL*FWU(L,K-1)
+!LH   ENDDO
+!LH   ENDDO
+!
+!1023      DO K=1,KC
+!DIR& IVDEP
+!1023      DO L=2,LA
+!1023        IF(ABS(QSUM(L,K)).GT.1.E-12)THEN
+!1023          LN=LNC(L)
+!1023          FUHU(L  ,K)=0.
+!1023          FUHU(L+1,K)=0.
+!1023          FVHU(L  ,K)=0.
+!1023          FVHU(LN ,K)=0.
+!1023          FWU(L,K  )=0.
+!1023          FWU(L,K-1)=0.
+!1023          CONT(L,K)=0.
+!1023        ELSE
+!1023          CONT(L,K)=1.
+!1023        ENDIF
+!1023      ENDDO
+!1023      ENDDO
+!
+!  ** ANTIDIFFUSION TURNED OFF FOR SOURCE CELLS
+!
       IF(ISADAC(MVAR).EQ.1)THEN
       DO K=1,KC
       DO L=2,LA
-C        IF(ABS(QSUM(L,K)).GT.1.E-12)THEN
+!        IF(ABS(QSUM(L,K)).GT.1.E-12)THEN
         IF(QSUMPAD(L,K).GT.0.0)THEN
           LN=LNC(L)
           FUHU(L  ,K)=0.
@@ -1140,68 +1086,68 @@ C        IF(ABS(QSUM(L,K)).GT.1.E-12)THEN
       ENDDO
       ENDDO
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
-C ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR OPEN BOUNDARY CELLS
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR OPEN BOUNDARY CELLS
+!
       DO K=1,KC
-C
+!
       DO LL=1,NCBS
       L=LCBS(LL)
       LN=LNC(L)
-C     DO K=1,KC
+!     DO K=1,KC
       FVHU(LN,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBW
       L=LCBW(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       FUHU(L+1,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBE
       L=LCBE(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       FUHU(L,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBN
       L=LCBN(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       FVHU(L,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       ENDDO
-C
-C**********************************************************************C
-C
-C **  CALCULATE AND APPLY FLUX CORRECTED TRANSPORT LIMITERS
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE AND APPLY FLUX CORRECTED TRANSPORT LIMITERS
+!
       IF(ISFCT(MVAR).EQ.0) GOTO 1100
-C
-C----------------------------------------------------------------------C
-C
-C **  DETERMINE MAX AND MIN CONCENTRATIONS
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  DETERMINE MAX AND MIN CONCENTRATIONS
+!
       DO K=1,KC
       DO L=1,LC
       CONTMX(L,K)=0.0
       CONTMN(L,K)=0.0
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
       CONTMX(L,K)=MAX(CON(L,K),CON2(L,K))
       CONTMN(L,K)=MIN(CON(L,K),CON2(L,K))
       ENDDO
       ENDDO
-C
+!
       IF(KC.EQ.1)THEN
         DO L=2,LA
           CMAX(L,KC)=CONTMX(L,KC)
@@ -1225,7 +1171,7 @@ C
           ENDDO
 	  ENDIF
 	ENDIF
-C
+!
       DO K=1,KC
       DO L=2,LA
       LS=LSC(L)
@@ -1248,12 +1194,12 @@ C
       CMIN(L,K)=MIN(CMIN(L,K),CMINT)
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  SEPARATE POSITIVE AND NEGATIVE FLUXES PUTTING NEGATIVE FLUXES 
-C **  INTO FUHV, FVHV, AND FWV
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SEPARATE POSITIVE AND NEGATIVE FLUXES PUTTING NEGATIVE FLUXES 
+! **  INTO FUHV, FVHV, AND FWV
+!
       DO K=1,KC
       DO L=2,LA
       FUHV(L,K)=MIN(FUHU(L,K),0.)
@@ -1262,137 +1208,135 @@ C
       FVHU(L,K)=MAX(FVHU(L,K),0.)
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
       FWV(L,K)=MIN(FWU(L,K),0.)
       FWU(L,K)=MAX(FWU(L,K),0.)
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  CALCULATE INFLUX AND OUTFLUX IN CONCENTRATION UNITS AND LOAD
-C **  INTO DU AND DV, THEN ADJUCT VALUES AT BOUNDARIES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  CALCULATE INFLUX AND OUTFLUX IN CONCENTRATION UNITS AND LOAD
+! **  INTO DU AND DV, THEN ADJUCT VALUES AT BOUNDARIES
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
       LN=LNC(L)
-      DU(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L,K)-FUHV(L+1,K)
-     &                               +FVHU(L,K)-FVHV(LN,K))
-     &                      +RDZIC*(FWU(L,K-1)-FWV(L,K)) )*HPI(L)
-      DV(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L+1,K)-FUHV(L,K)
-     &                               +FVHU(LN,K)-FVHV(L,K))
-     &                      +RDZIC*(FWU(L,K)-FWV(L,K-1)) )*HPI(L)
+      DU(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L,K)-FUHV(L+1,K)+FVHU(L,K)-FVHV(LN,K))                 &
+              +RDZIC*(FWU(L,K-1)-FWV(L,K)) )*HPI(L)
+      DV(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L+1,K)-FUHV(L,K)+FVHU(LN,K)-FVHV(L,K))                 &
+              +RDZIC*(FWU(L,K)-FWV(L,K-1)) )*HPI(L)
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
-C
+!
       DO LL=1,NCBS
       L=LCBS(LL)
       LN=LNC(L)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(LN,K)=0.
       DV(LN,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBW
       L=LCBW(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(L+1,K)=0.
       DV(L+1,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBE
       L=LCBE(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(L-1,K)=0.
       DV(L-1,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBN
       L=LCBN(LL)
       LS=LSC(L)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(LS,K)=0.
       DV(LS,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       ENDDO
-C
-CX      DO NS=1,NQSIJ
-CX       L=LQS(NS)
-CX       NQSTMP=NQSERQ(NS)
-CX       DO K=1,KC
-CX        QQQTMP=ABS(QSS(K,NS)+QSERT(K,NQSTMP))
-CX        IF(QQQTMP.GE.1.E-12)THEN
-CX          DU(L,K)=0.
-CX          DV(L,K)=0.
-C         DU(L+1,K)=0.
-C         DV(LNC(L),K)=0.
-CX        ENDIF       
-CX       ENDDO
-CX      ENDDO
-C
-CX      DO NCTL=1,NQCTL
-CX       IU=IQCTLU(NCTL)
-CX       JU=JQCTLU(NCTL)
-CX       LU=LIJ(IU,JU)
-CX       ID=IQCTLD(NCTL)
-CX       JD=JQCTLD(NCTL)
-CX       IF(ID.EQ.0.AND.JD.EQ.0)THEN
-CX         LD=LC
-CX        ELSE
-CX         LD=LIJ(ID,JD)
-CX       ENDIF
-CX       DO K=1,KC
-CX        QQQTMP=ABS(QCTLT(K,NCTL))
-CX        IF(QQQTMP.GE.1.E-12)THEN
-CX          DU(LU,K)=0.
-CX          DV(LU,K)=0.
-C         DU(LU+1,K)=0.
-C         DV(LNC(LU),K)=0.
-CX          DU(LD,K)=0.
-CX          DV(LD,K)=0.
-C         DU(LD+1,K)=0.
-C         DV(LNC(LD),K)=0.
-CX        ENDIF
-CX       ENDDO
-CX      ENDDO
-C
-CX      DO NWR=1,NQWR
-CX       IU=IQWRU(NWR)
-CX       JU=JQWRU(NWR)
-CX       KU=KQWRU(NWR)
-CX       ID=IQWRD(NWR)
-CX       JD=JQWRD(NWR)
-CX       KD=KQWRD(NWR)
-CX       LU=LIJ(IU,JU)
-CX       LD=LIJ(ID,JD)
-CX        NQSTMP=NQWRSERQ(NWR)
-CX        QQQTMP=ABS(QWR(NWR)+QWRSERT(NQSTMP))
-CX        IF(QQQTMP.GE.1.E-12)THEN
-CX          DU(LU,KU)=0.
-CX          DV(LU,KU)=0.
-C         DU(LU+1,K)=0.
-C         DV(LNC(LU),K)=0.
-CX          DU(LD,KD)=0.
-CX          DV(LD,KD)=0.
-C         DU(LD+1,K)=0.
-C         DV(LNC(LD),K)=0.
-CX        ENDIF
-CX      ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  CALCULATE BETA COEFFICIENTS WITH BETAUP AND BETADOWN IN DU AND DV
-C
+!
+!X      DO NS=1,NQSIJ
+!X       L=LQS(NS)
+!X       NQSTMP=NQSERQ(NS)
+!X       DO K=1,KC
+!X        QQQTMP=ABS(QSS(K,NS)+QSERT(K,NQSTMP))
+!X        IF(QQQTMP.GE.1.E-12)THEN
+!X          DU(L,K)=0.
+!X          DV(L,K)=0.
+!         DU(L+1,K)=0.
+!         DV(LNC(L),K)=0.
+!X        ENDIF       
+!X       ENDDO
+!X      ENDDO
+!
+!X      DO NCTL=1,NQCTL
+!X       IU=IQCTLU(NCTL)
+!X       JU=JQCTLU(NCTL)
+!X       LU=LIJ(IU,JU)
+!X       ID=IQCTLD(NCTL)
+!X       JD=JQCTLD(NCTL)
+!X       IF(ID.EQ.0.AND.JD.EQ.0)THEN
+!X         LD=LC
+!X        ELSE
+!X         LD=LIJ(ID,JD)
+!X       ENDIF
+!X       DO K=1,KC
+!X        QQQTMP=ABS(QCTLT(K,NCTL))
+!X        IF(QQQTMP.GE.1.E-12)THEN
+!X          DU(LU,K)=0.
+!X          DV(LU,K)=0.
+!         DU(LU+1,K)=0.
+!         DV(LNC(LU),K)=0.
+!X          DU(LD,K)=0.
+!X          DV(LD,K)=0.
+!         DU(LD+1,K)=0.
+!         DV(LNC(LD),K)=0.
+!X        ENDIF
+!X       ENDDO
+!X      ENDDO
+!
+!X      DO NWR=1,NQWR
+!X       IU=IQWRU(NWR)
+!X       JU=JQWRU(NWR)
+!X       KU=KQWRU(NWR)
+!X       ID=IQWRD(NWR)
+!X       JD=JQWRD(NWR)
+!X       KD=KQWRD(NWR)
+!X       LU=LIJ(IU,JU)
+!X       LD=LIJ(ID,JD)
+!X        NQSTMP=NQWRSERQ(NWR)
+!X        QQQTMP=ABS(QWR(NWR)+QWRSERT(NQSTMP))
+!X        IF(QQQTMP.GE.1.E-12)THEN
+!X          DU(LU,KU)=0.
+!X          DV(LU,KU)=0.
+!         DU(LU+1,K)=0.
+!         DV(LNC(LU),K)=0.
+!X          DU(LD,KD)=0.
+!X          DV(LD,KD)=0.
+!         DU(LD+1,K)=0.
+!         DV(LNC(LD),K)=0.
+!X        ENDIF
+!X      ENDDO
+!
+!----------------------------------------------------------------------C
+!
+! **  CALCULATE BETA COEFFICIENTS WITH BETAUP AND BETADOWN IN DU AND DV
+!
       DO K=1,KC
       DO L=2,LA
       IF(DU(L,K).GT.0.) DU(L,K)=(CMAX(L,K)-CON(L,K))/(DU(L,K)+BSMALL)
@@ -1401,121 +1345,118 @@ C
       DV(L,K)=MIN(DV(L,K),1.)
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-c  GVC DIAGNOSTIC
-C
-C      IF(N.LE.NTSPTC)THEN
-C        DO K=1,KC
-C        DO L=2,LA
-C	  WRITE(8,801)N,IL(L),JL(L),K,DV(L-1,K),DU(L,K),FUHU(L,K),
-C     &         DU(L-1,K),DV(L,K),FUHV(L,K)
-C        ENDDO
-C        ENDDO  
-C	ENDIF
-c
-C  801 FORMAT('FLUX LIM 1 SIG ',4I6,8E14.6)
-C
-C **  LIMIT FLUXES
-C
+!
+!----------------------------------------------------------------------C
+!
+!  GVC DIAGNOSTIC
+!
+!      IF(N.LE.NTSPTC)THEN
+!        DO K=1,KC
+!        DO L=2,LA
+!	  WRITE(8,801)N,IL(L),JL(L),K,DV(L-1,K),DU(L,K),FUHU(L,K),
+!     &         DU(L-1,K),DV(L,K),FUHV(L,K)
+!        ENDDO
+!        ENDDO  
+!	ENDIF
+!
+!  801 FORMAT('FLUX LIM 1 SIG ',4I6,8E14.6)
+!
+! **  LIMIT FLUXES
+!
       DO K=1,KC
       DO L=2,LA
       LS=LSC(L)
-      FUHU(L,K)=MIN(DV(L-1,K),DU(L,K))*FUHU(L,K)
-     &         +MIN(DU(L-1,K),DV(L,K))*FUHV(L,K)
-      FVHU(L,K)=MIN(DV(LS,K),DU(L,K))*FVHU(L,K)
-     &         +MIN(DU(LS,K),DV(L,K))*FVHV(L,K)
+      FUHU(L,K)=MIN(DV(L-1,K),DU(L,K))*FUHU(L,K)+MIN(DU(L-1,K),DV(L,K))*FUHV(L,K)
+      FVHU(L,K)=MIN(DV(LS,K),DU(L,K))*FVHU(L,K)+MIN(DU(LS,K),DV(L,K))*FVHV(L,K)
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
-      FWU(L,K)=MIN(DV(L,K),DU(L,K+1))*FWU(L,K)
-     &        +MIN(DU(L,K),DV(L,K+1))*FWV(L,K)
+      FWU(L,K)=MIN(DV(L,K),DU(L,K+1))*FWU(L,K)+MIN(DU(L,K),DV(L,K+1))*FWV(L,K)
       ENDDO
       ENDDO  
-C
-C**********************************************************************C
-C
-C **  ANTI-DIFFUSIVE ADVECTION CALCULATION
-C
+!
+!**********************************************************************C
+!
+! **  ANTI-DIFFUSIVE ADVECTION CALCULATION
+!
  1100 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
-C **  ADD SECOND CALL TO EXPERIMENTAL SED CALCULATION FOR  
-C **  ANTIDIFFUSIVE CORRECTION
-C !!  THIS IS A TEMPORARY TRIAL IF DOESN'T WORK MAKE CALL 
-C !!  FOR ALL CASES AT PREVIOUS LOCATION
-C !!  NOT ALSO THAT FQC HAS BEEN MOVED TO HERE FOR ISADAC=1
-C !!  IF PROBLEMS ARISE PUT BACK IN AS BEFORE AT OLD LOCATION
-C !!  RIGHT AFTER SECOND CALL TO CALSED2
-C
-C     IF(M.EQ.4) CALL CALSED2(ISTL,0.5,CON)
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  ADD SECOND CALL TO EXPERIMENTAL SED CALCULATION FOR  
+! **  ANTIDIFFUSIVE CORRECTION
+! !!  THIS IS A TEMPORARY TRIAL IF DOESN'T WORK MAKE CALL 
+! !!  FOR ALL CASES AT PREVIOUS LOCATION
+! !!  NOT ALSO THAT FQC HAS BEEN MOVED TO HERE FOR ISADAC=1
+! !!  IF PROBLEMS ARISE PUT BACK IN AS BEFORE AT OLD LOCATION
+! !!  RIGHT AFTER SECOND CALL TO CALSED2
+!
+!     IF(M.EQ.4) CALL CALSED2(ISTL,0.5,CON)
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
-CX      CH(L,K)=CON(L,K)*HP(L)
-CX     &       +DELT*( (WFQC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
-      CH(L,K)=CON(L,K)*HP(L)
-     &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
-     &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-     &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!X      CH(L,K)=CON(L,K)*HP(L)
+!X     &       +DELT*( (WFQC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
+      CH(L,K)=CON(L,K)*HP(L)                                                                      &
+            +DELT*( (FUHU(L,K)-FUHU(L+1,K)                                                        &
+                    +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)                                           &
+                    +(FWU(L,K-1)-FWU(L,K))*RDZIC )
       CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
       ENDDO
       ENDDO
-c
-c  GVC DIAGNOSTIC
-C
-C      IF(N.LE.NTSPTC)THEN
-C        DO K=1,KC
-C        DO L=2,LA
-C	  WRITE(8,801)N,IL(L),JL(L),K,CON(L,K),CH(L,K),
-C     &                              FUHU(L,K),DU(L,K),DV(L,K)
-C        ENDDO
-C        ENDDO  
-C	ENDIF
-c
-C  802 FORMAT('FLUX LIM 2 SIG ',4I6,8E14.6)
-C
-C
-C     CH(L,K)=CONT(L,K)*HP(L)
-C    &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
-C    &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-C    &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
-C
-CRAY      DO K=1,KC
-CRAY      DO L=2,LA
-CRAY      CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
-CRAY      ENDDO
-CRAY      ENDDO
-C
-C **  ADD REMAINING SEDIMENT SETTLING AND FLUX
-C
-C     IF(M.EQ.4)THEN
-C      IF(ISTOPT(6).EQ.2) CALL CALSED2(ISTL,0.5)
-C      NTSWVD=ISWVSD
-C      IF(ISTOPT(4).EQ.13) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.14.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.15) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.16.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
-C     ENDIF
-C
+!
+!  GVC DIAGNOSTIC
+!
+!      IF(N.LE.NTSPTC)THEN
+!        DO K=1,KC
+!        DO L=2,LA
+!	  WRITE(8,801)N,IL(L),JL(L),K,CON(L,K),CH(L,K),
+!     &                              FUHU(L,K),DU(L,K),DV(L,K)
+!        ENDDO
+!        ENDDO  
+!	ENDIF
+!
+!  802 FORMAT('FLUX LIM 2 SIG ',4I6,8E14.6)
+!
+!
+!     CH(L,K)=CONT(L,K)*HP(L)
+!    &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
+!    &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
+!    &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!
+!RAY      DO K=1,KC
+!RAY      DO L=2,LA
+!RAY      CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
+!RAY      ENDDO
+!RAY      ENDDO
+!
+! **  ADD REMAINING SEDIMENT SETTLING AND FLUX
+!
+!     IF(M.EQ.4)THEN
+!      IF(ISTOPT(6).EQ.2) CALL CALSED2(ISTL,0.5)
+!      NTSWVD=ISWVSD
+!      IF(ISTOPT(4).EQ.13) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.14.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.15) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.16.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
+!     ENDIF
+!
       ENDIF
-C
-C     ENDIF ON NON-DRYING AND WETTING ANTIDIFFUSION CALCULATION
-C
-C**********************************************************************C
-C**********************************************************************C
-C
-C **  ANTI-DIFFUSIVE ADVECTIVE FLUX CALCULATION WITH DRY BYPASS
-C
+!
+!     ENDIF ON NON-DRYING AND WETTING ANTIDIFFUSION CALCULATION
+!
+!**********************************************************************C
+!**********************************************************************C
+!
+! **  ANTI-DIFFUSIVE ADVECTIVE FLUX CALCULATION WITH DRY BYPASS
+!
       IF(IDRYTBP.GT.0)THEN 
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       DO L=2,LA
         UUU(L,K)=0.
@@ -1526,7 +1467,7 @@ C
         FVHV(L,K)=0.
 	END DO
 	END DO
-C
+!
       DO K=1,KS
       DO L=2,LA
         WWW(L,K)=0.
@@ -1544,7 +1485,7 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       RDZIG=DZIG(K)
       DO L=2,LA
@@ -1553,9 +1494,9 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1567,78 +1508,72 @@ C
       AVHV=ABS(VHDX2(L,K))
       UTERM=AUHU*(1.-DELTA*AUHU*DXYIU(L)*HUI(L))*(CON(L,K)-CON(L-1,K))
       VTERM=AVHV*(1.-DELTA*AVHV*DXYIV(L)*HVI(L))*(CON(L,K)-CON(LS,K))
-C     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
-C     AHU(L,K)=MAX(AHTMP,0.)
-C     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
-C     AHV(L,K)=MAX(AHTMP,0.)
-C     UTERM=UTERM*(CON(L,K)-CON(L-1,K))
-C     VTERM=VTERM*(CON(L,K)-CON(LS,K))
-      UTERM=UTERM-DELTA4*UHDY2(L,K)*
-     &      (VVV(L,K)+VVV(LN,K)+VVV(LNW,K)+VVV(L-1,K)
-     &      +WWW(L,K)+WWW(L-1,K)+WWW(L-1,K-1)+WWW(L,K-1))
-      VTERM=VTERM-DELTA4*VHDX2(L,K)*
-     &      (UUU(L,K)+UUU(LS,K)+UUU(LSE,K)+UUU(L+1,K)
-     &      +WWW(L,K)+WWW(LS,K)+WWW(LS,K-1)+WWW(L,K-1))
+!     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
+!     AHU(L,K)=MAX(AHTMP,0.)
+!     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
+!     AHV(L,K)=MAX(AHTMP,0.)
+!     UTERM=UTERM*(CON(L,K)-CON(L-1,K))
+!     VTERM=VTERM*(CON(L,K)-CON(LS,K))
+      UTERM=UTERM-DELTA4*UHDY2(L,K)*(VVV(L,K)+VVV(LN,K)+VVV(LNW,K)+VVV(L-1,K)                     &
+            +WWW(L,K)+WWW(L-1,K)+WWW(L-1,K-1)+WWW(L,K-1))
+      VTERM=VTERM-DELTA4*VHDX2(L,K)*(UUU(L,K)+UUU(LS,K)+UUU(LSE,K)+UUU(L+1,K)                     &
+            +WWW(L,K)+WWW(LS,K)+WWW(LS,K-1)+WWW(L,K-1))
       UHU=UTERM/(CON(L,K)+CON(L-1,K)+BSMALL)
       VHV=VTERM/(CON(L,K)+CON(LS,K)+BSMALL)
-C     AUHU=ABS(UHU)
-C     AVHV=ABS(VHV)
-C     UTERM=AUHU*(1.-DELTD2*AUHU/(DXYU(L)*HU(L)))
-C     VTERM=AVHV*(1.-DELTD2*AVHV/(DXYV(L)*HV(L)))
-C     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
-C     AHU(L,K)=MAX(AHTMP,0.)
-C     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
-C     AHV(L,K)=MAX(AHTMP,0.)
-      FUHU(L,K)=MAX(UHU,0.)*CON(L-1,K)
-     &         +MIN(UHU,0.)*CON(L,K)
-      FVHU(L,K)=MAX(VHV,0.)*CON(LS,K)
-     &         +MIN(VHV,0.)*CON(L,K)
+!     AUHU=ABS(UHU)
+!     AVHV=ABS(VHV)
+!     UTERM=AUHU*(1.-DELTD2*AUHU/(DXYU(L)*HU(L)))
+!     VTERM=AVHV*(1.-DELTD2*AVHV/(DXYV(L)*HV(L)))
+!     AHTMP=0.5*UTERM*DXU(L)/(DYU(L)*HU(L))
+!     AHU(L,K)=MAX(AHTMP,0.)
+!     AHTMP=0.5*VTERM*DYV(L)/(DXV(L)*HV(L))
+!     AHV(L,K)=MAX(AHTMP,0.)
+      FUHU(L,K)=MAX(UHU,0.)*CON(L-1,K)+MIN(UHU,0.)*CON(L,K)
+      FVHU(L,K)=MAX(VHV,0.)*CON(LS,K)+MIN(VHV,0.)*CON(L,K)
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
         LN=LNC(L)
         AWW=ABS(W2(L,K))
         WTERM=AWW*(1.-DELTA*AWW*DZIG(K)*HPI(L))*(CON(L,K+1)-CON(L,K))
-        WTERM=WTERM-DELTA4*W2(L,K)*
-     &      (UUU(L,K)+UUU(L+1,K)+UUU(L+1,K+1)+UUU(L,K+1)
-     &      +VVV(L,K)+VVV(LN,K)+VVV(LN,K+1)+VVV(L,K+1))
+        WTERM=WTERM-DELTA4*W2(L,K)*(UUU(L,K)+UUU(L+1,K)+UUU(L+1,K+1)+UUU(L,K+1)                   &
+              +VVV(L,K)+VVV(LN,K)+VVV(LN,K+1)+VVV(L,K+1))
         WW=WTERM/(CON(L,K+1)+CON(L,K)+BSMALL)
-        FWU(L,K)=MAX(WW,0.)*CON(L,K)
-     &        +MIN(WW,0.)*CON(L,K+1)
+        FWU(L,K)=MAX(WW,0.)*CON(L,K)+MIN(WW,0.)*CON(L,K+1)
       ENDIF
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR SOURCE CELLS JMH20MARCH97
-C
-CLH
-CLH   DO K=1,KC
-CLH   DO L=2,LA
-CLH     CONT(L,K)=1.
-CLH     ABSQSUM=ABS(QSUM(L,K))
-CLH     IF(ABSQSUM.GT.1.E-12) CONT(L,K)=0.
-CLH   ENDDO
-CLH   ENDDO
-C    
-CLH   DO K=1,KC
-CLH   DO L=2,LA
-CLH       TMPVAL=CONT(L,K)
-CLH       LN=LNC(L)
-CLH       FUHU(L  ,K)=TMPVAL*FUHU(L  ,K)
-CLH       FUHU(L+1,K)=TMPVAL*FUHU(L+1,K)
-CLH       FVHU(L  ,K)=TMPVAL*FVHU(L  ,K)
-CLH       FVHU(LN ,K)=TMPVAL*FVHU(LN ,K)
-CLH       FWU(L,K  )=TMPVAL*FWU(L,K  )
-CLH       FWU(L,K-1)=TMPVAL*FWU(L,K-1)
-CLH   ENDDO
-CLH   ENDDO
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR SOURCE CELLS JMH20MARCH97
+!
+!LH
+!LH   DO K=1,KC
+!LH   DO L=2,LA
+!LH     CONT(L,K)=1.
+!LH     ABSQSUM=ABS(QSUM(L,K))
+!LH     IF(ABSQSUM.GT.1.E-12) CONT(L,K)=0.
+!LH   ENDDO
+!LH   ENDDO
+!    
+!LH   DO K=1,KC
+!LH   DO L=2,LA
+!LH       TMPVAL=CONT(L,K)
+!LH       LN=LNC(L)
+!LH       FUHU(L  ,K)=TMPVAL*FUHU(L  ,K)
+!LH       FUHU(L+1,K)=TMPVAL*FUHU(L+1,K)
+!LH       FVHU(L  ,K)=TMPVAL*FVHU(L  ,K)
+!LH       FVHU(LN ,K)=TMPVAL*FVHU(LN ,K)
+!LH       FWU(L,K  )=TMPVAL*FWU(L,K  )
+!LH       FWU(L,K-1)=TMPVAL*FWU(L,K-1)
+!LH   ENDDO
+!LH   ENDDO
+!
       DO K=1,KC
       DO L=2,LA
 	  IF(LMASKDRY(L))THEN
@@ -1657,61 +1592,61 @@ C
         ENDIF
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR OPEN BOUNDARY CELLS
-C
+!
+!----------------------------------------------------------------------C
+!
+! ** SET ANTIDIFFUSIVE FLUXES TO ZERO FOR OPEN BOUNDARY CELLS
+!
       DO K=1,KC
-C
+!
       DO LL=1,NCBS
       L=LCBS(LL)
       LN=LNC(L)
-C     DO K=1,KC
+!     DO K=1,KC
       FVHU(LN,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBW
       L=LCBW(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       FUHU(L+1,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBE
       L=LCBE(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       FUHU(L,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBN
       L=LCBN(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       FVHU(L,K)=0.0
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       ENDDO
-C
-C**********************************************************************C
-C
-C **  CALCULATE AND APPLY FLUX CORRECTED TRANSPORT LIMITERS
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE AND APPLY FLUX CORRECTED TRANSPORT LIMITERS
+!
       IF(ISFCT(MVAR).EQ.0) GOTO 1101
-C
-C----------------------------------------------------------------------C
-C
-C **  DETERMINE MAX AND MIN CONCENTRATIONS
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  DETERMINE MAX AND MIN CONCENTRATIONS
+!
       DO K=1,KC
       DO L=2,LA
       CMIN(L,K)=0.
       CMAX(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1720,7 +1655,7 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
       CMAX(L,1)=MAX(CONTMX(L,1),CONTMX(L,2))
@@ -1729,7 +1664,7 @@ C
       CMIN(L,KC)=MIN(CONTMN(L,KS),CONTMN(L,KC))
       ENDIF
       ENDDO
-C
+!
       DO K=2,KS
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1740,7 +1675,7 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1765,12 +1700,12 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  SEPARATE POSITIVE AND NEGATIVE FLUXES PUTTING NEGATIVE FLUXES 
-C **  INTO FUHV, FVHV, AND FWV
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  SEPARATE POSITIVE AND NEGATIVE FLUXES PUTTING NEGATIVE FLUXES 
+! **  INTO FUHV, FVHV, AND FWV
+!
       DO K=1,KC
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1781,7 +1716,7 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1790,139 +1725,137 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  CALCULATE INFLUX AND OUTFLUX IN CONCENTRATION UNITS AND LOAD
-C **  INTO DU AND DV, THEN ADJUCT VALUES AT BOUNDARIES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  CALCULATE INFLUX AND OUTFLUX IN CONCENTRATION UNITS AND LOAD
+! **  INTO DU AND DV, THEN ADJUCT VALUES AT BOUNDARIES
+!
       DO K=1,KC
       DO L=2,LA
       DU(L,K)=0.
       DV(L,K)=0.
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
       LN=LNC(L)
-      DU(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L,K)-FUHV(L+1,K)
-     &                               +FVHU(L,K)-FVHV(LN,K))
-     &                      +RDZIC*(FWU(L,K-1)-FWV(L,K)) )*HPI(L)
-      DV(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L+1,K)-FUHV(L,K)
-     &                               +FVHU(LN,K)-FVHV(L,K))
-     &                      +RDZIC*(FWU(L,K)-FWV(L,K-1)) )*HPI(L)
+      DU(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L,K)-FUHV(L+1,K)+FVHU(L,K)-FVHV(LN,K))                 &
+              +RDZIC*(FWU(L,K-1)-FWV(L,K)) )*HPI(L)
+      DV(L,K)=DELT*SCB(L)*( DXYIP(L)*(FUHU(L+1,K)-FUHV(L,K)+FVHU(LN,K)-FVHV(L,K))                 &
+              +RDZIC*(FWU(L,K)-FWV(L,K-1)) )*HPI(L)
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO K=1,KC
-C
+!
       DO LL=1,NCBS
       L=LCBS(LL)
       LN=LNC(L)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(LN,K)=0.
       DV(LN,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBW
       L=LCBW(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(L+1,K)=0.
       DV(L+1,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBE
       L=LCBE(LL)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(L-1,K)=0.
       DV(L-1,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       DO LL=1,NCBN
       L=LCBN(LL)
       LS=LSC(L)
-C     DO K=1,KC
+!     DO K=1,KC
       DU(LS,K)=0.
       DV(LS,K)=0.
-C     ENDDO
+!     ENDDO
       ENDDO
-C
+!
       ENDDO
-C
-CX      DO NS=1,NQSIJ
-CX       L=LQS(NS)
-CX       NQSTMP=NQSERQ(NS)
-CX       DO K=1,KC
-CX        QQQTMP=ABS(QSS(K,NS)+QSERT(K,NQSTMP))
-CX        IF(QQQTMP.GE.1.E-12)THEN
-CX          DU(L,K)=0.
-CX          DV(L,K)=0.
-C         DU(L+1,K)=0.
-C         DV(LNC(L),K)=0.
-CX        ENDIF       
-CX       ENDDO
-CX      ENDDO
-C
-CX      DO NCTL=1,NQCTL
-CX       IU=IQCTLU(NCTL)
-CX       JU=JQCTLU(NCTL)
-CX       LU=LIJ(IU,JU)
-CX       ID=IQCTLD(NCTL)
-CX       JD=JQCTLD(NCTL)
-CX       IF(ID.EQ.0.AND.JD.EQ.0)THEN
-CX         LD=LC
-CX        ELSE
-CX         LD=LIJ(ID,JD)
-CX       ENDIF
-CX       DO K=1,KC
-CX        QQQTMP=ABS(QCTLT(K,NCTL))
-CX        IF(QQQTMP.GE.1.E-12)THEN
-CX          DU(LU,K)=0.
-CX          DV(LU,K)=0.
-C         DU(LU+1,K)=0.
-C         DV(LNC(LU),K)=0.
-CX          DU(LD,K)=0.
-CX          DV(LD,K)=0.
-C         DU(LD+1,K)=0.
-C         DV(LNC(LD),K)=0.
-CX        ENDIF
-CX       ENDDO
-CX      ENDDO
-C
-CX      DO NWR=1,NQWR
-CX       IU=IQWRU(NWR)
-CX       JU=JQWRU(NWR)
-CX       KU=KQWRU(NWR)
-CX       ID=IQWRD(NWR)
-CX       JD=JQWRD(NWR)
-CX       KD=KQWRD(NWR)
-CX       LU=LIJ(IU,JU)
-CX       LD=LIJ(ID,JD)
-CX        NQSTMP=NQWRSERQ(NWR)
-CX        QQQTMP=ABS(QWR(NWR)+QWRSERT(NQSTMP))
-CX        IF(QQQTMP.GE.1.E-12)THEN
-CX          DU(LU,KU)=0.
-CX          DV(LU,KU)=0.
-C         DU(LU+1,K)=0.
-C         DV(LNC(LU),K)=0.
-CX          DU(LD,KD)=0.
-CX          DV(LD,KD)=0.
-C         DU(LD+1,K)=0.
-C         DV(LNC(LD),K)=0.
-CX        ENDIF
-CX      ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  CALCULATE BETA COEFFICIENTS WITH BETAUP AND BETADOWN IN DU AND DV
-C
+!
+!X      DO NS=1,NQSIJ
+!X       L=LQS(NS)
+!X       NQSTMP=NQSERQ(NS)
+!X       DO K=1,KC
+!X        QQQTMP=ABS(QSS(K,NS)+QSERT(K,NQSTMP))
+!X        IF(QQQTMP.GE.1.E-12)THEN
+!X          DU(L,K)=0.
+!X          DV(L,K)=0.
+!         DU(L+1,K)=0.
+!         DV(LNC(L),K)=0.
+!X        ENDIF       
+!X       ENDDO
+!X      ENDDO
+!
+!X      DO NCTL=1,NQCTL
+!X       IU=IQCTLU(NCTL)
+!X       JU=JQCTLU(NCTL)
+!X       LU=LIJ(IU,JU)
+!X       ID=IQCTLD(NCTL)
+!X       JD=JQCTLD(NCTL)
+!X       IF(ID.EQ.0.AND.JD.EQ.0)THEN
+!X         LD=LC
+!X        ELSE
+!X         LD=LIJ(ID,JD)
+!X       ENDIF
+!X       DO K=1,KC
+!X        QQQTMP=ABS(QCTLT(K,NCTL))
+!X        IF(QQQTMP.GE.1.E-12)THEN
+!X          DU(LU,K)=0.
+!X          DV(LU,K)=0.
+!         DU(LU+1,K)=0.
+!         DV(LNC(LU),K)=0.
+!X          DU(LD,K)=0.
+!X          DV(LD,K)=0.
+!         DU(LD+1,K)=0.
+!         DV(LNC(LD),K)=0.
+!X        ENDIF
+!X       ENDDO
+!X      ENDDO
+!
+!X      DO NWR=1,NQWR
+!X       IU=IQWRU(NWR)
+!X       JU=JQWRU(NWR)
+!X       KU=KQWRU(NWR)
+!X       ID=IQWRD(NWR)
+!X       JD=JQWRD(NWR)
+!X       KD=KQWRD(NWR)
+!X       LU=LIJ(IU,JU)
+!X       LD=LIJ(ID,JD)
+!X        NQSTMP=NQWRSERQ(NWR)
+!X        QQQTMP=ABS(QWR(NWR)+QWRSERT(NQSTMP))
+!X        IF(QQQTMP.GE.1.E-12)THEN
+!X          DU(LU,KU)=0.
+!X          DV(LU,KU)=0.
+!         DU(LU+1,K)=0.
+!         DV(LNC(LU),K)=0.
+!X          DU(LD,KD)=0.
+!X          DV(LD,KD)=0.
+!         DU(LD+1,K)=0.
+!         DV(LNC(LD),K)=0.
+!X        ENDIF
+!X      ENDDO
+!
+!----------------------------------------------------------------------C
+!
+! **  CALCULATE BETA COEFFICIENTS WITH BETAUP AND BETADOWN IN DU AND DV
+!
       DO K=1,KC
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
@@ -1933,100 +1866,95 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C
-C **  LIMIT FLUXES
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  LIMIT FLUXES
+!
       DO K=1,KC
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
       LS=LSC(L)
-      FUHU(L,K)=MIN(DV(L-1,K),DU(L,K))*FUHU(L,K)
-     &         +MIN(DU(L-1,K),DV(L,K))*FUHV(L,K)
-      FVHU(L,K)=MIN(DV(LS,K),DU(L,K))*FVHU(L,K)
-     &         +MIN(DU(LS,K),DV(L,K))*FVHV(L,K)
+      FUHU(L,K)=MIN(DV(L-1,K),DU(L,K))*FUHU(L,K)+MIN(DU(L-1,K),DV(L,K))*FUHV(L,K)
+      FVHU(L,K)=MIN(DV(LS,K),DU(L,K))*FVHU(L,K)+MIN(DU(LS,K),DV(L,K))*FVHV(L,K)
       ENDIF
       ENDDO
       ENDDO
-C
+!
       DO K=1,KS
       DO L=2,LA
 	IF(LMASKDRY(L))THEN
-      FWU(L,K)=MIN(DV(L,K),DU(L,K+1))*FWU(L,K)
-     &        +MIN(DU(L,K),DV(L,K+1))*FWV(L,K)
+      FWU(L,K)=MIN(DV(L,K),DU(L,K+1))*FWU(L,K)+MIN(DU(L,K),DV(L,K+1))*FWV(L,K)
       ENDIF
       ENDDO
       ENDDO  
-C
-C**********************************************************************C
-C
-C **  ANTI-DIFFUSIVE ADVECTION CALCULATION
-C
+!
+!**********************************************************************C
+!
+! **  ANTI-DIFFUSIVE ADVECTION CALCULATION
+!
  1101 CONTINUE
-C
-C----------------------------------------------------------------------C
-C
-C **  ADD SECOND CALL TO EXPERIMENTAL SED CALCULATION FOR  
-C **  ANTIDIFFUSIVE CORRECTION
-C !!  THIS IS A TEMPORARY TRIAL IF DOESN'T WORK MAKE CALL 
-C !!  FOR ALL CASES AT PREVIOUS LOCATION
-C !!  NOT ALSO THAT FQC HAS BEEN MOVED TO HERE FOR ISADAC=1
-C !!  IF PROBLEMS ARISE PUT BACK IN AS BEFORE AT OLD LOCATION
-C !!  RIGHT AFTER SECOND CALL TO CALSED2
-C
-C     IF(M.EQ.4) CALL CALSED2(ISTL,0.5,CON)
-C
+!
+!----------------------------------------------------------------------C
+!
+! **  ADD SECOND CALL TO EXPERIMENTAL SED CALCULATION FOR  
+! **  ANTIDIFFUSIVE CORRECTION
+! !!  THIS IS A TEMPORARY TRIAL IF DOESN'T WORK MAKE CALL 
+! !!  FOR ALL CASES AT PREVIOUS LOCATION
+! !!  NOT ALSO THAT FQC HAS BEEN MOVED TO HERE FOR ISADAC=1
+! !!  IF PROBLEMS ARISE PUT BACK IN AS BEFORE AT OLD LOCATION
+! !!  RIGHT AFTER SECOND CALL TO CALSED2
+!
+!     IF(M.EQ.4) CALL CALSED2(ISTL,0.5,CON)
+!
       DO K=1,KC
       RDZIC=DZIC(K)
       DO L=2,LA
       IF(LMASKDRY(L))THEN
-CX      CH(L,K)=CON(L,K)*HP(L)
-CX     &       +DELT*( (WFQC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
-      CH(L,K)=CON(L,K)*HP(L)
-     &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
-     &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-     &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!X      CH(L,K)=CON(L,K)*HP(L)
+!X     &       +DELT*( (WFQC*FQC(L,K)+FUHU(L,K)-FUHU(L+1,K)
+      CH(L,K)=CON(L,K)*HP(L)+DELT*( (FUHU(L,K)-FUHU(L+1,K)+FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)     &
+              +(FWU(L,K-1)-FWU(L,K))*RDZIC )
       CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
       ENDIF
       ENDDO
       ENDDO
-C
-C     CH(L,K)=CONT(L,K)*HP(L)
-C    &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
-C    &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
-C    &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
-C
-CRAY      DO K=1,KC
-CRAY      DO L=2,LA
-CRAY      CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
-CRAY      ENDDO
-CRAY      ENDDO
-C
-C **  ADD REMAINING SEDIMENT SETTLING AND FLUX
-C
-C     IF(M.EQ.4)THEN
-C      IF(ISTOPT(6).EQ.2) CALL CALSED2(ISTL,0.5)
-C      NTSWVD=ISWVSD
-C      IF(ISTOPT(4).EQ.13) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.14.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.15) CALL CALSED3(ISTL,0.5,SED)
-C      IF(ISTOPT(4).EQ.16.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
-C     ENDIF
-C
+!
+!     CH(L,K)=CONT(L,K)*HP(L)
+!    &       +DELT*( (FUHU(L,K)-FUHU(L+1,K)
+!    &               +FVHU(L,K)-FVHU(LNC(L),K))*DXYIP(L)
+!    &               +(FWU(L,K-1)-FWU(L,K))*RDZIC )
+!
+!RAY      DO K=1,KC
+!RAY      DO L=2,LA
+!RAY      CON(L,K)=SCB(L)*CH(L,K)*HPI(L)+(1.-SCB(L))*CON(L,K)
+!RAY      ENDDO
+!RAY      ENDDO
+!
+! **  ADD REMAINING SEDIMENT SETTLING AND FLUX
+!
+!     IF(M.EQ.4)THEN
+!      IF(ISTOPT(6).EQ.2) CALL CALSED2(ISTL,0.5)
+!      NTSWVD=ISWVSD
+!      IF(ISTOPT(4).EQ.13) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.14.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.15) CALL CALSED3(ISTL,0.5,SED)
+!      IF(ISTOPT(4).EQ.16.AND.N.GE.NTSWVD) CALL CALSED3(ISTL,0.5,SED)
+!     ENDIF
+!
       ENDIF
-C    
-C     ENDIF ON DRY MASKED ANTIDIFFUSION CALCULATION
-C
-C**********************************************************************C
-C
-C **  DIAGNOSE FCT SCHEME
-C
-C----------------------------------------------------------------------C
-C
+!    
+!     ENDIF ON DRY MASKED ANTIDIFFUSION CALCULATION
+!
+!**********************************************************************C
+!
+! **  DIAGNOSE FCT SCHEME
+!
+!----------------------------------------------------------------------C
+!
       IF(ISFCT(MVAR).EQ.99)THEN
       WRITE(6,6110)N
-C
+!
       DO K=1,KC
       DO L=2,LA
       CCMAX=SCB(L)*(CON(L,K)-CMAX(L,K))
@@ -2039,14 +1967,14 @@ C
       ENDIF
       ENDDO
       ENDDO
-C
+!
       ENDIF
-C
+!
  6110 FORMAT('  FCT DIAGNOSTICS AT N = ',I5)
  6111 FORMAT('  CON = ',E12.4,3X,'CMAX = ',E12.4,3X,'I,J,K=',(3I10))
  6112 FORMAT('  CMIN = ',E12.4,3X,'CON = ',E12.4,3X,'I,J,K=',(3I10))
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       RETURN
       END

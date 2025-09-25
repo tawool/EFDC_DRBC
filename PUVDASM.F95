@@ -344,7 +344,7 @@
       IF(ISUVDA.GE.1)THEN
 !
       DO NL=1,NLUVDA
-C
+
         TMPIMP=1.-FSUVDA(NL)
         I=ICUVDA(NL)
         J=JCUVDA(NL)

@@ -951,7 +951,7 @@
       DV(L-1,K)=0.
 !     ENDDO
       ENDDO
-C
+
       DO LL=1,NCBN
       L=LCBN(LL)
       LS=LSC(L)

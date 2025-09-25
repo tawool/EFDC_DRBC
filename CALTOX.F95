@@ -316,8 +316,7 @@
             DO K=1,KB
               DO L=2,LA
 !0516                TOXPFB(L,K,NS,NT)=HBED(L,K)
-                TOXPFB(L,K,NS,NT)=PORBED(L,K)*HBED(L,K)
-     &                           *STDOCB(L,K)*TOXPARBC(1,NT)
+                TOXPFB(L,K,NS,NT)=PORBED(L,K)*HBED(L,K)*STDOCB(L,K)*TOXPARBC(1,NT)
               ENDDO
             ENDDO
           ENDIF
@@ -933,7 +932,7 @@
 !**********************************************************************C
 !
 ! **  TOXIC CONTAMINANT, KC=1 (SINGLE LAYER IN VERTICAL)
-C
+
       IF(ISTRAN(5).GE.1.AND.KC.EQ.1)THEN
         DO NT=1,NTOX
 !
@@ -964,8 +963,8 @@ C
 ! adjust wc and bed toxic consistent with flux
              TOX(L,1,NT)=(BB11+TOXF(L,0,NT)+TOXFB(L,KBT(L),NT))/WVEL
              TOXB(L,KBT(L),NT)=DELT*(BB22-TOXF(L,0,NT)-TOXFB(L,KBT(L),NT))
-c         WRITE(8,677)N,L,TOX(L,1,NT),TOXB(L,KBT(L),NT)
-C end adjust wc and bed toxic consistent with flux
+!c         WRITE(8,677)N,L,TOX(L,1,NT),TOXB(L,KBT(L),NT)
+!C end adjust wc and bed toxic consistent with flux
              IF(ISTOXALL.EQ.1.AND.NT.EQ.1)THEN
              DO NS=1,NSED+NSND+2
              TMPFLUX=DELT*DXYP(L)*TOXF(L,0,NT)*TOXPFW(L,1,NS,NT)+DELT*DXYP(L)*TOXFB(L,KBT(L),NT)  &

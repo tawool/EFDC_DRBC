@@ -68,9 +68,8 @@
 20    CONTINUE
 
       WRITE(2, 48) sDAY
-48    FORMAT(/,' DAY IN settling velocity FILE: ',F10.5,/,
-     + '    IZ    WSc      WSd     WSg    WSrp    WSlp'
-     + '    WSs    WSM REAERF')
+48    FORMAT(/,' DAY IN settling velocity FILE: ',F10.5,/,                                        &
+             '    IZ    WSc      WSd     WSg    WSrp    WSlp','    WSs    WSM REAERF')
 !
       DO I=1,IWQZ
         write(2,51) i,WQWSC(i),WQWSD(i),WQWSG(i),WQWSRP(i),WQWSLP(i),WQWSS(i)

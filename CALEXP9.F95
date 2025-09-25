@@ -1162,104 +1162,93 @@
 !
       DO L=2,LA
        LN=LNC(L)          
-       TVAR1S(L,1)=(FCORC(L)*DXYP(L)+0.5*SNLT*(TVAR3N(LN)+TVAR3N(L))*(DYU(L+1)-DYU(L))
-     &      -0.5*SNLT*(TVAR3E(L+1)+TVAR3E(L))*(DXV(LN)-DXV(L)) )*HP(L)
-       TVAR2S(L,1)=( FCORC(L)*DXYP(L)
-     &      +0.5*SNLT*(TVAR3S(LN)+TVAR3S(L))*(DYU(L+1)-DYU(L))
-     &      -0.5*SNLT*(TVAR3W(L+1)+TVAR3W(L))*(DXV(LN)-DXV(L)) )*H1P(L)
+       TVAR1S(L,1)=(FCORC(L)*DXYP(L)+0.5*SNLT*(TVAR3N(LN)+TVAR3N(L))*(DYU(L+1)-DYU(L))            &
+                   -0.5*SNLT*(TVAR3E(L+1)+TVAR3E(L))*(DXV(LN)-DXV(L)) )*HP(L)
+       TVAR2S(L,1)=(FCORC(L)*DXYP(L)+0.5*SNLT*(TVAR3S(LN)+TVAR3S(L))*(DYU(L+1)-DYU(L))            &
+                   -0.5*SNLT*(TVAR3W(L+1)+TVAR3W(L))*(DXV(LN)-DXV(L)) )*H1P(L)
       ENDDO
-C
-C       FCAX(L,K)=ROLD*FCAX(L,K)
-C     &          +0.25*RNEW*SCAX(L)*(CAC(L,K)*(V(LN,K)+V(L,K))
-C     &                             +CAC(L-1,K)*(V(LNW,K)+V(L-1,K)))
-C       FCAY(L,K)=ROLD*FCAY(L,K)
-C     &          +0.25*RNEW*SCAY(L)*(CAC(L,K)*(U(L+1,K)+U(L,K))
-C     &                             +CAC(LS,K)*(U(LSE,K)+U(LS,K)))
-C
-C
-C       TVAR1S=CAC @ N
-C       TVAR2S=CAC @ N-1
-C
-C       TVAR3E=U @ N
-C       TVAR3N=V @ N
-C       TVAR3W=U @ N-1
-C       TVAR3S=V @ N-1
-C
+!
+!       FCAX(L,K)=ROLD*FCAX(L,K)
+!     &          +0.25*RNEW*SCAX(L)*(CAC(L,K)*(V(LN,K)+V(L,K))
+!     &                             +CAC(L-1,K)*(V(LNW,K)+V(L-1,K)))
+!       FCAY(L,K)=ROLD*FCAY(L,K)
+!     &          +0.25*RNEW*SCAY(L)*(CAC(L,K)*(U(L+1,K)+U(L,K))
+!     &                             +CAC(LS,K)*(U(LSE,K)+U(LS,K)))
+!
+!
+!       TVAR1S=CAC @ N
+!       TVAR2S=CAC @ N-1
+!
+!       TVAR3E=U @ N
+!       TVAR3N=V @ N
+!       TVAR3W=U @ N-1
+!       TVAR3S=V @ N-1
+!
       DO L=2,LA
        LN=LNC(L)
        LS=LSC(L)      
        LNW=LNWC(L)
        LSE=LSEC(L)
-       FCAX1E(L)=0.0625*SCAX(L)*
-     &            ( TVAR2S(L,1)*(TVAR3S(LN)+TVAR3S(L))
-     &             +TVAR2S(L-1,1)*(TVAR3S(LNW)+TVAR3S(L-1)) )
-       FCAY1E(L)=0.0625*SCAY(L)*
-     &            ( TVAR2S(L,1)*(TVAR3W(L+1)+TVAR3W(L))
-     &             +TVAR2S(LS,1)*(TVAR3W(LSE)+TVAR3W(LS)) )
+       FCAX1E(L)=0.0625*SCAX(L)*(TVAR2S(L,1)*(TVAR3S(LN)+TVAR3S(L))+TVAR2S(L-1,1)*(TVAR3S(LNW)+TVAR3S(L-1)))
+       FCAY1E(L)=0.0625*SCAY(L)*(TVAR2S(L,1)*(TVAR3W(L+1)+TVAR3W(L))+TVAR2S(LS,1)*(TVAR3W(LSE)+TVAR3W(LS)))
       ENDDO
-C
+!
       DO L=2,LA
        LN=LNC(L)
        LS=LSC(L)      
        LNW=LNWC(L)
        LSE=LSEC(L)
-       FCAX1E(L)=FCAX1E(L)-0.125*SCAX(L)*
-     &            ( TVAR1S(L,1)*(TVAR3N(LN)+TVAR3N(L))
-     &             +TVAR1S(L-1,1)*(TVAR3N(LNW)+TVAR3N(L-1)) )
-       FCAY1E(L)=FCAY1E(L)-0.125*SCAY(L)*
-     &            ( TVAR1S(L,1)*(TVAR3E(L+1)+TVAR3E(L))
-     &             +TVAR1S(LS,1)*(TVAR3E(LSE)+TVAR3E(LS)) )
+       FCAX1E(L)=FCAX1E(L)-0.125*SCAX(L)*(TVAR1S(L,1)*(TVAR3N(LN)+TVAR3N(L))+TVAR1S(L-1,1)        &
+                 *(TVAR3N(LNW)+TVAR3N(L-1)) )
+       FCAY1E(L)=FCAY1E(L)-0.125*SCAY(L)*(TVAR1S(L,1)*(TVAR3E(L+1)+TVAR3E(L))+TVAR1S(LS,1)        &
+                 *(TVAR3E(LSE)+TVAR3E(LS)) )
       ENDDO
-C
+!
       ENDIF
       ENDIF
-C
-C----------------------------------------------------------------------C
-C
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KC
        DO L=2,LA
        LN=LNC(L)
        LS=LSC(L)      
        LNW=LNWC(L)
        LSE=LSEC(L)
-       FCAX(L,K)=ROLD*FCAX(L,K)
-     &          +0.25*RNEW*SCAX(L)*(CAC(L,K)*(V(LN,K)+V(L,K))
-     &                             +CAC(L-1,K)*(V(LNW,K)+V(L-1,K)))
-       FCAY(L,K)=ROLD*FCAY(L,K)
-     &          +0.25*RNEW*SCAY(L)*(CAC(L,K)*(U(L+1,K)+U(L,K))
-     &                             +CAC(LS,K)*(U(LSE,K)+U(LS,K)))
+       FCAX(L,K)=ROLD*FCAX(L,K)+0.25*RNEW*SCAX(L)*(CAC(L,K)*(V(LN,K)+V(L,K))+CAC(L-1,K)           &
+                 *(V(LNW,K)+V(L-1,K)))
+       FCAY(L,K)=ROLD*FCAY(L,K)+0.25*RNEW*SCAY(L)*(CAC(L,K)*(U(L+1,K)+U(L,K))+CAC(LS,K)           &
+                 *(U(LSE,K)+U(LS,K)))
        FX(L,K)=SAAX(L)*(FUHU(L,K)-FUHU(L-1,K)+FVHU(LN,K)-FVHU(L,K))
        FY(L,K)=SAAY(L)*(FUHV(L+1,K)-FUHV(L,K)+FVHV(L,K)-FVHV(LS,K))
        ENDDO
       ENDDO
-C
-C**********************************************************************C
-C
-C **  ADD HORIZONTAL MOMENTUN DIFFUSION TO ADVECTIVE ACCELERATIONS
-C
-C----------------------------------------------------------------------C
-C 
+!
+!**********************************************************************C
+!
+! **  ADD HORIZONTAL MOMENTUN DIFFUSION TO ADVECTIVE ACCELERATIONS
+!
+!----------------------------------------------------------------------C
+! 
       IF(ISHDMF.GE.1)THEN
-C
+!
       DO K=1,KC
        DO L=2,LA
        LS=LSC(L)
        LN=LNC(L)
-       FX(L,K)=FX(L,K)
-     &        -SDX(L)*(FMDUX(L,K)-FMDUX(L-1,K)+FMDUY(LN,K)-FMDUY(L,K))
-       FY(L,K)=FY(L,K)
-     &        -SDY(L)*(FMDVX(L+1,K)-FMDVX(L,K)+FMDVY(L,K)-FMDVY(LS,K))
+       FX(L,K)=FX(L,K)-SDX(L)*(FMDUX(L,K)-FMDUX(L-1,K)+FMDUY(LN,K)-FMDUY(L,K))
+       FY(L,K)=FY(L,K)-SDY(L)*(FMDVX(L+1,K)-FMDVX(L,K)+FMDVY(L,K)-FMDVY(LS,K))
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  CALCULATE EXTERNAL ACCELERATIONS
-C
-C----------------------------------------------------------------------C
-C 
+!
+!**********************************************************************C
+!
+! **  CALCULATE EXTERNAL ACCELERATIONS
+!
+!----------------------------------------------------------------------C
+! 
       DO K=1,KC
        DO L=2,LA
         FCAXE(L)=FCAXE(L)+FCAX(L,K)*DZC(K)
@@ -1268,20 +1257,20 @@ C
         FYE(L)=FYE(L)+FY(L,K)*DZC(K)
        ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C 
-C **  ADD NET WAVE REYNOLDS STRESSES TO EXTERNAL ADVECTIVE ACCEL.
-C
+!
+!----------------------------------------------------------------------C
+! 
+! **  ADD NET WAVE REYNOLDS STRESSES TO EXTERNAL ADVECTIVE ACCEL.
+!
       IF(ISWAVE.GE.2)THEN
-C
+!
       IF(N.LT.NTSWV)THEN
          TMPVAL=FLOAT(N)/FLOAT(NTSWV)
          WVFACT=0.5-0.5*COS(PI*TMPVAL)
        ELSE
         WVFACT=1.0
       ENDIF        
-C
+!
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -1292,28 +1281,28 @@ C
         ENDDO
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  COMPLETE CALCULATION OF INTERNAL ADVECTIVE ACCELERATIONS
-C
-C----------------------------------------------------------------------C
-C 
+!
+!**********************************************************************C
+!
+! **  COMPLETE CALCULATION OF INTERNAL ADVECTIVE ACCELERATIONS
+!
+!----------------------------------------------------------------------C
+! 
       DO K=1,KC
        DO L=2,LA
          FX(L,K)=FX(L,K)+SAAX(L)*(FWU(L,K)-FWU(L,K-1))*DZIC(K)
          FY(L,K)=FY(L,K)+SAAY(L)*(FWV(L,K)-FWV(L,K-1))*DZIC(K)
         ENDDO
       ENDDO
-C
-C----------------------------------------------------------------------C
-C 
-C **  ADD NET WAVE REYNOLDS STRESSES TO INTERNAL ADVECTIVE ACCEL.
-C
+!
+!----------------------------------------------------------------------C
+! 
+! **  ADD NET WAVE REYNOLDS STRESSES TO INTERNAL ADVECTIVE ACCEL.
+!
       IF(ISWAVE.GE.2)THEN
-C
+!
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -1324,70 +1313,64 @@ C
         ENDDO
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
-C**********************************************************************C
-C
-C **  CALCULATE EXPLICIT INTERNAL BUOYANCY FORCINGS CENTERED AT N FOR
-C **  THREE TIME LEVEL STEP AND AT (N+1/2) FOR TWO TIME LEVEL STEP
-C **  SBX=SBX*0.5*DYU & SBY=SBY*0.5*DXV
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE EXPLICIT INTERNAL BUOYANCY FORCINGS CENTERED AT N FOR
+! **  THREE TIME LEVEL STEP AND AT (N+1/2) FOR TWO TIME LEVEL STEP
+! **  SBX=SBX*0.5*DYU & SBY=SBY*0.5*DXV
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KS
       DO L=2,LA
       LS=LSC(L)
-      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*
-     &            ( HU(L)*( (B(L,K+1)-B(L-1,K+1))*DZC(K+1)
-     &                     +(B(L,K)-B(L-1,K))*DZC(K) )
-     &           +(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*
-     &            (HMP(L)-HMP(L-1)-Z(K)*(HP(L)-HP(L-1))) )
-      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*
-     &            ( HV(L)*( (B(L,K+1)-B(LS,K+1))*DZC(K+1)
-     &                     +(B(L,K)-B(LS,K))*DZC(K) )
-     &           +(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*
-     &            (HMP(L)-HMP(LS)-Z(K)*(HP(L)-HP(LS))) )
+      FBBX(L,K)=ROLD*FBBX(L,K)+RNEW*SBX(L)*GP*HU(L)*( HU(L)*( (B(L,K+1)-B(L-1,K+1))*DZC(K+1)      &
+                +(B(L,K)-B(L-1,K))*DZC(K) )+(B(L,K+1)-B(L,K)+B(L-1,K+1)-B(L-1,K))*                &
+                (HMP(L)-HMP(L-1)-Z(K)*(HP(L)-HP(L-1))) )
+      FBBY(L,K)=ROLD*FBBY(L,K)+RNEW*SBY(L)*GP*HV(L)*(HV(L)*((B(L,K+1)-B(LS,K+1))*DZC(K+1)         &
+                +(B(L,K)-B(LS,K))*DZC(K))+(B(L,K+1)-B(L,K)+B(LS,K+1)-B(LS,K))*                    &
+                (HMP(L)-HMP(LS)-Z(K)*(HP(L)-HP(LS))) )
       ENDDO
       ENDDO
-C
-C     IF(N.EQ.1)THEN
-C       OPEN(1,FILE='BUOY.DIA',STATUS='UNKNOWN')
-C       DO L=2,LA
-C        DO K=1,KS
-C        TMP3D(K)=SUBO(L)*FBBX(L,K)
-C        ENDDO
-C       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
-C        DO K=1,KS
-C        TMP3D(K)=SVBO(L)*FBBY(L,K)
-C        ENDDO
-C       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
-C       ENDDO
-C       CLOSE(1)
-C     ENDIF
-C
+!
+!     IF(N.EQ.1)THEN
+!       OPEN(1,FILE='BUOY.DIA',STATUS='UNKNOWN')
+!       DO L=2,LA
+!        DO K=1,KS
+!        TMP3D(K)=SUBO(L)*FBBX(L,K)
+!        ENDDO
+!       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
+!        DO K=1,KS
+!        TMP3D(K)=SVBO(L)*FBBY(L,K)
+!        ENDDO
+!       WRITE(1,1111)IL(L),JL(L),(TMP3D(K),K=1,KS)
+!       ENDDO
+!       CLOSE(1)
+!     ENDIF
+!
  1111 FORMAT(2I5,2X,8E12.4)       
-C
-C**********************************************************************C
-C
-C **  CALCULATE EXPLICIT INTERNAL U AND V SHEAR EQUATION TERMS
-C
-C----------------------------------------------------------------------C
-C
+!
+!**********************************************************************C
+!
+! **  CALCULATE EXPLICIT INTERNAL U AND V SHEAR EQUATION TERMS
+!
+!----------------------------------------------------------------------C
+!
       DO K=1,KS
        RCDZF=CDZF(K)
        DO L=2,LA
-        DU(L,K)=RCDZF*( H1U(L)*(U1(L,K+1)-U1(L,K))*DELTI
-     &           +DXYIU(L)*(FCAX(L,K+1)-FCAX(L,K)+FBBX(L,K)
-     &           +SNLT*(FX(L,K)-FX(L,K+1))) )
-        DV(L,K)=RCDZF*( H1V(L)*(V1(L,K+1)-V1(L,K))*DELTI
-     &           +DXYIV(L)*(FCAY(L,K)-FCAY(L,K+1)+FBBY(L,K)
-     &           +SNLT*(FY(L,K)-FY(L,K+1))) )
+        DU(L,K)=RCDZF*( H1U(L)*(U1(L,K+1)-U1(L,K))*DELTI+DXYIU(L)*(FCAX(L,K+1)-FCAX(L,K)          &
+                +FBBX(L,K)+SNLT*(FX(L,K)-FX(L,K+1))) )
+        DV(L,K)=RCDZF*( H1V(L)*(V1(L,K+1)-V1(L,K))*DELTI+DXYIV(L)*(FCAY(L,K)-FCAY(L,K+1)+FBBY(L,K)&
+        +SNLT*(FY(L,K)-FY(L,K+1))) )
        ENDDO
       ENDDO
-C
+!
       IF(ISTL.EQ.2)THEN
-C 
+! 
       DO ND=1,NDM
        LF=2+(ND-1)*LDM
        LL=LF+LDM-1
@@ -1396,12 +1379,12 @@ C
         DV(L,KS)=DV(L,KS)-CDZU(KS)*TSY(L)
        ENDDO
       ENDDO
-C
+!
       ENDIF
-C
+!
       CLOSE(1)
-C
-C**********************************************************************C
-C
+!
+!**********************************************************************C
+!
       RETURN
-      END
+      END 

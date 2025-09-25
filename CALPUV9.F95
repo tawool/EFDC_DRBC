@@ -3,7 +3,7 @@
 !**********************************************************************C
 !**********************************************************************C
 !
-!     SUBROUTINE CALPUV9 (ISTL)
+     SUBROUTINE CALPUV9 (ISTL)
 !
 ! **  THIS SUBROUTINE IS PART OF  EFDC-FULL VERSION 1.0a
 !
@@ -194,7 +194,7 @@
 !     &    +RITB*DELT*FXVEGE(L) )
         RCY(L)=1./(1.+FBODYFYI(L)+RITB*DELT*HVI(L)*STBY(L)*SQRT(UV(L)*UV(L)+V(L,1)*V(L,1))+DELT   &
                *FYVEGE(L) )
-C     &    +RITB*DELT*FYVEGE(L) )
+!C     &    +RITB*DELT*FYVEGE(L) )
         FUHDYE(L)=FUHDYE(L)*RCX(L)
         FVHDXE(L)=FVHDXE(L)*RCY(L)
         ENDDO
@@ -760,7 +760,7 @@ C     &    +RITB*DELT*FYVEGE(L) )
 ! **  SCALE BY MINIMUM DIAGONAL
 !
 !     IF(IRVEC.EQ.9)THEN
-C
+
       
       DO L=2,LA
       CCS(L)=CS(L)*CCMNMI
@@ -772,7 +772,7 @@ C
       CCCI(L)=1./CCC(L)
       ENDDO
 !
-      ENDIF
+!TAW      ENDIF
 !
 ! **  SCALE TO NORMAL FORM
 !

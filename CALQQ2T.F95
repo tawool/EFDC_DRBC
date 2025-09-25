@@ -319,8 +319,10 @@
       UUU(L,K)=QQ(L,K)*H1P(L)+DELT*(FUHU(L,K)-FUHU(L+1,K)+FVHU(L,K)-FVHU(LN,K)+(FWQQ(L,K)         &
               -FWQQ(L,K+1))*DZIG(K))*DXYIP(L)
 !      VVV(L,K)=QQL1(L,K)*H1P(L)
-      VVV(L,K)=QQL(L,K)*H1P(L)*H1P(L)+DELT*(FUHV(L,K)-FUHV(L+1,K)+FVHV(L,K)-FVHV(LN,K)            &
-               (FWQQL(L,K)-FWQQL(L,K+1))*DZIG(K))*DXYIP(L)
+       VVV(L,K)=QQL1(L,K)*H1P(L)*H1P(L)                                                           &
+           +DELT*(FUHV(L,K)-FUHV(L+1,K)+FVHV(L,K)-FVHV(LN,K)                                     &
+           +(FWQQL(L,K)-FWQQL(L,K+1))*DZIG(K))*DXYIP(L)
+
       ENDIF
       ENDDO
       ENDDO
@@ -390,8 +392,8 @@
 !      VVV(L,K)=VVV(L,K)+CTE1*DML(L,K)*PQQ
 !      ENDDO
 !      ENDDO
-C!
-C!     ENDIF
+!
+!     ENDIF
       ENDIF
 !
 !----------------------------------------------------------------------C
@@ -532,7 +534,7 @@ C!     ENDIF
 !
 !
       IF(IDRYTBP.EQ.0)THEN
-C
+
 
       DO L=2,LA
 	  CLQTMP=-DELT*CDZKK(1)*AQ(L,1)*HPI(L)

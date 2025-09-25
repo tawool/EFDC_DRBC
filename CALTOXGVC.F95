@@ -1008,16 +1008,16 @@
               TOXB(LCHAN,KCHAN,NT)=TOXB(LCHAN,KCHAN,NT)-DELT*TOXFBECHB(NP,NT)
               TOX(LCHAN,1,NT)=TOX(LCHAN,1,NT)+DELT*DZIC(1)*GVCSCLPI(LCHAN)                        &
                               *HPI(LCHAN)*TOXFBECHW(NP,NT)
-c
+
              IF(ISTOXALL.EQ.1.AND.NT.EQ.1)THEN
                ATOXFBEBKB(LBANK,NT)=ATOXFBEBKB(LBANK,NT)-DELT*DXYP(LBANK)*TOXFBEBKB(NP,NT)
                ATOXFBECHB(LCHAN,NT)=ATOXFBECHB(LCHAN,NT)-DELT*DXYP(LCHAN)*TOXFBECHB(NP,NT)
                ATOXFBECHW(LCHAN,NT)=ATOXFBECHW(LCHAN,NT)+DELT*DXYP(LCHAN)*TOXFBECHW(NP,NT)
              ENDIF               
-C
+
             ENDDO    
           ENDIF
-C
+
           IF(ISDTXBUG.EQ.2)THEN
             OPEN(2,FILE='TOXFLX.DIA',ACCESS='APPEND')
             DO L=2,LA
@@ -1025,7 +1025,7 @@ C
             ENDDO
             CLOSE(2)
           ENDIF
-C
+
         ENDDO
       ENDIF
 !

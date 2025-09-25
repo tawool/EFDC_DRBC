@@ -167,7 +167,7 @@
  1459 FORMAT(1H1,' Y VECTOR POTENTIAL TRANSPORT VEL, M/S, LAYER',I5,//)
 !
 !**********************************************************************C
-C
+
   100 CONTINUE
 !
       RETURN

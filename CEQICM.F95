@@ -430,7 +430,7 @@
 !
       ENDIF
 !
-C----------------------------------------------------------------------C
+!C----------------------------------------------------------------------C
 !
 ! **  WRITE INTERNAL FLOWS TO INTFLW.INP
 !
@@ -669,7 +669,7 @@ C----------------------------------------------------------------------C
         DO L=2,LA
          LM=L-1
          TMPVAL=DXYP(L)*HWQ(L)
-C         WRITE(2,294)LM,TVAR3C(L),TMPVAL,L
+!C         WRITE(2,294)LM,TVAR3C(L),TMPVAL,L
          WRITE(2,2294)LM,L,HP(L),HWQ(L),HTMP(L)
          WRITE(4,402)LM,L,(QSUMLPF(L,K),K=1,KC)
 !         IF(TVAR3C(L).LT.0.0)THEN

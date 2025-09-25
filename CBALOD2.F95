@@ -40,8 +40,11 @@
       DYEOUTO=DYEOUTO-MIN(VHDX2(LN,K),0.)*DYE1(LN,K)*DZC(K)-MAX(VHDX2(LN,K),0.)*DYE1(L,K)*DZC(K)
       PPEOUTO=PPEOUTO-VHDX2(LN,K)*G*DZC(K)*(0.5*(BELV(L)+BELV(LN))+0.125*(HP(L)+H2P(L)+HP(LN)     &
               +H2P(LN))*(Z(K)+Z(K-1)) )
-      BBEOUTO=BBEOUTO-MIN(VHDX2(LN,K),0.)*DZC(K)*GP*(BELV(LN)+0.5*HP(LN)*(Z(K)+Z(K-1))*B1(LN,K)   &
-              -MAX(VHDX2(LN,K),0.)*DZC(K)*GP*( BELV(L)+0.5*HP(L)*(Z(K)+Z(K-1)))*B1(L,K)
+              
+      BBEOUTO=BBEOUTO-MIN(VHDX2(LN,K),0.)*DZC(K)*GP*( BELV(LN)                                    &
+                       +0.5*HP(LN)*(Z(K)+Z(K-1)) )*B1(LN,K)                                      &
+                  -MAX(VHDX2(LN,K),0.)*DZC(K)*GP*( BELV(L)                                       &
+                       +0.5*HP(L)*(Z(K)+Z(K-1)) )*B1(L,K)
 !
       ENDDO
       ENDDO
